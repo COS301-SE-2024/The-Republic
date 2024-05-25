@@ -1,6 +1,7 @@
 <div style="text-align: center; background-color: #f0f8ff; padding: 20px; border-radius: 10px;">
     <img src="image.png" alt="Logo" width="150" />
     <h1 style="color: darkblue;">The Republic</h1>
+    <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
 
 ---
@@ -78,7 +79,7 @@ As a user, I want to share my details, such as username, surname, and email addr
 - FR14: Users can update their account details.
 
 ### 📊 Use Case Diagrams
-- TODO: Add use case diagrams
+- TODO: Add use case diagrams per subsystem
 
 ## 📄 Service Contracts
 - TODO: Detail the service contracts, including the operations, inputs, outputs, and any preconditions or postconditions.
@@ -102,7 +103,7 @@ The system should handle up to 10,000 concurrent users with minimal latency.
 
 **2. MVC (Model-View-Controller)**: This pattern will be used in the frontend to separate concerns and enhance maintainability.
 
-**3. RESTful APIs**: Standardized communication between the frontend and backend services.
+**3. Monolithic???**
 
 ## 🎨 Design Patterns
 **1. Singleton**: Ensuring a single instance of key classes, such as database connection managers.
@@ -132,7 +133,7 @@ The system should handle up to 10,000 concurrent users with minimal latency.
 - Python via Django
 
 **4. Database**
-- PostgreSQL
+- PostgreSQL (Supabase)
 
 ---
 
