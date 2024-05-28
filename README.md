@@ -38,7 +38,7 @@ The documentation will guide you through various aspects of the project, includi
 <table style="border-width: 1px; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse">
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/shama.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/shama.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -83,7 +83,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/assets/InfiniteLoopers_11.jpeg" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/assets/InfiniteLoopers_11.jpeg" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -128,7 +128,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/sibisi.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/sibisi.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -173,7 +173,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/sello.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/sello.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -218,7 +218,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/hlokomani.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/hlokomani.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
