@@ -117,11 +117,9 @@ This document serves as a guide for end-users, providing instructions on how to 
 
 This document outlines the coding standards and best practices to be followed during the development of the project.
 
-[Link to Coding Standards](./specifications/CodingStandards.md)
-
 ---
 
-These documents collectively ensure that The Republic project is developed, tested, and delivered to the highest standards, providing a robust platform for citizen engagement and government accountability.
+[Link to Coding Standards](./specifications/CodingStandards.md)
 
 Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
 
