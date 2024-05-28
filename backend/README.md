@@ -1,30 +1,30 @@
 # Node.js Express Backend with TypeScript Documentation
 
-![Backend Documentation](../documentation/images/express.png)
+<div style="width: 100%; height: 40%; border-radius:20px; background-color: black; margin: 20px 0;">
+    <img src="../documentation/images/express.png" alt="Backend Documentation" style="width: 100%; height: auto; max-height: 50%;">
+</div>
+
+> This document provides comprehensive information on the Node.js Express backend application written in TypeScript. The application uses Express for handling HTTP requests and Supabase for authentication and PostgreSQL database operations.
 
 ## Table of Contents
+
 1. [Coding Standards](#coding-standards)
-2. [Overview](#overview)
-3. [Installation](#installation)
-4. [Configuration](#configuration)
-5. [API Endpoints](#api-endpoints)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [API Endpoints](#api-endpoints)
     - [GET /](#get-)
     - [GET /users](#get-users)
-6. [Using Supabase](#using-supabase)
+5. [Using Supabase](#using-supabase)
     - [Authentication](#authentication)
     - [Database Operations](#database-operations)
-7. [Project Structure](#project-structure)
-8. [Running the Project](#running-the-project)
+6. [Project Structure](#project-structure)
+7. [Running the Project](#running-the-project)
 
 ## Coding Standards:
 
 - Maintaining high coding standards is crucial for the success of The Republic project. We have a document which provides guidelines and best practices for ensuring a clean, readable, and maintainable codebase.
 - Please read the document here: [Coding Standards](./../documentation/specifications/CodingStandards.md)
 - Read this for the Full Documentation: [Documentation](./../documentation/README.md)
-
-## Overview
-
-This document provides comprehensive information on the Node.js Express backend application written in TypeScript. The application uses Express for handling HTTP requests and Supabase for authentication and PostgreSQL database operations.
 
 ## Installation
 
