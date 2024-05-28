@@ -49,10 +49,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/shama" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/ShamaKamina" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/shama" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/shama-k-257386153" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -94,10 +94,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/mulisa" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/MulisaMusehane" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/mulisa" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/mulisa-musehane-96119b233" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -139,10 +139,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/sibisi" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/IRIA7" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/sibisi" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/sibisi-mathebe" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -184,10 +184,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/sello" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/TebogoYungMercykay" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/sello" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/sello-selepe-tebogoyungmercykay" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
