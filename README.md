@@ -83,7 +83,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/assets/InfiniteLoopers_11.jpeg" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/mulisa.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
