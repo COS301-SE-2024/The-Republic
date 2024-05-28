@@ -65,4 +65,16 @@ The Republic aims to revolutionize citizen engagement with government services. 
 
 These requirements form the foundation for the development of The Republic project, ensuring that it meets the needs of users effectively and efficiently.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
+
+<details>
+    <summary> :lock: Secret Message</summary>
+    <br/>
+    <p>Thank you for opening this, Have a great day! :smile:</p>
+</details>
+
+---

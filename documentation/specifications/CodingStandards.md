@@ -166,4 +166,16 @@ describe('Login Functionality', () => {
 
 These coding standards serve as a roadmap for maintaining consistency and quality throughout the development lifecycle of The Republic project.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
+
+<details>
+    <summary> :lock: Secret Message</summary>
+    <br/>
+    <p>Thank you for opening this, Have a great day! :smile:</p>
+</details>
+
+---
