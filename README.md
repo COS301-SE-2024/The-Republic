@@ -38,7 +38,7 @@ The documentation will guide you through various aspects of the project, includi
 <table style="border-width: 1px; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse">
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/shama.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/shama.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -49,10 +49,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/shama" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/ShamaKamina" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/shama" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/shama-k-257386153" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -83,7 +83,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/assets/InfiniteLoopers_11.jpeg" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/mulisa.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -94,10 +94,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/mulisa" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/MulisaMusehane" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/mulisa" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/mulisa-musehane-96119b233" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -128,7 +128,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/sibisi.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/sibisi.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -139,10 +139,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/sibisi" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/IRIA7" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/sibisi" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/sibisi-mathebe" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -173,7 +173,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/sello.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/sello.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
@@ -184,10 +184,10 @@ The documentation will guide you through various aspects of the project, includi
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
-      <a href="https://github.com/sello" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/TebogoYungMercykay" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="http://www.linkedin.com/in/sello" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/sello-selepe-tebogoyungmercykay" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
@@ -218,7 +218,7 @@ The documentation will guide you through various aspects of the project, includi
   </tr>
   <tr>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
-      <img src="./documentation/images/team/hlokomani.png" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="./documentation/images/team/hlokomani.png" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2>
