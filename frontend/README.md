@@ -1,25 +1,25 @@
 # Next.js Frontend with Chakra UI and TypeScript
 
-![Frontend Documentation](../documentation/images/nextjs.png)
+<div style="width: 100%; height: 40%; border-radius:20px; background-color: black; margin: 20px 0;">
+    <img src="../documentation/images/nextjs.png" alt="Frontend Documentation" style="width: 100%; height: auto; max-height: 50%;">
+</div>
+
+> Welcome to the documentation for our Next.js frontend with Chakra UI and TypeScript. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [Getting Started](#getting-started)
+
+1. [Getting Started](#getting-started)
     - [Coding Standards](#coding-standards)
     - [Creating a Page](#creating-a-page)
-3. [Understanding Chakra UI](#understanding-chakra-ui)
+2. [Understanding Chakra UI](#understanding-chakra-ui)
     - [Introduction to Chakra UI](#introduction-to-chakra-ui)
     - [Theme Customization](#theme-customization)
-4. [Backend Integration](#backend-integration)
+3. [Backend Integration](#backend-integration)
     - [API Integration](#api-integration)
-5. [Project Structure](#project-structure)
-6. [Running the Project](#running-the-project)
-7. [Learn More About Next.js](#learn-more-about-nextjs)
-8. [Deploying The Application on Vercel](#deploying-the-application-on-vercel)
-
-## Introduction
-
-Welcome to the documentation for our Next.js frontend with Chakra UI and TypeScript. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
+4. [Project Structure](#project-structure)
+5. [Running the Project](#running-the-project)
+6. [Learn More About Next.js](#learn-more-about-nextjs)
+7. [Deploying The Application on Vercel](#deploying-the-application-on-vercel)
 
 ## Getting Started
 

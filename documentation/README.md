@@ -1,10 +1,14 @@
 # Project Documentation
 
-Welcome to the project documentation for The Republic, developed by team Infinite Loopers. This document serves as a comprehensive guide to the project’s architecture, design, implementation, and more.
+<div style="width: 100%; height: 40%; border-radius:20px; background-color: #d1d1d1; margin: 20px 0;">
+    <img src="../documentation/images/social.png" alt="Documentation" style="width: 100%; height: auto; max-height: 100%;">
+</div>
+
+> Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
 
 ## Table of Contents
 
-1. [README](#readme)
+1. [Main README](../README.md)
 2. [Architectural Specification](#architectural-specification)
 3. [Design Specification](#design-specification)
 4. [Project Plan](#project-plan)
@@ -14,36 +18,6 @@ Welcome to the project documentation for The Republic, developed by team Infinit
 8. [Requirements Specification](#requirements-specification)
 9. [User Manual](#user-manual)
 10. [Coding Standards](#coding-standards)
-
----
-
-## README
-
-Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
-
-### Core Technologies
-
-- **Database and Authentication**: Supabase
-- **Backend**: Node.js with Express
-- **Frontend**: Next.js
-- **Analysis Engine**: Django
-
-### Core Requirements
-
-- Post feed with user interaction and filtering capabilities.
-- Sentiment analysis and data processing on user posts.
-- Standard data visualizations and analytics.
-- Option for anonymous posting.
-- Mock data generation for scalability and performance demonstration.
-
-### Optional Requirements
-
-- User contact by officials.
-- Custom report generation.
-- Multiple post types.
-- Multi-language support.
-- Predictive analytics.
-- Integration with external services.
 
 ---
 
