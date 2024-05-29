@@ -1,0 +1,66 @@
+version: 2.1
+
+jobs:
+  lint-app:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies and lint backend
+          command: |
+            cd backend
+            npm install
+            npm run lint
+      - run:
+          name: Install dependencies and lint frontend
+          command: |
+            cd ../frontend
+            npm install
+            npm run lint
+  build-and-push:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Build docker container for each microservices
+          command: |
+            echo "--------- Installing dependencies -----------"
+            sudo curl -LO https://nodejs.org/dist/v18.0.0/node-v18.0.0-linux-x64.tar.xz
+            sudo tar -xvf node-v18.0.0-linux-x64.tar.xz
+            sudo cp -r node-v18.0.0-linux-x64/{bin,include,lib,share} /usr/
+            node --version => v18.0.0
+            sudo apt install nodejs
+
+            echo "--------- The images is Building ------------"
+
+            docker build -t infiniteloopers-backend-server ./backend
+            docker tag infiniteloopers-backend-server tebogoyungmercykay/infiniteloopers-backend-server:v0
+            
+            docker build -t infiniteloopers-frontend-app ./frontend
+            docker tag infiniteloopers-frontend-app tebogoyungmercykay/infiniteloopers-frontend-app:v0
+
+            docker build -t infiniteloopers-reverseproxy ./reverseproxy
+            docker tag infiniteloopers-reverseproxy tebogoyungmercykay/infiniteloopers-reverseproxy:v0
+
+            echo "-------- All images succesfully built ----------"
+
+            echo "-------- login in to hub --------"
+
+            docker login -u tebogoyungmercykay -p $DOCKERPASS
+
+            echo "-------------- Pushing images to dockerhub -------"
+
+            docker push tebogoyungmercykay/infiniteloopers-backend-server:v0
+            docker push tebogoyungmercykay/infiniteloopers-frontend-app:v0
+            docker push tebogoyungmercykay/infiniteloopers-reverseproxy:v0
+
+workflows:
+  default:
+    jobs:
+      - lint-app
+      - build-and-push:
+          requires: [lint-app]
+          filters:
+            branches:
+              only: [master, main]
