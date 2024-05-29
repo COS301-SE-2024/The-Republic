@@ -2,7 +2,7 @@ version: '3'
 services:
   frontend:
     image: infiniteloopers-frontend-app:v0
-    build: ./frontend
+    build: ./../frontend
     ports:
       - '3000:3000'
     depends_on:
@@ -11,11 +11,12 @@ services:
       - REACT_APP_BACKEND_URL=http://backend:8080
   backend:
     image: infiniteloopers-backend-server:v0
-    build: ./backend
+    build: ./../backend
     ports:
       - '8080:8080'
   reverseproxy:
-    build: ./reverseproxy
+    image: infiniteloopers-reverseproxy:v0
+    build: ./../reverseproxy
     ports:
       - 80:80
     depends_on:
