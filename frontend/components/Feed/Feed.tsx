@@ -9,6 +9,9 @@ const mockIssues = [
     username: '@johndoe',
     content: 'Did anyone else just hear that blast? Electricity gone in Brooklyn',
     timestamp: '6 sec ago',
+    category: 'Water',
+    sentiment: 'Angry',
+    numberofcomments: 5
   },
 ];
 
