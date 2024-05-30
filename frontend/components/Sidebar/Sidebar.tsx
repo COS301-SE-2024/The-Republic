@@ -1,9 +1,22 @@
-'use client'
-
+'use client';
 import React from 'react';
-import { Command, CommandGroup, CommandItem, CommandList, CommandSeparator } from '../ui/command';
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from '../ui/command';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+} from '../ui/dropdown-menu';
 
 const Sidebar = () => {
   const router = useRouter();
@@ -43,6 +56,23 @@ const Sidebar = () => {
               </CommandGroup>
             ))}
             <CommandSeparator />
+            <CommandGroup heading="More">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <CommandItem>Settings</CommandItem>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onSelect={() => router.push('/settings/RequestVerification')}>
+                      Request Verification
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => router.push('/settings/Preferences')}>
+                      Preferences
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CommandGroup>
           </CommandList>
         </Command>
       </div>
