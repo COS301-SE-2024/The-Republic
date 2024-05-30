@@ -1,5 +1,6 @@
 import React from 'react';
 import Issue from "../Issue/Issue"
+import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 
 const mockIssues = [
   {
@@ -14,6 +15,7 @@ const mockIssues = [
 const Feed = () => {
   return (
     <div className="w-full px-6">
+      <IssueInputBox/>
       {mockIssues.map((issue) => (
         <Issue key={issue.id} issue={issue} />
       ))}
