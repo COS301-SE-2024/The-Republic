@@ -7,13 +7,13 @@ const IssueInputBox = () => {
   const [content, setContent] = useState('');
 
   const handleIssueSubmit = () => {
-    // Handle posting logic here
+
     console.log('Posting:', content);
     setContent('');
   };
 
   return (
-    <Card className="mb-4 w-full bg-white border border-gray-300 rounded-lg shadow-md">
+    <Card className="mb-4 w-full bg-background border-primary rounded-lg">
       <CardContent className="p-4">
         <div className="flex items-center">
           <Input

@@ -21,8 +21,8 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         <div className="flex items-center ">
           <div className="pr-2">
             <Avatar >
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src="https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg" />
+              <AvatarFallback>JD</AvatarFallback>
             </Avatar>
           </div>
           <div className="font-bold">{issue.author}</div>
