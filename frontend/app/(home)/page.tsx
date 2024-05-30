@@ -4,7 +4,7 @@ import { Center, Heading } from "@chakra-ui/react";
 
 export default function Home() {
   return (
-    <Center width="100vw" height="100vh">
+    <Center>
       <Heading>
         Hello World
       </Heading>
