@@ -24,21 +24,21 @@ on:
       - feature/devops
 
 jobs:
-  notification-job:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Notification
-      uses: actions/github-script@v4
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          const issueNumber = context.issue.number;
-          await github.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: issueNumber,
-            body: 'Capstone!! A New Pull Request Has Been Made.',
-          });
+  # notification-job:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Notification
+  #     uses: actions/github-script@v4
+  #     with:
+  #       github-token: ${{secrets.GITHUB_TOKEN}}
+  #       script: |
+  #         const issueNumber = context.issue.number;
+  #         await github.issues.createComment({
+  #           owner: context.repo.owner,
+  #           repo: context.repo.repo,
+  #           issue_number: issueNumber,
+  #           body: 'Capstone!! A New Pull Request Has Been Made.',
+  #         });
 
   deploy-backend:
     if: github.event_name == 'push'
