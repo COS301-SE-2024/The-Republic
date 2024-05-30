@@ -12,12 +12,16 @@ COPY --chown=node:node package*.json ./
 
 RUN npm install
 
-RUN npm install typescript --save-dev
+# Install TypeScript as a dev dependency
+USER root
+RUN npm install -g typescript --save-dev
+USER node
 
 COPY --chown=node:node . .
 
+# Compile TypeScript files
 RUN npx tsc
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
