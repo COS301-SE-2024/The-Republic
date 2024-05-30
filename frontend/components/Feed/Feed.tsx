@@ -13,7 +13,7 @@ const mockIssues = [
 
 const Feed = () => {
   return (
-    <div>
+    <div className="w-full px-6">
       {mockIssues.map((issue) => (
         <Issue key={issue.id} issue={issue} />
       ))}
