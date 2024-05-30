@@ -1,7 +1,15 @@
 # .github/workflows/lint.yml
 name: Lint
 
-on: [push, pull_request]
+# on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - feature/devops
+  pull_request:
+    branches:
+      - feature/devops
 
 jobs:
   lint-frontend:

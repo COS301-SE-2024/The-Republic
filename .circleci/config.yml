@@ -55,6 +55,16 @@ jobs:
             docker push tebogoyungmercykay/infiniteloopers-frontend-app:v0
             docker push tebogoyungmercykay/infiniteloopers-reverseproxy:v0
 
+# workflows:
+#   default:
+#     jobs:
+#       - lint-app
+#       - build-and-push:
+#           requires: [lint-app]
+#           filters:
+#             branches:
+#               only: [master, main]
+
 workflows:
   default:
     jobs:
@@ -63,4 +73,4 @@ workflows:
           requires: [lint-app]
           filters:
             branches:
-              only: [master, main]
+              only: [feature/devops]

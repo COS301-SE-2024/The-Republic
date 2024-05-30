@@ -1,19 +1,27 @@
 # .github/workflows/build-deploy.yml
 name: Notification and Deploying Project to Heroku
 
+# on:
+#   push:
+#     branches:
+#       - master
+#       - main
+#   pull_request:
+#     types:
+#       - opened
+#       - reopened
+#     branches:
+#       - master
+#       - dev
+#       - develop
+
 on:
   push:
     branches:
-      - master
-      - main
+      - feature/devops
   pull_request:
-    types:
-      - opened
-      - reopened
     branches:
-      - master
-      - dev
-      - develop
+      - feature/devops
 
 jobs:
   notification-job:
