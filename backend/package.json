@@ -4,9 +4,11 @@
   "description": "Here are the steps to create a new Node.js Express backend with TypeScript:",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/server.js",
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
