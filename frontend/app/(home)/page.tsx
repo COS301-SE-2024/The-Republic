@@ -1,13 +1,12 @@
-'use client'
-
+'use client';
 import { Center, Heading } from "@chakra-ui/react";
+import Feed from "../../components/Feed/Feed";
 
 export default function Home() {
   return (
-    <Center width="100vw" height="100vh">
-      <Heading>
-        Hello World
-      </Heading>
+    <Center flexDirection="column">
+      {/* <Heading mb={8}>Hello World</Heading> */}
+      <Feed />
     </Center>
   );
 }
