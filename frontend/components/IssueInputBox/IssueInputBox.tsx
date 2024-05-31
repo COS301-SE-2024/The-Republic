@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Dropdown from "@/components/Dropdown/Dropdown"
 import { MapPin } from 'lucide-react';
 import { Image } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox"
+
 
 
 // TODO: Add emojies to options
@@ -89,6 +91,14 @@ const IssueInputBox = () => {
           </div>
           <div className="mx-2">
             <Image />
+          </div>
+          <div className="mx-2">
+            <Checkbox className=""/>
+            <label 
+            htmlFor="anon"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 p-2">
+              Anonymous
+            </label>
           </div>
       </CardFooter>
     </Card>
