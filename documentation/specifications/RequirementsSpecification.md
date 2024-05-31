@@ -1,5 +1,5 @@
 <div style="text-align: center; background-color: #f0f8ff; padding: 20px; border-radius: 10px;">
-    <img src="image.png" alt="Logo"/>
+    <img src="documentation/images/assets/il_logo_blue.png" alt="Logo"/>
     <h1 style="color: darkblue;">The Republic</h1>
     <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
