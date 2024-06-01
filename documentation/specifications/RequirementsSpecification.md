@@ -148,8 +148,149 @@ As a user, I want to choose my role (general public, government official) during
 </div>
 
 
-## 📄 Service Contracts
-- TODO: Detail the service contracts, including the operations, inputs, outputs, and any preconditions or postconditions - will update
+## 📄 Service Contract
+The following specifies our service contract.
+
+### Base URL
+In order to access the API URL you will need to run the server on your local machine. 
+```
+cd backend
+npm i
+npm run dev
+```
+You will see that the server is running on:
+```
+localhost:8080
+```
+### Authentication
+All endpoints require authentication using a bearer token. The token should be included in the Authorization header of the request.
+Header:
+```
+Copy codeAuthorization: Bearer <token>
+```
+If the token is missing, invalid, or expired, the API will respond with a 401 Unauthorized status code.
+
+### Endpoints
+
+#### 1. Create a New Issue
+- **Method:** `POST`
+- **Endpoint:** `/issues`
+- **Description:** Create a new issue.
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",          // UUID of the user   
+    "location_id": "number",      // ID of the location
+    "category_id": "number",      // ID of the category
+    "content": "string",          // Content of the issue
+    "media_url": "string",        // URL to any media related to the issue,
+    "is_anonymous": "boolean"     // Whether the issue is reported anonymously
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+      "success": true
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+  - **500 Internal Server Error**
+
+### 2. Get All Issues
+- **Method:** `GET`
+- **Endpoint:** `/issues`
+- **Description:** Retrieve all issues.
+- **Response:**
+  - **200 OK**
+    ```json
+    [
+        "success": true,
+        "data":[
+          {
+            "issue_id": "number",
+            "user_id": "string",
+            "location_id": "number",
+            "category_id": "number",
+            "content": "string",
+            "media_url": "string",
+            "is_anonymous": "boolean",
+            "created_at": "string",
+            "resolved_at": "string",
+            "sentiment": "string",
+            "isOwner": "boolean"
+          }
+        ]
+    ]
+    ```
+
+### 3. Get Issue by ID
+- **Method:** `GET`
+- **Endpoint:** `/issues/{id}`
+- **Description:** Retrieve an issue by its ID.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+      "issue_id": "number",
+      "user_id": "string",
+      "department_id": "number",
+      "location_id": "number",
+      "category_id": "number",
+      "content": "string",
+      "media_url": "string",
+      "is_anonymous": "boolean",
+      "created_at": "string",
+      "resolved_at": "string",
+      "sentiment": "string"
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+  - **500 Internal Server Error**
+
+### 4. Resolve an Issue
+- **Method:** `PUT`
+- **Endpoint:** `/issues/{id}/resolve`
+- **Description:** Mark an issue as resolved.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",
+    "resolved_at": "string" // Timestamp of when the issue was resolved
+  }
+  ```
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+        "success": true
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+
+### 5. React to an Issue
+- **Method:** `POST`
+- **Endpoint:** `/issues/{id}/reactions`
+- **Description:** React to an issue with an emoji.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",  // UUID of the user reacting
+    "emoji": "string"     // Emoji reaction
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+        "success": true
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+
 
 ## 🔧 Quality Requirements
 
