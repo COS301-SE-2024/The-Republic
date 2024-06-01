@@ -1,9 +1,8 @@
-import { Providers } from "./providers";
 import React from 'react';
-import Sidebar from '../components/Sidebar/Sidebar';
-import RightSidebar from '../components/RightSidebar/RightSidebar';
-import Header from '../components/Header/Header';
-import "../styles/globals.css";
+import Sidebar from '@/components/Sidebar/Sidebar';
+import RightSidebar from '@/components/RightSidebar/RightSidebar';
+import Header from '@/components/Header/Header';
+import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({
