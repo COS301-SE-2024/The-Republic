@@ -347,13 +347,15 @@ Usability requirements ensure that the system is easy to use and provides a good
 </div>
 
 ## 🎨 Design Patterns
-**1. Singleton**: Ensuring a single instance of key classes, such as database connection managers.
 
-**2. Observer**: For implementing real-time updates in the post feed and notifications.
+**1. Singleton**: We will use the Singleton Pattern for managing user sessions in the User Management Module and for the Data Analytics Engine in the Data Analytics and Visualization Module. This pattern ensures that a class has only one instance and provides a global point of access to it, which is perfect for managing user sessions and ensuring there is only one active instance of the Data Analytics Engine.
 
-**3. Factory**: To create different types of posts and visualisations dynamically.
+**2. Observer**: We will use the Observer Pattern in the Post Management Module for notifying other parts of the system about changes in posts (like a new post being created). This pattern is beneficial because it allows us to maintain a list of observers which are automatically notified of any changes to the subject. This way, we can easily add or remove observers without modifying the subject's code.
 
-**4. Decorator**: For adding functionality to posts such as tagging and filtering without modifying the original object.
+**3. Factory**: We will use the Factory Pattern in the User Management Module for creating different types of users (regular user, municipal official, etc.), and in the Post Management Module for creating different types of posts. This pattern helps us encapsulate the complexities involved in creating different types of users and posts, making the code more maintainable and flexible.
+
+**4. Strategy**: We will use the Strategy Pattern in the Data Analytics and Visualization Module for switching between different data analysis and visualization algorithms. This pattern is beneficial because it allows an algorithm's behavior to be selected at runtime. This way, we can easily add new algorithms or modify existing ones without affecting the context class that uses them.
+
 
 ## ⚖️ Constraints
 1. The system must not follow a serverless model.
