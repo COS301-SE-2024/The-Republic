@@ -106,8 +106,7 @@ As a user, I want to choose my role (general public, government official) during
 - **FR4.1**: Users can comment on other users' posts.
 - **FR4.2**: Users can react to other users' posts.
 - **FR4.3**: Comments are displayed alongside the respective post.
-- **FR4.4**: Government officials should be able to view a user's profile.
-- **FR4.5**: Government officials should be able to message any user to follow up.
+- **FR4.4**: Users should be able to view each others profile.
 
 ---
 #### 5. Feed
