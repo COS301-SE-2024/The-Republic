@@ -1,5 +1,5 @@
 <div style="text-align: center; background-color: #f0f8ff; padding: 20px; border-radius: 10px;">
-    <img src="documentation/images/assets/il_logo_blue.png" alt="Logo"/>
+    <img src="../images/assets/InfiniteLoopers_11.jpeg" alt="Logo"/>
     <h1 style="color: darkblue;">The Republic</h1>
     <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
@@ -126,7 +126,27 @@ As a user, I want to choose my role (general public, government official) during
 - **FR6.2**: Reports should be statistically shown with analytics visualisation.
 
 ### 📊 Use Case Diagrams
-- TODO: Add use case diagrams per subsystem - will update 
+<div>
+    <img src="../images/diagrams/authentication.png" alt="authentication use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/profile_management.png" alt="profile use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/posting.png" alt="posting use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/interactions.png" alt="interactions use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/feed.png" alt="feed use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
+</div>
+
 
 ## 📄 Service Contracts
 - TODO: Detail the service contracts, including the operations, inputs, outputs, and any preconditions or postconditions - will update
