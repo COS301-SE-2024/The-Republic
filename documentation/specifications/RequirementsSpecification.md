@@ -127,24 +127,24 @@ As a user, I want to choose my role (general public, government official) during
 
 ### 📊 Use Case Diagrams
 <div>
-    <img src="./images/diagrams/authentication.png" alt="authentication use case diagram"/>
+    <img src="../../images/diagrams/authentication.png" alt="authentication use case diagram"/>
 </div>
 
 <div>
-    <img src="./images/diagrams/profile.png" alt="profile use case diagram"/>
+    <img src="../../../images/diagrams/profile.png" alt="profile use case diagram"/>
 </div>
 
 <div>
-    <img src="./images/diagrams/posting.png" alt="posting use case diagram"/>
+    <img src="./documentation/images/diagrams/posting.png" alt="posting use case diagram"/>
 </div>
 <div>
-    <img src="/images/diagrams/interactions.png" alt="interactions use case diagram"/>
+    <img src="../documentation/images/diagrams/interactions.png" alt="interactions use case diagram"/>
 </div>
 <div>
-    <img src="/images/diagrams/feed.png" alt="feed use case diagram"/>
+    <img src="../images/diagrams/feed.png" alt="feed use case diagram"/>
 </div>
 <div>
-    <img src="/images/diagrams/reporting.png" alt="reporting use case diagram"/>
+    <img src="./images/diagrams/reporting.png" alt="reporting use case diagram"/>
 </div>
 
 
