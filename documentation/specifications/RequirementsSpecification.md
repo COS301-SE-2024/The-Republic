@@ -1,5 +1,5 @@
 <div style="text-align: center; background-color: #f0f8ff; padding: 20px; border-radius: 10px;">
-    <img src="../images/assets/il_logo_blue.png" alt="Logo"/>
+    <img src="../images/assets/InfiniteLoopers_11.jpeg" alt="Logo"/>
     <h1 style="color: darkblue;">The Republic</h1>
     <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
@@ -131,11 +131,11 @@ As a user, I want to choose my role (general public, government official) during
 </div>
 
 <div>
-    <img src="../images/diagrams/profile.png" alt="profile use case diagram"/>
+    <img src="../images/diagrams/profile_management.png" alt="profile use case diagram"/>
 </div>
 
 <div>
-    <img src="./images/diagrams/posting.png" alt="posting use case diagram"/>
+    <img src="../images/diagrams/posting.png" alt="posting use case diagram"/>
 </div>
 <div>
     <img src="../images/diagrams/interactions.png" alt="interactions use case diagram"/>
