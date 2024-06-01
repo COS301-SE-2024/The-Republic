@@ -151,7 +151,7 @@ As a user, I want to choose my role (general public, government official) during
 The following specifies our service contract.
 
 ### Base URL
-In order to access the API URL you will need to run the server on your local machine. 
+In order to access the API URL you will need to run the server on your local machine. We will be deploying our backend at a later stage.
 ```
 cd backend
 npm i
