@@ -340,11 +340,12 @@ Usability requirements ensure that the system is easy to use and provides a good
 
 
 ## 🏗️ Architectural Patterns
-**1. Microservices**: The application will use a microservices architecture to ensure modularity and scalability.
-  - **Justification**: Microservices architecture divides the application into smaller, independent services that can be developed, deployed, and scaled individually. This supports performance by allowing independent scaling of services experiencing high load, enhances scalability by distributing the load across multiple services, and increases modularity by separating concerns into different services.
+**Monolithic Architecture**: This pattern involves a single, unified codebase.
+  - **Justification**: This architecture is chosen for its simplicity and ease of deployment, combining all functionalities into a single, unified application. It integrates User Management, Post Management, and Data Analytics and Visualisation modules, ensuring cohesive functionality and efficient data management. Postgres is used as a robust and reliable data store, providing consistent and efficient handling of large volumes of data. This approach meets core requirements effectively while being scalable and modular for future evolution.
 
-**2. Monolithic Architecture**: This pattern involves a single, unified codebase.
-  - **Justification**: A monolithic architecture is simpler to develop and deploy initially, as it involves a single codebase and deployment pipeline. It can be a suitable choice for smaller applications or when development resources are limited. However, it may face challenges in scalability and maintainability as the application grows.
+<div>
+    <img src="../images/diagrams/architecture.png" alt="monolithic architectural diagram"/>
+</div>
 
 ## 🎨 Design Patterns
 **1. Singleton**: Ensuring a single instance of key classes, such as database connection managers.
