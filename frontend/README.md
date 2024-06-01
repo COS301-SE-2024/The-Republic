@@ -1,21 +1,21 @@
-# Next.js Frontend with Chakra UI and TypeScript
+# Next.js and TypeScript Frontend
 
 <div style="width: 100%; height: 40%; border-radius:20px; background-color: black; margin: 20px 0;">
     <img src="../documentation/images/nextjs.png" alt="Frontend Documentation" style="width: 100%; height: auto; max-height: 50%;">
 </div>
 
-> Welcome to the documentation for our Next.js frontend with Chakra UI and TypeScript. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
+> Welcome to the documentation for our Next.js and TypeScript frontend. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
 
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-    - [Coding Standards](#coding-standards)
-    - [Creating a Page](#creating-a-page)
+   - [Coding Standards](#coding-standards)
+   - [Creating a Page](#creating-a-page)
 2. [Understanding Chakra UI](#understanding-chakra-ui)
-    - [Introduction to Chakra UI](#introduction-to-chakra-ui)
-    - [Theme Customization](#theme-customization)
+   - [Introduction to Chakra UI](#introduction-to-chakra-ui)
+   - [Theme Customization](#theme-customization)
 3. [Backend Integration](#backend-integration)
-    - [API Integration](#api-integration)
+   - [API Integration](#api-integration)
 4. [Project Structure](#project-structure)
 5. [Running the Project](#running-the-project)
 6. [Learn More About Next.js](#learn-more-about-nextjs)
@@ -33,35 +33,25 @@
 
 1. **Navigate to the pages directory:**
 
-    ```bash
-    cd app
-    ```
+   ```bash
+   cd app
+   ```
 
 2. **Create a new file for your page, for example, `/{pagename}/page.tsx`:**
 
-    ```typescript
-    import { Box, Heading } from '@chakra-ui/react';
+   ```typescript
+   import React from "react";
 
-    const IndexPage = () => {
-      return (
-        <Box>
-          <Heading>Hello, Next.js!</Heading>
-        </Box>
-      );
-    };
+   const YourPageName: React.FC = () => {
+     return (
+       <div>
+         <h1>Hello, Next.js!</h1>
+       </div>
+     );
+   };
 
-    export default IndexPage;
-    ```
-
-## Understanding Chakra UI
-
-### Introduction to Chakra UI
-
-Chakra UI is a simple, modular, and accessible component library that provides building blocks for faster and easier web development. It offers a wide range of customizable UI components and styles out of the box, allowing you to focus more on building your application rather than reinventing the wheel.
-
-### Theme Customization
-
-Chakra UI provides an easy way to customize the theme of your application. You can modify colors, typography, spacing, and more to match your brand or design preferences. This makes it simple to create visually appealing and consistent user interfaces across your application.
+   export default YourPageName;
+   ```
 
 ## Backend Server Integration
 
@@ -72,20 +62,20 @@ When integrating with a Node.js Express backend, the frontend typically communic
 Here's an example of how to consume the Node.js Express backend server via POST requests in the Next.js frontend:
 
 ```typescript
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const MyComponent = () => {
   const [data, setData] = useState(null);
 
   const fetchData = async () => {
     try {
-      const response = await axios.post('/api/my-endpoint', {
+      const response = await axios.post("/api/my-endpoint", {
         // data to send to the backend
       });
       setData(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -106,7 +96,7 @@ Alternatively, on the backend side, you may define the corresponding route to ha
 
 ```typescript
 // Example backend route handling POST request
-app.post('/api/my-endpoint', async (req, res) => {
+app.post("/api/my-endpoint", async (req, res) => {
   try {
     // Process the request and fetch data from the database
     const data = await fetchDataFromDatabase();
@@ -114,8 +104,8 @@ app.post('/api/my-endpoint', async (req, res) => {
     // Send the fetched data back to the frontend
     res.json(data);
   } catch (error) {
-    console.error('Error handling POST request:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error handling POST request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 ```
@@ -151,36 +141,39 @@ Here's a quick overview of the project structure:
 
 - #### Running The Development Server:
 
-    ```bash
-    npm i
-    npm run dev
-    ```
+  ```bash
+  npm i
+  cd frontend
+  npm run dev
+  ```
 
 - #### Running the Application locally in a Docker Container
 
-    - Changing working directory to the frontend folder
-        ```bash
-        cd frontend
-        ```
-    - Building the application locally:
-        ```bash
-        docker build -t the_republic .
-        ```
+  - Changing working directory to the frontend folder
+    ```bash
+    cd frontend
+    ```
+  - Building the application locally:
 
-    - Running the application locally:
-        ```bash
-        docker run -p 3000:3000 -d the_republic
-        ```
-    - Stopping and Removing all Containers Locally:
-        ```bash
-        docker stop $(docker ps -a -q)
-        docker rm $(docker ps -a -q)
-        ```
+    ```bash
+    docker build -t the_republic .
+    ```
 
-    - Removing all Unused Docker Objects:
-        ```bash
-        docker system prune -a
-        ```
+  - Running the application locally:
+    ```bash
+    docker run -p 3000:3000 -d the_republic
+    ```
+  - Stopping and Removing all Containers Locally:
+
+    ```bash
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+    ```
+
+  - Removing all Unused Docker Objects:
+    ```bash
+    docker system prune -a
+    ```
 
 > Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The page auto-updates as you edit the file.
 
