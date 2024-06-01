@@ -165,7 +165,8 @@ localhost:8080
 All endpoints require authentication using a bearer token. The token should be included in the Authorization header of the request.
 Header:
 ```
-Copy codeAuthorization: Bearer <token>
+Authorization: Bearer <token>
+Content-type: application/json
 ```
 If the token is missing, invalid, or expired, the API will respond with a 401 Unauthorized status code.
 
