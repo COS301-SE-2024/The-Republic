@@ -8,16 +8,15 @@
 
 ## Table of Contents
 
-1. [Main README](../README.md)
-2. [Architectural Specification](#architectural-specification)
-3. [Design Specification](#design-specification)
-4. [Project Plan](#project-plan)
-5. [Testing Specification](#testing-specification)
-6. [Delivery Specification](#delivery-specification)
-7. [Implementation Specification](#implementation-specification)
-8. [Requirements Specification](#requirements-specification)
-9. [User Manual](#user-manual)
-10. [Coding Standards](#coding-standards)
+1. [Architectural Specification](#architectural-specification)
+2. [Design Specification](#design-specification)
+3. [Project Plan](#project-plan)
+4. [Testing Specification](#testing-specification)
+5. [Delivery Specification](#delivery-specification)
+6. [Implementation Specification](#implementation-specification)
+7. [Requirements Specification](#requirements-specification)
+8. [User Manual](#user-manual)
+9. [Coding Standards](#coding-standards)
 
 ---
 
@@ -95,12 +94,6 @@ This document outlines the coding standards and best practices to be followed du
 
 [Link to Coding Standards](./specifications/CodingStandards.md)
 
-Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
-
-<details>
-    <summary> :lock: Secret Message</summary>
-    <br/>
-    <p>Thank you for opening this, Have a great day! :smile:</p>
-</details>
+[Go back](/README.md)
 
 ---
