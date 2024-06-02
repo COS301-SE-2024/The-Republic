@@ -6,18 +6,51 @@ import { MessageCircle } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
+import { supabase } from "@/lib/globals";
 
 interface IssueProps {
   issue: IssueType;
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const menuItems = ["Edit", "Delete", "Resolve Issue"];
-  const isOwner = true; // will have to get this from api
+  const menuItems = ["Delete"];
+  if (!issue.resolved_at) {
+    menuItems.push("Resolve Issue");
+  }
 
-  const handleDelete = () => {
-    // call delete tweet endpoint here
-    console.log("Deleting issue:", issue.issue_id);
+  //TODO: GET THIS FROM THE API
+  const isOwner = true; 
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/issues/${issue.issue_id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.error("Failed to delete issue");
+      }
+    } catch (error) {
+      console.error("Error deleting issue:", error);
+    }
+  };
+
+  const handleResolve = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/issues/resolve/${issue.issue_id}`, {
+        method: "PUT",
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.error("Failed to resolve issue");
+      }
+    } catch (error) {
+      console.error("Error resolving issue:", error);
+    }
   };
 
   return (
@@ -44,6 +77,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
             menuItems={menuItems}
             isOwner={isOwner}
             onDelete={handleDelete}
+            onResolve={handleResolve} // Pass handleResolve to MoreMenu
           />
         </div>
         <div className="flex space-x-2 pt-2">
@@ -53,6 +87,11 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <Badge variant="outline" className="">
             {issue.sentiment}
           </Badge>
+          {issue.resolved_at && (
+            <Badge className="bg-green-500">
+              Resolved {timeSince(issue.resolved_at)}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>
