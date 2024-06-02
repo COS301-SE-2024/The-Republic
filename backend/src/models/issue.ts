@@ -10,6 +10,11 @@ interface Category {
   name: string;
 }
 
+interface Reaction {
+  emoji: string;
+  count: number;
+}
+
 interface Issue {
   issue_id: number;
   user_id: string;
@@ -23,6 +28,7 @@ interface Issue {
   sentiment: string;
   user: User;
   category: Category;
+  reactions: Reaction[]; 
 }
 
-export { User, Category, Issue };
+export { User, Category, Reaction, Issue };

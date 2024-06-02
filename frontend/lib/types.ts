@@ -1,5 +1,3 @@
-// Shared types
-
 interface User {
   user_id: string;
   email_address: string;
@@ -7,22 +5,30 @@ interface User {
   fullname: string;
   image_url: string;
 }
-interface Issue {
-    issue_id: number;
-    user_id: string;
-    username: string;
-    content: string;
-    created_at: string;
-    category: Category;
-    sentiment: string;
-    numberofcomments: number;
-    user: User;
-    resolved_at: string;
-  }
 
 interface Category {
-  id: number;
   name: string;
 }
 
-export type { User, Category, Issue };
+interface Reaction {
+  emoji: string;
+  count: number;
+}
+
+interface Issue {
+  issue_id: number;
+  user_id: string;
+  location_id: number | null;
+  category_id: number;
+  content: string;
+  image_url: string | null;
+  is_anonymous: boolean;
+  created_at: string;
+  resolved_at: string | null;
+  sentiment: string;
+  user: User;
+  category: Category;
+  reactions: Reaction[]; 
+}
+
+export type { User, Category, Reaction, Issue };

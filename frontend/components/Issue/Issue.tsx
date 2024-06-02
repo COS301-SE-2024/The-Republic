@@ -6,6 +6,7 @@ import { MessageCircle } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
+import Reaction from "../Reaction/Reaction";
 
 interface IssueProps {
   issue: IssueType;
@@ -17,8 +18,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     menuItems.push("Resolve Issue");
   }
 
-  //TODO: GET THIS FROM THE API
-  const isOwner = true; 
+  const isOwner = true; // will have to get this from api
 
   const handleDelete = async () => {
     try {
@@ -76,7 +76,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
             menuItems={menuItems}
             isOwner={isOwner}
             onDelete={handleDelete}
-            onResolve={handleResolve} // Pass handleResolve to MoreMenu
+            onResolve={handleResolve}
           />
         </div>
         <div className="flex space-x-2 pt-2">
@@ -86,21 +86,23 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <Badge variant="outline" className="">
             {issue.sentiment}
           </Badge>
-          {issue.resolved_at && (
-            <Badge className="bg-green-500">
-              Resolved {timeSince(issue.resolved_at)}
-            </Badge>
-          )}
         </div>
       </CardHeader>
       <CardContent>
         <p>{issue.content}</p>
+        {issue.resolved_at && (
+          <div className="flex space-x-2 pt-2">
+            <Badge className="">
+              Resolved {timeSince(issue.resolved_at)}
+            </Badge>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex space-x-2 items-center">
         <div className="flex items-center">
           <MessageCircle className="mr-1" />
-          {issue.numberofcomments}
         </div>
+        <Reaction issueId={issue.issue_id} initialReactions={issue.reactions} />
       </CardFooter>
     </Card>
   );

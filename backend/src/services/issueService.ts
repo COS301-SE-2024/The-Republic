@@ -1,5 +1,5 @@
 import IssueRepository from "../db/issueRepository";
-import Issue from "../models/issue";
+import { Issue } from "../models/issue";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
