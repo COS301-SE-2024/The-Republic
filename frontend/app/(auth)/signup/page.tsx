@@ -19,7 +19,8 @@ export default function Signup() {
 
     const signup = async () => {
         const { error } = await supabase.auth.signUp({
-            email, password,
+            email, 
+            password,
             options: {
                 data: {
                     fullname,
@@ -27,11 +28,6 @@ export default function Signup() {
                 }
             }
         });
-
-        setFullname("");
-        setEmail("");
-        setUsername("");
-        setPassword("");
 
         if (error) {
             toast({
@@ -41,7 +37,6 @@ export default function Signup() {
         } else {
             router.push("/");
         }
-
     }
 
 
@@ -78,7 +73,7 @@ export default function Signup() {
                 <div className="flex flex-row mt-2">
                     <Label htmlFor="password">Password</Label>
                     <p 
-                        className="text-xs ml-3 cursor-default"
+                        className="text-xs ml-3 cursor-pointer"
                         onClick={() => setShowPassword(!showPassword)}
                     >
                         {showPassword ? "Hide" : "Show"}
