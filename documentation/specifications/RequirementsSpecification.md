@@ -1,4 +1,4 @@
-<div style="text-align: center; background-color: #f0f8ff; padding: 20px; border-radius: 10px;">
+<div>
     <img src="../images/assets/InfiniteLoopers_11.jpeg" alt="Logo"/>
     <h1 style="color: darkblue;">The Republic</h1>
     <p style="color: darkblue;">A Project for EPI-USE Labs</p>
@@ -106,8 +106,7 @@ As a user, I want to choose my role (general public, government official) during
 - **FR4.1**: Users can comment on other users' posts.
 - **FR4.2**: Users can react to other users' posts.
 - **FR4.3**: Comments are displayed alongside the respective post.
-- **FR4.4**: Government officials should be able to view a user's profile.
-- **FR4.5**: Government officials should be able to message any user to follow up.
+- **FR4.4**: Users should be able to view each others profile.
 
 ---
 #### 5. Feed
@@ -148,46 +147,188 @@ As a user, I want to choose my role (general public, government official) during
 </div>
 
 
-## 📄 Service Contracts
-- TODO: Detail the service contracts, including the operations, inputs, outputs, and any preconditions or postconditions - will update
+## 📄 Service Contract
+The following specifies our service contract.
+
+### Base URL
+In order to access the API URL you will need to run the server on your local machine. We will be deploying our backend at a later stage.
+```
+cd backend
+npm i
+npm run dev
+```
+You will see that the server is running on:
+```
+localhost:8080
+```
+### Authentication
+All endpoints require authentication using a bearer token. The token should be included in the Authorization header of the request.
+Header:
+```
+Authorization: Bearer <token>
+Content-type: application/json
+```
+If the token is missing, invalid, or expired, the API will respond with a 401 Unauthorized status code.
+
+### Endpoints
+
+#### 1. Create a New Issue
+- **Method:** `POST`
+- **Endpoint:** `/issues`
+- **Description:** Create a new issue.
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",          // UUID of the user   
+    "location_id": "number",      // ID of the location
+    "category_id": "number",      // ID of the category
+    "content": "string",          // Content of the issue
+    "media_url": "string",        // URL to any media related to the issue,
+    "is_anonymous": "boolean"     // Whether the issue is reported anonymously
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+      "success": true
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+  - **500 Internal Server Error**
+
+### 2. Get All Issues
+- **Method:** `GET`
+- **Endpoint:** `/issues`
+- **Description:** Retrieve all issues.
+- **Response:**
+  - **200 OK**
+    ```json
+    [
+        "success": true,
+        "data":[
+          {
+            "issue_id": "number",
+            "user_id": "string",
+            "location_id": "number",
+            "category_id": "number",
+            "content": "string",
+            "media_url": "string",
+            "is_anonymous": "boolean",
+            "created_at": "string",
+            "resolved_at": "string",
+            "sentiment": "string",
+            "isOwner": "boolean"
+          }
+        ]
+    ]
+    ```
+
+### 3. Get Issue by ID
+- **Method:** `GET`
+- **Endpoint:** `/issues/{id}`
+- **Description:** Retrieve an issue by its ID.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+      "issue_id": "number",
+      "user_id": "string",
+      "department_id": "number",
+      "location_id": "number",
+      "category_id": "number",
+      "content": "string",
+      "media_url": "string",
+      "is_anonymous": "boolean",
+      "created_at": "string",
+      "resolved_at": "string",
+      "sentiment": "string"
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+  - **500 Internal Server Error**
+
+### 4. Resolve an Issue
+- **Method:** `PUT`
+- **Endpoint:** `/issues/{id}/resolve`
+- **Description:** Mark an issue as resolved.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",
+    "resolved_at": "string" // Timestamp of when the issue was resolved
+  }
+  ```
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+        "success": true
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+
+### 5. React to an Issue
+- **Method:** `POST`
+- **Endpoint:** `/issues/{id}/reactions`
+- **Description:** React to an issue with an emoji.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string",  // UUID of the user reacting
+    "emoji": "string"     // Emoji reaction
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+        "success": true
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+
 
 ## 🔧 Quality Requirements
 
 ### 1. Performance 🚀
-Performance requirements ensure that the system can handle a high volume of users and interactions without significant latency.
+Performance requirements ensure that the system can handle a high volume of users and interactions without significant latency. Since we will have a large population using this app, the system should maintain high speed and responsiveness even with many users online.
 - **FR3.1**: Users can create textual posts about governmental service delivery shortcomings and interactions.
 - **FR3.2**: Users should be able to upload media (images) limited to 1 per post.
 - **FR4.1**: Users can comment on other users’ posts.
 - **FR4.2**: Users can react to other users’ posts.
 
 ### 2. Reliability 🛡️
-Reliability requirements ensure that the system is available and functional when users need it.
+Reliability requirements ensure that the system is available and functional when users need it. Users should be able to create accounts, post, or reset their passwords whenever they encounter an issue in their community and need it solved urgently.
 - **FR2.1**: Users can create accounts with a username, email address, and password.
 - **FR2.2**: Users can log in using their credentials.
 - **FR2.3**: Users can reset their password if forgotten.
 
 ### 3. Scalability 📈
-Scalability requirements ensure that the system can handle growth in terms of users, data, and complexity.
+Scalability requirements ensure that the system can handle growth in terms of users, data, and complexity. Since the platform is intended for the general public citizens of South Africa, it must be able to accommodate a large number of users and posts.
 - **FR5.1**: Users can filter posts by department, date, or location.
 - **FR5.2**: Users should see the feed according to their roles - different roles have different views.
 - **FR5.3**: Filtered posts are displayed based on selected criteria.
 
 ### 4. Security 🔒
-Security requirements protect the system and its data from unauthorized access and potential harm.
+Security requirements protect the system and its data from unauthorized access and potential harm. Unauthorized access should not be possible, so only people with verified credentials should be able to perform certain actions. Municipal officials, for instance, will have specific roles that are verified and restricted.
 - **FR2.4**: Users can update their account details.
 - **FR2.5**: Users can select their role during account creation.
 - **FR4.4**: Government officials should be able to view a user’s profile.
 - **FR4.5**: Government officials should be able to message any user to follow up.
 
 ### 5. Maintainability 🔧
-Maintainability requirements ensure that the system can be easily updated and improved over time.
+Maintainability requirements ensure that the system can be easily updated and improved over time. The system should be maintainable because future improvements and the addition of new functionalities like integration with external services will be necessary.
 - **FR1.1**: Users can manage their profile display name.
 - **FR1.2**: Users can choose to post anonymously.
 - **FR1.3**: Users can change their profile roles.
 - **FR1.4**: Users should be able to update their profile picture.
 
 ### 6. Usability 🖐️
-Usability requirements ensure that the system is easy to use and provides a good user experience.
+Usability requirements ensure that the system is easy to use and provides a good user experience for individuals of diverse backgrounds, including different age groups and abilities. The system should be intuitive and user-friendly, ensuring that users, regardless of age or disability, can easily interact with it and perform necessary actions.
 - **FR1.5**: Users should be able to view their own posts on their profile.
 - **FR3.3**: Users should be able to choose the category of the issue when posting.
 - **FR3.4**: Users should be able to pick their location showing their municipality when making a post.
@@ -199,20 +340,22 @@ Usability requirements ensure that the system is easy to use and provides a good
 
 
 ## 🏗️ Architectural Patterns
-**1. Microservices**: The application will use a microservices architecture to ensure modularity and scalability.
-  - **Justification**: Microservices architecture divides the application into smaller, independent services that can be developed, deployed, and scaled individually. This supports performance by allowing independent scaling of services experiencing high load, enhances scalability by distributing the load across multiple services, and increases modularity by separating concerns into different services.
+**Monolithic Architecture**: This architecture is chosen for its simplicity and ease of deployment, combining all functionalities into a single, unified application. It integrates User Management, Post Management, and Data Analytics and Visualisation modules, ensuring cohesive functionality and efficient data management. Postgres is used as a robust and reliable data store, providing consistent and efficient handling of large volumes of data. This approach meets core requirements effectively while being scalable and modular for future evolution.
 
-**2. Monolithic Architecture**: This pattern involves a single, unified codebase.
-  - **Justification**: A monolithic architecture is simpler to develop and deploy initially, as it involves a single codebase and deployment pipeline. It can be a suitable choice for smaller applications or when development resources are limited. However, it may face challenges in scalability and maintainability as the application grows.
+<div>
+    <img src="../images/diagrams/architecture.png" alt="monolithic architectural diagram"/>
+</div>
 
 ## 🎨 Design Patterns
-**1. Singleton**: Ensuring a single instance of key classes, such as database connection managers.
 
-**2. Observer**: For implementing real-time updates in the post feed and notifications.
+**1. Singleton**: We will use the Singleton Pattern for managing user sessions in the User Management Module and for the Data Analytics Engine in the Data Analytics and Visualization Module. This pattern ensures that a class has only one instance and provides a global point of access to it, which is perfect for managing user sessions and ensuring there is only one active instance of the Data Analytics Engine.
 
-**3. Factory**: To create different types of posts and visualisations dynamically.
+**2. Observer**: We will use the Observer Pattern in the Post Management Module for notifying other parts of the system about changes in posts (like a new post being created). This pattern is beneficial because it allows us to maintain a list of observers which are automatically notified of any changes to the subject. This way, we can easily add or remove observers without modifying the subject's code.
 
-**4. Decorator**: For adding functionality to posts such as tagging and filtering without modifying the original object.
+**3. Factory**: We will use the Factory Pattern in the User Management Module for creating different types of users (regular user, municipal official, etc.), and in the Post Management Module for creating different types of posts. This pattern helps us encapsulate the complexities involved in creating different types of users and posts, making the code more maintainable and flexible.
+
+**4. Strategy**: We will use the Strategy Pattern in the Data Analytics and Visualization Module for switching between different data analysis and visualization algorithms. This pattern is beneficial because it allows an algorithm's behavior to be selected at runtime. This way, we can easily add new algorithms or modify existing ones without affecting the context class that uses them.
+
 
 ## ⚖️ Constraints
 1. The system must not follow a serverless model.
