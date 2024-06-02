@@ -1,4 +1,4 @@
-export interface User {
+interface User {
   user_id: string;
   email_address: string;
   username: string;
@@ -6,11 +6,11 @@ export interface User {
   image_url: string;
 }
 
-export interface Category {
+interface Category {
   name: string;
 }
 
-export default interface Issue {
+interface Issue {
   issue_id: number;
   user_id: string;
   location_id: number | null;
@@ -24,3 +24,5 @@ export default interface Issue {
   user: User;
   category: Category;
 }
+
+export { User, Category, Issue };
