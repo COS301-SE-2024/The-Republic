@@ -9,6 +9,8 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { MapPin } from 'lucide-react';
 import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/lib/globals';
 
 
 
@@ -31,24 +33,65 @@ const categoryOptions = {
 const moodOptions = {
   group: 'Moods',
   items: [
-    { value: 'concerned', label: 'Concerned' },
-    { value: 'angry', label: 'Angry' },
-    { value: 'sad', label: 'Sad' },
-    { value: 'happy', label: 'Happy' }
+    { value: 'Concerned', label: 'Concerned' },
+    { value: 'Angry', label: 'Angry' },
+    { value: 'Sad', label: 'Sad' },
+    { value: 'Happy', label: 'Happy' }
   ],
 };
 
 
 
 const IssueInputBox = () => {
-  const [content, setContent] = useState('');
   // const [open, setOpen] = useState(false);
+  const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const { toast } = useToast();
 
-  const handleIssueSubmit = () => {
-    console.log('Posting:', content);
-    setContent('');
+  const handleIssueSubmit = async () => {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error || data.session == null) {
+      toast({
+          description: "You need to be logged in to post",
+      });
+
+      return;
+    }
+
+    // TODO: Get category ID and time backend
+    const res = await fetch("http://localhost:8080/api/issues", {
+      method: "POST",
+      body: JSON.stringify({
+          user_id: data.session!.user.id,
+          category_id: 1,
+          content,
+          sentiment: mood,
+          is_anonymous: isAnonymous,
+          created_at: new Date().toISOString(),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      toast({
+          variant: "destructive",
+          description: "Failed to post, please try again"
+      });
+    } else {
+      setContent("");
+      setCategory("");
+      setMood("");
+      setIsAnonymous(false);
+
+      toast({
+          description: "Post successful",
+      });
+    }
   };
 
   return (
@@ -93,7 +136,7 @@ const IssueInputBox = () => {
             <LucideImage />
           </div>
           <div className="mx-2">
-            <Checkbox className=""/>
+            <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)}/>
             <label 
             htmlFor="anon"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 p-2">

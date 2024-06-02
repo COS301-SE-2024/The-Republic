@@ -24,12 +24,4 @@ The Republic is a platform aimed at revolutionizing citizen engagement with gove
 
 [Back to Full Documentation](./../README.md)
 
-Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
-
-<details>
-    <summary> :lock: Secret Message</summary>
-    <br/>
-    <p>Thank you for opening this, Have a great day! :smile:</p>
-</details>
-
 ---

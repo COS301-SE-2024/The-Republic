@@ -1,3 +1,9 @@
+<div>
+    <img src="../images/gifs/Delivery.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
+</div>
+
+---
+
 # Delivery Specification
 
 ## Overview
@@ -70,25 +76,25 @@ heroku git:remote -a 'infiniteloopers-backend-server'
 
 2. **Create a Start Script**: Add a `start` script in your `package.json` file under the `scripts` section. This script should start your server. For example:
 
-    ```json
-    "scripts": {
-      "start": "node server.js"
-    }
-    ```
+   ```json
+   "scripts": {
+     "start": "node server.js"
+   }
+   ```
 
-    Replace `server.js` with the main file of your application.
+   Replace `server.js` with the main file of your application.
 
 3. **Configure the Port**: Heroku dynamically assigns your app a port, so modify your server file to use the port number set by Heroku:
 
-    ```javascript
-    const express = require('express');
-    const app = express();
-    const port = Number(process.env.PORT) || 8080;
+   ```javascript
+   const express = require("express");
+   const app = express();
+   const port = Number(process.env.PORT) || 8080;
 
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-    ```
+   app.listen(port, () => {
+     console.log(`Server is running on port ${port}`);
+   });
+   ```
 
 4. **Initialize a Git Repository**: If your project is not already a Git repository, initialize it by running `git init`.
 
@@ -98,9 +104,9 @@ heroku git:remote -a 'infiniteloopers-backend-server'
 
 7. **Push to Heroku**: Push your code to Heroku by running `git push heroku master`.
 
-    ```bash
-    git subtree push --prefix backend heroku feature/devops:master
-    ```
+   ```bash
+   git subtree push --prefix backend heroku feature/devops:master
+   ```
 
 8. **Open the App**: Open your deployed app in the browser by running `heroku open`.
 
@@ -118,14 +124,8 @@ heroku logs --tail
 
 ---
 
-[Back to Full Documentation](./../README.md)
+[Back to Full Documentation](./../README.md)<br>
 
-For further assistance, feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
-
-<details>
-    <summary>🔒 Secret Message</summary>
-    <br/>
-    <p>Thank you for opening this. Have a great day! 😊</p>
-</details>
+[Back to main](/README.md)
 
 ---
