@@ -23,4 +23,4 @@ export default interface Issue {
   sentiment: string;
   user: User;
   category: Category;
-}
+};

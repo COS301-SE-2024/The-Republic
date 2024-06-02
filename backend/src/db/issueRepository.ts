@@ -1,4 +1,4 @@
-import Issue, { User, Category } from "../models/issue";
+import { User, Category } from "../models/issue";
 import supabase from "../services/supabaseClient";
 import { DateTime } from 'luxon';
 
