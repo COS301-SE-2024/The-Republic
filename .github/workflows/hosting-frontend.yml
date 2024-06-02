@@ -1,0 +1,33 @@
+name: Deploy Frontend to Heroku
+run-name: "Heroku: Hosting The Next.Js Frontend App"
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_run:
+    workflows:
+      - "Frontend Unit Testing"
+      - "Backend Unit Testing"
+      - "Linting, Building, and Pushing of Docker images"
+    types:
+      - completed
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy Frontend to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_FRONTEND}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          project_path: frontend

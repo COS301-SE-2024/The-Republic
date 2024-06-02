@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Dropdown from "@/components/Dropdown/Dropdown"
+import Dropdown from "@/components/Dropdown/Dropdown";
 import { MapPin } from 'lucide-react';
 import { Image as LucideImage } from 'lucide-react';
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 
@@ -42,7 +42,7 @@ const moodOptions = {
 
 const IssueInputBox = () => {
   const [content, setContent] = useState('');
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
 

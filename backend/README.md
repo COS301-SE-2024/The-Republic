@@ -12,11 +12,11 @@
 2. [Installation](#installation)
 3. [Configuration](#configuration)
 4. [API Endpoints](#api-endpoints)
-    - [GET /](#get-)
-    - [GET /users](#get-users)
+   - [GET /](#get-)
+   - [GET /users](#get-users)
 5. [Using Supabase](#using-supabase)
-    - [Authentication](#authentication)
-    - [Database Operations](#database-operations)
+   - [Authentication](#authentication)
+   - [Database Operations](#database-operations)
 6. [Project Structure](#project-structure)
 7. [Running the Project](#running-the-project)
 
@@ -32,47 +32,47 @@ Follow these steps to install the application:
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone https://github.com/your-repo/node-express-ts-backend.git
-    cd node-express-ts-backend
-    ```
+   ```bash
+   git clone https://github.com/your-repo/node-express-ts-backend.git
+   cd node-express-ts-backend
+   ```
 
 2. **Install dependencies:**
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 3. **Install TypeScript (if not already installed globally):**
 
-    ```bash
-    npm install -g typescript
-    ```
+   ```bash
+   npm install -g typescript
+   ```
 
 ## Configuration
 
 1. **Create a `.env` file in the root directory and add your Supabase URL and anon key:**
 
-    ```env
-    SUPABASE_URL=https://your-project-url.supabase.co
-    SUPABASE_ANON_KEY=your-anon-key
-    ```
+   ```env
+   SUPABASE_URL=https://your-project-url.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key
+   ```
 
 2. **Modify the `supabaseClient.ts` file to use environment variables:**
 
-    ```typescript
-    import { createClient } from '@supabase/supabase-js';
-    import dotenv from 'dotenv';
+   ```typescript
+   import { createClient } from "@supabase/supabase-js";
+   import dotenv from "dotenv";
 
-    dotenv.config();
+   dotenv.config();
 
-    const supabaseUrl = process.env.SUPABASE_URL as string;
-    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY as string;
+   const supabaseUrl = process.env.SUPABASE_URL as string;
+   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY as string;
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    export default supabase;
-    ```
+   export default supabase;
+   ```
 
 ## Example: API Endpoints
 
@@ -137,14 +137,14 @@ Supabase allows you to perform CRUD operations on your PostgreSQL database. This
 In `users.ts`:
 
 ```typescript
-import { Router, Request, Response } from 'express';
-import supabase from './supabaseClient';
+import { Router, Request, Response } from "express";
+import supabase from "./supabaseClient";
 
 const router = Router();
 
-router.get('/users', async (req: Request, res: Response) => {
-  const { data, error } = await supabase.from('users').select('*');
-  
+router.get("/users", async (req: Request, res: Response) => {
+  const { data, error } = await supabase.from("users").select("*");
+
   if (error) {
     res.status(500).send(error.message);
   } else {
@@ -158,27 +158,35 @@ export default router;
 ## Project Structure
 
 ```
-/your-project
-|-- node_modules
-|-- src
-|   |-- server.ts
-|   |-- users.ts
-|   |-- supabaseClient.ts
-|   |-- [more files here]
-|-- package.json
-|-- tsconfig.json
-|-- .env
-|-- dist
-|   |-- server.js
-|   |-- users.js
-|   |-- supabaseClient.js
-|   |-- [more files here]
+backend/
+├── src/
+│   ├── controllers/
+│   │   └── exampleController.ts
+│   ├── routes/
+│   │   └── exampleRoute.ts
+│   ├── types/
+│   │   └── exampleTypes.ts
+│   ├── services/
+│   │   └── supabaseClient.ts
+│   ├── middleware/
+│   │   └── exampleMiddleware.ts
+│   ├── utils/
+│   │   └── exampleUtil.ts
+│   ├── app.ts
+│   └── server.ts
+├── public/
+├── node_modules/
+├── .gitignore
+├── package.json
+├── tsconfig.json
+├── tsconfig.build.json
+└── Dockerfile
 ```
 
 - **src/server.ts:** Main server file.
 - **src/users.ts:** User route handler.
 - **src/supabaseClient.ts:** Supabase client setup.
-- **dist/:** Compiled JavaScript files.
+- **public/:** Compiled JavaScript files.
 
 ## Running the Project
 
@@ -186,28 +194,28 @@ To run the backend project located at "path/to/The-Republic/backend," follow the
 
 1. **Compile TypeScript files:**
 
-    First, navigate to the root directory of the backend project. Then, compile the TypeScript files by executing the following command:
+   First, navigate to the root directory of the backend project. Then, compile the TypeScript files by executing the following command:
 
-    ```bash
-    npx tsc
-    ```
+   ```bash
+   npx tsc
+   ```
 
-    This command uses the TypeScript compiler (`tsc`) to transpile the TypeScript files in the project into JavaScript. The compiled files will be placed in the designated output directory, typically `dist`.
+   This command uses the TypeScript compiler (`tsc`) to transpile the TypeScript files in the project into JavaScript. The compiled files will be placed in the designated output directory, typically `public`.
 
 2. **Start the server:**
 
-    After the TypeScript files have been successfully compiled, start the server by running:
+   After the TypeScript files have been successfully compiled, start the server by running:
 
-    ```bash
-    node dist/server.js
-    ```
+   ```bash
+   node public/server.js
+   ```
 
-    This command uses Node.js to execute the compiled server file (`server.js`) located in the `dist` directory. Once the server starts, it will be ready to handle requests and run the backend services for the project.
+   This command uses Node.js to execute the compiled server file (`server.js`) located in the `public` directory. Once the server starts, it will be ready to handle requests and run the backend services for the project.
 
 3. **Access the API:**
 
-    - Open your browser and navigate to `http://localhost:8080/` to see the welcome message.
-    - Navigate to `http://localhost:8080/users` to see the list of users.
+   - Open your browser and navigate to `http://localhost:8080/` to see the welcome message.
+   - Navigate to `http://localhost:8080/users` to see the list of users.
 
 ---
 

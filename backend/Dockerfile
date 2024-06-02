@@ -10,12 +10,9 @@ USER node
 
 COPY --chown=node:node package*.json ./
 
-RUN npm install
+RUN npm ci
 
-# Install TypeScript as a dev dependency
-USER root
-RUN npm install -g typescript --save-dev
-USER node
+RUN npm install typescript --save-dev
 
 COPY --chown=node:node . .
 

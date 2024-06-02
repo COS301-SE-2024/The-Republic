@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 import { SearchBar } from "../SearchBar/SearchBar";
-import { ModeToggle } from '../ThemeToggle/ModeToggle';
+import { ModeToggle } from "../ThemeToggle/ModeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
@@ -9,7 +9,7 @@ export default function Header() {
       <div className="text-lg font-bold">The Republic</div>
       <div className="flex items-center flex-grow mx-8">
         <div className="flex-grow mr-4">
-          <SearchBar  />
+          <SearchBar />
         </div>
         <div className="mr-4">
           <ModeToggle />

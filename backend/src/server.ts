@@ -1,13 +1,10 @@
-// Using Typescript
+// Uncomment line bellow when when Working locally
+import "dotenv/config";
 
-import express, { Request, Response } from 'express';
-const app = express();
-const port: number = Number(process.env.PORT) || 8080;
+import app from "./app";
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, Express!');
-});
+const PORT = process.env.PORT || 8080;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

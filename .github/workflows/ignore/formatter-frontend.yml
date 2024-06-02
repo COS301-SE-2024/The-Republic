@@ -1,0 +1,54 @@
+name: Format Frontend Code
+
+on:
+  pull_request:
+    types: [opened, reopened]
+  workflow_run:
+    workflows: ["Lint Frontend Application"]
+    types:
+      - completed
+
+jobs:
+  format-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.INFINITE_LOOPERS_TOKEN }}
+
+      - name: Set up Node.js for frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Format frontend code
+        run: |
+          cd frontend
+          npx prettier --write .
+
+      - name: Set Git User Info
+        run: |
+          git config user.name "${{ secrets.GIT_USER }}"
+          git config user.email "${{ secrets.GIT_USER_EMAIL }}"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --exit-code --quiet && echo "changed=false" >> $GITHUB_ENV || echo "changed=true" >> $GITHUB_ENV
+
+      - name: Add changes to staging area
+        run: git add -A
+        if: env.changed == 'true'
+
+      - name: Commit and Push Changes
+        run: |
+          git commit -am "Format code with Prettier"
+          git push origin HEAD
+        if: env.changed == 'true'
