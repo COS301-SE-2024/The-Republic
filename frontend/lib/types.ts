@@ -1,13 +1,13 @@
 // Shared types
 
-export interface User {
+interface User {
   user_id: string;
   email_address: string;
   username: string;
   fullname: string;
   image_url: string;
 }
-export interface Issue {
+interface Issue {
     issue_id: number;
     user_id: string;
     username: string;
@@ -20,7 +20,9 @@ export interface Issue {
     resolved_at: string;
   }
 
-export interface Category {
+interface Category {
   id: number;
   name: string;
 }
+
+export type { User, Category, Issue };

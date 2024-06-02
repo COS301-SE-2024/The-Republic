@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from "react";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { ModeToggle } from "../ThemeToggle/ModeToggle";
@@ -53,7 +53,7 @@ export default function Header() {
         ) : (
           <Button
             onClick={() => {
-              router.push("/signup")
+              router.push("/signup");
             }}
             
           >

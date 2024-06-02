@@ -6,7 +6,6 @@ import { MessageCircle } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
-import { supabase } from "@/lib/globals";
 
 interface IssueProps {
   issue: IssueType;

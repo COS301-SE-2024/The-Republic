@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-import { supabase } from "@/lib/globals";
 import { Issue as IssueType } from "@/lib/types";
 
 const Feed = () => {
