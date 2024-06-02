@@ -17,6 +17,7 @@ export interface Issue {
     sentiment: string;
     numberofcomments: number;
     user: User;
+    resolved_at: string;
   }
 
 export interface Category {
