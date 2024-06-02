@@ -1,8 +1,8 @@
-import { Issue } from '../models/issue';
+import Issue from '../models/issue';
 
-import supabase from '../supabaseClient'
+import supabase from '../services/supabaseClient';
 
-export class IssueRepository {
+export default class IssueRepository {
     async getAllIssues(): Promise<Issue[]> {
       const { data, error } = await supabase.from('issue').select('*');
       if (error) throw new Error(error.message);

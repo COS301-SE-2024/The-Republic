@@ -1,7 +1,7 @@
-import { IssueRepository } from '../db/issueRepository';
-import { Issue } from '../models/issue';
+import IssueRepository from '../db/issueRepository';
+import Issue from '../models/issue';
 
-export class IssueService {
+export default class IssueService {
   private issueRepository: IssueRepository;
 
   constructor() {
@@ -34,5 +34,9 @@ export class IssueService {
 
   async deleteIssue(issueId: number): Promise<void> {
     return this.issueRepository.deleteIssue(issueId);
+  }
+
+  setIssueRepository(issueRepository: IssueRepository): void {
+    this.issueRepository = issueRepository;
   }
 }

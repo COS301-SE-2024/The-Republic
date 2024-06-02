@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IssueService } from '../services/issueService';
+import IssueService from '../services/issueService';
 
 const issueService = new IssueService();
 
@@ -62,3 +62,5 @@ export const deleteIssue = async (req: Request, res: Response) => {
     handleError(res, error);
   }
 };
+
+export default  { getAllIssues, getIssueById, createIssue, updateIssue, deleteIssue };
