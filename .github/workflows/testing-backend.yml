@@ -7,11 +7,14 @@ on:
       - develop
       - master
       - main
+      - 'feature/**'
   pull_request:
     branches:
       - develop
       - master
       - main
+      - 'feature/**'
+
   workflow_run:
     workflows: ["Lint Backend Application"]
     types:

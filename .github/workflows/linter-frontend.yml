@@ -1,9 +1,20 @@
 name: Lint Frontend Application
 run-name: Linting The Next.Js Frontend
 
+
 on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
   pull_request:
-    types: [opened, reopened]
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
 
 jobs:
   lint-frontend:

@@ -1,23 +1,21 @@
-name: Creating And Deploying Docker Images
+name: Creating And Deploying Frontend Docker Images
 
 on:
   push:
     branches:
       - master
       - main
+      - develop
   workflow_run:
     workflows:
       - "Frontend Unit Testing"
-      - "Backend Unit Testing"
-      - "Lint Frontend Application"
-      - "Lint Backend Application"
     types:
       - completed
 
 jobs:
-  build-and-push:
+  build-and-push-frontend:
     runs-on: ubuntu-latest
-    name: "DockerHub: Containerized Environments For The Project"
+    name: "DockerHub: Frontend"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
@@ -33,9 +31,6 @@ jobs:
           node --version # This should output v18.0.0
           sudo apt install -y nodejs
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -45,16 +40,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push backend Docker image
-        run: |
-          echo "--------- Building backend Docker image -----------"
-          docker build -t infiniteloopers-backend-server ./backend
-          docker tag infiniteloopers-backend-server ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v0
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v0
-        env:
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-
       - name: Build and push frontend Docker image
         run: |
           echo "--------- Building frontend Docker image -----------"
@@ -63,11 +48,3 @@ jobs:
           docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-frontend-app:v0
         env:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
-
-      - name: Build and push reverse proxy Docker image
-        run: |
-          echo "--------- Building reverse proxy Docker image -----------"
-          docker build -t infiniteloopers-reverseproxy ./reverseproxy
-          docker tag infiniteloopers-reverseproxy ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v0
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v0
-  
