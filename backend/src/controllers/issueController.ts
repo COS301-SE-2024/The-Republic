@@ -63,10 +63,21 @@ export const deleteIssue = async (req: Request, res: Response) => {
   }
 };
 
+export const resolveIssue = async (req: Request, res: Response) => {
+  try {
+    const issueId = parseInt(req.params.id, 10);
+    const issue = await issueService.resolveIssue(issueId);
+    res.status(200).json(issue);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
 export default {
   getAllIssues,
   getIssueById,
   createIssue,
   updateIssue,
   deleteIssue,
+  resolveIssue
 };

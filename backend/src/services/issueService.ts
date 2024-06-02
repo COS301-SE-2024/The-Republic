@@ -41,4 +41,8 @@ export default class IssueService {
   setIssueRepository(issueRepository: IssueRepository): void {
     this.issueRepository = issueRepository;
   }
+
+  async resolveIssue(issueId: number) {
+    return this.issueRepository.resolveIssue(issueId);
+  }
 }
