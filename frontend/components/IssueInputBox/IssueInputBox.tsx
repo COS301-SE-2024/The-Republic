@@ -84,6 +84,7 @@ const IssueInputBox = () => {
       toast({
           description: "Post successful",
       });
+      window.location.reload();
     }
   };
 
