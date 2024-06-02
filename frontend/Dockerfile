@@ -10,12 +10,13 @@ USER node
 
 COPY --chown=node:node package*.json ./
 
-RUN npm install
+RUN npm ci
 
 RUN npm install typescript --save-dev
 
 COPY --chown=node:node . .
 
+# Compile TypeScript files
 RUN npx tsc
 
 EXPOSE 3000
