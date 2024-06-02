@@ -1,5 +1,5 @@
 import React from 'react';
-import Issue from "../Issue/Issue"
+import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 
 const mockIssues = [

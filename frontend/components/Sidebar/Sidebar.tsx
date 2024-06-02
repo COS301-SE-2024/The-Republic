@@ -13,7 +13,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
   DropdownMenuGroup,
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
