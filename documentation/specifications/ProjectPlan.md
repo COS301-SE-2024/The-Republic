@@ -21,13 +21,6 @@ The Republic project is structured to ensure timely and efficient delivery. This
 ---
 
 [Back to Full Documentation](./../README.md)
-
-Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
-
-<details>
-    <summary> :lock: Secret Message</summary>
-    <br/>
-    <p>Thank you for opening this, Have a great day! :smile:</p>
-</details>
+[Back to main](/README.md)
 
 ---
