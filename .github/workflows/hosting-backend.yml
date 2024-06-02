@@ -8,8 +8,6 @@ on:
       - main
   workflow_run:
     workflows:
-      - "Frontend Unit Testing"
-      - "Backend Unit Testing"
       - "Linting, Building, and Pushing of Docker images"
     types:
       - completed

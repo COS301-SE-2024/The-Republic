@@ -8,18 +8,36 @@ on:
       - develop
   workflow_run:
     workflows:
-      - "Frontend Unit Testing"
-      - "Backend Unit Testing"
       - "Lint Frontend Application"
       - "Lint Backend Application"
     types:
       - completed
 
 jobs:
+  check-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check workflow status
+        id: check
+        run: |
+          # Use the GitHub API to check the status of each workflow
+          FRONTEND_STATUS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/owner/repo/actions/workflows/frontend.yml/runs | jq -r '.workflow_runs[0].conclusion')
+          BACKEND_STATUS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/owner/repo/actions/workflows/backend.yml/runs | jq -r '.workflow_runs[0].conclusion')
+
+          # Only proceed if both workflows were successful
+          if [[ "$FRONTEND_STATUS" == "success" && "$BACKEND_STATUS" == "success" ]]; then
+            echo "::set-output name=status::success"
+          else
+            echo "::set-output name=status::failure"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
   build-and-push:
     runs-on: ubuntu-latest
     name: "DockerHub: Containerized Environments For The Project"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: check-workflows
+    if: ${{ needs.check-workflows.outputs.status == 'success' }}
 
     steps:
       - name: Checkout code
