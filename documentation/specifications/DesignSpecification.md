@@ -22,6 +22,5 @@ The Republic aims to provide a user-friendly and visually appealing platform. Th
 ---
 
 [Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
 
 ---

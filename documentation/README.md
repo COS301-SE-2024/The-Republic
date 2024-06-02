@@ -94,6 +94,4 @@ This document outlines the coding standards and best practices to be followed du
 
 [Link to Coding Standards](./specifications/CodingStandards.md)
 
-[Go back](/README.md)
-
----
+## [Back to main README](/README.md)

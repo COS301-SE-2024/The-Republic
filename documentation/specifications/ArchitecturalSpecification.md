@@ -23,6 +23,5 @@ The Republic is a platform aimed at revolutionizing citizen engagement with gove
 ---
 
 [Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
 
 ---
