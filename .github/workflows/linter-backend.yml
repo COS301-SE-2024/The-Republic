@@ -1,9 +1,20 @@
 name: Lint Backend Application
 run-name: Linter For Backend Server
 
+
 on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+      - feature/*
   pull_request:
-    types: [opened, reopened]
+    branches:
+      - develop
+      - master
+      - main
+      - feature/*
 
 jobs:
   lint-backend:

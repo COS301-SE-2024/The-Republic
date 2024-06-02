@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - develop
   workflow_run:
     workflows:
       - "Frontend Unit Testing"
