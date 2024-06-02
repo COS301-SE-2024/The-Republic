@@ -9,13 +9,13 @@
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-    - [Coding Standards](#coding-standards)
-    - [Creating a Page](#creating-a-page)
+   - [Coding Standards](#coding-standards)
+   - [Creating a Page](#creating-a-page)
 2. [Understanding Chakra UI](#understanding-chakra-ui)
-    - [Introduction to Chakra UI](#introduction-to-chakra-ui)
-    - [Theme Customization](#theme-customization)
+   - [Introduction to Chakra UI](#introduction-to-chakra-ui)
+   - [Theme Customization](#theme-customization)
 3. [Backend Integration](#backend-integration)
-    - [API Integration](#api-integration)
+   - [API Integration](#api-integration)
 4. [Project Structure](#project-structure)
 5. [Running the Project](#running-the-project)
 6. [Learn More About Next.js](#learn-more-about-nextjs)
@@ -33,25 +33,25 @@
 
 1. **Navigate to the pages directory:**
 
-    ```bash
-    cd app
-    ```
+   ```bash
+   cd app
+   ```
 
 2. **Create a new file for your page, for example, `/{pagename}/page.tsx`:**
 
-    ```typescript
-    import { Box, Heading } from '@chakra-ui/react';
+   ```typescript
+   import { Box, Heading } from '@chakra-ui/react';
 
-    const IndexPage = () => {
-      return (
-        <Box>
-          <Heading>Hello, Next.js!</Heading>
-        </Box>
-      );
-    };
+   const IndexPage = () => {
+     return (
+       <Box>
+         <Heading>Hello, Next.js!</Heading>
+       </Box>
+     );
+   };
 
-    export default IndexPage;
-    ```
+   export default IndexPage;
+   ```
 
 ## Understanding Chakra UI
 
@@ -106,7 +106,7 @@ Alternatively, on the backend side, you may define the corresponding route to ha
 
 ```typescript
 // Example backend route handling POST request
-app.post('/api/my-endpoint', async (req, res) => {
+app.post("/api/my-endpoint", async (req, res) => {
   try {
     // Process the request and fetch data from the database
     const data = await fetchDataFromDatabase();
@@ -114,8 +114,8 @@ app.post('/api/my-endpoint', async (req, res) => {
     // Send the fetched data back to the frontend
     res.json(data);
   } catch (error) {
-    console.error('Error handling POST request:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error handling POST request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 ```
@@ -151,36 +151,38 @@ Here's a quick overview of the project structure:
 
 - #### Running The Development Server:
 
-    ```bash
-    npm i
-    npm run dev
-    ```
+  ```bash
+  npm i
+  npm run dev
+  ```
 
 - #### Running the Application locally in a Docker Container
 
-    - Changing working directory to the frontend folder
-        ```bash
-        cd frontend
-        ```
-    - Building the application locally:
-        ```bash
-        docker build -t the_republic .
-        ```
+  - Changing working directory to the frontend folder
+    ```bash
+    cd frontend
+    ```
+  - Building the application locally:
 
-    - Running the application locally:
-        ```bash
-        docker run -p 3000:3000 -d the_republic
-        ```
-    - Stopping and Removing all Containers Locally:
-        ```bash
-        docker stop $(docker ps -a -q)
-        docker rm $(docker ps -a -q)
-        ```
+    ```bash
+    docker build -t the_republic .
+    ```
 
-    - Removing all Unused Docker Objects:
-        ```bash
-        docker system prune -a
-        ```
+  - Running the application locally:
+    ```bash
+    docker run -p 3000:3000 -d the_republic
+    ```
+  - Stopping and Removing all Containers Locally:
+
+    ```bash
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+    ```
+
+  - Removing all Unused Docker Objects:
+    ```bash
+    docker system prune -a
+    ```
 
 > Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The page auto-updates as you edit the file.
 
