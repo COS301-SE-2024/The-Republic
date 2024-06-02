@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "jest --coverage",
+    "formatter": "npx prettier --write ."
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
