@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ export default function Login() {
         } else {
             router.push("/");
         }
-    }
+    };
 
     return (
         <div className="flex w-max h-full mb-16 items-center">
