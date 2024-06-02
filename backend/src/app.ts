@@ -1,6 +1,6 @@
 import express from "express";
 import issueRoutes from "./routes/issueRoutes";
-import { exampleMiddleware } from "./middleware/middleware";
+import { serverMiddleare } from "./middleware/middleware";
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(exampleMiddleware);
+app.use(serverMiddleare);
 app.use("/api/issues", issueRoutes);
 
 app.get("/", (req, res) => {

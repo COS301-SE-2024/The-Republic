@@ -1,3 +1,3 @@
-export const exampleUtil = () => {
+export const unusedUtil = () => {
   return "This is a utility function";
 };
