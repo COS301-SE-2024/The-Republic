@@ -1,4 +1,4 @@
-name: Linting, Building, and Pushing of Docker images
+name: Creating And Deploying Docker Images
 
 on:
   push:
@@ -6,13 +6,19 @@ on:
       - master
       - main
   workflow_run:
-    workflows: ["Frontend Unit Testing", "Backend Unit Testing"]
+    workflows:
+      - "Frontend Unit Testing"
+      - "Backend Unit Testing"
+      - "Lint Frontend Application"
+      - "Lint Backend Application"
     types:
       - completed
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    name: "DockerHub: Containerized Environments For The Project"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code

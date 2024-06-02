@@ -1,4 +1,5 @@
 name: Notification
+run-name: Pull Request Opened By ${{ github.actor }}
 
 on:
   pull_request:
@@ -13,6 +14,7 @@ jobs:
   notification-job:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+
     steps:
     - name: Notify Contributors
       uses: actions/github-script@v3

@@ -1,5 +1,5 @@
 name: Frontend Unit Testing
-run-name: ${{ github.actor }} at ${{ github.event_name }} event
+run-name: ${{ github.event_name }} event by ${{ github.actor }}
 
 on:
   push:
@@ -20,6 +20,7 @@ on:
 jobs:
   test-frontend:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code

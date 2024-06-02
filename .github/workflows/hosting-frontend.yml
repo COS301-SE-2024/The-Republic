@@ -1,4 +1,5 @@
 name: Deploy Frontend to Heroku
+run-name: "Heroku: Hosting The Next.Js Frontend App"
 
 on:
   push:
@@ -6,13 +7,17 @@ on:
       - master
       - main
   workflow_run:
-    workflows: ["Frontend Unit Testing", "Backend Unit Testing"]
+    workflows:
+      - "Frontend Unit Testing"
+      - "Backend Unit Testing"
+      - "Linting, Building, and Pushing of Docker images"
     types:
       - completed
 
 jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: production
     steps:

@@ -1,4 +1,5 @@
 name: Lint Frontend Application
+run-name: Linting The Next.Js Frontend
 
 on:
   pull_request:
