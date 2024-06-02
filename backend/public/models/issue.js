@@ -7,5 +7,5 @@ exports.issue = {
     category_id: 0,
     content: "",
     is_anonymous: false,
-    created_at: ""
+    created_at: "",
 };

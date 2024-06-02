@@ -20,7 +20,7 @@ const handleError = (res, error) => {
         res.status(500).json({ error: error.message });
     }
     else {
-        res.status(500).json({ error: 'An unknown error occurred' });
+        res.status(500).json({ error: "An unknown error occurred" });
     }
 };
 const getAllIssues = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,7 +41,7 @@ const getIssueById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             res.status(200).json(issue);
         }
         else {
-            res.status(404).json({ message: 'Issue not found' });
+            res.status(404).json({ message: "Issue not found" });
         }
     }
     catch (error) {
@@ -81,4 +81,10 @@ const deleteIssue = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.deleteIssue = deleteIssue;
-exports.default = { getAllIssues: exports.getAllIssues, getIssueById: exports.getIssueById, createIssue: exports.createIssue, updateIssue: exports.updateIssue, deleteIssue: exports.deleteIssue };
+exports.default = {
+    getAllIssues: exports.getAllIssues,
+    getIssueById: exports.getIssueById,
+    createIssue: exports.createIssue,
+    updateIssue: exports.updateIssue,
+    deleteIssue: exports.deleteIssue,
+};

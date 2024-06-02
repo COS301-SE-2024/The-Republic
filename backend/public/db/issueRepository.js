@@ -16,7 +16,7 @@ const supabaseClient_1 = __importDefault(require("../services/supabaseClient"));
 class IssueRepository {
     getAllIssues() {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default.from('issue').select('*');
+            const { data, error } = yield supabaseClient_1.default.from("issue").select("*");
             if (error)
                 throw new Error(error.message);
             return data;
@@ -24,7 +24,11 @@ class IssueRepository {
     }
     getIssueById(issueId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default.from('issue').select('*').eq('issue_id', issueId).single();
+            const { data, error } = yield supabaseClient_1.default
+                .from("issue")
+                .select("*")
+                .eq("issue_id", issueId)
+                .single();
             if (error)
                 throw new Error(error.message);
             return data;
@@ -32,7 +36,10 @@ class IssueRepository {
     }
     createIssue(issue) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default.from('issue').insert([issue]).single();
+            const { data, error } = yield supabaseClient_1.default
+                .from("issue")
+                .insert([issue])
+                .single();
             if (error)
                 throw new Error(error.message);
             return data;
@@ -40,7 +47,11 @@ class IssueRepository {
     }
     updateIssue(issueId, issue) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default.from('issue').update(issue).eq('issue_id', issueId).single();
+            const { data, error } = yield supabaseClient_1.default
+                .from("issue")
+                .update(issue)
+                .eq("issue_id", issueId)
+                .single();
             if (error)
                 throw new Error(error.message);
             return data;
@@ -48,7 +59,10 @@ class IssueRepository {
     }
     deleteIssue(issueId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { error } = yield supabaseClient_1.default.from('issue').delete().eq('issue_id', issueId);
+            const { error } = yield supabaseClient_1.default
+                .from("issue")
+                .delete()
+                .eq("issue_id", issueId);
             if (error)
                 throw new Error(error.message);
         });

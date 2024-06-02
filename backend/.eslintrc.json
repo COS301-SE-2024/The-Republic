@@ -12,7 +12,10 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "semi": ["error", "always"],
-    "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": false }],
+    "@typescript-eslint/no-explicit-any": [
+      "error",
+      { "ignoreRestArgs": false }
+    ],
     "import/order": "off"
   }
 }

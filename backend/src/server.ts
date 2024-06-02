@@ -1,5 +1,5 @@
 // Uncomment line bellow when when Working locally
-import 'dotenv/config';
+import "dotenv/config";
 
 import app from "./app";
 

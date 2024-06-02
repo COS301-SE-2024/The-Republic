@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MoreMenuProps {
@@ -24,7 +24,11 @@ interface MoreMenuProps {
   onDelete: () => void;
 }
 
-const MoreMenu: React.FC<MoreMenuProps> = ({ menuItems, isOwner, onDelete }) => {
+const MoreMenu: React.FC<MoreMenuProps> = ({
+  menuItems,
+  isOwner,
+  onDelete,
+}) => {
   const handleDelete = () => {
     onDelete();
   };
@@ -55,7 +59,8 @@ const MoreMenu: React.FC<MoreMenuProps> = ({ menuItems, isOwner, onDelete }) => 
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this issue? This action cannot be undone.
+            Are you sure you want to delete this issue? This action cannot be
+            undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

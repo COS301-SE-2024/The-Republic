@@ -17,6 +17,10 @@ app.use((req, res, next) => {
 app.use(middleware_1.serverMiddleare);
 app.use("/api/issues", issueRoutes_1.default);
 app.get("/", (req, res) => {
-    res.send("Welcome to My Express App");
+    res.status(200).json({
+        status: "success",
+        id: Math.floor(Math.random() * 500) + 1,
+        data: "Welcome to InfiniteLoopers Node-Express App",
+    });
 });
 exports.default = app;

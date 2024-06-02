@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import IssueService from '../services/issueService';
+import { Request, Response } from "express";
+import IssueService from "../services/issueService";
 
 const issueService = new IssueService();
 
@@ -7,7 +7,7 @@ const handleError = (res: Response, error: unknown) => {
   if (error instanceof Error) {
     res.status(500).json({ error: error.message });
   } else {
-    res.status(500).json({ error: 'An unknown error occurred' });
+    res.status(500).json({ error: "An unknown error occurred" });
   }
 };
 
@@ -27,7 +27,7 @@ export const getIssueById = async (req: Request, res: Response) => {
     if (issue) {
       res.status(200).json(issue);
     } else {
-      res.status(404).json({ message: 'Issue not found' });
+      res.status(404).json({ message: "Issue not found" });
     }
   } catch (error) {
     handleError(res, error);
@@ -63,4 +63,10 @@ export const deleteIssue = async (req: Request, res: Response) => {
   }
 };
 
-export default  { getAllIssues, getIssueById, createIssue, updateIssue, deleteIssue };
+export default {
+  getAllIssues,
+  getIssueById,
+  createIssue,
+  updateIssue,
+  deleteIssue,
+};

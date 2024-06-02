@@ -9,5 +9,5 @@ export default function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (<>{children}</>);
+  return <>{children}</>;
 }

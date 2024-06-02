@@ -30,10 +30,10 @@ class IssueService {
     createIssue(issue) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!issue.user_id || !issue.category_id || !issue.content) {
-                throw new Error('Missing required fields for creating an issue');
+                throw new Error("Missing required fields for creating an issue");
             }
             if (issue.content.length > 500) {
-                throw new Error('Issue content exceeds the maximum length of 500 characters');
+                throw new Error("Issue content exceeds the maximum length of 500 characters");
             }
             return this.issueRepository.createIssue(issue);
         });

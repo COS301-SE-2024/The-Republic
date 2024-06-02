@@ -1,21 +1,21 @@
-'use client';
-import React from 'react';
+"use client";
+import React from "react";
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '../ui/command';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+} from "../ui/command";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuGroup,
   DropdownMenuItem,
-} from '../ui/dropdown-menu';
+} from "../ui/dropdown-menu";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -23,13 +23,13 @@ const Sidebar = () => {
 
   const sidebarList = [
     {
-      group: 'General',
+      group: "General",
       items: [
-        { link: '/', text: 'Home' },
-        { link: '/notifications', text: 'Notifications' },
-        { link: '/reports', text: 'View Reports' },
-        { link: '/visualizations', text: 'Visualizations' },
-        { link: '/profile', text: 'Profile' },
+        { link: "/", text: "Home" },
+        { link: "/notifications", text: "Notifications" },
+        { link: "/reports", text: "View Reports" },
+        { link: "/visualizations", text: "Visualizations" },
+        { link: "/profile", text: "Profile" },
       ],
     },
   ];
@@ -45,7 +45,7 @@ const Sidebar = () => {
                   <CommandItem
                     key={optionKey}
                     className={`flex gap-2 cursor-pointer ${
-                      pathname === option.link ? 'bg-gray-200' : ''
+                      pathname === option.link ? "bg-gray-200" : ""
                     }`}
                     onSelect={() => router.push(option.link)}
                   >
@@ -62,10 +62,16 @@ const Sidebar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuGroup>
-                    <DropdownMenuItem onSelect={() => router.push('/settings/RequestVerification')}>
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        router.push("/settings/RequestVerification")
+                      }
+                    >
                       Request Verification
                     </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => router.push('/settings/Preferences')}>
+                    <DropdownMenuItem
+                      onSelect={() => router.push("/settings/Preferences")}
+                    >
                       Preferences
                     </DropdownMenuItem>
                   </DropdownMenuGroup>

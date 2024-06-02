@@ -11,7 +11,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
   );
   next();
 });
@@ -20,7 +20,11 @@ app.use(serverMiddleare);
 app.use("/api/issues", issueRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to My Express App");
+  res.status(200).json({
+    status: "success",
+    id: Math.floor(Math.random() * 500) + 1,
+    data: "Welcome to InfiniteLoopers Node-Express App",
+  });
 });
 
 export default app;

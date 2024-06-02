@@ -1,11 +1,9 @@
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import React from "react";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle } from 'lucide-react';
-import MoreMenu from '../MoreMenu/MoreMenu';
-
-
+import { MessageCircle } from "lucide-react";
+import MoreMenu from "../MoreMenu/MoreMenu";
 
 interface IssueProps {
   issue: {
@@ -17,22 +15,21 @@ interface IssueProps {
     category: string;
     sentiment: string;
     numberofcomments: number;
-    
   };
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const menuItems = ['Edit', 'Delete', 'Report'];
+  const menuItems = ["Edit", "Delete", "Report"];
   const isOwner = true; // will have to get this from api
 
   const handleDelete = () => {
     // call delete tweet endpoint here
-    console.log('Deleting issue:', issue.id);
+    console.log("Deleting issue:", issue.id);
   };
 
   return (
     <Card className="mb-4">
-      <CardHeader className='place-content-stretch'>
+      <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
             <div className="pr-2">
@@ -50,16 +47,22 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
               <div className="text-sm text-gray-600">{issue.username}</div>
             </div>
           </div>
-          <MoreMenu menuItems={menuItems} isOwner={isOwner} onDelete={handleDelete} />
+          <MoreMenu
+            menuItems={menuItems}
+            isOwner={isOwner}
+            onDelete={handleDelete}
+          />
         </div>
         <div className="flex space-x-2 pt-2">
-          <Badge variant="outline" className=''>{issue.category}</Badge>
-          <Badge variant="outline" className=''>{issue.sentiment}</Badge>
+          <Badge variant="outline" className="">
+            {issue.category}
+          </Badge>
+          <Badge variant="outline" className="">
+            {issue.sentiment}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent>
-        
-
         <p>{issue.content}</p>
       </CardContent>
       <CardFooter className="flex space-x-2 items-center">
@@ -67,7 +70,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <MessageCircle className="mr-1" />
           {issue.numberofcomments}
         </div>
-        
       </CardFooter>
     </Card>
   );

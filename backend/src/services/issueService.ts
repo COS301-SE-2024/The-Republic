@@ -1,5 +1,5 @@
-import IssueRepository from '../db/issueRepository';
-import Issue from '../models/issue';
+import IssueRepository from "../db/issueRepository";
+import Issue from "../models/issue";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -18,11 +18,13 @@ export default class IssueService {
 
   async createIssue(issue: Partial<Issue>): Promise<Issue> {
     if (!issue.user_id || !issue.category_id || !issue.content) {
-      throw new Error('Missing required fields for creating an issue');
+      throw new Error("Missing required fields for creating an issue");
     }
 
     if (issue.content.length > 500) {
-      throw new Error('Issue content exceeds the maximum length of 500 characters');
+      throw new Error(
+        "Issue content exceeds the maximum length of 500 characters",
+      );
     }
 
     return this.issueRepository.createIssue(issue);
