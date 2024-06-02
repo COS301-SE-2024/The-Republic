@@ -124,7 +124,8 @@ heroku logs --tail
 
 ---
 
-[Back to Full Documentation](./../README.md)
+[Back to Full Documentation](./../README.md)<br>
+
 [Back to main](/README.md)
 
 ---

@@ -22,6 +22,5 @@ Ensuring the quality and reliability of The Republic is critical. This document 
 ---
 
 [Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
 
 ---

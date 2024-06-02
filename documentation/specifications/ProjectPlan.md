@@ -21,6 +21,5 @@ The Republic project is structured to ensure timely and efficient delivery. This
 ---
 
 [Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
 
 ---

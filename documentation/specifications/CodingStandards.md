@@ -188,7 +188,8 @@ These coding standards serve as a roadmap for maintaining consistency and qualit
 
 ---
 
-[Back to Full Documentation](./../README.md)
+[Back to Full Documentation](./../README.md)<br>
+
 [Back to main](/README.md)
 
 ---

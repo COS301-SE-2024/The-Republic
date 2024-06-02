@@ -444,7 +444,8 @@ Usability requirements ensure that the system is easy to use and provides a good
 
 _Note: This is where we will put old sections which have changed. Keep this document updated incrementally as changes are made to the project._
 
-[Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
+[Back to Full Documentation](./../README.md)<br>
+
+[Back to main README](/README.md)
 
 ---

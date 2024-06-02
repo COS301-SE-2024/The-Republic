@@ -22,6 +22,5 @@ The Republic is designed to be a robust and scalable platform. This document des
 ---
 
 [Back to Full Documentation](./../README.md)
-[Back to main](/README.md)
 
 ---
