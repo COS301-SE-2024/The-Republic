@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Dropdown from "@/components/Dropdown/Dropdown"
 import { MapPin } from 'lucide-react';
-import { Image } from 'lucide-react';
+import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox"
 
 
@@ -90,7 +90,7 @@ const IssueInputBox = () => {
             <MapPin />
           </div>
           <div className="mx-2">
-            <Image />
+            <LucideImage />
           </div>
           <div className="mx-2">
             <Checkbox className=""/>
