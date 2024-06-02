@@ -1,5 +1,6 @@
 import Issue from "../models/issue";
 import supabase from "../services/supabaseClient";
+import { DateTime } from 'luxon';
 
 export default class IssueRepository {
   async getAllIssues(): Promise<any[]> {
@@ -71,5 +72,16 @@ export default class IssueRepository {
       .delete()
       .eq("issue_id", issueId);
     if (error) throw new Error(error.message);
+  }
+
+  async resolveIssue(issueId: number): Promise<Issue> {
+    const resolvedAt = DateTime.now().setZone('UTC+2').toISO();
+    const { data, error } = await supabase
+      .from("issue")
+      .update({ resolved_at: resolvedAt })
+      .eq("issue_id", issueId)
+      .single();
+    if (error) throw new Error(error.message);
+    return data as Issue;
   }
 }
