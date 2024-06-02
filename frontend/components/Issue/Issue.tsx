@@ -4,27 +4,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
+import { Issue as IssueType } from "@/lib/types";
+import { timeSince } from "@/lib/utils";
 
 interface IssueProps {
-  issue: {
-    id: number;
-    author: string;
-    username: string;
-    content: string;
-    timestamp: string;
-    category: string;
-    sentiment: string;
-    numberofcomments: number;
-  };
+  issue: IssueType;
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const menuItems = ["Edit", "Delete", "Report"];
+  const menuItems = ["Edit", "Delete", "Resolve Issue"];
   const isOwner = true; // will have to get this from api
 
   const handleDelete = () => {
     // call delete tweet endpoint here
-    console.log("Deleting issue:", issue.id);
+    console.log("Deleting issue:", issue.issue_id);
   };
 
   return (
@@ -34,17 +27,17 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <div className="flex items-center">
             <div className="pr-2">
               <Avatar>
-                <AvatarImage src="https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarImage src={issue.user.image_url || "https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg"} />
+                <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
             <div>
               <div className="flex items-center">
-                <div className="font-bold">{issue.author}</div>
+                <div className="font-bold">{issue.user.fullname}</div>
                 <div className="mx-1 text-sm text-gray-500">·</div>
-                <div className="text-sm text-gray-500">{issue.timestamp}</div>
+                <div className="text-sm text-gray-500">{timeSince(issue.created_at)}</div>
               </div>
-              <div className="text-sm text-gray-600">{issue.username}</div>
+              <div className="text-sm text-gray-600">{issue.user.username}</div>
             </div>
           </div>
           <MoreMenu
@@ -55,7 +48,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         </div>
         <div className="flex space-x-2 pt-2">
           <Badge variant="outline" className="">
-            {issue.category}
+            {issue.category.name}
           </Badge>
           <Badge variant="outline" className="">
             {issue.sentiment}
