@@ -12,7 +12,7 @@ export default function Login() {
         <div className="flex w-max h-full mb-16 items-center">
             <form className="flex flex-col gap-1.5">
                 <Label htmlFor="email">Email</Label>
-                <Input type="email" placeholder="Email" id="email"/>
+                <Input type="email" placeholder="Email" id="email" required/>
                 <div className="flex flex-row mt-2">
                     <Label htmlFor="password">Password</Label>
                     <p 
@@ -24,8 +24,8 @@ export default function Login() {
                 </div>
                 <Input 
                     type={showPassword ? "text" : "password"} 
-                    placeholder="Password" id="password" />
-                <p className="mt-2 text-sm">Don&apos;t have an account? <a href="/singup">Signup</a></p> 
+                    placeholder="Password" id="password" required/>
+                <p className="mt-2 text-sm">Don&apos;t have an account? <a href="/signup">Signup</a></p> 
                 <Button type="submit" className="mt-4">Login</Button>
             </form>
         </div>
