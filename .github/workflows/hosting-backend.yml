@@ -6,14 +6,6 @@ on:
     branches:
       - master
       - main
-  workflow_run:
-    workflows:
-      - "Creating And Deploying Backend and Proxy Docker Images"
-    types:
-      - completed
-    branches:
-      - master
-      - main
 
 jobs:
   deploy-backend:
