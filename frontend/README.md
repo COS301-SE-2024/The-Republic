@@ -1,10 +1,10 @@
-# Next.js Frontend with Chakra UI and TypeScript
+# Next.js and TypeScript Frontend
 
 <div style="width: 100%; height: 40%; border-radius:20px; background-color: black; margin: 20px 0;">
     <img src="../documentation/images/nextjs.png" alt="Frontend Documentation" style="width: 100%; height: auto; max-height: 50%;">
 </div>
 
-> Welcome to the documentation for our Next.js frontend with Chakra UI and TypeScript. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
+> Welcome to the documentation for our Next.js and TypeScript frontend. This guide will provide you with all the information you need to get started, develop, and integrate your frontend application seamlessly.
 
 ## Table of Contents
 
@@ -40,28 +40,18 @@
 2. **Create a new file for your page, for example, `/{pagename}/page.tsx`:**
 
    ```typescript
-   import { Box, Heading } from '@chakra-ui/react';
+   import React from "react";
 
-   const IndexPage = () => {
+   const YourPageName: React.FC = () => {
      return (
-       <Box>
-         <Heading>Hello, Next.js!</Heading>
-       </Box>
+       <div>
+         <h1>Hello, Next.js!</h1>
+       </div>
      );
    };
 
-   export default IndexPage;
+   export default YourPageName;
    ```
-
-## Understanding Chakra UI
-
-### Introduction to Chakra UI
-
-Chakra UI is a simple, modular, and accessible component library that provides building blocks for faster and easier web development. It offers a wide range of customizable UI components and styles out of the box, allowing you to focus more on building your application rather than reinventing the wheel.
-
-### Theme Customization
-
-Chakra UI provides an easy way to customize the theme of your application. You can modify colors, typography, spacing, and more to match your brand or design preferences. This makes it simple to create visually appealing and consistent user interfaces across your application.
 
 ## Backend Server Integration
 
@@ -72,20 +62,20 @@ When integrating with a Node.js Express backend, the frontend typically communic
 Here's an example of how to consume the Node.js Express backend server via POST requests in the Next.js frontend:
 
 ```typescript
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const MyComponent = () => {
   const [data, setData] = useState(null);
 
   const fetchData = async () => {
     try {
-      const response = await axios.post('/api/my-endpoint', {
+      const response = await axios.post("/api/my-endpoint", {
         // data to send to the backend
       });
       setData(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -153,6 +143,7 @@ Here's a quick overview of the project structure:
 
   ```bash
   npm i
+  cd frontend
   npm run dev
   ```
 
