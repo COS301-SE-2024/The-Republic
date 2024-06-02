@@ -4,6 +4,7 @@
 > The Republic project aims to revolutionize citizen engagement with government services by providing a platform for individuals to share their experiences, report incidents, and voice their concerns. This initiative is designed to enhance transparency and accountability within government operations, allowing users to contribute to a public discourse that promotes improved service delivery. By organizing and analyzing user-generated content, The Republic seeks to provide a clear and comprehensive picture of government service performance, fostering a more informed and active citizenry.
 
 <div align="center">
+
   ![last Push](https://img.shields.io/github/last-commit/COS301-SE-2024/The-Republic)
   ![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2024/The-Republic)
   [![Issues Closed](https://img.shields.io/github/issues-closed/COS301-SE-2024/The-Republic?color=blue)](https://github.com/COS301-SE-2024/The-Republic/issues?q=is%3Aissue+is%3Aclosed)
@@ -12,6 +13,7 @@
   [![Backend Unit Testing](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml)
   [![Docker Deployment](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml)
   [![Backend Linter](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml)
+
 </div>
 
 # Documentation
