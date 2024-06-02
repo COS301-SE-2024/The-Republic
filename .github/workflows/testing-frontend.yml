@@ -1,0 +1,59 @@
+name: Frontend Unit Testing
+run-name: ${{ github.actor }} at ${{ github.event_name }} event
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+  workflow_run:
+    workflows: ["Lint Frontend Application"]
+    types:
+      - completed
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          cat .npmrc
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      # - name: Upload test results
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: test-results
+      #     path: frontend/test-results
