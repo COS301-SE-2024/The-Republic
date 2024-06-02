@@ -1,36 +1,23 @@
-name: Notification
-run-name: Pull Request Opened By ${{ github.actor }}
+name: Notification and Deploying API to Heroku
 
 on:
   pull_request:
-    types: [opened, reopened]
-  push:
-    branches:
-      - develop
-      - master
-      - main
+    branches: [ master ]
 
 jobs:
-  notification-job:
-    if: github.event_name == 'pull_request'
+  deploy:
     runs-on: ubuntu-latest
-
+    environment:
+      name: production
+    env:
+      PROJECT_PATH: frontend
     steps:
-    - name: Notify Contributors
-      uses: actions/github-script@v3
-      with:
-        github-token: ${{secrets.INFINITE_LOOPERS_TOKEN}}
-        script: |
-          const issueNumber = context.issue.number;
-          const contributors = await github.repos.listContributors({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          });
-          contributors.data.forEach(async (contributor) => {
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              body: `@${contributor.login} A new pull request has been created.`,
-            });
-          });
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_FRONTEND}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
