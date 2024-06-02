@@ -11,6 +11,10 @@ on:
       - "Backend Unit Testing"
     types:
       - completed
+    branches:
+      - master
+      - main
+      - develop
 
 jobs:
   build-and-push-backend:
