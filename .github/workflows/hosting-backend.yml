@@ -8,7 +8,7 @@ on:
       - main
   workflow_run:
     workflows:
-      - "Linting, Building, and Pushing of Docker images"
+      - "Creating And Deploying Backend and Proxy Docker Images"
     types:
       - completed
 
