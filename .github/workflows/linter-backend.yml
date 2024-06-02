@@ -8,13 +8,13 @@ on:
       - develop
       - master
       - main
-      - feature/*
+      - 'feature/**'
   pull_request:
     branches:
       - develop
       - master
       - main
-      - feature/*
+      - 'feature/**'
 
 jobs:
   lint-backend:
