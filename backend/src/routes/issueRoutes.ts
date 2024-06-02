@@ -8,5 +8,6 @@ router.get("/:id", issueController.getIssueById);
 router.post("/", issueController.createIssue);
 router.put("/:id", issueController.updateIssue);
 router.delete("/:id", issueController.deleteIssue);
+router.put("/resolve/:id", issueController.resolveIssue);
 
 export default router;

@@ -12,21 +12,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/globals';
 
-
-
-// TODO: Add emojies to options
-
 const categoryOptions = {
   group: 'Categories',
   items: [
-    { value: 'Healthcare Services', label: 'Healthcare Services' },
-    { value: 'Public Safety', label: 'Public Safety' },
-    { value: 'Water', label: 'Water' },
-    { value: 'Transportation', label: 'Transportation' },
-    { value: 'Electricity', label: 'Electricity' },
-    { value: 'Sanitation', label: 'Sanitation' },
-    { value: 'Social Services', label: 'Social Services' },
-    { value: 'Administrative Services', label: 'Administrative Services' },
+    { value: '1', label: 'Healthcare Services' },
+    { value: '2', label: 'Public Safety' },
+    { value: '3', label: 'Water' },
+    { value: '4', label: 'Transportation' },
+    { value: '5', label: 'Electricity' },
+    { value: '6', label: 'Sanitation' },
+    { value: '7', label: 'Social Services' },
+    { value: '8', label: 'Administrative Services' },
   ],
 };
 
@@ -40,10 +36,7 @@ const moodOptions = {
   ],
 };
 
-
-
 const IssueInputBox = () => {
-  // const [open, setOpen] = useState(false);
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
@@ -57,16 +50,16 @@ const IssueInputBox = () => {
       toast({
           description: "You need to be logged in to post",
       });
-
       return;
     }
 
-    // TODO: Get category ID and time backend
+    const categoryID = parseInt(category);
+
     const res = await fetch("http://localhost:8080/api/issues", {
       method: "POST",
       body: JSON.stringify({
           user_id: data.session!.user.id,
-          category_id: 1,
+          category_id: categoryID,
           content,
           sentiment: mood,
           is_anonymous: isAnonymous,
@@ -91,6 +84,7 @@ const IssueInputBox = () => {
       toast({
           description: "Post successful",
       });
+      window.location.reload();
     }
   };
 
@@ -118,31 +112,31 @@ const IssueInputBox = () => {
       </CardContent>
       <CardFooter className="">
         <Dropdown 
-            options={categoryOptions}
-            value={category}
-            onChange={setCategory}
-            placeholder="Select category..."
-            />
-          <Dropdown
-            options={moodOptions}
-            value={mood}
-            onChange={setMood}
-            placeholder="Mood"
-          />
-          <div className="mx-2">
-            <MapPin />
-          </div>
-          <div className="mx-2">
-            <LucideImage />
-          </div>
-          <div className="mx-2">
-            <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)}/>
-            <label 
+          options={categoryOptions}
+          value={category}
+          onChange={setCategory}
+          placeholder="Select category..."
+        />
+        <Dropdown
+          options={moodOptions}
+          value={mood}
+          onChange={setMood}
+          placeholder="Mood"
+        />
+        <div className="mx-2">
+          <MapPin />
+        </div>
+        <div className="mx-2">
+          <LucideImage />
+        </div>
+        <div className="mx-2">
+          <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)}/>
+          <label 
             htmlFor="anon"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 p-2">
-              Anonymous
-            </label>
-          </div>
+            Anonymous
+          </label>
+        </div>
       </CardFooter>
     </Card>
   );
