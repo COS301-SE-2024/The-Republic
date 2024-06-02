@@ -22,7 +22,8 @@ export default class IssueRepository {
   async createIssue(issue: Partial<Issue>): Promise<Issue> {
     const { data, error } = await supabase
       .from("issue")
-      .insert([issue])
+      .insert(issue)
+      .select()
       .single();
     if (error) throw new Error(error.message);
     return data as Issue;
