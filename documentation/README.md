@@ -1,49 +1,22 @@
 # Project Documentation
 
-Welcome to the project documentation for The Republic, developed by team Infinite Loopers. This document serves as a comprehensive guide to the project’s architecture, design, implementation, and more.
+<div style="width: 100%; height: 40%; border-radius:20px; background-color: #d1d1d1; margin: 20px 0;">
+    <img src="../documentation/images/InfiniteLoopers_21.jpeg" alt="Documentation" style="width: 100%; height: auto; max-height: 100%;">
+</div>
+
+> Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
 
 ## Table of Contents
 
-1. [README](#readme)
-2. [Architectural Specification](#architectural-specification)
-3. [Design Specification](#design-specification)
-4. [Project Plan](#project-plan)
-5. [Testing Specification](#testing-specification)
-6. [Delivery Specification](#delivery-specification)
-7. [Implementation Specification](#implementation-specification)
-8. [Requirements Specification](#requirements-specification)
-9. [User Manual](#user-manual)
-10. [Coding Standards](#coding-standards)
-
----
-
-## README
-
-Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
-
-### Core Technologies
-
-- **Database and Authentication**: Supabase
-- **Backend**: Node.js with Express
-- **Frontend**: Next.js
-- **Analysis Engine**: Django
-
-### Core Requirements
-
-- Post feed with user interaction and filtering capabilities.
-- Sentiment analysis and data processing on user posts.
-- Standard data visualizations and analytics.
-- Option for anonymous posting.
-- Mock data generation for scalability and performance demonstration.
-
-### Optional Requirements
-
-- User contact by officials.
-- Custom report generation.
-- Multiple post types.
-- Multi-language support.
-- Predictive analytics.
-- Integration with external services.
+1. [Architectural Specification](#architectural-specification)
+2. [Design Specification](#design-specification)
+3. [Project Plan](#project-plan)
+4. [Testing Specification](#testing-specification)
+5. [Delivery Specification](#delivery-specification)
+6. [Implementation Specification](#implementation-specification)
+7. [Requirements Specification](#requirements-specification)
+8. [User Manual](#user-manual)
+9. [Coding Standards](#coding-standards)
 
 ---
 
@@ -117,18 +90,8 @@ This document serves as a guide for end-users, providing instructions on how to 
 
 This document outlines the coding standards and best practices to be followed during the development of the project.
 
+---
+
 [Link to Coding Standards](./specifications/CodingStandards.md)
 
----
-
-These documents collectively ensure that The Republic project is developed, tested, and delivered to the highest standards, providing a robust platform for citizen engagement and government accountability.
-
-Feel free to contact us at: [infiniteloopers@gmail.com](mailto:infiniteloopers@gmail.com)
-
-<details>
-    <summary> :lock: Secret Message</summary>
-    <br/>
-    <p>Thank you for opening this, Have a great day! :smile:</p>
-</details>
-
----
+## [Back to main README](/README.md)

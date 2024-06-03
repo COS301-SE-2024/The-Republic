@@ -1,0 +1,63 @@
+name: Backend Unit Testing
+run-name: ${{ github.event_name }} event by ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+
+  workflow_run:
+    workflows: ["Lint Backend Application"]
+    types:
+      - completed
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          cat .npmrc
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd backend
+          npm test
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      # - name: Upload test results
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: test-results
+      #     path: backend/test-results

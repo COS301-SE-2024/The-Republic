@@ -1,0 +1,47 @@
+name: Lint Backend Application
+run-name: Linter For Backend Server
+
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+
+jobs:
+  lint-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          cat .npmrc
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run linter
+        run: |
+          cd backend
+          npm run lint

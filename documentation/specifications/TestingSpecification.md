@@ -19,4 +19,8 @@ This document describes the testing strategies and methodologies to ensure the q
 
 Ensuring the quality and reliability of The Republic is critical. This document outlines the testing strategies and methodologies used to validate the system's functionality and performance.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+---

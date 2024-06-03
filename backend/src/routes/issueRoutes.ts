@@ -1,0 +1,13 @@
+import { Router } from "express";
+import issueController from "../controllers/issueController";
+
+const router = Router();
+
+router.get("/", issueController.getAllIssues);
+router.get("/:id", issueController.getIssueById);
+router.post("/", issueController.createIssue);
+router.put("/:id", issueController.updateIssue);
+router.delete("/:id", issueController.deleteIssue);
+router.put("/resolve/:id", issueController.resolveIssue);
+
+export default router;

@@ -19,4 +19,8 @@ This document provides detailed information on the implementation process for Th
 
 The Republic is designed to be a robust and scalable platform. This document describes the implementation process, providing guidelines and best practices to ensure a high-quality and maintainable codebase.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+---

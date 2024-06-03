@@ -19,4 +19,8 @@ This document details the design elements of The Republic project, focusing on u
 
 The Republic aims to provide a user-friendly and visually appealing platform. This document outlines the design principles and elements that guide the development of the user interface and experience.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+---

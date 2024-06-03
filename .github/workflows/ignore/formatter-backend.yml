@@ -1,0 +1,45 @@
+name: Format Backend Code
+
+on:
+  pull_request:
+    types: [opened, reopened]
+  workflow_run:
+    workflows: ["Lint Backend Application"]
+    types:
+      - completed
+
+jobs:
+  format-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js for backend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Format backend code
+        run: |
+          cd backend
+          npx prettier --write .
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "Format backend code with Prettier"
+
+      - name: Push changes
+        run: |
+          git push origin HEAD:${{ github.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.INFINITE_LOOPERS_TOKEN }}

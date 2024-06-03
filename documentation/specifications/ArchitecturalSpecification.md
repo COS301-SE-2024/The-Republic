@@ -20,4 +20,8 @@ This document outlines the architectural design of The Republic project, focusin
 
 The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document provides a detailed description of the system architecture, including the technologies used and the design principles followed to ensure a robust, scalable, and secure system.
 
+---
+
 [Back to Full Documentation](./../README.md)
+
+---

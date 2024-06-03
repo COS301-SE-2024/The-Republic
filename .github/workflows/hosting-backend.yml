@@ -1,0 +1,27 @@
+name: Deploy Backend to Heroku
+run-name: "Heroku: Server Deployment And Hosting"
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment:
+      name: production
+    env:
+      PROJECT_PATH: backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy Backend to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_BACKEND }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
