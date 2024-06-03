@@ -1,27 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-
-const mockIssues = [
-  {
-    id: 1,
-    author: "John Doe",
-    username: "@johndoe",
-    content:
-      "Did anyone else just hear that blast? Electricity gone in Brooklyn",
-    timestamp: "6 sec ago",
-    category: "Water",
-    sentiment: "Angry",
-    numberofcomments: 5,
-  },
-];
+import { Issue as IssueType } from "@/lib/types";
 
 const Feed = () => {
+  const [issues, setIssues] = useState<IssueType[]>([]);
+
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/issues");
+        const data: IssueType[] = await response.json();
+        setIssues(data);
+      } catch (error) {
+        console.error("Error fetching issues:", error);
+      }
+    };
+
+    fetchIssues();
+  }, []);
+
   return (
     <div className="w-full px-6">
       <IssueInputBox />
-      {mockIssues.map((issue) => (
-        <Issue key={issue.id} issue={issue} />
+      {issues.map((issue) => (
+        <Issue key={issue.issue_id} issue={issue} />
       ))}
     </div>
   );

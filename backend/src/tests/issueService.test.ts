@@ -1,6 +1,6 @@
 import IssueService from "../services/issueService";
 import IssueRepository from "../db/issueRepository";
-import Issue from "../models/issue";
+import { Issue } from "../models/issue";
 
 jest.mock("../db/issueRepository");
 
@@ -19,7 +19,6 @@ describe("IssueService", () => {
       {
         issue_id: 1,
         user_id: "1",
-        department_id: 1,
         location_id: null,
         category_id: 1,
         content: "Test Issue",
@@ -27,7 +26,19 @@ describe("IssueService", () => {
         is_anonymous: false,
         created_at: "2024-06-01",
         sentiment: "angry",
-      },
+        image_url: null,
+        user: {
+          user_id: "1",
+          email_address: "test@example.com",
+          username: "testuser",
+          fullname: "Test User",
+          image_url: "https://example.com/image.png"
+        },
+        category: {
+          name: "Category 1"
+        },
+        reactions: []
+      }
     ];
     issueRepository.getAllIssues.mockResolvedValue(mockIssues);
 
@@ -41,7 +52,6 @@ describe("IssueService", () => {
     const mockIssue: Issue = {
       issue_id: 1,
       user_id: "1",
-      department_id: 1,
       location_id: null,
       category_id: 1,
       content: "Test Issue",
@@ -49,6 +59,18 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       sentiment: "neutral",
+      image_url: null,
+      user: {
+        user_id: "1",
+        email_address: "test@example.com",
+        username: "testuser",
+        fullname: "Test User",
+        image_url: "https://example.com/image.png"
+      },
+      category: {
+        name: "Category 1"
+      },
+      reactions: []
     };
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
 
@@ -63,7 +85,6 @@ describe("IssueService", () => {
     it("should create a new issue when all required fields are provided", async () => {
       const newIssue: Partial<Issue> = {
         user_id: "1",
-        department_id: 1,
         location_id: null,
         category_id: 1,
         content: "New Issue",
@@ -75,6 +96,18 @@ describe("IssueService", () => {
         ...newIssue,
         issue_id: 1,
         created_at: "2022-01-01",
+        image_url: null,
+        user: {
+          user_id: "1",
+          email_address: "test@example.com",
+          username: "testuser",
+          fullname: "Test User",
+          image_url: "https://example.com/image.png"
+        },
+        category: {
+          name: "Category 1"
+        },
+        reactions: []
       } as Issue;
       issueRepository.createIssue.mockResolvedValue(createdIssue);
 
@@ -89,7 +122,7 @@ describe("IssueService", () => {
       const newIssue: Partial<Issue> = { user_id: "1", content: "New Issue" };
 
       await expect(issueService.createIssue(newIssue)).rejects.toThrowError(
-        "Missing required fields for creating an issue",
+        "Missing required fields for creating an issue"
       );
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
     });
@@ -97,7 +130,6 @@ describe("IssueService", () => {
     it("should throw an error when content exceeds the maximum length", async () => {
       const newIssue: Partial<Issue> = {
         user_id: "1",
-        department_id: 1,
         location_id: null,
         category_id: 1,
         content: "A".repeat(501),
@@ -107,7 +139,7 @@ describe("IssueService", () => {
       };
 
       await expect(issueService.createIssue(newIssue)).rejects.toThrowError(
-        "Issue content exceeds the maximum length of 500 characters",
+        "Issue content exceeds the maximum length of 500 characters"
       );
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
     });
@@ -118,7 +150,6 @@ describe("IssueService", () => {
     const updatedIssue: Issue = {
       issue_id: 1,
       user_id: "1",
-      department_id: 1,
       location_id: null,
       category_id: 1,
       content: "Updated Issue",
@@ -126,6 +157,18 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       sentiment: "neutral",
+      image_url: null,
+      user: {
+        user_id: "1",
+        email_address: "test@example.com",
+        username: "testuser",
+        fullname: "Test User",
+        image_url: "https://example.com/image.png"
+      },
+      category: {
+        name: "Category 1"
+      },
+      reactions: []
     };
     issueRepository.updateIssue.mockResolvedValue(updatedIssue);
 

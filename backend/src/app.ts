@@ -1,5 +1,6 @@
 import express from "express";
 import issueRoutes from "./routes/issueRoutes";
+import reactionRoutes from "./routes/reactionRoutes";
 import { serverMiddleare } from "./middleware/middleware";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 
 app.use(serverMiddleare);
 app.use("/api/issues", issueRoutes);
+app.use("/api/reactions", reactionRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({

@@ -22,15 +22,21 @@ interface MoreMenuProps {
   menuItems: string[];
   isOwner: boolean;
   onDelete: () => void;
+  onResolve: () => void; 
 }
 
 const MoreMenu: React.FC<MoreMenuProps> = ({
   menuItems,
   isOwner,
   onDelete,
+  onResolve,
 }) => {
   const handleDelete = () => {
     onDelete();
+  };
+
+  const handleResolve = () => {
+    onResolve();
   };
 
   return (
@@ -48,6 +54,10 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                 <DialogTrigger asChild>
                   <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DialogTrigger>
+              ) : item === "Resolve Issue" && isOwner ? (
+                <DropdownMenuItem onClick={handleResolve}>
+                  Resolve Issue
+                </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
               )}

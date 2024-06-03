@@ -13,10 +13,8 @@ on:
 jobs:
   notification-job:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Notify Contributors
+  steps:
+  - name: Notify Contributors
       uses: actions/github-script@v3
       with:
         github-token: ${{secrets.INFINITE_LOOPERS_TOKEN}}

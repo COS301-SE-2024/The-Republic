@@ -1,7 +1,7 @@
 # Project Documentation
 
 <div style="width: 100%; height: 40%; border-radius:20px; background-color: #d1d1d1; margin: 20px 0;">
-    <img src="../documentation/images/social.png" alt="Documentation" style="width: 100%; height: auto; max-height: 100%;">
+    <img src="../documentation/images/InfiniteLoopers_21.jpeg" alt="Documentation" style="width: 100%; height: auto; max-height: 100%;">
 </div>
 
 > Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
