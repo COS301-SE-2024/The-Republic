@@ -1,6 +1,7 @@
 # The Republic: COS 301 Capstone Project 2024
 
 <img src="./documentation/images/InfiniteLoopers_13.jpeg" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
+
 > The Republic project aims to revolutionize citizen engagement with government services by providing a platform for individuals to share their experiences, report incidents, and voice their concerns. This initiative is designed to enhance transparency and accountability within government operations, allowing users to contribute to a public discourse that promotes improved service delivery. By organizing and analyzing user-generated content, The Republic seeks to provide a clear and comprehensive picture of government service performance, fostering a more informed and active citizenry.
 
 <div align="center">
@@ -23,10 +24,10 @@ The documentation will guide you through various aspects of the project, includi
 #### `Links to Specific Sections of the Documentation`:
 
 - [Link to Coding Standards](./documentation/specifications/CodingStandards.md)
-<!-- - [Link to User Manual](./documentation/specifications/UserManual.md) -->
 - [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
-<!-- -[Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md) -->
 - [Link to Delivery Specification](./documentation/specifications/DeliverySpecification.md)
+<!-- -[Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md) -->
+<!-- - [Link to User Manual](./documentation/specifications/UserManual.md) -->
 <!-- -[Link to Testing Specification](./documentation/specifications/TestingSpecification.md)
 - [Link to Project Plan](./documentation/specifications/ProjectPlan.md)
 - [Link to Design Specification](./documentation/specifications/DesignSpecification.md)
