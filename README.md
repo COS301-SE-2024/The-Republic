@@ -6,14 +6,14 @@
 
 <div align="center">
 
-![last Push](https://img.shields.io/github/last-commit/COS301-SE-2024/The-Republic)
-![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/The-Republic)
-[![Issues closed](https://img.shields.io/github/issues-closed/COS301-SE-2024/The-Republic?color=blue)](https://github.com/COS301-SE-2024/The-Republic/issues?q=is%3Aissue+is%3Aclosed)
-![Languages](https://img.shields.io/github/languages/count/COS301-SE-2024/The-Republic)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/The-Republic)
-![Backend Linter](https://img.shields.io/github/workflow/status/COS301-SE-2024/The-Republic/linter-backend)
-![Frontend Linter](https://img.shields.io/github/workflow/status/COS301-SE-2024/The-Republic/linter-frontend)
-![Codecov](https://codecov.io/gh/COS301-SE-2024/The-Republic/branch/main/graph/badge.svg)
+ ![last Push](https://img.shields.io/github/last-commit/COS301-SE-2024/The-Republic)
+  ![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2024/The-Republic)
+  [![Issues Closed](https://img.shields.io/github/issues-closed/COS301-SE-2024/The-Republic?color=blue)](https://github.com/COS301-SE-2024/The-Republic/issues?q=is%3Aissue+is%3Aclosed)
+  ![Languages](https://img.shields.io/github/languages/count/COS301-SE-2024/The-Republic)
+  ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/The-Republic)
+  [![Backend Unit Testing](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml)
+  [![Docker Deployment](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml)
+  [![Backend Linter](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml)
 
 </div>
 
