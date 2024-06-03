@@ -1,4 +1,4 @@
-# The Republic: COS 301 Capstone Project 2024
+# Infinite Loopers - The Republic
 
 <img src="./documentation/images/image.png" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
 
@@ -17,15 +17,22 @@
 
 </div>
 
+# Demo
+- [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link)
+
+# Link To Project Board
+- [The Republic Project Board](https://github.com/orgs/COS301-SE-2024/projects/79)
+
 # Documentation
 
 The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [View Full Documentation Here](./documentation/README.md)
 
 #### `Links to Specific Sections of the Documentation`:
 
+- [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
 - [Link to Coding Standards](./documentation/specifications/CodingStandards.md)
 <!-- - [Link to User Manual](./documentation/specifications/UserManual.md) -->
-- [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
+
 <!-- -[Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md) -->
 - [Link to Delivery Specification](./documentation/specifications/DeliverySpecification.md)
 <!-- -[Link to Testing Specification](./documentation/specifications/TestingSpecification.md)

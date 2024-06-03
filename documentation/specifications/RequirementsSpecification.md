@@ -214,17 +214,18 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
 #### 1. Create a New Issue
 
 - **Method:** `POST`
-- **Endpoint:** `/issues`
+- **Endpoint:** `/api/issues`
 - **Description:** Create a new issue.
 - **Request Body:**
   ```json
   {
     "user_id": "string", // UUID of the user
-    "location_id": "number", // ID of the location
+    "location_id": "number", // ID of the location (nullable)
     "category_id": "number", // ID of the category
     "content": "string", // Content of the issue
-    "media_url": "string", // URL to any media related to the issue,
-    "is_anonymous": "boolean" // Whether the issue is reported anonymously
+    "image_url": "string", // URL to any media related to the issue (nullable)
+    "is_anonymous": "boolean", // Whether the issue is reported anonymously
+    "sentiment": "string" // Sentiment of the issue
   }
   ```
 - **Response:**
@@ -240,35 +241,50 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
 ### 2. Get All Issues
 
 - **Method:** `GET`
-- **Endpoint:** `/issues`
+- **Endpoint:** `/api/issues`
 - **Description:** Retrieve all issues.
 - **Response:**
   - **200 OK**
     ```json
-    [
-        "success": true,
-        "data":[
-          {
-            "issue_id": "number",
+    {
+      "success": true,
+      "data": [
+        {
+          "issue_id": "number",
+          "user_id": "string",
+          "location_id": "number",
+          "category_id": "number",
+          "content": "string",
+          "image_url": "string",
+          "is_anonymous": "boolean",
+          "created_at": "string",
+          "resolved_at": "string",
+          "sentiment": "string",
+          "user": {
             "user_id": "string",
-            "location_id": "number",
-            "category_id": "number",
-            "content": "string",
-            "media_url": "string",
-            "is_anonymous": "boolean",
-            "created_at": "string",
-            "resolved_at": "string",
-            "sentiment": "string",
-            "isOwner": "boolean"
-          }
-        ]
-    ]
+            "email_address": "string",
+            "username": "string",
+            "fullname": "string",
+            "image_url": "string"
+          },
+          "category": {
+            "name": "string"
+          },
+          "reactions": [
+            {
+              "emoji": "string",
+              "count": "number"
+            }
+          ]
+        }
+      ]
+    }
     ```
 
 ### 3. Get Issue by ID
 
 - **Method:** `GET`
-- **Endpoint:** `/issues/{id}`
+- **Endpoint:** `/api/issues/{id}`
 - **Description:** Retrieve an issue by its ID.
 - **Path Parameters:** `id` (number) - ID of the issue
 - **Response:**
@@ -277,15 +293,30 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
     {
       "issue_id": "number",
       "user_id": "string",
-      "department_id": "number",
       "location_id": "number",
       "category_id": "number",
       "content": "string",
-      "media_url": "string",
+      "image_url": "string",
       "is_anonymous": "boolean",
       "created_at": "string",
       "resolved_at": "string",
-      "sentiment": "string"
+      "sentiment": "string",
+      "user": {
+        "user_id": "string",
+        "email_address": "string",
+        "username": "string",
+        "fullname": "string",
+        "image_url": "string"
+      },
+      "category": {
+        "name": "string"
+      },
+      "reactions": [
+        {
+          "emoji": "string",
+          "count": "number"
+        }
+      ]
     }
     ```
   - **404 Not Found** (Issue not found)
@@ -294,16 +325,9 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
 ### 4. Resolve an Issue
 
 - **Method:** `PUT`
-- **Endpoint:** `/issues/{id}/resolve`
+- **Endpoint:** `/api/issues/resolve/{id}`
 - **Description:** Mark an issue as resolved.
 - **Path Parameters:** `id` (number) - ID of the issue
-- **Request Body:**
-  ```json
-  {
-    "user_id": "string",
-    "resolved_at": "string" // Timestamp of when the issue was resolved
-  }
-  ```
 - **Response:**
   - **200 OK**
     ```json
@@ -316,12 +340,12 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
 ### 5. React to an Issue
 
 - **Method:** `POST`
-- **Endpoint:** `/issues/{id}/reactions`
+- **Endpoint:** `/api/reactions`
 - **Description:** React to an issue with an emoji.
-- **Path Parameters:** `id` (number) - ID of the issue
 - **Request Body:**
   ```json
   {
+    "issue_id": "number", // ID of the issue
     "user_id": "string", // UUID of the user reacting
     "emoji": "string" // Emoji reaction
   }
@@ -333,7 +357,14 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
       "success": true
     }
     ```
+  - **200 OK** (Reaction removed)
+    ```json
+    {
+      "message": "Reaction removed"
+    }
+    ```
   - **400 Bad Request** (Invalid input data)
+  - **500 Internal Server Error**
 
 ## 🔧 Quality Requirements
 
