@@ -18,7 +18,7 @@ const Reaction: React.FC<ReactionProps> = ({ issueId, initialReactions }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/reactions", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reactions`, {
         method: "POST",
         body: JSON.stringify({
           issue_id: issueId,

@@ -55,7 +55,7 @@ const IssueInputBox = () => {
 
     const categoryID = parseInt(category);
 
-    const res = await fetch("http://localhost:8080/api/issues", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
       method: "POST",
       body: JSON.stringify({
           user_id: data.session!.user.id,
