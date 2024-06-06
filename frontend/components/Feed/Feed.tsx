@@ -9,7 +9,8 @@ const Feed = () => {
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/issues");
+        console.log("Variable: ", process.env.NEXT_PUBLIC_BACKEND_URL);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`);
         const data: IssueType[] = await response.json();
         setIssues(data);
       } catch (error) {

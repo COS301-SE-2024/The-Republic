@@ -18,113 +18,162 @@ This document covers the delivery aspects of The Republic project, including dep
 - Continuous Integration/Continuous Deployment (CI/CD)
 - Post-Deployment Support
 - Rollback Procedures
+- Future Plans
 - Conclusion
 
 ## Introduction
 
 The Republic aims to provide a reliable and scalable platform for citizen engagement. This document outlines the strategies and procedures for deploying the system, ensuring smooth and efficient delivery, and providing post-deployment support.
 
-# Node.js Application Deployment to Heroku
+## Deployment Strategies
 
-This README provides a step-by-step guide on how to deploy a Node.js application to Heroku.
+- ### Node.js Application Deployment to Heroku
 
-## Prerequisites
+   The backend Node.js application will be deployed to Heroku. This involves setting up the Heroku environment, configuring buildpacks, setting environment variables, and deploying the application code. Heroku provides a scalable and easy-to-manage platform for hosting the backend service.
 
-Ensure you have the following prerequisites installed and set up on your local machine:
+   - ##### Example CI/CD Job for Heroku Deployment
 
-- Node.js and npm
-- Heroku CLI
-- A Heroku account
+      ```yaml
+      name: Deploy Backend to Heroku
 
-## Setting Configuration Variables
+      on:
+         ...
 
-You can set configuration variables in Heroku using the following command syntax:
+      jobs:
+      deploy-backend:
+         runs-on: ubuntu-latest
+         steps:
+            - name: Checkout code
+            uses: actions/checkout@v3
 
-```bash
-heroku config:set -a infiniteloopers-backend-server APP_BASE=backend
-```
+            - name: Deploy Backend to Heroku
+            uses: akhileshns/heroku-deploy@v3.12.12
+            with:
+               heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+               heroku_app_name: ${{ secrets.HEROKU_BACKEND }}
+               heroku_email: ${{ secrets.HEROKU_EMAIL }}
+      ```
 
-This command sets the `APP_BASE` environment variable to `backend` for the app `infiniteloopers-backend-server`.
+   - ##### Setting Configuration Variables
 
-## Adding Buildpacks
+      You can set configuration variables in Heroku using the following command syntax:
 
-You can manage buildpacks for your Heroku app using these commands:
+      ```bash
+      heroku config:set -a backend-appname APP_BASE=backend
+      heroku config:set -a frontend-appname APP_BASE=frontend
+      ```
 
-To add a buildpack:
+   - ##### Setting the Git Remote
 
-```bash
-heroku buildpacks:add -a 'infiniteloopers-backend-server' -i 1 heroku-community/multi-procfile
-```
+      Set the git remote for your Heroku app with:
 
-To remove a buildpack:
+      ```bash
+      heroku git:remote -a appname'
+      ```
 
-```bash
-heroku buildpacks:remove heroku-community/multi-procfile -a 'infiniteloopers-backend-server'
-```
+- ### Deployment to DockerHub
 
-## Setting the Git Remote
+   The backend and reverse proxy components will also be containerized and deployed using Docker. Docker images for these components will be built and pushed to Docker Hub. This ensures a consistent runtime environment and facilitates easy scaling and management of these services.
 
-Set the git remote for your Heroku app with:
+   ###### Example CI/CD Job for Docker Deployment
 
-```bash
-heroku git:remote -a 'infiniteloopers-backend-server'
-```
+   ```yaml
+   name: Build and Push Docker Images
 
-## Steps
+   on:
+      ...
 
-1. **Initialize Your Node.js Application**: Ensure your Node.js application is initialized with a `package.json` file. If not, create one by running `npm init`.
+   jobs:
+   build-and-push:
+      runs-on: ubuntu-latest
+      steps:
+         - name: Checkout code
+         uses: actions/checkout@v3
 
-2. **Create a Start Script**: Add a `start` script in your `package.json` file under the `scripts` section. This script should start your server. For example:
+         - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3
 
-   ```json
-   "scripts": {
-     "start": "node server.js"
-   }
+         - name: Login to Docker Hub
+         uses: docker/login-action@v3
+         with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+
+         - name: Build and push backend Docker image
+         run: |
+            docker build -t myproject-backend ./backend
+            docker tag myproject-backend ${{ secrets.DOCKER_USERNAME }}/myproject-backend:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/myproject-backend:latest
+
+         - name: Build and push reverse proxy Docker image
+         run: |
+            docker build -t myproject-reverseproxy ./reverseproxy
+            docker tag myproject-reverseproxy ${{ secrets.DOCKER_USERNAME }}/myproject-reverseproxy:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/myproject-reverseproxy:latest
    ```
 
-   Replace `server.js` with the main file of your application.
+## Environment Setup
 
-3. **Configure the Port**: Heroku dynamically assigns your app a port, so modify your server file to use the port number set by Heroku:
+Ensure all necessary environment variables and configurations are set up in the respective deployment environments (Heroku, Docker, etc.). Proper environment setup is crucial for the smooth operation of the applications.
 
-   ```javascript
-   const express = require("express");
-   const app = express();
-   const port = Number(process.env.PORT) || 8080;
-
-   app.listen(port, () => {
-     console.log(`Server is running on port ${port}`);
-   });
+- ##### Backend Example `.env`:
+   ```env
+   SUPABASE_URL={{VALUE}}
+   SUPABASE_KEY={{VALUE}}
+   PORT=8080
    ```
 
-4. **Initialize a Git Repository**: If your project is not already a Git repository, initialize it by running `git init`.
-
-5. **Commit Your Changes**: Commit all changes by running `git add .` and `git commit -m "Initial commit"`.
-
-6. **Create a New Heroku App**: Create a new Heroku app by running `heroku create`.
-
-7. **Push to Heroku**: Push your code to Heroku by running `git push heroku master`.
-
-   ```bash
-   git subtree push --prefix backend heroku feature/devops:master
+- ##### Frontend Example `.env`:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL={{VALUE}}
+   NEXT_PUBLIC_SUPABASE_ANON_KEY={{VALUE}}
+   BACKEND_URL={{VALUE}}
    ```
 
-8. **Open the App**: Open your deployed app in the browser by running `heroku open`.
+## Continuous Integration/Continuous Deployment (CI/CD)
 
-## Deployment To Docker
+The project uses GitHub Actions for CI/CD pipelines. The workflows are triggered on specific branches and after successful unit testing. The CI/CD pipelines handle building, testing, and deploying the applications to both Heroku and Docker environments. This ensures that the code is always in a deployable state and reduces manual intervention.
 
-Refer to the [Docker Deployment Documentation](./../../docker/README.md) located in the docker directory for detailed instructions.
+## Post-Deployment Support
 
-## Troubleshooting
+- ### Monitoring and Logging
 
-If you encounter any issues during deployment, view the logs by running:
+   - Ensure continuous monitoring and logging for the deployed applications to quickly identify and address any issues. Use Heroku's built-in tools and other monitoring services as needed.
+   - For Docker deployments, utilize monitoring tools compatible with Docker to track the performance and health of the containers.
 
-```bash
-heroku logs --tail
-```
+- ### Troubleshooting
+
+   - If issues arise during or after deployment, consult the deployment logs and monitoring tools to diagnose and resolve problems promptly.
+   - Both Heroku and Docker provide robust logging capabilities to aid in troubleshooting.
+
+## Rollback Procedures
+
+Our goal is to ensure high reliability and availability of The Republic platform. By deploying to AWS and implementing robust scaling strategies, we aim to minimize downtime and ensure that our services are always accessible to users.
+
+## Future Deployment and Management Plans
+
+- ### AWS Hosting
+
+   - We are planning to host our backend Node.js Express server as well as the frontend Next.js app on AWS.
+   - This move will allow us to leverage AWS's extensive suite of services for greater flexibility, performance, and scalability.
+
+- ### Horizontal Autoscaling
+
+   - To handle an increasing number of posts and users, we will implement horizontal autoscaling.
+   - This strategy will enable our infrastructure to automatically adjust capacity to maintain performance and availability as demand changes, aiming to efficiently handle 10,000+ posts and numerous concurrent users.
+
+- ### Reliability and Availability
+
+   - Our goal is to ensure high reliability and availability of The Republic platform.
+   - By deploying to AWS and implementing robust scaling strategies, we aim to minimize downtime and ensure that our services are always accessible to users.
+
+## Conclusion
+
+This document provides the necessary steps and guidelines for deploying and supporting The Republic project. Adhering to these instructions will ensure a smooth and efficient deployment process, leveraging the capabilities of both Heroku and Docker for robust and scalable application hosting. Our future plans for AWS hosting and horizontal autoscaling will further enhance the reliability and availability of our platform.
 
 ---
 
-[Back to Full Documentation](./../README.md)<br>
+[Back to Full Documentation](./../README.md)
 
 [Back to main](/README.md)
 

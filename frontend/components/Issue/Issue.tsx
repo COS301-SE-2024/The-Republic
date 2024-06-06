@@ -22,7 +22,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/issues/${issue.issue_id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/${issue.issue_id}`, {
         method: "DELETE",
       });
 
@@ -38,7 +38,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleResolve = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/issues/resolve/${issue.issue_id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/${issue.issue_id}`, {
         method: "PUT",
       });
 
