@@ -39,9 +39,7 @@
     "react-icons": "^5.2.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "ts-jest": "^29.1.4"
-  },
-  "devDependencies": {
+    "ts-jest": "^29.1.4",
     "@swc/cli": "^0.3.12",
     "@swc/core": "^1.5.24",
     "@types/node": "^20",
