@@ -119,16 +119,22 @@ Here's a quick overview of the project structure:
 ```
 /nextjs-frontend
 |-- app
-|   |-- pages
-|   |   |-- index.tsx
-|   |   |-- auth
-|   |   |   |-- login.tsx
-|   |   |   |-- signup.tsx
-|   |-- components
-|   |   |-- Header.tsx
-|   |   |-- Footer.tsx
+|   |-- (auth)
+|   |   |-- layout.tsx
+|   |   |-- login
+|   |   |   |-- page.tsx
+|   |   |-- signup
+|   |   |   |-- page.tsx
+|   |-- (home)
+|   |   |-- layout.tsx
+|   |   |-- page.tsx
+|-- components
+|   |-- Header.tsx
+|   |-- Footer.tsx
 |-- lib
 |   |-- utils.ts
+|-- styles
+|   |-- globals.css
 |-- README.md
 |-- .env
 |-- Dockerfile
