@@ -1,7 +1,9 @@
-import React from "react";
+"use client";
 
-function page() {
-  return <div>Settings</div>;
+import Settings from "@/components/Settings/Settings";
+
+export default function Home() {
+  return (
+    <Settings/>
+  );
 }
-
-export default page;
