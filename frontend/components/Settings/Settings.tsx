@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ProfileSettings from './ProfileSettings';
 import RequestVerifications from './RequestVerification';
 import NotificationSettings from './NotificationSettings';
+import { Button } from '../ui/button';
 
 interface SettingsDropdownProps {
   title: string;
@@ -30,7 +31,10 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({ title, children }) 
 const SettingsPage = () => {
   return (
     <div className="container mx-auto my-8 space-y-8">
-      <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+      <div className="flex flex-row mb-6">
+        <h1 className="text-3xl font-bold mr-auto">Account Settings</h1>
+        <Button variant="outline">Sign out</Button>
+      </div>
       <SettingsDropdown title="Profile Settings">
         <ProfileSettings />
       </SettingsDropdown>
