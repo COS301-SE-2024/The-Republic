@@ -148,8 +148,8 @@ Here's a quick overview of the project structure:
 - #### Running The Development Server:
 
   ```bash
-  npm i
   cd frontend
+  npm i
   npm run dev
   ```
 
