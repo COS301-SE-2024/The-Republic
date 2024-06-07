@@ -33,8 +33,8 @@ Follow these steps to install the application:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-repo/node-express-ts-backend.git
-   cd node-express-ts-backend
+   git clone https://github.com/COS301-SE-2024/The-Republic.git
+   cd backend
    ```
 
 2. **Install dependencies:**
@@ -193,8 +193,8 @@ backend/
 - #### Running The Development Server:
 
   ```bash
-  npm i
   cd backend
+  npm i
   npm run dev
   ```
 
