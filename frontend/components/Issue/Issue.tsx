@@ -55,7 +55,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     }
   };
 
-  const handleSubscribe = (option: string) => {
+  const handleSubscribe = () => {
     console.log("Subscribed");
   };
 
