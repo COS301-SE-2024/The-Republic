@@ -1,9 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
@@ -15,14 +18,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MoreMenuProps {
   menuItems: string[];
   isOwner: boolean;
   onDelete: () => void;
-  onResolve: () => void; 
+  onResolve: () => void;
+  onSubscribe: (option: string) => void;
 }
 
 const MoreMenu: React.FC<MoreMenuProps> = ({
@@ -30,13 +34,19 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
   isOwner,
   onDelete,
   onResolve,
+  onSubscribe,
 }) => {
+
   const handleDelete = () => {
     onDelete();
   };
 
   const handleResolve = () => {
     onResolve();
+  };
+
+  const handleSubscribeOptionClick = (option: string) => {
+    onSubscribe(option);
   };
 
   return (
@@ -58,11 +68,29 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                 <DropdownMenuItem onClick={handleResolve}>
                   Resolve Issue
                 </DropdownMenuItem>
+              ) : item === "Subscribe" ? (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                  Subscribe 
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Issue")}>
+                      Issue
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Category")}>
+                      Category
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Location")}>
+                      Location
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
               ) : (
                 <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
               )}
             </React.Fragment>
           ))}
+        
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent>
