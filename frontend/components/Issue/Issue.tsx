@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,6 @@ interface IssueProps {
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
 
-  const[selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
@@ -57,7 +56,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   };
 
   const handleSubscribe = (option: string) => {
-    setSelectedOption(option);
+    console.log("Subscribed");
   };
 
 
