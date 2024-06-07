@@ -9,13 +9,7 @@ import {
 } from "../ui/command";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
+
 
 const Sidebar = () => {
   const router = useRouter();
@@ -26,10 +20,12 @@ const Sidebar = () => {
       group: "General",
       items: [
         { link: "/", text: "Home" },
-        { link: "/notifications", text: "Notifications" },
-        { link: "/reports", text: "View Reports" },
-        { link: "/visualizations", text: "Visualizations" },
         { link: "/profile", text: "Profile" },
+        { link: "/notifications", text: "Notifications" },
+        { link: "/reports", text: "Reports" },
+        { link: "/visualizations", text: "Visualizations" },
+        { link: "/settings", text: "Settings" },
+
       ],
     },
   ];
@@ -55,29 +51,6 @@ const Sidebar = () => {
               </CommandGroup>
             ))}
             <CommandSeparator />
-            <CommandGroup heading="More">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <CommandItem>Settings</CommandItem>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onSelect={() =>
-                        router.push("/settings/RequestVerification")
-                      }
-                    >
-                      Request Verification
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={() => router.push("/settings/Preferences")}
-                    >
-                      Preferences
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CommandGroup>
           </CommandList>
         </Command>
       </div>
