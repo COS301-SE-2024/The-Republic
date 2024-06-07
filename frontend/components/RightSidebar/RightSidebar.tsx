@@ -16,6 +16,7 @@ const filterOptions = {
   group: "Filter",
   items: [
     { value: "all", label: "All" },
+    { value: "subscriptions", label: "Subscriptions"},
     { value: "healthcare", label: "Healthcare Services" },
     { value: "publicSafety", label: "Public Safety" },
     { value: "water", label: "Water" },

@@ -12,8 +12,11 @@ interface IssueProps {
   issue: IssueType;
 }
 
+
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const menuItems = ["Delete"];
+
+
+  const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
   }
@@ -52,6 +55,11 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     }
   };
 
+  const handleSubscribe = () => {
+    console.log("Subscribed");
+  };
+
+
   return (
     <Card className="mb-4">
       <CardHeader className="place-content-stretch">
@@ -77,6 +85,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
             isOwner={isOwner}
             onDelete={handleDelete}
             onResolve={handleResolve}
+            onSubscribe={handleSubscribe}
           />
         </div>
         <div className="flex space-x-2 pt-2">
