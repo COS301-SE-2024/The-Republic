@@ -13,7 +13,7 @@ interface IssueProps {
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const menuItems = ["Delete"];
+  const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
   }
