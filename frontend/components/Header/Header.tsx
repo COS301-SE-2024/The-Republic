@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { ModeToggle } from "../ThemeToggle/ModeToggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/globals";
 import { User } from '@supabase/supabase-js';
 import { useRouter } from "next/navigation";
+import { HomeAvatar } from "../HomeAvatar/HomeAvatar";
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
@@ -44,12 +44,7 @@ export default function Header() {
           <ModeToggle />
         </div>
         {user ? (
-          <Avatar>
-            <AvatarImage
-              src={"https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg"}
-            />
-            <AvatarFallback>{"JD"}</AvatarFallback>
-          </Avatar>
+          <HomeAvatar/>
         ) : (
           <Button
             onClick={() => {
