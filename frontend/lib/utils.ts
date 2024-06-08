@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast as shadToast } from "@/components/ui/use-toast";
+import { supabase } from "./globals";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,4 +35,23 @@ export function timeSince(time: string) {
         return interval + " minute(s)";
     }
     return Math.floor(seconds) + " seconds";
+}
+
+export async function signOutWithToast(toast: typeof shadToast) {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        toast({
+            variant: "destructive",
+            description: "Failed to sign out, please try again",
+        });
+    } else {
+        toast({
+            description: "Signed out succesfully",
+        });
+
+        setTimeout(() => {
+            window.location.assign("/");
+        }, 2000);
+    }
 }

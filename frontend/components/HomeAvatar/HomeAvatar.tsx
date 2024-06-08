@@ -9,9 +9,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-
+import { useToast } from "../ui/use-toast";
+import { signOutWithToast } from "@/lib/utils";
 
 export function HomeAvatar() {
+  const { toast } = useToast();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,7 +26,7 @@ export function HomeAvatar() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="m-2">
-        <DropdownMenuItem>Sign out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOutWithToast(toast)}>Sign out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
