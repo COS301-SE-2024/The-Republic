@@ -159,7 +159,7 @@ describe("Login Functionality", () => {
 ### Git Flow
 
 - Use the Git Flow branching strategy for parallel development.
-  - Branches: Master, Development, Feature, Documentation.
+  - Branches: Main, Development, Feature, Documentation.
 
 ### Git Branch Naming Conventions
 
@@ -167,16 +167,35 @@ describe("Login Functionality", () => {
 - Lowercase and hyphen-separated.
 - Alphanumeric characters with no continuous hyphens.
 - Example Names:
-  - `master`
+  - `main`
   - `development` or `develop`
   - `feature/testing` or `feature/bugfixes`
   - `hotfix/test` or `hotfix/bugfix`
 
 ### Review Process
 
-- Features based on the development branch.
-- Automated checks for linting and unit tests.
-- Manual review by testers.
+  - Features based on the development branch.
+  - Automated checks for linting and unit tests.
+  - Manual review by testers.
+
+### Commits
+  - Commit per feature or each aspect of a feature.
+  - Avoid the following:
+    - Commits with too many files.
+    - Committing tests, documentation, and code simultaneously.
+    - Vague commit messages.
+
+
+  - Each commit should be focused and have a clear purpose.
+  - Write descriptive and concise commit messages.
+    - Summarize the changes made in the commit. Use as much detail as possible in the commit description if necessary.
+
+  - Use separate commits for code changes, tests, and documentation.
+
+  - This allows for better tracking and understanding of the changes.
+
+  - Regularly push commits to the remote repository to keep the team in sync.
+  - Use interactive rebase or squash commits when necessary to maintain a clean commit history.
 
 ### CI/CD
 
