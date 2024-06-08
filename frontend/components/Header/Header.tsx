@@ -1,37 +1,16 @@
-'use client';
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React from "react";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { ModeToggle } from "../ThemeToggle/ModeToggle";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/globals";
-import { User } from '@supabase/supabase-js';
-import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/contexts/UserContext";
 import { HomeAvatar } from "../HomeAvatar/HomeAvatar";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-export default function Header() {
-  const [user, setUser] = useState<User | null>(null);
+const Header = () => {
+  const { user } = useUser();
   const router = useRouter();
-
-  useEffect(() => {
-    async function checkAuth() {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Failed to retrieve session:', sessionError);
-        return;
-      }
-      if (session) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-          console.error('Failed to retrieve user:', userError);
-          return;
-        }
-        setUser(user);
-      }
-      
-    }
-
-    checkAuth();
-  }, []);
 
   return (
     <header className="flex items-center justify-between p-5 border-b bg-background">
@@ -44,13 +23,12 @@ export default function Header() {
           <ModeToggle />
         </div>
         {user ? (
-          <HomeAvatar/>
+          <HomeAvatar imageUrl={user.image_url} />
         ) : (
           <Button
             onClick={() => {
               router.push("/signup");
             }}
-            
           >
             Sign Up
           </Button>
@@ -58,4 +36,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

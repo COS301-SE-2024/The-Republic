@@ -36,7 +36,7 @@ const moodOptions = {
   ],
 };
 
-const IssueInputBox = () => {
+const IssueInputBox = ({ user }: { user: { fullname: string; image_url: string } | null }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
@@ -92,12 +92,14 @@ const IssueInputBox = () => {
     <Card className="mb-4 w-full bg-background border-primary rounded-lg">
       <CardContent className="p-4">
         <div className="flex items-center">
-          <div className="pr-2">
-            <Avatar>
-              <AvatarImage src="https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </div>
+          {user && (
+            <div className="pr-2">
+              <Avatar>
+                <AvatarImage src={user.image_url} />
+                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+              </Avatar>
+            </div>
+          )}
           <Input
             type="text"
             placeholder="What's going on!?"

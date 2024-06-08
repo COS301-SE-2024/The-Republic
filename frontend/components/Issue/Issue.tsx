@@ -67,7 +67,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <div className="flex items-center">
             <div className="pr-2">
               <Avatar>
-                <AvatarImage src={issue.user.image_url || "https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg"} />
+                <AvatarImage src={issue.user.image_url} />
                 <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>

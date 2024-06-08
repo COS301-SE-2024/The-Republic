@@ -1,6 +1,7 @@
 import express from "express";
 import issueRoutes from "./routes/issueRoutes";
 import reactionRoutes from "./routes/reactionRoutes";
+import userRoutes from "./routes/userRoutes";
 import { serverMiddleare } from "./middleware/middleware";
 
 const app = express();
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 app.use(serverMiddleare);
 app.use("/api/issues", issueRoutes);
 app.use("/api/reactions", reactionRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
