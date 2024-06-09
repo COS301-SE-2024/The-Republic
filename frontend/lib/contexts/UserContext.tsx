@@ -6,6 +6,7 @@ import { supabase } from "@/lib/globals";
 interface User {
   fullname: string;
   image_url: string;
+  user_id: string;
 }
 
 interface UserContextType {
