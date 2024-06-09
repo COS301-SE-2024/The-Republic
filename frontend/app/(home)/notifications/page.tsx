@@ -1,4 +1,3 @@
-// pages/notifications.tsx
 import Notifications from '@/components/Notifications/Notifications';
 
 const NotificationsRoute = () => {
