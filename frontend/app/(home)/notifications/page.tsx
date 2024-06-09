@@ -1,7 +1,9 @@
+// app/notifications/page.tsx
+import React from 'react';
 import Notifications from '@/components/Notifications/Notifications';
 
-const NotificationsRoute = () => {
+const NotificationsPage: React.FC = () => {
   return <Notifications />;
 };
 
-export default NotificationsRoute;
+export default NotificationsPage;
