@@ -15,11 +15,6 @@ on:
       - main
       - 'feature/**'
 
-  workflow_run:
-    workflows: ["Lint Backend Application"]
-    types:
-      - completed
-
 jobs:
   test-backend:
     runs-on: ubuntu-latest
