@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bell, ThumbsUp, MessageSquare, CheckCircle, Plus } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import {  ThumbsUp, MessageSquare, CheckCircle, Plus } from 'lucide-react';
 
 type NotificationType = 'reaction' | 'comment' | 'resolve' | 'newIssue';
 
@@ -39,30 +39,28 @@ const getNotificationIcon = (type: NotificationType) => {
 };
 
 const NotificationsPage: React.FC = () => {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Bell className="mr-2" /> Notifications
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="space-y-4">
-          {mockNotifications.map((notification) => (
-            <li key={notification.id} className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
-                {getNotificationIcon(notification.type)}
-              </div>
-              <div>
-                <p className="text-sm font-medium">{notification.user.name} {notification.type === 'newIssue' ? 'reported' : notification.type} "{notification.issue.title}"</p>
-                <p className="text-xs text-muted-foreground">{new Date(notification.createdAt).toLocaleString()}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
-  );
-};
-
-export default NotificationsPage;
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-semibold">Notifications</h1>
+        <Card>
+          <CardContent className="p-0">
+            <ul className="divide-y divide-gray-200">
+              {mockNotifications.map((notification) => (
+                <li key={notification.id} className="flex items-start space-x-3 p-4 hover:bg-gray-50">
+                  <div className="flex-shrink-0 mt-1">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{notification.user.name} {notification.type === 'newIssue' ? 'reported' : notification.type} "{notification.issue.title}"</p>
+                    <p className="text-xs text-muted-foreground">{new Date(notification.createdAt).toLocaleString()}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+  
+  export default NotificationsPage;
