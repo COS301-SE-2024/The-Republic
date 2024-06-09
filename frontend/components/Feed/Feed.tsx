@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { Issue as IssueType } from "@/lib/types";
+import { useUser } from "@/lib/contexts/UserContext";
 
 interface FeedProps {
   userId?: string;
   showInputBox?: boolean;
 }
 
-const Feed: React.FC<FeedProps> = ({ userId, showInputBox= true }) => {
+const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [issues, setIssues] = useState<IssueType[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchIssues = async () => {
@@ -32,7 +34,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox= true }) => {
 
   return (
     <div className="w-full px-6">
-      {showInputBox && <IssueInputBox />}
+      {showInputBox && <IssueInputBox user={user} />}
       {issues.map((issue) => (
         <Issue key={issue.issue_id} issue={issue} />
       ))}
