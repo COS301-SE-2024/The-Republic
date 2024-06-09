@@ -1,33 +1,40 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bell, ThumbsUp, MessageSquare, CheckCircle, User } from 'lucide-react';
+import { Bell, ThumbsUp, MessageSquare, CheckCircle, Plus } from 'lucide-react';
 
-interface Notification {
-  id: number;
-  type: 'like' | 'comment' | 'resolved' | 'newIssue';
-  message: string;
-  timestamp: string;
+type NotificationType = 'reaction' | 'comment' | 'resolve' | 'newIssue';
+
+interface User {
+  id: string;
+  name: string;
 }
 
-const notifications: Notification[] = [
-  { id: 1, type: 'like', message: 'John Doe liked your issue "Fix broken link"', timestamp: '5m ago' },
-  { id: 2, type: 'comment', message: 'Jane Smith commented on your issue "Update dependencies"', timestamp: '10m ago' },
-  { id: 3, type: 'resolved', message: 'Your issue "Improve performance" has been marked as resolved', timestamp: '1h ago' },
-  { id: 4, type: 'newIssue', message: 'Alex Johnson created a new issue "Add dark mode"', timestamp: '2h ago' },
+interface Issue {
+  id: string;
+  title: string;
+}
+
+interface Notification {
+  id: string;
+  type: NotificationType;
+  user: User;
+  issue: Issue;
+  createdAt: string;
+}
+
+const mockNotifications: Notification[] = [
+  { id: '1', type: 'reaction', user: { id: 'user1', name: 'John Doe' }, issue: { id: 'issue1', title: 'Pothole on Main Street' }, createdAt: '2023-06-09T10:00:00Z' },
+  { id: '2', type: 'comment', user: { id: 'user2', name: 'Jane Smith' }, issue: { id: 'issue2', title: 'Streetlight out on Oak Avenue' }, createdAt: '2023-06-09T09:30:00Z' },
+  { id: '3', type: 'resolve', user: { id: 'user3', name: 'City Worker' }, issue: { id: 'issue1', title: 'Pothole on Main Street' }, createdAt: '2023-06-09T08:00:00Z' },
+  { id: '4', type: 'newIssue', user: { id: 'user4', name: 'Alice Johnson' }, issue: { id: 'issue3', title: 'Water pressure low in Westside' }, createdAt: '2023-06-08T15:00:00Z' },
 ];
 
-const getNotificationIcon = (type: Notification['type']) => {
+const getNotificationIcon = (type: NotificationType) => {
   switch (type) {
-    case 'like':
-      return <ThumbsUp className="h-5 w-5" />;
-    case 'comment':
-      return <MessageSquare className="h-5 w-5" />;
-    case 'resolved':
-      return <CheckCircle className="h-5 w-5" />;
-    case 'newIssue':
-      return <User className="h-5 w-5" />;
-    default:
-      return <Bell className="h-5 w-5" />;
+    case 'reaction': return <ThumbsUp className="h-5 w-5" />;
+    case 'comment': return <MessageSquare className="h-5 w-5" />;
+    case 'resolve': return <CheckCircle className="h-5 w-5" />;
+    case 'newIssue': return <Plus className="h-5 w-5" />;
   }
 };
 
@@ -41,14 +48,14 @@ const NotificationsPage: React.FC = () => {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {notifications.map((notification) => (
+          {mockNotifications.map((notification) => (
             <li key={notification.id} className="flex items-start space-x-3">
               <div className="flex-shrink-0 mt-1">
                 {getNotificationIcon(notification.type)}
               </div>
               <div>
-                <p className="text-sm font-medium">{notification.message}</p>
-                <p className="text-xs text-muted-foreground">{notification.timestamp}</p>
+                <p className="text-sm font-medium">{notification.user.name} {notification.type === 'newIssue' ? 'reported' : notification.type} "{notification.issue.title}"</p>
+                <p className="text-xs text-muted-foreground">{new Date(notification.createdAt).toLocaleString()}</p>
               </div>
             </li>
           ))}
