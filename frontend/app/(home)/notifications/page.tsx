@@ -1,7 +1,8 @@
-import React from "react";
+// pages/notifications.tsx
+import Notifications from '@/components/Notifications/Notifications';
 
-function page() {
-  return <div></div>;
-}
+const NotificationsRoute = () => {
+  return <Notifications />;
+};
 
-export default page;
+export default NotificationsRoute;
