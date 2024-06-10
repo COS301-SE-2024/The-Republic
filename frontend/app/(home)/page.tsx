@@ -1,14 +1,9 @@
 "use client";
 
 import Feed from "@/components/Feed/Feed";
-import { UserProvider } from '@/lib/contexts/UserContext';
 
-const Home = () => {
+export default function Home() {
   return (
-    <UserProvider>
-      <Feed />
-    </UserProvider>
+    <Feed showInputBox={true}/>
   );
-};
-
-export default Home;
+}

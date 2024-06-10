@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
-import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Dropdown from "@/components/Dropdown/Dropdown";
@@ -10,62 +9,28 @@ import { MapPin } from 'lucide-react';
 import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from '@/lib/globals';
-import { IssueInputBoxProps } from "@/lib/types";
+import TextareaAutosize from 'react-textarea-autosize';
+import CircularProgress from '../CircularProgressBar/CircularProgressBar';
+import { categoryOptions, moodOptions } from '@/lib/constants';
 
-const categoryOptions = {
-  group: 'Categories',
-  items: [
-    { value: '1', label: 'Healthcare Services' },
-    { value: '2', label: 'Public Safety' },
-    { value: '3', label: 'Water' },
-    { value: '4', label: 'Transportation' },
-    { value: '5', label: 'Electricity' },
-    { value: '6', label: 'Sanitation' },
-    { value: '7', label: 'Social Services' },
-    { value: '8', label: 'Administrative Services' },
-  ],
-};
+const MAX_CHAR_COUNT = 500;
 
-const moodOptions = {
-  group: 'Moods',
-  items: [
-    { value: 'Concerned', label: 'Concerned' },
-    { value: 'Angry', label: 'Angry' },
-    { value: 'Sad', label: 'Sad' },
-    { value: 'Happy', label: 'Happy' }
-  ],
-};
+interface IssueInputBoxProps {
+  user: {
+    user_id: string;
+    fullname: string;
+    image_url: string;
+  } | null; // Allow user to be null
+}
 
-const IssueInputBox: React.FC = () => {
+const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { toast } = useToast();
-  const [user, setUser] = useState<IssueInputBoxProps['user']>(null);
-
-
-  useEffect(() => {
-    const setUserObject = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-    
-        if (!(error || data.session == null)) {
-          const { id, user_metadata: { fullname, avatar_url: image_url } } = data.session.user;
-          setUser({ id, fullname, image_url });
-        }
-      } catch (err) {
-        console.log("Error: ", err);
-      }
-    };
-
-    setUserObject();
-
-  }, []);
 
   const handleIssueSubmit = async () => {
-    const categoryID = parseInt(category);
     if (!user) {
       toast({
         description: "You need to be logged in to post",
@@ -73,15 +38,17 @@ const IssueInputBox: React.FC = () => {
       return;
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issueskkk`, {
+    const categoryID = parseInt(category);
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
       method: "POST",
       body: JSON.stringify({
-          user_id: user.id,
-          category_id: categoryID,
-          content,
-          sentiment: mood,
-          is_anonymous: isAnonymous,
-          created_at: new Date().toISOString(),
+        user_id: user.user_id,
+        category_id: categoryID,
+        content,
+        sentiment: mood,
+        is_anonymous: isAnonymous,
+        created_at: new Date().toISOString(),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -90,8 +57,8 @@ const IssueInputBox: React.FC = () => {
 
     if (!res.ok) {
       toast({
-          variant: "destructive",
-          description: "Failed to post, please try again"
+        variant: "destructive",
+        description: "Failed to post, please try again"
       });
     } else {
       setContent("");
@@ -100,11 +67,13 @@ const IssueInputBox: React.FC = () => {
       setIsAnonymous(false);
 
       toast({
-          description: "Post successful",
+        description: "Post successful",
       });
       window.location.reload();
     }
   };
+
+  const charCount = content.length;
 
   return (
     <Card className="mb-4 w-full bg-background border-primary rounded-lg">
@@ -113,25 +82,29 @@ const IssueInputBox: React.FC = () => {
           {user && (
             <div className="pr-2">
               <Avatar>
-                <AvatarImage src={user.image_url  || '/default.png' } />
-                <AvatarFallback>{user.fullname}</AvatarFallback>
+                <AvatarImage src={user.image_url} />
+                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
           )}
-          <Input
-            type="text"
+          <TextareaAutosize
             placeholder="What's going on!?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="flex-grow mr-4"
+            className="flex-grow mr-4 p-2 border rounded resize-none"
+            maxRows={10}
+            style={{ width: '100%' }}
           />
-          <Button onClick={handleIssueSubmit} disabled={!content}>
+          <Button onClick={handleIssueSubmit} disabled={charCount > MAX_CHAR_COUNT || !content}>
             Post
           </Button>
         </div>
+        {charCount > MAX_CHAR_COUNT && (
+          <div className="text-red-500 mt-2">You are over the limit by {charCount - MAX_CHAR_COUNT} characters.</div>
+        )}
       </CardContent>
-      <CardFooter className="">
-        <Dropdown 
+      <CardFooter className="relative">
+        <Dropdown
           options={categoryOptions}
           value={category}
           onChange={setCategory}
@@ -150,12 +123,15 @@ const IssueInputBox: React.FC = () => {
           <LucideImage />
         </div>
         <div className="mx-2">
-          <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)}/>
-          <label 
+          <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)} />
+          <label
             htmlFor="anon"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 p-2">
             Anonymous
           </label>
+        </div>
+        <div className="absolute bottom-2 right-0 m-4">
+          <CircularProgress charCount={charCount} />
         </div>
       </CardFooter>
     </Card>

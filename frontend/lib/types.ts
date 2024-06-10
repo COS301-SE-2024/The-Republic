@@ -37,8 +37,4 @@ interface HomeAvatarProps {
   imageUrl: string;
 }
 
-interface IssueInputBoxProps {
-  user: { id: string; fullname: string; image_url: string } | null;
-}
-
-export type { User, Category, Reaction, Issue, HomeAvatarProps, IssueInputBoxProps };
+export type { User, Category, Reaction, Issue, HomeAvatarProps };
