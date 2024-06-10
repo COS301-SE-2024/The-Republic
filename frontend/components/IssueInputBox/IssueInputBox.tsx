@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -37,29 +37,46 @@ const moodOptions = {
   ],
 };
 
-const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
+const IssueInputBox: React.FC = () => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { toast } = useToast();
+  const [user, setUser] = useState<IssueInputBoxProps['user']>(null);
+
+
+  useEffect(() => {
+    const setUserObject = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+    
+        if (!(error || data.session == null)) {
+          const { id, user_metadata: { fullname, avatar_url: image_url } } = data.session.user;
+          setUser({ id, fullname, image_url });
+        }
+      } catch (err) {
+        console.log("Error: ", err);
+      }
+    };
+
+    setUserObject();
+
+  }, []);
 
   const handleIssueSubmit = async () => {
-    const { data, error } = await supabase.auth.getSession();
-
-    if (error || data.session == null) {
+    const categoryID = parseInt(category);
+    if (!user) {
       toast({
-          description: "You need to be logged in to post",
+        description: "You need to be logged in to post",
       });
       return;
     }
 
-    const categoryID = parseInt(category);
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issueskkk`, {
       method: "POST",
       body: JSON.stringify({
-          user_id: data.session!.user.id,
+          user_id: user.id,
           category_id: categoryID,
           content,
           sentiment: mood,
@@ -96,8 +113,8 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           {user && (
             <div className="pr-2">
               <Avatar>
-                <AvatarImage src={user.image_url} />
-                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                <AvatarImage src={user.image_url  || '/default.png' } />
+                <AvatarFallback>{user.fullname}</AvatarFallback>
               </Avatar>
             </div>
           )}
