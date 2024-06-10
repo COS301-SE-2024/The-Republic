@@ -18,7 +18,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
       try {
         let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
         if (userId) {
-          url += `?user_id=${userId}`; // API CALL to make
+          url += `?user_id=${userId}`;
         }
 
         const response = await fetch(url);

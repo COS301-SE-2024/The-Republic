@@ -5,9 +5,11 @@ import { SquarePen } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
+import { useUser } from "@/lib/contexts/UserContext";
 
 const ProfileStats: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("issues");
+  const { user } = useUser();
 
   const handleTabClick = (tab: string) => {
     setSelectedTab(tab);
@@ -51,7 +53,7 @@ const ProfileStats: React.FC = () => {
             <Dialog.Overlay className="bg-black/50 fixed inset-0" />
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg w-[90vw] max-w-3xl">
               <Dialog.Title className="text-xl font-semibold mb-4">Create a Post</Dialog.Title>
-              <IssueInputBox />
+              <IssueInputBox user={user} />
               <Dialog.Close asChild>
                 <Button variant="outline" className="mt-4">Close</Button>
               </Dialog.Close>
