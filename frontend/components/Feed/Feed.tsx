@@ -24,7 +24,7 @@ const Feed = () => {
 
   return (
     <div className="w-full px-6">
-      <IssueInputBox user={user} />
+      <IssueInputBox user={user || { fullname: "Defalt User", image_url: "/default.png" }} />
       {issues.map((issue) => (
         <Issue key={issue.issue_id} issue={issue} />
       ))}
