@@ -11,6 +11,7 @@ import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/globals';
+import { IssueInputBoxProps } from "@/lib/types";
 
 const categoryOptions = {
   group: 'Categories',
@@ -36,7 +37,7 @@ const moodOptions = {
   ],
 };
 
-const IssueInputBox = ({ user }: { user: { fullname: string; image_url: string } | null }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
