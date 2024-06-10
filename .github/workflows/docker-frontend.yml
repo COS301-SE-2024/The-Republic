@@ -6,6 +6,11 @@ on:
       - master
       - main
       - develop
+  pull_request:
+    branches:
+      - master
+      - main
+      - develop
 
 jobs:
   build-and-push-frontend:
