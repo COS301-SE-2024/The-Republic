@@ -11,18 +11,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from 'react-textarea-autosize';
 import CircularProgress from '../CircularProgressBar/CircularProgressBar';
-import { useUser } from '@/lib/contexts/UserContext';
 import { categoryOptions, moodOptions } from '@/lib/constants';
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox = () => {
+interface IssueInputBoxProps {
+  user: {
+    user_id: string;
+    fullname: string;
+    image_url: string;
+  } | null; // Allow user to be null
+}
+
+const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { toast } = useToast();
-  const { user } = useUser();
 
   const handleIssueSubmit = async () => {
     if (!user) {
