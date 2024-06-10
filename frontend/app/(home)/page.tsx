@@ -1,9 +1,14 @@
 "use client";
 
 import Feed from "@/components/Feed/Feed";
+import { UserProvider } from '@/lib/contexts/UserContext';
 
-export default function Home() {
+const Home = () => {
   return (
-    <Feed/>
+    <UserProvider>
+      <Feed />
+    </UserProvider>
   );
-}
+};
+
+export default Home;
