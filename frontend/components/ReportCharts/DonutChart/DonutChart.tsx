@@ -16,7 +16,7 @@ function DonutChart() {
         left: 'center'
       },
       series: [{
-        name: 'Access From',
+        name: 'Issue Category',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
@@ -35,11 +35,11 @@ function DonutChart() {
           show: false
         },
         data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' }
+          { value: 1048, name: 'Water' },
+          { value: 735, name: 'Electricity' },
+          { value: 580, name: 'Health' },
+          { value: 484, name: 'Services' },
+          { value: 300, name: 'Roads' }
         ]
       }]
     });

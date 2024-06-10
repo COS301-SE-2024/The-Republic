@@ -31,7 +31,7 @@ function StackedLineChart() {
         },
         series: [
           {
-            name: 'Sales',
+            name: 'Water Issues',
             type: 'line',
             smooth: true,
             stack: 'total',
@@ -47,7 +47,7 @@ function StackedLineChart() {
             }
           },
           {
-            name: 'Revenue',
+            name: 'Electricity issues',
             type: 'line',
             smooth: true,
             stack: 'total',
@@ -63,7 +63,7 @@ function StackedLineChart() {
             }
           },
           {
-            name: 'Customers',
+            name: 'Health Issues',
             type: 'line',
             smooth: true,
             stack: 'total',

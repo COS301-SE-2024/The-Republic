@@ -9,16 +9,16 @@ function RadarChart() {
     const radarChart = echarts.init(document.querySelector("#radarChart"));
     radarChart.setOption({
       legend: {
-        data: ['Allocated Budget', 'Actual Spending']
+        data: ['Reported Issues', 'Resolved Issues']
       },
       radar: {
         indicator: [
-          { name: 'Sales', max: 6500 },
-          { name: 'Administration', max: 16000 },
-          { name: 'Information Technology', max: 30000 },
-          { name: 'Customer Support', max: 38000 },
-          { name: 'Development', max: 52000 },
-          { name: 'Marketing', max: 25000 }
+          { name: 'Water', max: 6500 },
+          { name: 'Electricity', max: 16000 },
+          { name: 'Health', max: 30000 },
+          { name: 'Services', max: 38000 },
+          { name: 'Roads', max: 52000 },
+          { name: 'Crime', max: 25000 }
         ]
       },
       series: [{
