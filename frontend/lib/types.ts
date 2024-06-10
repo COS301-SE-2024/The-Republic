@@ -31,4 +31,10 @@ interface Issue {
   reactions: Reaction[]; 
 }
 
-export type { User, Category, Reaction, Issue };
+interface HomeAvatarProps {
+  username: string;
+  fullname: string;
+  imageUrl: string;
+}
+
+export type { User, Category, Reaction, Issue, HomeAvatarProps };

@@ -15,16 +15,12 @@ import {
   AvatarFallback
 } from "@/components/ui/avatar";
 
+import { HomeAvatarProps } from '@/lib/types';
 import styles from "@/styles/Custom.module.css";
 
 import Link from 'next/link';
-interface HomeAvatarProps {
-  username: string;
-  fullname: string;
-  imageUrl: string;
-}
 
-const Sidebar = ({username = 'johndoe', fullname = 'John Doe', imageUrl}: HomeAvatarProps) => {
+const Sidebar: React.FC<HomeAvatarProps> = ({ username = 'johndoe', fullname = 'John Doe', imageUrl = '' }) => {
   return (
     <div className="w-[300px] border-r min-h-80vh">
       <div className={`${styles.sidebar} grow`}>
