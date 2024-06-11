@@ -7,14 +7,14 @@ import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
+import { useRouter } from "next/navigation";
 
 interface IssueProps {
   issue: IssueType;
 }
 
-
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-
+  const router = useRouter();
 
   const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
@@ -59,6 +59,9 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     console.log("Subscribed");
   };
 
+  const handleCommentClick = () => {
+    router.push(`/issues/${issue.issue_id}`);
+  };
 
   return (
     <Card className="mb-4">
@@ -108,8 +111,8 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         )}
       </CardContent>
       <CardFooter className="flex space-x-2 items-center">
-        <div className="flex items-center">
-          <MessageCircle className="mr-1" />
+        <div className="flex items-center" onClick={handleCommentClick}>
+          <MessageCircle className="mr-1 cursor-pointer" />
         </div>
         <Reaction issueId={issue.issue_id} initialReactions={issue.reactions} />
       </CardFooter>
