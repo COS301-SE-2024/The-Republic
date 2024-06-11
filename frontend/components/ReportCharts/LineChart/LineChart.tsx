@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function LineChart() {
   useEffect(() => {
     // ECharts Line Chart
-    const lineChart = echarts.init(document.querySelector("#lineChart"));
+    const lineChart = echarts.init(document.querySelector("#lineChart") as HTMLElement);
     lineChart.setOption({
       xAxis: {
         type: 'category',

@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function BarChart() {
   useEffect(() => {
     // ECharts Bar Chart
-    const barChart = echarts.init(document.querySelector("#barChart"));
+    const barChart = echarts.init(document.querySelector("#barChart") as HTMLElement);
     barChart.setOption({
       xAxis: {
         type: 'category',

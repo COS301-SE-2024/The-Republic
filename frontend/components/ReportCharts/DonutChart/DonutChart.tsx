@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function DonutChart() {
   useEffect(() => {
     // ECharts Donut Chart
-    const donutChart = echarts.init(document.querySelector("#donutChart"));
+    const donutChart = echarts.init(document.querySelector("#donutChart") as HTMLElement);
     donutChart.setOption({
       tooltip: {
         trigger: 'item'

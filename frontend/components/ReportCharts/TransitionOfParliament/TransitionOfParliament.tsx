@@ -131,7 +131,7 @@ const TransitionOfParliament: React.FC = () => {
                         };
                     }
                 }
-            };
+            } as echarts.EChartsOption;
         })();
 
         let currentOption: echarts.EChartsOption = pieOption;

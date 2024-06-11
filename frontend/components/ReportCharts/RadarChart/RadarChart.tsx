@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function RadarChart() {
   useEffect(() => {
     // ECharts Radar Chart
-    const radarChart = echarts.init(document.querySelector("#radarChart"));
+    const radarChart = echarts.init(document.querySelector("#radarChart") as HTMLElement);
     radarChart.setOption({
       legend: {
         data: ['Reported Issues', 'Resolved Issues']
