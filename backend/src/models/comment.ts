@@ -1,3 +1,5 @@
+import { User } from "./issue";
+
 export interface Comment {
   comment_id: number;
   user_id: string;
@@ -5,4 +7,5 @@ export interface Comment {
   content: string;
   created_at: string;
   is_anonymous: boolean;
+  user: User;
 }
