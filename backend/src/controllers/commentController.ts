@@ -22,3 +22,31 @@ export async function getComments(req: Request, res: Response) {
     res.status(500);
   }
 }
+
+export async function addComment(req: Request, res: Response) {
+  try {
+    await commentService.addComment(req.body);
+    res.sendStatus(201);
+  } catch (error) {
+    console.error(error);
+    if (error === 400)  {
+      res.sendStatus(400);
+    } else {
+      res.sendStatus(500);
+    }
+  }
+}
+
+export async function deleteComment(req: Request, res: Response) {
+  try {
+    await commentService.deleteComment(req.body);
+    res.sendStatus(204);
+  } catch (error) {
+    console.error(error);
+    if (error === 400)  {
+      res.sendStatus(400);
+    } else {
+      res.sendStatus(500);
+    }
+  }
+}
