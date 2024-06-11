@@ -85,7 +85,7 @@ const Sidebar: React.FC<HomeAvatarProps> = ({ username = 'johndoe', fullname = '
               </Avatar>
               <div className={styles.userDetail}>
                 <h3>{(user) ? user.fullname : fullname}</h3>
-                <span>{(user) ? user.username : username}</span>
+                <span>@{(user) ? user.username : username}</span>
               </div>
             </div>
           </div>
