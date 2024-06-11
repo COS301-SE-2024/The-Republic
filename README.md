@@ -21,9 +21,9 @@
 
 <div align="center" >
 
-| Demo   | Video                   | Slides          |
-| ------ | ----------------------- | --------------- |
-| Demo 1 | [InfiniteLoopers-Demo1] | [Demo 1 Slides] |
+| Demo   | Video                                                                                                          | Slides          |
+| ------ | -------------------------------------------------------------------------------------------------------------- | --------------- |
+| Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides] |
 
 </div>
 
