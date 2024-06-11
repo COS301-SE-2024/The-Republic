@@ -9,9 +9,9 @@ import { MapPin } from 'lucide-react';
 import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-// import TextareaAutosize from 'react-textarea-autosize';
-// import CircularProgress from '../CircularProgressBar/CircularProgressBar';
-// import { categoryOptions, moodOptions } from '@/lib/constants';
+import TextareaAutosize from 'react-textarea-autosize';
+import CircularProgress from '../CircularProgressBar/CircularProgressBar';
+import { categoryOptions, moodOptions } from '@/lib/constants';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -87,14 +87,14 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
               </Avatar>
             </div>
           )}
-          {/* <TextareaAutosize
+          <TextareaAutosize
             placeholder="What's going on!?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="flex-grow mr-4 p-2 border rounded resize-none"
             maxRows={10}
             style={{ width: '100%' }}
-          /> */}
+          />
           <Button onClick={handleIssueSubmit} disabled={charCount > MAX_CHAR_COUNT || !content}>
             Post
           </Button>
@@ -104,7 +104,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
         )}
       </CardContent>
       <CardFooter className="relative">
-        {/* <Dropdown
+        <Dropdown
           options={categoryOptions}
           value={category}
           onChange={setCategory}
@@ -115,7 +115,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           value={mood}
           onChange={setMood}
           placeholder="Mood"
-        /> */}
+        /
         <div className="mx-2">
           <MapPin />
         </div>
@@ -131,7 +131,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           </label>
         </div>
         <div className="absolute bottom-2 right-0 m-4">
-          {/* <CircularProgress charCount={charCount} /> */}
+          <CircularProgress charCount={charCount} />
         </div>
       </CardFooter>
     </Card>
