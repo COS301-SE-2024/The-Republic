@@ -23,4 +23,37 @@ export class CommentService {
       amount
     });
   }
+
+  async addComment({
+    user_id,
+    issue_id,
+    content,
+    is_anonymous,
+  }: Partial<Comment>) {
+    if (
+      !user_id ||
+      !issue_id ||
+      !content ||
+      is_anonymous === undefined
+    ) {
+      throw 400;
+    }
+
+    return await this.commentRepository.addComment({
+      user_id,
+      issue_id,
+      content,
+      is_anonymous,
+    });
+  }
+
+  async deleteComment({
+    comment_id,
+    user_id,
+  }: Partial<Comment>) {
+    return await this.commentRepository.deleteComment({
+      comment_id,
+      user_id,
+    });
+  }
 }
