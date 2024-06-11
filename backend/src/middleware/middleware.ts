@@ -15,6 +15,8 @@ export const verifyAndGetUser = async (
   res: Response,
   next: NextFunction,
 ) => {
+  req.body.user_id = undefined;
+
   const authHeader = req.headers.authorization;
 
   if (authHeader === undefined) {
@@ -22,9 +24,8 @@ export const verifyAndGetUser = async (
     return;
   }
 
-  const { data, error } = await supabase.auth.getUser(
-    authHeader.split(" ")[1]
-  );
+  const jwt = authHeader.split(" ")[1];
+  const { data, error } = await supabase.auth.getUser(jwt);
 
   if (error) {
     console.error(error);
@@ -39,5 +40,6 @@ export const verifyAndGetUser = async (
   }
 
   req.body.user_id = data.user.id;
+  console.log(req.body);
   next();
 };
