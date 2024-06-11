@@ -17,13 +17,13 @@
 
 </div>
 
-# Demo
+# Demo Resources
 
-<div align="center" >
+<div>
 
 | Demo   | Video                                                                                                          | Slides          |
 | ------ | -------------------------------------------------------------------------------------------------------------- | --------------- |
-| Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides] |
+| Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGG4_iuy44/_y28yfkIgtxUtfM1VtlgSA/view?utm_content=DAGG4_iuy44&utm_campaign=designshare&utm_medium=link&utm_source=editor) |
 
 </div>
 
