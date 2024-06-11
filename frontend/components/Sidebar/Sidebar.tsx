@@ -17,10 +17,13 @@ import {
 
 import { HomeAvatarProps } from '@/lib/types';
 import styles from "@/styles/Custom.module.css";
+import { useUser } from "@/lib/contexts/UserContext";
 
 import Link from 'next/link';
 
 const Sidebar: React.FC<HomeAvatarProps> = ({ username = 'johndoe', fullname = 'John Doe', imageUrl = '' }) => {
+  const { user } = useUser();
+
   return (
     <div className="w-[300px] border-r min-h-80vh">
       <div className={`${styles.sidebar} grow`}>
@@ -77,12 +80,12 @@ const Sidebar: React.FC<HomeAvatarProps> = ({ username = 'johndoe', fullname = '
           <div className={styles.userAccount}>
             <div className={styles.userProfile}>
               <Avatar>
-                <AvatarImage src={imageUrl} />
+                <AvatarImage src={(user) ? user.image_url : imageUrl} />
                 <AvatarFallback>{"JD"}</AvatarFallback>
               </Avatar>
               <div className={styles.userDetail}>
-                <h3>{fullname}</h3>
-                <span>{username}</span>
+                <h3>{(user) ? user.fullname : fullname}</h3>
+                <span>{(user) ? user.username : username}</span>
               </div>
             </div>
           </div>
