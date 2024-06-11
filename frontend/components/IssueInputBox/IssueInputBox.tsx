@@ -115,7 +115,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           value={mood}
           onChange={setMood}
           placeholder="Mood"
-        /
+        />
         <div className="mx-2">
           <MapPin />
         </div>
