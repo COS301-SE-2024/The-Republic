@@ -6,6 +6,10 @@ import * as d3 from 'd3';
 import 'd3-hierarchy';
 import mockData from "@/data/dot";
 
+import {
+  SubData, SeriesDataItem, Params, Api, RenderItemResult
+} from "@/lib/types";
+
 const EChartsComponent = () => {
   const chartRef = useRef(null);
 
@@ -13,16 +17,20 @@ const EChartsComponent = () => {
     const chartDom = chartRef.current;
     const myChart = echarts.init(chartDom);
 
-    function run(rawData) {
-      const dataWrap = prepareData(rawData);
+    function run() {
+      const myObject = {
+        $count: 1,
+        data: mockData
+      };
+      const dataWrap = prepareData(myObject);
       initChart(dataWrap.seriesData, dataWrap.maxDepth);
     }
 
-    function prepareData(rawData) {
-      const seriesData = [];
+    function prepareData(rawData: SubData) {
+      const seriesData: SeriesDataItem[] = [];
       let maxDepth = 0;
 
-      function convert(source, basePath, depth) {
+      function convert(source: SubData, basePath: string, depth: number) {
         if (source == null) {
           return;
         }
@@ -36,10 +44,11 @@ const EChartsComponent = () => {
             depth: depth,
             index: seriesData.length
         });
+        
         for (const key in source) {
             if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
                 const path = basePath + '.' + key;
-                convert(source[key], path, depth + 1);
+                convert(source[key] as SubData<unknown>, path, depth + 1);
             }
         }
       }
@@ -50,37 +59,38 @@ const EChartsComponent = () => {
       };
     }
 
-    function initChart(seriesData, maxDepth) {
-      let displayRoot = stratify();
-
+    function initChart(seriesData: SeriesDataItem[], maxDepth: number) {
+      let displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
+    
       function stratify() {
         return d3
-          .stratify()
-          .parentId(function (d) {
+          .stratify<SeriesDataItem>()
+          .parentId((d: SeriesDataItem): string => {
             return d.id.substring(0, d.id.lastIndexOf('.'));
           })(seriesData)
-          .sum(function (d) {
+          .sum((d: SeriesDataItem): number => {
             return d.value || 0;
           })
-          .sort(function (a, b) {
-            return b.value - a.value;
+          .sort((a: d3.HierarchyNode<SeriesDataItem>, b: d3.HierarchyNode<SeriesDataItem>): number => {
+            return (b.value || 0) - (a.value || 0);
           });
-      }
+      }   
 
-      function overallLayout(params, api) {
+      function overallLayout(params: Params, api: Api): void {
         const context = params.context;
         d3
-          .pack()
+          .pack<SeriesDataItem>()
           .size([api.getWidth() - 2, api.getHeight() - 2])
           .padding(3)(displayRoot);
         context.nodes = {};
-        displayRoot.descendants().forEach(function (node, index) {
-          context.nodes[node.id] = node;
-          console.log(index);
+        displayRoot.descendants().forEach(function (node) {
+          if (node.id != undefined) {
+            context.nodes[node.id] = node;
+          }
         });
       }
 
-      function renderItem(params, api) {
+      function renderItem(params: Params, api: Api): RenderItemResult | void {
         const context = params.context;
         if (!context.layout) {
           context.layout = true;
@@ -103,7 +113,7 @@ const EChartsComponent = () => {
             .split(/(?=[A-Z][^A-Z])/g)
             .join('\n')
           : '';
-        const z2 = api.value('depth') * 2;
+        const z2 = Number(api.value('depth')) * 2;
         return {
           type: 'circle',
           focus: focus,
@@ -179,15 +189,17 @@ const EChartsComponent = () => {
       };
       myChart.setOption(option);
       myChart.on('click', { seriesIndex: 0 }, function (params) {
-        drillDown(params.data.id);
+        if (params.data && typeof params.data === 'object' && 'id' in params.data) {
+          drillDown((params.data as { id: string }).id);
+        }
       });
 
-      function drillDown(targetNodeId) {
-        displayRoot = stratify();
+      function drillDown(targetNodeId: string | null = null): void {
+        displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
         if (targetNodeId != null) {
           displayRoot = displayRoot.descendants().find(function (node) {
             return node.data.id === targetNodeId;
-          });
+          }) as d3.HierarchyCircularNode<SeriesDataItem>;
         }
         displayRoot.parent = null;
         myChart.setOption({
@@ -204,7 +216,7 @@ const EChartsComponent = () => {
       });
     }
 
-    run(mockData);
+    run();
 
     return () => {
       myChart.dispose();
