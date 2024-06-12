@@ -44,7 +44,7 @@ const ProfileHeader: React.FC = () => {
           </Avatar>
           <Dialog.Root open={isEditing} onOpenChange={setIsEditing}>
             <Dialog.Trigger asChild>
-              <Button className="inline-flex items-center justify-center rounded-md px-4 py-2 font-medium text-black-600 hover:bg-gray-100">
+              <Button className="inline-flex items-center justify-center rounded-md px-4 py-2 font-medium text-black-600">
                 <Pencil className="w-4 h-4 mr-2" /> Edit Profile
               </Button>
             </Dialog.Trigger>
