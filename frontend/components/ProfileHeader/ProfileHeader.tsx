@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Pencil } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { cn } from "@/lib/utils";
 import { User } from "@/lib/types";
 import EditProfile from "@/components/EditProfile/EditProfile";
+import { useTheme } from "next-themes";
 
 const ProfileHeader: React.FC = () => {
   const [user, setUser] = useState<User>({
@@ -20,6 +22,7 @@ const ProfileHeader: React.FC = () => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const { theme } = useTheme();
 
   const handleUpdate = (updatedUser: User) => {
     setUser(updatedUser);
@@ -50,7 +53,7 @@ const ProfileHeader: React.FC = () => {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="bg-black/50 fixed inset-0" />
-              <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg w-96">
+              <Dialog.Content className={cn("fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg w-96", theme === "dark" ? "bg-black-900 text-white" : "bg-white text-gray-800")}>
                 <Dialog.Title className="text-xl font-semibold mb-4">Edit Profile</Dialog.Title>
                 <EditProfile user={user} onUpdate={handleUpdate} onCancel={handleCancel} />
               </Dialog.Content>
