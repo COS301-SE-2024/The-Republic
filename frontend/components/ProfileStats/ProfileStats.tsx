@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import CreatePost from "@/components/CreatePost/CreatePost"; 
-import { useUser } from "@/lib/contexts/UserContext";
+// import { useUser } from "@/lib/contexts/UserContext";
 
 const ProfileStats: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState("issues");
-  const { user } = useUser();
+  // const { user } = useUser();
 
   const handleTabClick = (tab: string) => {
     setSelectedTab(tab);
