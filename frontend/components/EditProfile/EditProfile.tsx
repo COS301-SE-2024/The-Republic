@@ -58,7 +58,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
 
   return (
     <form>
-      <div className={cn("space-y-4", theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800")}>
+      <div className={cn("space-y-4", theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800")}>
         <div>
           <label htmlFor="banner" className="block text-sm font-medium">
             Banner Image
@@ -143,7 +143,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         </Button>
         <Button
           type="button"
-          className={cn("inline-flex justify-center rounded-md px-4 py-2 font-medium", theme === "dark" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-blue-600 text-white hover:bg-blue-700")}
+          className={cn("inline-flex justify-center rounded-md px-4 py-2 font-medium", theme === "dark" ? "bg-green-600 text-white hover:bg-green-700" : "bg-green-600 text-white hover:bg-green-700")}
           onClick={handleSave}
         >
           Save
