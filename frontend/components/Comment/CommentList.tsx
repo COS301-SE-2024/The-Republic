@@ -48,7 +48,7 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
   };
 
   return (
-    <div>
+    <div className="pt-4">
       {renderComments(null)}
     </div>
   );
