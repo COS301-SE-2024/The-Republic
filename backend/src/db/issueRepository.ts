@@ -3,8 +3,10 @@ import supabase from "../services/supabaseClient";
 import { DateTime } from 'luxon';
 import ReactionRepository from "./reactionRepository";
 import { GetIssuesParams } from "../types/issue";
+import { CategoryRepository } from "./categoryRepository";
 
 const reactionRepository = new ReactionRepository();
+const categoryRepository = new CategoryRepository();
 
 export default class IssueRepository {
   async getAllIssues(): Promise<Issue[]> {
@@ -38,6 +40,8 @@ export default class IssueRepository {
   async getIssues({
     from,
     amount,
+    category,
+    mood,
   }: GetIssuesParams): Promise<Issue[]> {
     let query = supabase
       .from("issue")
@@ -56,6 +60,15 @@ export default class IssueRepository {
       `)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
+
+    if (category) {
+      const categoryId = await categoryRepository.getCategoryId(category);
+      query = query.eq("category_id", categoryId);
+    }
+
+    if (mood) {
+      query = query.eq("sentiment",  mood);
+    }
 
     const { data, error } = await query;
 
