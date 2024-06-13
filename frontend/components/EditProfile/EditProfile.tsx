@@ -33,7 +33,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleImageUpload = (
     e: ChangeEvent<HTMLInputElement>,
-    type: "banner" | "avatar"
+    type: "avatar"
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -41,7 +41,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
       reader.onloadend = () => {
         setUpdatedUser((prev) => ({
           ...prev,
-          [type === "banner" ? "banner_url" : "image_url"]: reader.result as string,
+          [type === "avatar" ? "image_url" : "image_url"]: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
@@ -58,35 +58,19 @@ const EditProfile: React.FC<EditProfileProps> = ({
 
   return (
     <form>
-      <div className={cn("space-y-4", theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800")}>
-        <div>
-          <label htmlFor="banner" className="block text-sm font-medium">
-            Banner Image
-          </label>
-          <label
-            htmlFor="banner"
-            className={cn("mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer", 
-              theme === "dark" ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white" : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white")}
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            <span className="text-base leading-normal">Upload Image</span>
-            <Input
-              id="banner"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleImageUpload(e, "banner")}
-            />
-          </label>
-        </div>
+      <div className={cn("space-y-4", theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800")}>
         <div>
           <label htmlFor="avatar" className="block text-sm font-medium">
             Profile Picture
           </label>
           <label
             htmlFor="avatar"
-            className={cn("mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer", 
-              theme === "dark" ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white" : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white")}
+            className={cn(
+              "mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer",
+              theme === "dark"
+                ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
+                : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white"
+            )}
           >
             <Upload className="w-4 h-4 mr-2" />
             <span className="text-base leading-normal">Upload Image</span>
@@ -107,7 +91,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
             id="fullname"
             value={updatedUser.fullname}
             onChange={handleInputChange}
-            className={cn(theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300")}
+            className={cn(
+              theme === "dark"
+                ? "bg-gray-700 text-white border-gray-600"
+                : "bg-white text-gray-800 border-gray-300"
+            )}
           />
         </div>
         <div>
@@ -118,7 +106,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
             id="username"
             value={updatedUser.username}
             onChange={handleInputChange}
-            className={cn(theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300")}
+            className={cn(
+              theme === "dark"
+                ? "bg-gray-700 text-white border-gray-600"
+                : "bg-white text-gray-800 border-gray-300"
+            )}
           />
         </div>
         <div>
@@ -129,21 +121,35 @@ const EditProfile: React.FC<EditProfileProps> = ({
             id="bio"
             value={updatedUser.bio}
             onChange={handleInputChange}
-            className={cn(theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300")}
+            className={cn(
+              theme === "dark"
+                ? "bg-gray-700 text-white border-gray-600"
+                : "bg-white text-gray-800 border-gray-300"
+            )}
           />
         </div>
       </div>
       <div className="mt-6 flex justify-end space-x-2">
         <Button
           type="button"
-          className={cn("inline-flex justify-center rounded-md px-4 py-2 font-medium", theme === "dark" ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-white text-gray-800 hover:bg-gray-200")}
+          className={cn(
+            "inline-flex justify-center rounded-md px-4 py-2 font-medium",
+            theme === "dark"
+              ? "bg-gray-700 text-white hover:bg-gray-600"
+              : "bg-white text-gray-800 hover:bg-gray-200"
+          )}
           onClick={handleCancel}
         >
           Cancel
         </Button>
         <Button
           type="button"
-          className={cn("inline-flex justify-center rounded-md px-4 py-2 font-medium", theme === "dark" ? "bg-green-600 text-white hover:bg-green-700" : "bg-green-600 text-white hover:bg-green-700")}
+          className={cn(
+            "inline-flex justify-center rounded-md px-4 py-2 font-medium",
+            theme === "dark"
+              ? "bg-green-600 text-white hover:bg-green-700"
+              : "bg-green-600 text-white hover:bg-green-700"
+          )}
           onClick={handleSave}
         >
           Save
