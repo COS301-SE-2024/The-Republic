@@ -14,7 +14,7 @@ const ProfileStats: React.FC = () => {
 
   return (
     <div className="flex space-x-4 px-4 py-1 border-b">
-      <div className="px-2"> 
+      <div className="py-3"> 
         <div
           className={`relative inline-block cursor-pointer ${
             selectedTab === "issues" ? "text-green-500" : ""
@@ -28,7 +28,7 @@ const ProfileStats: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="px-2"> 
+      <div className="py-3"> 
         <div
           className={`relative inline-block cursor-pointer ${
             selectedTab === "resolved" ? "text-green-500" : ""
@@ -42,7 +42,7 @@ const ProfileStats: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="flex items-center ml-auto px-2"> 
+      <div className="flex items-center ml-auto py-3"> 
         <CreatePost />
       </div>
     </div>
