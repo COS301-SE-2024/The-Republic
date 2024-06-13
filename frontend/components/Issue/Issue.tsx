@@ -12,10 +12,8 @@ interface IssueProps {
   issue: IssueType;
 }
 
-
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-
-
+  const [isSubscribed, setIsSubscribed] = React.useState(false);
   const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
@@ -25,9 +23,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/${issue.issue_id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/${issue.issue_id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         window.location.reload();
@@ -41,9 +42,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleResolve = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/${issue.issue_id}`, {
-        method: "PUT",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/${issue.issue_id}`,
+        {
+          method: "PUT",
+        }
+      );
 
       if (response.ok) {
         window.location.reload();
@@ -56,9 +60,10 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   };
 
   const handleSubscribe = () => {
-    console.log("Subscribed");
+    setIsSubscribed((prevState) => !prevState);
+    // Perform additional logic here, such as making an API call
+    console.log("Subscription toggled:", !isSubscribed);
   };
-
 
   return (
     <Card className="mb-4">
@@ -75,7 +80,9 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
               <div className="flex items-center">
                 <div className="font-bold">{issue.user.fullname}</div>
                 <div className="mx-1 text-sm text-gray-500">·</div>
-                <div className="text-sm text-gray-500">{timeSince(issue.created_at)}</div>
+                <div className="text-sm text-gray-500">
+                  {timeSince(issue.created_at)}
+                </div>
               </div>
               <div className="text-sm text-gray-600">{issue.user.username}</div>
             </div>
@@ -101,9 +108,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         <p>{issue.content}</p>
         {issue.resolved_at && (
           <div className="flex space-x-2 pt-2">
-            <Badge className="">
-              Resolved {timeSince(issue.resolved_at)}
-            </Badge>
+            <Badge className="">Resolved {timeSince(issue.resolved_at)}</Badge>
           </div>
         )}
       </CardContent>
@@ -111,7 +116,16 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         <div className="flex items-center">
           <MessageCircle className="mr-1" />
         </div>
-        <Reaction issueId={issue.issue_id} initialReactions={issue.reactions} />
+        <Reaction
+          issueId={issue.issue_id}
+          initialReactions={issue.reactions}
+        />
+        <button
+          onClick={handleSubscribe}
+          className="px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+        >
+          {isSubscribed ? "Unsubscribe" : "Subscribe"}
+        </button>
       </CardFooter>
     </Card>
   );

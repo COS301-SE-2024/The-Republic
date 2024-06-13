@@ -91,7 +91,7 @@ const mockNotifications: Notification[] = [
   },
   {
     id: '10',
-    type: 'reaction',
+    type: 'reaction', 
     user: { id: 'user10', name: 'Patrice Motsepe' },
     issue: { id: 'issue9', title: 'Solar panel installation for schools in Limpopo' },
     createdAt: '2024-06-05T14:00:00Z',
