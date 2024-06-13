@@ -18,14 +18,16 @@ export class CommentRepository {
 
   async getComments({
     issue_id,
+    parent_id,
     from,
     amount
   }: {
     issue_id: number,
+    parent_id: number,
     from: number,
     amount: number
   }): Promise<Comment[]> {
-    const { data, error } = await supabase
+    let query = supabase
       .from("comment")
       .select(`
         *,
@@ -40,6 +42,14 @@ export class CommentRepository {
       .eq("issue_id", issue_id)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
+
+    if (parent_id === null) {
+      query = query.is("parent_id", null);
+    } else {
+      query = query.eq("parent_id", parent_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
 

@@ -10,15 +10,18 @@ export class CommentService {
 
   async getComments({
     issue_id,
+    parent_id,
     from,
     amount
   }: {
     issue_id: number,
+    parent_id: number,
     from: number,
     amount: number
   }): Promise<Comment[]> {
     return await this.commentRepository.getComments({
       issue_id,
+      parent_id,
       from,
       amount
     });

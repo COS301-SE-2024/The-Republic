@@ -19,7 +19,7 @@ export async function getComments(req: Request, res: Response) {
     res.json(comments);
   } catch (error) {
     console.error(error);
-    res.status(500);
+    res.sendStatus(500);
   }
 }
 
