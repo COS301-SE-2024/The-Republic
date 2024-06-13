@@ -1,11 +1,19 @@
 import { CommentRepository } from "../db/commentRepository";
 import { Comment } from "../models/comment";
+import { GetCommentsParams, GetNumCommentsParams } from "../types/comment";
+import { Count } from "../types/shared";
 
 export class CommentService {
   private commentRepository = new CommentRepository();
 
-  async getNumComments(issue_id: number): Promise<{ count: number }> {
-    return await this.commentRepository.getNumComments(issue_id);
+  async getNumComments({
+    issue_id,
+    parent_id
+  }: GetNumCommentsParams): Promise<Count> {
+    return await this.commentRepository.getNumComments({
+      issue_id,
+      parent_id
+    });
   }
 
   async getComments({
@@ -13,12 +21,7 @@ export class CommentService {
     parent_id,
     from,
     amount
-  }: {
-    issue_id: number,
-    parent_id: number,
-    from: number,
-    amount: number
-  }): Promise<Comment[]> {
+  }: GetCommentsParams): Promise<Comment[]> {
     return await this.commentRepository.getComments({
       issue_id,
       parent_id,
@@ -30,6 +33,7 @@ export class CommentService {
   async addComment({
     user_id,
     issue_id,
+    parent_id,
     content,
     is_anonymous,
   }: Partial<Comment>) {
@@ -45,6 +49,7 @@ export class CommentService {
     return await this.commentRepository.addComment({
       user_id,
       issue_id,
+      parent_id,
       content,
       is_anonymous,
     });

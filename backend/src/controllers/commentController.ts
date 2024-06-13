@@ -5,7 +5,7 @@ const commentService = new CommentService();
 
 export async function getNumComments(req: Request, res: Response) {
   try {
-    const count = await commentService.getNumComments(req.body.issue_id);
+    const count = await commentService.getNumComments(req.body);
     res.json(count);
   } catch (error) {
     console.error(error);

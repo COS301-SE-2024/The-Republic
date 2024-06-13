@@ -2,8 +2,8 @@ import { Comment } from "../models/comment";
 import supabase from "../services/supabaseClient";
 
 export class CommentRepository {
-  async getNumComments(issue_id: number): Promise<{ count: number }> {
-    const { count, error } = await supabase
+  async getNumComments({ issue_id, parent_id }: GetNumCommentsParams): Promise<Count> {
+    let query = supabase
       .from("comment")
       .select("*", {
         count: "exact",
@@ -21,12 +21,7 @@ export class CommentRepository {
     parent_id,
     from,
     amount
-  }: {
-    issue_id: number,
-    parent_id: number,
-    from: number,
-    amount: number
-  }): Promise<Comment[]> {
+  }: GetCommentsParams): Promise<Comment[]> {
     let query = supabase
       .from("comment")
       .select(`
@@ -59,6 +54,7 @@ export class CommentRepository {
   async addComment({
     user_id,
     issue_id,
+    parent_id,
     content,
     is_anonymous,
   }: Partial<Comment>) {
@@ -67,6 +63,7 @@ export class CommentRepository {
       .insert({
         user_id,
         issue_id,
+        parent_id,
         content,
         is_anonymous,
         created_at: new Date().toISOString(),
