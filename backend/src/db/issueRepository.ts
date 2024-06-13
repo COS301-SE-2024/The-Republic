@@ -2,6 +2,7 @@ import { Issue } from "../models/issue";
 import supabase from "../services/supabaseClient";
 import { DateTime } from 'luxon';
 import ReactionRepository from "./reactionRepository";
+import { GetIssuesParams } from "../types/issue";
 
 const reactionRepository = new ReactionRepository();
 
@@ -33,6 +34,42 @@ export default class IssueRepository {
 
     return issues as Issue[];
   }
+
+  async getIssues({
+    from,
+    amount,
+  }: GetIssuesParams): Promise<Issue[]> {
+    let query = supabase
+      .from("issue")
+      .select(`
+        *,
+        user: user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url
+        ),
+        category: category_id (
+          name
+        )
+      `)
+      .order("created_at", { ascending: false })
+      .range(from, from + amount - 1);
+
+    const { data, error } = await query;
+
+    if (error) throw new Error(error.message);
+
+    // Fetch reaction counts for each issue
+    const issues = await Promise.all(data.map(async (issue: Issue) => {
+      const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+      return { ...issue, reactions };
+    }));
+
+    return issues as Issue[];
+  }
+
 
   async getIssueById(issueId: number): Promise<Issue | null> {
     const { data, error } = await supabase

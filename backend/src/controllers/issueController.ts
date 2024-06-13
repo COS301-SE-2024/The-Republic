@@ -20,6 +20,15 @@ export const getAllIssues = async (req: Request, res: Response) => {
   }
 };
 
+export const getIssues = async (req: Request, res: Response) => {
+  try {
+    const issues = await issueService.getIssues(req.body);
+    res.json(issues);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
 export const getIssueById = async (req: Request, res: Response) => {
   try {
     const issueId = parseInt(req.params.id, 10);
@@ -75,6 +84,7 @@ export const resolveIssue = async (req: Request, res: Response) => {
 
 export default {
   getAllIssues,
+  getIssues,
   getIssueById,
   createIssue,
   updateIssue,

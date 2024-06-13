@@ -1,5 +1,6 @@
 import IssueRepository from "../db/issueRepository";
 import { Issue } from "../models/issue";
+import { GetIssuesParams } from "../types/issue";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -10,6 +11,10 @@ export default class IssueService {
 
   async getAllIssues(): Promise<Issue[]> {
     return this.issueRepository.getAllIssues();
+  }
+
+  async getIssues(params: GetIssuesParams): Promise<Issue[]> {
+    return this.issueRepository.getIssues(params);
   }
 
   async getIssueById(issueId: number): Promise<Issue | null> {
