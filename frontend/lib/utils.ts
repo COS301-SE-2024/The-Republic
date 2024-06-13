@@ -9,8 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function timeSince(time: string) {
     const seconds = Math.floor((
-        (new Date().getTime()) - 
-        (new Date(time).getTime())) / 
+        (new Date().getTime()) -
+        (new Date(time).getTime())) /
         1000
     );
 
@@ -54,4 +54,14 @@ export async function signOutWithToast(toast: typeof shadToast) {
             window.location.assign("/");
         }, 2000);
     }
+}
+
+export function objectToQuery(obj: { [key: string]: string | number | boolean}) {
+    const params = [];
+
+    for (const key in obj) {
+        params.push(key + "=" + encodeURIComponent(obj[key]));
+    }
+
+    return params.join("&");
 }
