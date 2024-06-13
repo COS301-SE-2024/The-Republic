@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Bell } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
@@ -13,8 +13,9 @@ interface IssueProps {
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const menuItems = ["Delete"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
@@ -61,11 +62,23 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   };
 
   const handleSubscribe = (type: string) => {
-    setIsSubscribed(true);
-    setShowSubscribePopup(false);
+    setShowSubscribeDropdown(false);
     // Perform additional logic here, such as making an API call
     console.log("Subscribed to:", type);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowSubscribeDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   return (
     <Card className="mb-4">
@@ -90,18 +103,57 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
             </div>
           </div>
           <div className="flex items-center">
-            <button
-              onClick={() => setShowSubscribePopup(true)}
-              className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 mr-2"
-            >
-              {isSubscribed ? "Subscribed" : "Subscribe"}
-            </button>
+            <div className="relative inline-block text-left">
+              <div>
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 focus:outline-none"
+                  id="subscribe-menu"
+                  onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
+                >
+                  <Bell className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+              {showSubscribeDropdown && (
+                <div
+                  ref={dropdownRef}
+                  className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="subscribe-menu"
+                >
+                  <div className="py-1" role="none">
+                    <button
+                      onClick={() => handleSubscribe("Issue")}
+                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                      role="menuitem"
+                    >
+                      Subscribe to Issue
+                    </button>
+                    <button
+                      onClick={() => handleSubscribe("Category")}
+                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                      role="menuitem"
+                    >
+                      Subscribe to Category
+                    </button>
+                    <button
+                      onClick={() => handleSubscribe("Location")}
+                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                      role="menuitem"
+                    >
+                      Subscribe to Location
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
             <MoreMenu
               menuItems={menuItems}
               isOwner={isOwner}
               onDelete={handleDelete}
               onResolve={handleResolve}
-              onSubscribe={() => setShowSubscribePopup(true)}
+              onSubscribe={handleSubscribe} // Add this line to pass the prop
             />
           </div>
         </div>
@@ -131,33 +183,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           initialReactions={issue.reactions}
         />
       </CardFooter>
-      {showSubscribePopup && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
-            <div className="space-y-2">
-              <button
-                onClick={() => handleSubscribe("Issue")}
-                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
-              >
-                Subscribe to Issue
-              </button>
-              <button
-                onClick={() => handleSubscribe("Category")}
-                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
-              >
-                Subscribe to Category
-              </button>
-              <button
-                onClick={() => handleSubscribe("Location")}
-                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
-              >
-                Subscribe to Location
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </Card>
   );
 };
