@@ -1,8 +1,10 @@
 import { Router } from "express";
 import issueController from "../controllers/issueController";
+import { verifyAndGetUser } from "../middleware/middleware";
 
 const router = Router();
 
+router.use(verifyAndGetUser);
 router.get("/", issueController.getAllIssues);
 router.post("/", issueController.getIssues);
 router.get("/:id", issueController.getIssueById);
