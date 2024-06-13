@@ -14,8 +14,8 @@ interface IssueProps {
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [subscriptionType, setSubscriptionType] = useState("Issue");
-  const menuItems = ["Delete", "Subscribe"];
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const menuItems = ["Delete"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
   }
@@ -60,10 +60,11 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     }
   };
 
-  const handleSubscribe = () => {
-    setIsSubscribed((prevState) => !prevState);
+  const handleSubscribe = (type: string) => {
+    setIsSubscribed(true);
+    setShowSubscribePopup(false);
     // Perform additional logic here, such as making an API call
-    console.log("Subscription toggled:", !isSubscribed, `for ${subscriptionType}`);
+    console.log("Subscribed to:", type);
   };
 
   return (
@@ -88,13 +89,21 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
               <div className="text-sm text-gray-600">{issue.user.username}</div>
             </div>
           </div>
-          <MoreMenu
-            menuItems={menuItems}
-            isOwner={isOwner}
-            onDelete={handleDelete}
-            onResolve={handleResolve}
-            onSubscribe={handleSubscribe}
-          />
+          <div className="flex items-center">
+            <button
+              onClick={() => setShowSubscribePopup(true)}
+              className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 mr-2"
+            >
+              {isSubscribed ? "Subscribed" : "Subscribe"}
+            </button>
+            <MoreMenu
+              menuItems={menuItems}
+              isOwner={isOwner}
+              onDelete={handleDelete}
+              onResolve={handleResolve}
+              onSubscribe={() => setShowSubscribePopup(true)}
+            />
+          </div>
         </div>
         <div className="flex space-x-2 pt-2">
           <Badge variant="outline" className="">
@@ -113,36 +122,42 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-between items-center">
-        <div className="flex space-x-2 items-center">
-          <div className="flex items-center">
-            <MessageCircle className="mr-1" />
-          </div>
-          <Reaction
-            issueId={issue.issue_id}
-            initialReactions={issue.reactions}
-          />
-        </div>
+      <CardFooter className="flex space-x-2 items-center">
         <div className="flex items-center">
-          <div className="mr-2">
-            <select
-              value={subscriptionType}
-              onChange={(e) => setSubscriptionType(e.target.value)}
-              className="px-3 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="Issue">Issue</option>
-              <option value="Category">Category</option>
-              <option value="Location">Location</option>
-            </select>
-          </div>
-          <button
-            onClick={handleSubscribe}
-            className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600"
-          >
-            {isSubscribed ? "Unsubscribe" : "Subscribe"}
-          </button>
+          <MessageCircle className="mr-1" />
         </div>
+        <Reaction
+          issueId={issue.issue_id}
+          initialReactions={issue.reactions}
+        />
       </CardFooter>
+      {showSubscribePopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg">
+            <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
+            <div className="space-y-2">
+              <button
+                onClick={() => handleSubscribe("Issue")}
+                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
+              >
+                Subscribe to Issue
+              </button>
+              <button
+                onClick={() => handleSubscribe("Category")}
+                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
+              >
+                Subscribe to Category
+              </button>
+              <button
+                onClick={() => handleSubscribe("Location")}
+                className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 w-full"
+              >
+                Subscribe to Location
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
