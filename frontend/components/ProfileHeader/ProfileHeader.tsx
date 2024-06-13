@@ -25,18 +25,16 @@ const ProfileHeader: React.FC = () => {
 
   const handleUpdate = (updatedUser: User) => {
     setUser(updatedUser);
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   return (
     <div className="mb-4">
-      <div
-        className="h-32 bg-cover bg-center"
-      />
+      <div className="h-32 bg-cover bg-center" />
       <div className="px-4 pb-4">
         <div className="-mt-16 flex justify-between items-end">
           <Avatar className="w-32 h-32 border-4 border-white">
@@ -51,7 +49,12 @@ const ProfileHeader: React.FC = () => {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="bg-black/50 fixed inset-0" />
-              <Dialog.Content className={cn("fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg w-96", theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-white")}>
+              <Dialog.Content
+                className={cn(
+                  "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg w-96",
+                  theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
+                )}
+              >
                 <Dialog.Title className="text-xl font-semibold mb-4">Edit Profile</Dialog.Title>
                 <EditProfile user={user} onUpdate={handleUpdate} onCancel={handleCancel} />
               </Dialog.Content>
