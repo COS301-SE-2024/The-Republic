@@ -1,4 +1,3 @@
-// Comment.tsx
 import React, { useState } from "react";
 import { Comment as CommentType } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,8 +31,8 @@ const Comment: React.FC<CommentProps> = ({
   };
 
   return (
-    <div className="flex items-start space-x-4 mb-4">
-      <div className="relative">
+    <div className="flex items-start space-x-4 space-y-4 mb-4">
+      <div className="relative space-y-6">
         <Avatar>
           <AvatarImage src={comment.user.image_url} />
           <AvatarFallback>{comment.user.fullname[0]}</AvatarFallback>
@@ -49,7 +48,7 @@ const Comment: React.FC<CommentProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="text-blue-600"
+              className="text-green-600"
               onClick={() => setIsReplying(!isReplying)}
             >
               {isReplying ? "Cancel" : "Reply"}
@@ -62,7 +61,7 @@ const Comment: React.FC<CommentProps> = ({
           )}
           {replies.length > 0 && (
             <button
-              className="text-blue-600"
+              className="text-green-600"
               onClick={() => setShowReplies(!showReplies)}
             >
               {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
@@ -76,16 +75,20 @@ const Comment: React.FC<CommentProps> = ({
             onCommentAdded={handleReplySubmit}
           />
         )}
-        {showReplies && replies.map(reply => (
-          <Comment
-            key={reply.comment_id}
-            comment={reply}
-            onDelete={onDelete}
-            isOwner={user?.user_id === reply.user.user_id}
-            onReply={onReply}
-            replies={[]}
-          />
-        ))}
+        {showReplies && (
+          <div className="ml-8">
+            {replies.map((reply) => (
+              <Comment
+                key={reply.comment_id}
+                comment={reply}
+                onDelete={onDelete}
+                isOwner={user?.user_id === reply.user.user_id}
+                onReply={onReply}
+                replies={replies.filter((r) => r.parent_comment_id === reply.comment_id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

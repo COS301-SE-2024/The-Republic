@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Comment as CommentType } from "@/lib/types";
 import Comment from "./Comment";
@@ -12,7 +11,6 @@ interface CommentListProps {
 const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const { user } = useUser();
-  const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -31,22 +29,27 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
     setComments((prevComments) => [...prevComments, reply]);
   };
 
-  const getReplies = (parentCommentId: string) => {
-    return comments.filter(comment => comment.parent_comment_id === parentCommentId);
-  };
+  const renderComments = (parentId: string | null) => {
+    const threadComments = comments.filter(
+      (comment) => comment.parent_comment_id === parentId
+    );
 
-  return (
-    <div>
-      {comments.filter(comment => comment.parent_comment_id === null).map(comment => (
+    return threadComments.map((comment) => (
+      <div key={comment.comment_id} className={`ml-${parentId ? 8 : 0}`}>
         <Comment
-          key={comment.comment_id}
           comment={comment}
           onDelete={handleDeleteComment}
           isOwner={user?.user_id === comment.user.user_id}
           onReply={handleReply}
-          replies={getReplies(comment.comment_id)}
+          replies={comments.filter((c) => c.parent_comment_id === comment.comment_id)}
         />
-      ))}
+      </div>
+    ));
+  };
+
+  return (
+    <div>
+      {renderComments(null)}
     </div>
   );
 };
