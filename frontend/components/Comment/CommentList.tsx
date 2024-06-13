@@ -31,29 +31,24 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
     setComments((prevComments) => [...prevComments, reply]);
   };
 
-  const handleReplyClick = (commentId: string) => {
-    setReplyingCommentId(replyingCommentId === commentId ? null : commentId);
+  const getReplies = (parentCommentId: string) => {
+    return comments.filter(comment => comment.parent_comment_id === parentCommentId);
   };
 
-  const renderComments = (parentId: string | null = null) => {
-    return comments
-      .filter((comment) => comment.parent_comment_id === parentId)
-      .map((comment) => (
-        <div key={comment.comment_id} className="mb-4">
-          <Comment
-            comment={comment}
-            onDelete={handleDeleteComment}
-            isOwner={user?.user_id === comment.user.user_id}
-            onReply={handleReply}
-            onReplyClick={handleReplyClick}
-            isReplying={replyingCommentId === comment.comment_id}
-          />
-          {renderComments(comment.comment_id)}
-        </div>
-      ));
-  };
-
-  return <div>{renderComments()}</div>;
+  return (
+    <div>
+      {comments.filter(comment => comment.parent_comment_id === null).map(comment => (
+        <Comment
+          key={comment.comment_id}
+          comment={comment}
+          onDelete={handleDeleteComment}
+          isOwner={user?.user_id === comment.user.user_id}
+          onReply={handleReply}
+          replies={getReplies(comment.comment_id)}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default CommentList;

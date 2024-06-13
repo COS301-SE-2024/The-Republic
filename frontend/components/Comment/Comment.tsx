@@ -1,5 +1,5 @@
-
-import React from "react";
+// Comment.tsx
+import React, { useState } from "react";
 import { Comment as CommentType } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,7 @@ interface CommentProps {
   onDelete: (commentId: string) => void;
   isOwner: boolean;
   onReply: (parentCommentId: string, comment: CommentType) => void;
-  onReplyClick: (commentId: string) => void;
-  isReplying: boolean;
+  replies: CommentType[];
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -20,14 +19,16 @@ const Comment: React.FC<CommentProps> = ({
   onDelete,
   isOwner,
   onReply,
-  onReplyClick,
-  isReplying,
+  replies,
 }) => {
   const { user } = useUser();
+  const [isReplying, setIsReplying] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
 
   const handleReplySubmit = (reply: CommentType) => {
     onReply(comment.comment_id, reply);
-    onReplyClick("");
+    setIsReplying(false);
+    setShowReplies(true);
   };
 
   return (
@@ -45,7 +46,12 @@ const Comment: React.FC<CommentProps> = ({
         </div>
         <div className="flex items-center space-x-2 mt-2">
           {user && (
-            <Button variant="ghost" size="sm" className="text-blue-600" onClick={() => onReplyClick(comment.comment_id)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-blue-600"
+              onClick={() => setIsReplying(!isReplying)}
+            >
               {isReplying ? "Cancel" : "Reply"}
             </Button>
           )}
@@ -53,6 +59,14 @@ const Comment: React.FC<CommentProps> = ({
             <Button variant="ghost" size="sm" onClick={() => onDelete(comment.comment_id)}>
               Delete
             </Button>
+          )}
+          {replies.length > 0 && (
+            <button
+              className="text-blue-600"
+              onClick={() => setShowReplies(!showReplies)}
+            >
+              {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
+            </button>
           )}
         </div>
         {isReplying && (
@@ -62,6 +76,16 @@ const Comment: React.FC<CommentProps> = ({
             onCommentAdded={handleReplySubmit}
           />
         )}
+        {showReplies && replies.map(reply => (
+          <Comment
+            key={reply.comment_id}
+            comment={reply}
+            onDelete={onDelete}
+            isOwner={user?.user_id === reply.user.user_id}
+            onReply={onReply}
+            replies={[]}
+          />
+        ))}
       </div>
     </div>
   );
