@@ -1,5 +1,7 @@
 import { Comment } from "../models/comment";
 import supabase from "../services/supabaseClient";
+import { GetCommentsParams, GetNumCommentsParams } from "../types/comment";
+import { Count } from "../types/shared";
 
 export class CommentRepository {
   async getNumComments({ issue_id, parent_id }: GetNumCommentsParams): Promise<Count> {
@@ -10,6 +12,12 @@ export class CommentRepository {
         head: true,
       })
       .eq("issue_id", issue_id);
+
+    query = parent_id === null
+      ? query.is("parent_id", null)
+      : query.eq("parent_id", parent_id);
+
+    const { count, error } = await query;
 
     if (error) throw error;
 
@@ -38,11 +46,9 @@ export class CommentRepository {
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
 
-    if (parent_id === null) {
-      query = query.is("parent_id", null);
-    } else {
-      query = query.eq("parent_id", parent_id);
-    }
+    query = parent_id === null
+      ? query.is("parent_id", null)
+      : query.eq("parent_id", parent_id);
 
     const { data, error } = await query;
 
