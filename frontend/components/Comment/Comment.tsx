@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Comment as CommentType } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,8 +35,8 @@ const Comment: React.FC<CommentProps> = ({
   };
 
   return (
-    <div className="flex items-start space-x-4 mb-4">
-      <div className="relative">
+    <div className="flex items-start space-x-4 space-y-4 mb-4">
+      <div className="relative space-y-4">
         <Avatar>
           <AvatarImage src={comment.user.image_url} />
           <AvatarFallback>{comment.user.fullname[0]}</AvatarFallback>
@@ -47,7 +48,7 @@ const Comment: React.FC<CommentProps> = ({
         )}
       </div>
       <div>
-        <div className="bg-gray-100 p-2 rounded-lg">
+        <div className="bg-gray-100 p-4 rounded-lg shadow">
           <div className="font-bold">{comment.user.fullname}</div>
           <div>{comment.content}</div>
         </div>
