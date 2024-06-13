@@ -15,15 +15,9 @@ on:
       - main
       - 'feature/**'
 
-  workflow_run:
-    workflows: ["Lint Backend Application"]
-    types:
-      - completed
-
 jobs:
   test-backend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code

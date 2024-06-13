@@ -7,6 +7,7 @@ interface User {
   fullname: string;
   image_url: string;
   user_id: string;
+  username: string;
 }
 
 interface UserContextType {

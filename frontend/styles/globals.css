@@ -24,6 +24,11 @@
     --input: 240 5.9% 90%;
     --ring: 142.1 76.2% 36.3%;
     --radius: 0.5rem;
+
+    --grey: 0 0% 95%;
+    --grey-medium: 0 0% 55%;
+    --grey-dark: 0 0% 87%;
+    --theme-current: 2;
   }
 
   .dark {
@@ -46,6 +51,11 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 142.4 71.8% 29.2%;
+
+    --grey: 0 0% 8.2%;
+    --grey-medium: 0 0% 52.9%;
+    --grey-dark: 0 0% 17.6%;
+    --theme-current: 1;
   }
 }
 
@@ -57,3 +67,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .logo {
+    background-image: url('/images/w-logo.png');
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .logo {
+    background-image: url('/images/b-logo.png');
+  }
+}
+
