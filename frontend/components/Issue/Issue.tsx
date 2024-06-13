@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,8 @@ interface IssueProps {
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
-  const [isSubscribed, setIsSubscribed] = React.useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriptionType, setSubscriptionType] = useState("Issue");
   const menuItems = ["Delete", "Subscribe"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
@@ -62,7 +63,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   const handleSubscribe = () => {
     setIsSubscribed((prevState) => !prevState);
     // Perform additional logic here, such as making an API call
-    console.log("Subscription toggled:", !isSubscribed);
+    console.log("Subscription toggled:", !isSubscribed, `for ${subscriptionType}`);
   };
 
   return (
@@ -112,20 +113,35 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex space-x-2 items-center">
-        <div className="flex items-center">
-          <MessageCircle className="mr-1" />
+      <CardFooter className="flex justify-between items-center">
+        <div className="flex space-x-2 items-center">
+          <div className="flex items-center">
+            <MessageCircle className="mr-1" />
+          </div>
+          <Reaction
+            issueId={issue.issue_id}
+            initialReactions={issue.reactions}
+          />
         </div>
-        <Reaction
-          issueId={issue.issue_id}
-          initialReactions={issue.reactions}
-        />
-        <button
-          onClick={handleSubscribe}
-          className="px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600"
-        >
-          {isSubscribed ? "Unsubscribe" : "Subscribe"}
-        </button>
+        <div className="flex items-center">
+          <div className="mr-2">
+            <select
+              value={subscriptionType}
+              onChange={(e) => setSubscriptionType(e.target.value)}
+              className="px-3 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="Issue">Issue</option>
+              <option value="Category">Category</option>
+              <option value="Location">Location</option>
+            </select>
+          </div>
+          <button
+            onClick={handleSubscribe}
+            className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600"
+          >
+            {isSubscribed ? "Unsubscribe" : "Subscribe"}
+          </button>
+        </div>
       </CardFooter>
     </Card>
   );
