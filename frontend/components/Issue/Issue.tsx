@@ -102,12 +102,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
               <div className="text-sm text-gray-600">{issue.user.username}</div>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
             <div className="relative inline-block text-left">
               <div>
                 <button
                   type="button"
-                  className="inline-flex justify-center items-center px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 focus:outline-none"
+                  className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
                   id="subscribe-menu"
                   onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
                 >
