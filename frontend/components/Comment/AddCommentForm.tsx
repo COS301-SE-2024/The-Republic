@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,7 +25,6 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
       return;
     }
 
-    // Simulate posting a comment
     const newComment: Comment = {
       comment_id: (mockComments.length + 1).toString(),
       issue_id: issueId,
@@ -50,12 +50,12 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
   };
 
   return (
-    <form onSubmit={handleCommentSubmit} className="flex items-center space-x-4 mt-4">
+    <form onSubmit={handleCommentSubmit} className="flex items-center space-x-2 mt-4 bg-white p-4 rounded shadow">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         className="flex-grow p-2 border rounded resize-none"
-        placeholder="Add a comment..."
+        placeholder="Add Comment..."
         rows={1}
       />
       <button
@@ -63,7 +63,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
         className="bg-green-500 text-white px-4 py-2 rounded"
         disabled={!content.trim()}
       >
-        Comment
+        Send
       </button>
     </form>
   );
