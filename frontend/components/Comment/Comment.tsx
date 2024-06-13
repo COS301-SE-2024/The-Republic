@@ -13,8 +13,6 @@ interface CommentProps {
   onReply: (parentCommentId: string, comment: CommentType) => void;
   onReplyClick: (commentId: string) => void;
   isReplying: boolean;
-  hasReplies: boolean;
-  isLastComment: boolean;
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -24,8 +22,6 @@ const Comment: React.FC<CommentProps> = ({
   onReply,
   onReplyClick,
   isReplying,
-  hasReplies,
-  isLastComment,
 }) => {
   const { user } = useUser();
 
@@ -35,27 +31,22 @@ const Comment: React.FC<CommentProps> = ({
   };
 
   return (
-    <div className="flex items-start space-x-4 space-y-4 mb-4">
-      <div className="relative space-y-4">
+    <div className="flex items-start space-x-4 mb-4">
+      <div className="relative">
         <Avatar>
           <AvatarImage src={comment.user.image_url} />
           <AvatarFallback>{comment.user.fullname[0]}</AvatarFallback>
         </Avatar>
-        {hasReplies && !isLastComment && (
-          <div
-            className={`absolute top-10 left-1/2 w-px bg-gray-300 h-full transform -translate-x-1/2`}
-          ></div>
-        )}
       </div>
-      <div>
+      <div className="flex-1">
         <div className="bg-gray-100 p-4 rounded-lg shadow">
           <div className="font-bold">{comment.user.fullname}</div>
           <div>{comment.content}</div>
         </div>
         <div className="flex items-center space-x-2 mt-2">
           {user && (
-            <Button variant="ghost" size="sm" onClick={() => onReplyClick(comment.comment_id)}>
-              Reply
+            <Button variant="ghost" size="sm" className="text-blue-600" onClick={() => onReplyClick(comment.comment_id)}>
+              {isReplying ? "Cancel" : "Reply"}
             </Button>
           )}
           {isOwner && (
