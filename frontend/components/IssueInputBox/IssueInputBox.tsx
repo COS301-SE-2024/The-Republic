@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from 'react-textarea-autosize';
 import CircularProgress from '../CircularProgressBar/CircularProgressBar';
 import { categoryOptions, moodOptions } from '@/lib/constants';
+import { supabase } from '@/lib/globals';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -39,11 +40,11 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     const categoryID = parseInt(category);
+    const { data } = await supabase.auth.getSession();
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`, {
       method: "POST",
       body: JSON.stringify({
-        user_id: user.user_id,
         category_id: categoryID,
         content,
         sentiment: mood,
@@ -52,6 +53,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       }),
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${data.session!.access_token}`,
       },
     });
 
