@@ -17,8 +17,8 @@ export default class IssueService {
     return this.issueRepository.getIssues(params);
   }
 
-  async getIssueById(issueId: number): Promise<Issue | null> {
-    return this.issueRepository.getIssueById(issueId);
+  async getIssueById(issueId: number, user_id?: string): Promise<Issue | null> {
+    return this.issueRepository.getIssueById(issueId, user_id);
   }
 
   async createIssue(issue: Partial<Issue>): Promise<Issue> {

@@ -42,6 +42,7 @@ export default class IssueRepository {
     amount,
     category,
     mood,
+    user_id
   }: GetIssuesParams): Promise<Issue[]> {
     let query = supabase
       .from("issue")
@@ -74,17 +75,22 @@ export default class IssueRepository {
 
     if (error) throw new Error(error.message);
 
-    // Fetch reaction counts for each issue
-    const issues = await Promise.all(data.map(async (issue: Issue) => {
-      const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
-      return { ...issue, reactions };
-    }));
+    const issues = await Promise.all(data.map(
+      async (issue: Issue) => {
+        const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+        return {
+          ...issue,
+          reactions,
+          is_owner: issue.user_id === user_id
+        };
+      }
+    ));
 
     return issues as Issue[];
   }
 
 
-  async getIssueById(issueId: number): Promise<Issue | null> {
+  async getIssueById(issueId: number, user_id?: string): Promise<Issue | null> {
     const { data, error } = await supabase
       .from("issue")
       .select(`
@@ -111,7 +117,11 @@ export default class IssueRepository {
     // Fetch reaction counts for the issue
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
 
-    return { ...data, reactions } as Issue;
+    return {
+      ...data,
+      reactions,
+      is_owner: data.user_id === user_id
+     } as Issue;
   }
 
   async createIssue(issue: Partial<Issue>): Promise<Issue> {

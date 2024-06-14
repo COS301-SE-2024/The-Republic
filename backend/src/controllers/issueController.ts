@@ -32,7 +32,7 @@ export const getIssues = async (req: Request, res: Response) => {
 export const getIssueById = async (req: Request, res: Response) => {
   try {
     const issueId = parseInt(req.params.id, 10);
-    const issue = await issueService.getIssueById(issueId);
+    const issue = await issueService.getIssueById(issueId, req.body.user_id);
     if (issue) {
       res.status(200).json(issue);
     } else {

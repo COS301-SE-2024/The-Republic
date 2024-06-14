@@ -5,4 +5,5 @@ export interface GetIssuesParams {
   ascending: boolean;
   category?: string;
   mood?: string;
+  user_id?: string
 }
