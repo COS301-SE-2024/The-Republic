@@ -1,7 +1,6 @@
 name: Frontend Unit Testing
 run-name: ${{ github.event_name }} event by ${{ github.actor }}
 
-
 on:
   push:
     branches:
@@ -15,16 +14,10 @@ on:
       - master
       - main
       - 'feature/**'
-
-  workflow_run:
-    workflows: ["Lint Frontend Application"]
-    types:
-      - completed
-
+      
 jobs:
   test-frontend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code

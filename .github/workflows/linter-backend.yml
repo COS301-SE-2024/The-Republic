@@ -1,7 +1,6 @@
 name: Lint Backend Application
 run-name: Linter For Backend Server
 
-
 on:
   push:
     branches:

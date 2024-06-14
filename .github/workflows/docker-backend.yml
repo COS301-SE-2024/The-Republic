@@ -6,21 +6,15 @@ on:
       - master
       - main
       - develop
-  workflow_run:
-    workflows:
-      - "Backend Unit Testing"
-    types:
-      - completed
+  pull_request:
     branches:
       - master
       - main
       - develop
-
 jobs:
   build-and-push-backend:
     runs-on: ubuntu-latest
     name: "DockerHub: Backend and Reverse Proxy"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
