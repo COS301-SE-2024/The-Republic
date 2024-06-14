@@ -4,6 +4,7 @@ interface User {
   username: string;
   fullname: string;
   image_url: string;
+  bio: string;
 }
 
 interface Category {

@@ -12,6 +12,7 @@ function ProfilePage() {
     <div>
       <ProfileHeader />
       <ProfileStats />
+      <div className="mt-5"></div>
       <Feed userId={userId} showInputBox={false}/> 
     </div>
   );
