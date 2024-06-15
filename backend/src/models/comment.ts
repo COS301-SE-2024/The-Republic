@@ -8,5 +8,6 @@ export interface Comment {
   content: string;
   created_at: string;
   is_anonymous: boolean;
+  is_owner: boolean;
   user: User;
 }
