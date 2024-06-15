@@ -1,52 +1,42 @@
 import { Request, Response } from "express";
 import { CommentService } from "../services/commentService";
+import { sendResponse } from "../utils/response";
+import { APIResponse } from "../types/response";
 
 const commentService = new CommentService();
 
 export async function getNumComments(req: Request, res: Response) {
   try {
-    const count = await commentService.getNumComments(req.body);
-    res.json(count);
+    const response = await commentService.getNumComments(req.body);
+    sendResponse(res, response);
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    sendResponse(res, error as APIResponse);
   }
 }
 
 export async function getComments(req: Request, res: Response) {
   try {
-    const comments = await commentService.getComments(req.body);
-    res.json(comments);
+    const response = await commentService.getComments(req.body);
+    sendResponse(res, response);
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    sendResponse(res, error as APIResponse);
   }
 }
 
 export async function addComment(req: Request, res: Response) {
   try {
-    await commentService.addComment(req.body);
-    res.sendStatus(201);
+    const response = await commentService.addComment(req.body);
+    sendResponse(res, response);
   } catch (error) {
-    console.error(error);
-    if (error === 400)  {
-      res.sendStatus(400);
-    } else {
-      res.sendStatus(500);
-    }
+    sendResponse(res, error as APIResponse);
   }
 }
 
 export async function deleteComment(req: Request, res: Response) {
   try {
-    await commentService.deleteComment(req.body);
-    res.sendStatus(204);
+    const response = await commentService.deleteComment(req.body);
+    sendResponse(res, response);
   } catch (error) {
-    console.error(error);
-    if (error === 400)  {
-      res.sendStatus(400);
-    } else {
-      res.sendStatus(500);
-    }
+    sendResponse(res, error as APIResponse);
   }
 }

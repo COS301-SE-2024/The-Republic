@@ -1,11 +1,7 @@
 export interface GetCommentsParams {
   issue_id: number;
-  parent_id: number | null;
+  parent_id?: number;
+  user_id?: string;
   from: number;
   amount: number;
-}
-
-export interface GetNumCommentsParams {
-  issue_id: number;
-  parent_id: number | null;
 }

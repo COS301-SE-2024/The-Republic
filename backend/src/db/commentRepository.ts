@@ -1,10 +1,10 @@
 import { Comment } from "../models/comment";
 import supabase from "../services/supabaseClient";
-import { GetCommentsParams, GetNumCommentsParams } from "../types/comment";
-import { Count } from "../types/shared";
+import { GetCommentsParams, } from "../types/comment";
+import { APIData, APIError } from "../types/response";
 
 export class CommentRepository {
-  async getNumComments({ issue_id, parent_id }: GetNumCommentsParams): Promise<Count> {
+  async getNumComments(issue_id: number, parent_id?: number) {
     let query = supabase
       .from("comment")
       .select("*", {
@@ -13,23 +13,36 @@ export class CommentRepository {
       })
       .eq("issue_id", issue_id);
 
-    query = parent_id === null
+    query = !parent_id
       ? query.is("parent_id", null)
       : query.eq("parent_id", parent_id);
 
     const { count, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error(error);
 
-    return { count: count! };
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: count!
+    });
   }
 
   async getComments({
     issue_id,
     parent_id,
+    user_id,
     from,
     amount
-  }: GetCommentsParams): Promise<Comment[]> {
+  }: GetCommentsParams) {
     let query = supabase
       .from("comment")
       .select(`
@@ -46,52 +59,92 @@ export class CommentRepository {
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
 
-    query = parent_id === null
+    query = !parent_id
       ? query.is("parent_id", null)
       : query.eq("parent_id", parent_id);
 
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error(error);
 
-    return data as Comment[];
-  }
-
-  async addComment({
-    user_id,
-    issue_id,
-    parent_id,
-    content,
-    is_anonymous,
-  }: Partial<Comment>) {
-    const { error } = await supabase
-      .from("comment")
-      .insert({
-        user_id,
-        issue_id,
-        parent_id,
-        content,
-        is_anonymous,
-        created_at: new Date().toISOString(),
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
       });
-
-    if (error) throw error;
-  }
-
-  async deleteComment({
-    comment_id,
-    user_id,
-  }: Partial<Comment>) {
-    if (!comment_id || !user_id) {
-      throw 400;
     }
 
-    const { error } = await supabase
+    const commnets = data.map((comment: Comment) => {
+      return {
+        ...comment,
+        is_owner: comment.user_id === user_id
+      };
+    });
+
+    return APIData<Comment[]>({
+      code: 200,
+      success: true,
+      data: commnets
+    });
+  }
+
+  async addComment(comment: Partial<Comment>) {
+    comment.created_at = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from("comment")
+      .insert(comment)
+      .select()
+      .single();
+
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    return APIData<Comment>({
+      code: 201,
+      success: true,
+      data: data
+    });
+  }
+
+  async deleteComment(comment_id: number, user_id: string) {
+    const { data, error } = await supabase
       .from("comment")
       .delete()
       .eq("comment_id", comment_id)
-      .eq("user_id", user_id);
+      .eq("user_id", user_id)
+      .select()
+      .maybeSingle();
 
-    if (error) throw error;
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Comment does not exist"
+      });
+    }
+
+    return APIData({
+      code: 204,
+      success: true
+    });
   }
 }
