@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
 import IssueService from "../services/issueService";
 import { APIResponse } from "../types/response";
+import { sendResponse } from "../utils/response";
 
 const issueService = new IssueService();
-
-function sendResponse<T>(res: Response, response: APIResponse<T>) {
-  res.status(response.code).json(response);
-}
 
 export const getIssues = async (req: Request, res: Response) => {
   try {
