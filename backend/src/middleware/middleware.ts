@@ -43,12 +43,3 @@ export const verifyAndGetUser = async (
   console.log(req.body);
   next();
 };
-
-export const defineParentCommentId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  req.body.parent_id ??= null;
-  next();
-};
