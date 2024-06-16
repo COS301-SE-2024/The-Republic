@@ -37,6 +37,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
         image_url: user.image_url,
         username: "mock",
         email_address: "mock@example.com",
+        bio: "dont care"
       },
     };
 
