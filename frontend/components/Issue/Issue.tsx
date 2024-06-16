@@ -7,12 +7,14 @@ import MoreMenu from "../MoreMenu/MoreMenu";
 import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
+import { useRouter } from "next/navigation";
 
 interface IssueProps {
   issue: IssueType;
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
+  const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +67,10 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     setShowSubscribeDropdown(false);
     // Perform additional logic here, such as making an API call
     console.log("Subscribed to:", type);
+  };
+
+  const handleCommentClick = () => {
+    router.push(`/issues/${issue.issue_id}`);
   };
 
   useEffect(() => {
@@ -153,7 +159,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
               isOwner={isOwner}
               onDelete={handleDelete}
               onResolve={handleResolve}
-              onSubscribe={handleSubscribe} // Add this line to pass the prop
+              onSubscribe={handleSubscribe}
             />
           </div>
         </div>
@@ -175,8 +181,8 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         )}
       </CardContent>
       <CardFooter className="flex space-x-2 items-center">
-        <div className="flex items-center">
-          <MessageCircle className="mr-1" />
+        <div className="flex items-center" onClick={handleCommentClick}>
+          <MessageCircle className="mr-1 cursor-pointer" />
         </div>
         <Reaction
           issueId={issue.issue_id}

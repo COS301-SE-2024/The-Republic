@@ -32,6 +32,16 @@ interface Issue {
   reactions: Reaction[]; 
 }
 
+interface Comment {
+  comment_id: string;
+  issue_id: string;
+  user_id: string;
+  parent_comment_id: string | null;
+  content: string;
+  created_at: string;
+  user: User;
+}
+
 interface HomeAvatarProps {
   username: string;
   fullname: string;
@@ -111,5 +121,5 @@ interface RenderItemResult {
 }
 
 export type { User, Category, Reaction, Issue, HomeAvatarProps,
-   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult
+   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment
 };
