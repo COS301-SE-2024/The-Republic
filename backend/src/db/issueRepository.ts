@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import ReactionRepository from "./reactionRepository";
 import { GetIssuesParams } from "../types/issue";
 import { CategoryRepository } from "./categoryRepository";
-import { APIData, APIError } from "../types/response";
+import { APIError } from "../types/response";
 
 const reactionRepository = new ReactionRepository();
 const categoryRepository = new CategoryRepository();
@@ -16,7 +16,7 @@ export default class IssueRepository {
     category,
     mood,
     user_id
-  }: GetIssuesParams) {
+  }: Partial<GetIssuesParams>) {
     let query = supabase
       .from("issue")
       .select(`
@@ -33,7 +33,7 @@ export default class IssueRepository {
         )
       `)
       .order("created_at", { ascending: false })
-      .range(from, from + amount - 1);
+      .range(from!, from! + amount! - 1);
 
     if (category) {
       const categoryId = await categoryRepository.getCategoryId(category);
@@ -46,13 +46,15 @@ export default class IssueRepository {
 
     const { data, error } = await query;
 
-    console.error(error);
+    if (error) {
+      console.error(error);
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
     const issues = await Promise.all(data.map(
       async (issue: Issue) => {
@@ -65,11 +67,7 @@ export default class IssueRepository {
       }
     ));
 
-    return APIData<Issue[]>({
-      code: 200,
-      success: true,
-      data: issues,
-    });
+    return issues as Issue[];
   }
 
   async getIssueById(issueId: number, user_id?: string) {
@@ -91,32 +89,32 @@ export default class IssueRepository {
       .eq("issue_id", issueId)
       .maybeSingle();
 
-    console.error(error);
+    if (error) {
+      console.error(error);
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
-    if (!data) throw APIError({
-      code: 404,
-      success: false,
-      error: "Issue does not exist"
-    });
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue does not exist"
+      });
+    }
 
     // Fetch reaction counts for the issue
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
 
-    return APIData<Issue>({
-      code: 200,
-      success: true,
-      data: {
-        ...data,
-        reactions,
-        is_owner: data.user_id === user_id
-      }
-    });
+    return {
+      ...data,
+      reactions,
+      is_owner: data.user_id === user_id
+    } as Issue;
   }
 
   async createIssue(issue: Partial<Issue>) {
@@ -128,25 +126,23 @@ export default class IssueRepository {
       .select()
       .single();
 
-    console.error(error);
+    if (error) {
+      console.error(error);
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
 
-    return APIData<Issue>({
-      code: 201,
-      success: true,
-      data: {
-        ...data,
-        reactions,
-        is_owner: true
-      }
-    });
+    return {
+      ...data,
+      reactions,
+      is_owner: true
+    } as Issue;
   }
 
   async updateIssue(
@@ -162,31 +158,31 @@ export default class IssueRepository {
       .select()
       .maybeSingle();
 
-    console.error(error);
+    if (error) {
+      console.error(error);
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
-    if (!data) throw APIError({
-      code: 404,
-      success: false,
-      error: "Issue does not exist"
-    });
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue does not exist"
+      });
+    }
 
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
 
-    return APIData<Issue>({
-      code: 200,
-      success: true,
-      data: {
-        ...data,
-        reactions,
-        is_owner: true
-      }
-    });
+    return {
+      ...data,
+      reactions,
+      is_owner: true
+    } as Issue;
   }
 
   async deleteIssue(issueId: number, user_id: string) {
@@ -198,22 +194,23 @@ export default class IssueRepository {
       .select()
       .maybeSingle();
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+    if (error) {
+      console.error(error);
 
-    if (!data) throw APIError({
-      code: 404,
-      success: false,
-      error: "Issue does not exist"
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
-    return APIData({
-      code: 204,
-      success: true
-    });
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue does not exist"
+      });
+    }
   }
 
   async resolveIssue(issueId: number, user_id: string) {
@@ -228,22 +225,24 @@ export default class IssueRepository {
       .select()
       .maybeSingle();
 
-    if (error) throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    });
+    if (error) {
+      console.error(error);
 
-    if (!data) throw APIError({
-      code: 404,
-      success: false,
-      error: "Issue does not exist"
-    });
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
-    return APIData<Issue>({
-      code: 200,
-      success: true,
-      data: data,
-    });
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue does not exist"
+      });
+    }
+
+    return data as Issue;
   }
 }

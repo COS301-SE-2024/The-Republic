@@ -1,7 +1,7 @@
 import { CommentRepository } from "../db/commentRepository";
 import { Comment } from "../models/comment";
 import { GetCommentsParams } from "../types/comment";
-import { APIError } from "../types/response";
+import { APIData, APIError } from "../types/response";
 
 export class CommentService {
   private commentRepository = new CommentRepository();
@@ -15,7 +15,13 @@ export class CommentService {
       });
     }
 
-    return this.commentRepository.getNumComments(issue_id, parent_id);
+    const count = await this.commentRepository.getNumComments(issue_id, parent_id);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: count!
+    });
   }
 
   async getComments(params: GetCommentsParams) {
@@ -31,7 +37,13 @@ export class CommentService {
       });
     }
 
-    return this.commentRepository.getComments(params);
+    const comments = await this.commentRepository.getComments(params);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: comments
+    });
   }
 
   async addComment(comment: Partial<Comment>) {
@@ -58,7 +70,13 @@ export class CommentService {
     comment.parent_id ??= null;
     delete comment.comment_id;
 
-    return this.commentRepository.addComment(comment);
+    const addedComment = await this.commentRepository.addComment(comment);
+
+    return APIData({
+      code: 201,
+      success: true,
+      data: addedComment
+    });
   }
 
   async deleteComment({ comment_id, user_id }: Partial<Comment>) {
@@ -78,6 +96,11 @@ export class CommentService {
       });
     }
 
-    return this.commentRepository.deleteComment(comment_id, user_id);
+    await this.commentRepository.deleteComment(comment_id, user_id);
+
+    return APIData({
+      code: 204,
+      success: true
+    });
   }
 }

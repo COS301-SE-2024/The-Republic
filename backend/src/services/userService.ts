@@ -7,11 +7,6 @@ export class UserService {
   async getUserById(user_id: string) {
     const user = await this.userRepository.getUserById(user_id);
 
-    /* TODO: Its probably best to move the APIData to calls to
-     * the service classes. Then there will be less logic in
-     * the repositories and we can get data from them without
-     * having to extract it from an APIResponse */
-
     return APIData({
       code: 200,
       success: true,

@@ -9,6 +9,6 @@ export function APIError(error: APIResponse) {
   return error;
 }
 
-export function APIData<T>(data: APIResponse<T>) {
+export function APIData<T = never>(data: APIResponse<T>) {
   return data;
 }

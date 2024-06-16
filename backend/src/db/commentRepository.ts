@@ -1,7 +1,7 @@
 import { Comment } from "../models/comment";
 import supabase from "../services/supabaseClient";
 import { GetCommentsParams, } from "../types/comment";
-import { APIData, APIError } from "../types/response";
+import { APIError } from "../types/response";
 
 export class CommentRepository {
   async getNumComments(issue_id: number, parent_id?: number) {
@@ -29,11 +29,7 @@ export class CommentRepository {
       });
     }
 
-    return APIData({
-      code: 200,
-      success: true,
-      data: count!
-    });
+    return count!;
   }
 
   async getComments({
@@ -75,18 +71,14 @@ export class CommentRepository {
       });
     }
 
-    const commnets = data.map((comment: Comment) => {
+    const comments = data.map((comment: Comment) => {
       return {
         ...comment,
         is_owner: comment.user_id === user_id
       };
     });
 
-    return APIData<Comment[]>({
-      code: 200,
-      success: true,
-      data: commnets
-    });
+    return comments as Comment[];
   }
 
   async addComment(comment: Partial<Comment>) {
@@ -108,11 +100,7 @@ export class CommentRepository {
       });
     }
 
-    return APIData<Comment>({
-      code: 201,
-      success: true,
-      data: data
-    });
+    return data as Comment;
   }
 
   async deleteComment(comment_id: number, user_id: string) {
@@ -141,10 +129,5 @@ export class CommentRepository {
         error: "Comment does not exist"
       });
     }
-
-    return APIData({
-      code: 204,
-      success: true
-    });
   }
 }

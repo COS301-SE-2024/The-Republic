@@ -1,7 +1,7 @@
 import IssueRepository from "../db/issueRepository";
 import { Issue } from "../models/issue";
 import { GetIssuesParams } from "../types/issue";
-import { APIError } from "../types/response";
+import { APIData, APIError } from "../types/response";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -10,7 +10,11 @@ export default class IssueService {
     this.issueRepository = new IssueRepository();
   }
 
-  async getIssues(params: GetIssuesParams) {
+  setIssueRepository(issueRepository: IssueRepository): void {
+    this.issueRepository = issueRepository;
+  }
+
+  async getIssues(params: Partial<GetIssuesParams>) {
     // `from` can be 0
     if (params.from === undefined || !params.amount) {
       throw APIError({
@@ -20,7 +24,13 @@ export default class IssueService {
       });
     }
 
-    return this.issueRepository.getIssues(params);
+    const issues = await this.issueRepository.getIssues(params);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: issues,
+    });
   }
 
   async getIssueById(issue: Partial<Issue>) {
@@ -33,7 +43,13 @@ export default class IssueService {
       });
     }
 
-    return this.issueRepository.getIssueById(issue_id, issue.user_id);
+    const resIssue = await this.issueRepository.getIssueById(issue_id, issue.user_id);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: resIssue
+    });
   }
 
   async createIssue(issue: Partial<Issue>) {
@@ -63,7 +79,13 @@ export default class IssueService {
 
     delete issue.issue_id;
 
-    return this.issueRepository.createIssue(issue);
+    const createdIssue = await this.issueRepository.createIssue(issue);
+
+    return APIData({
+      code: 201,
+      success: true,
+      data: createdIssue,
+    });
   }
 
   async updateIssue(issue: Partial<Issue>) {
@@ -93,9 +115,16 @@ export default class IssueService {
       });
     }
 
+    delete issue.user_id;
     delete issue.issue_id;
 
-    return this.issueRepository.updateIssue(issue_id, issue, user_id);
+    const updatedIssue = await this.issueRepository.updateIssue(issue_id, issue, user_id);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: updatedIssue
+    });
   }
 
   async deleteIssue(issue: Partial<Issue>) {
@@ -117,11 +146,12 @@ export default class IssueService {
       });
     }
 
-    return this.issueRepository.deleteIssue(issue_id, user_id);
-  }
+    await this.issueRepository.deleteIssue(issue_id, user_id);
 
-  setIssueRepository(issueRepository: IssueRepository): void {
-    this.issueRepository = issueRepository;
+    return APIData({
+      code: 204,
+      success: true
+    });
   }
 
   async resolveIssue(issue: Partial<Issue>) {
@@ -143,6 +173,12 @@ export default class IssueService {
       });
     }
 
-    return this.issueRepository.resolveIssue(issue_id, user_id);
+    const resolvedIssue = await this.issueRepository.resolveIssue(issue_id, user_id);
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: resolvedIssue,
+    });
   }
 }
