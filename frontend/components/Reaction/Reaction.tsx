@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/globals";
-import { flushSync } from "react-dom";
 
 interface ReactionProps {
   issueId: number;
