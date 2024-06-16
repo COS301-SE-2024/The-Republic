@@ -39,7 +39,7 @@ const Comment: React.FC<CommentProps> = ({
         </Avatar>
       </div>
       <div className="flex-1">
-        <div className="bg-card text-card-foreground dark:bg-card dark:text-card-foreground p-4 rounded-lg shadow">
+        <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
           <div className="font-bold">{comment.user.fullname}</div>
           <div>{comment.content}</div>
         </div>
@@ -48,7 +48,7 @@ const Comment: React.FC<CommentProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="text-primary dark:text-primary-foreground"
+              className="text-green-600 dark:text-green-400"
               onClick={() => setIsReplying(!isReplying)}
             >
               {isReplying ? "Cancel" : "Reply"}
@@ -58,7 +58,7 @@ const Comment: React.FC<CommentProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="text-destructive dark:text-destructive-foreground"
+              className="text-red-600 dark:text-red-400"
               onClick={() => onDelete(comment.comment_id)}
             >
               Delete
@@ -66,7 +66,7 @@ const Comment: React.FC<CommentProps> = ({
           )}
           {replies.length > 0 && (
             <button
-              className="text-primary dark:text-primary-foreground"
+              className="text-green-600 dark:text-green-400"
               onClick={() => setShowReplies(!showReplies)}
             >
               {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
