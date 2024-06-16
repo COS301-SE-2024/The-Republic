@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
-import UserRepository from "../db/userRepository";
+import { sendResponse } from "../utils/response";
+import { UserService } from "../services/userService";
+import { APIResponse } from "../types/response";
 
-const userRepository = new UserRepository();
+const userService = new UserService();
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
-    const user = await userRepository.getUserById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json(user);
+    const response = await userService.getUserById(req.params.id);
+    sendResponse(res, response);
   } catch (error) {
-    console.error("Error fetching user:", error);
-    res.status(500).json({ message: "Internal server error" });
+    sendResponse(res, error as APIResponse);
   }
 };
