@@ -14,6 +14,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
+      bio: "This is John's bio."
     },
   },
   {
@@ -29,6 +30,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/jane-smith.jpg",
       username: "janesmith",
       email_address: "jane@example.com",
+      bio: "This is Jane's bio."
     },
   },
   {
@@ -44,6 +46,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
+      bio: "This is John's bio."
     },
   },
   {
@@ -59,6 +62,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
+      bio: "This is John's bio."
     },
   },
   {
@@ -74,6 +78,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
+      bio: "This is John's bio."
     },
   },
   {
@@ -89,6 +94,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/jane-smith.jpg",
       username: "janesmith",
       email_address: "jane@example.com",
+      bio: "This is Jane's bio."
     },
   },
   {
@@ -104,6 +110,7 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
+      bio: "This is John's bio."
     },
   },
 ];
