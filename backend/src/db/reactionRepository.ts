@@ -1,58 +1,95 @@
+import { Reaction } from "../models/reaction";
 import supabase from "../services/supabaseClient";
-import { DateTime } from 'luxon';
-
-export interface Reaction {
-  reaction_id: number;
-  issue_id: number;
-  user_id: string;
-  emoji: string;
-  created_at: string;
-}
+import { APIError } from "../types/response";
 
 export default class ReactionRepository {
-  async addReaction(issueId: number, userId: string, emoji: string): Promise<Reaction> {
+  async addReaction(reaction: Partial<Reaction>) {
+    reaction.created_at = new Date().toISOString();
     const { data, error } = await supabase
       .from("reaction")
-      .insert({
-        issue_id: issueId,
-        user_id: userId,
-        emoji: emoji,
-        created_at: DateTime.now().setZone('UTC+2').toISO()
-      })
+      .insert(reaction)
       .select()
       .single();
-    if (error) throw new Error(error.message);
+
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
     return data as Reaction;
   }
 
-  async getReactionsByUserAndIssue(issueId: number, userId: string): Promise<Reaction[]> {
+  async deleteReaction(issueId: number, userId: string) {
     const { data, error } = await supabase
-      .from("reaction")
-      .select("*")
-      .eq("issue_id", issueId)
-      .eq("user_id", userId);
-
-    if (error) throw new Error(error.message);
-    return data as Reaction[];
-  }
-
-  async deleteReaction(issueId: number, userId: string, emoji: string): Promise<void> {
-    const { error } = await supabase
       .from("reaction")
       .delete()
       .eq("issue_id", issueId)
       .eq("user_id", userId)
-      .eq("emoji", emoji);
-    if (error) throw new Error(error.message);
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Reaction does not exist"
+      });
+    }
+
+    return data as Reaction;
   }
 
-  async getReactionCountsByIssueId(issueId: number): Promise<{ emoji: string; count: number }[]> {
+  async getReactionByUserAndIssue(issueId: number, userId: string) {
+    const { data, error } = await supabase
+      .from("reaction")
+      .select("*")
+      .eq("issue_id", issueId)
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    return data as Reaction | null;
+  }
+
+  async getReactionCountsByIssueId(issueId: number)  {
     const { data, error } = await supabase
       .from("reaction")
       .select("emoji")
       .eq("issue_id", issueId);
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
 
     // Aggregate the counts manually
     const reactionCounts: { [emoji: string]: number } = {};
