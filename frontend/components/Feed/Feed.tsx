@@ -27,8 +27,8 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
             "content-type": "application/json"
           }
         });
-        const data: IssueType[] = await response.json();
-        setIssues(data);
+        const apiResponse = await response.json();
+        setIssues(apiResponse.data);
       } catch (error) {
         console.error("Error fetching issues:", error);
       }
