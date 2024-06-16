@@ -5,9 +5,12 @@ import ReactionRepository from "./reactionRepository";
 import { GetIssuesParams } from "../types/issue";
 import { CategoryRepository } from "./categoryRepository";
 import { APIError } from "../types/response";
+import { CommentRepository } from "./commentRepository";
 
 const reactionRepository = new ReactionRepository();
 const categoryRepository = new CategoryRepository();
+const commentRepository = new CommentRepository();
+
 
 export default class IssueRepository {
   async getIssues({
@@ -41,7 +44,7 @@ export default class IssueRepository {
     }
 
     if (mood) {
-      query = query.eq("sentiment",  mood);
+      query = query.eq("sentiment", mood);
     }
 
     const { data, error } = await query;
@@ -59,9 +62,13 @@ export default class IssueRepository {
     const issues = await Promise.all(data.map(
       async (issue: Issue) => {
         const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+        const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(issue.issue_id, user_id) : null;
+        const commentCount = await commentRepository.getNumComments(issue.issue_id);
         return {
           ...issue,
           reactions,
+          user_reaction: userReaction?.emoji || null,
+          comment_count: commentCount,
           is_owner: issue.user_id === user_id
         };
       }
@@ -107,12 +114,16 @@ export default class IssueRepository {
       });
     }
 
-    // Fetch reaction counts for the issue
+    // Fetch reaction counts and user reaction for the issue
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
+    const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(data.issue_id, user_id) : null;
+    const commentCount = await commentRepository.getNumComments(data.issue_id);
 
     return {
       ...data,
       reactions,
+      user_reaction: userReaction?.emoji || null,
+      comment_count: commentCount,
       is_owner: data.user_id === user_id
     } as Issue;
   }
