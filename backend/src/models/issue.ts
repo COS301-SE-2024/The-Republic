@@ -10,7 +10,7 @@ interface Category {
   name: string;
 }
 
-interface Reaction {
+interface ReactionCount {
   emoji: string;
   count: number;
 }
@@ -28,7 +28,7 @@ interface Issue {
   sentiment: string;
   user: User;
   category: Category;
-  reactions: Reaction[]; 
+  reactions: ReactionCount[];
 }
 
-export { User, Category, Reaction, Issue };
+export { User, Category, ReactionCount, Issue };

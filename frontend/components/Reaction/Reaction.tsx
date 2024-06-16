@@ -7,7 +7,15 @@ interface ReactionProps {
 }
 
 const Reaction: React.FC<ReactionProps> = ({ issueId, initialReactions }) => {
-  const [reactions, setReactions] = useState<{ emoji: string; count: number }[]>(initialReactions);
+  const [reactions, setReactions] = useState(() =>
+    initialReactions.reduce(
+      (acc, reaction) => {
+        acc[reaction.emoji] = reaction.count;
+        return acc;
+      },
+      {} as { [key: string]: number }
+    )
+  );
 
   const handleReaction = async (emoji: string) => {
     const { data, error } = await supabase.auth.getSession();
@@ -17,58 +25,37 @@ const Reaction: React.FC<ReactionProps> = ({ issueId, initialReactions }) => {
       return;
     }
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reactions`, {
-        method: "POST",
-        body: JSON.stringify({
-          issue_id: issueId,
-          user_id: data.session.user.id,
-          emoji,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reactions`, {
+      method: "POST",
+      body: JSON.stringify({
+        issue_id: issueId,
+        emoji,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${data.session!.access_token}`
+      },
+    });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        if (responseData.message === "Reaction removed") {
-          setReactions((prevReactions) => {
-            const reactionIndex = prevReactions.findIndex((r) => r.emoji === emoji);
-            if (reactionIndex > -1) {
-              const newReactions = [...prevReactions];
-              newReactions[reactionIndex].count -= 1;
-              if (newReactions[reactionIndex].count <= 0) {
-                newReactions.splice(reactionIndex, 1);
-              }
-              return newReactions;
-            }
-            return prevReactions;
-          });
-        } else {
-          setReactions((prevReactions) => {
-            const existingReaction = prevReactions.find((r) => r.emoji === emoji);
-            if (existingReaction) {
-              return prevReactions.map((r) =>
-                r.emoji === emoji ? { ...r, count: r.count + 1 } : r
-              );
-            } else {
-              return [...prevReactions, { emoji, count: 1 }];
-            }
-          });
-        }
-      } else {
-        console.error("Failed to add reaction");
-      }
-    } catch (error) {
-      console.error("Error adding reaction:", error);
+    if (!response.ok) {
+      console.error("Failed to update reaction");
+      return;
     }
-  };
 
-  const reactionCounts = reactions.reduce((acc, reaction) => {
-    acc[reaction.emoji] = reaction.count;
-    return acc;
-  }, {} as { [key: string]: number });
+    const apiResponse = await response.json();
+    const reactionsUpdate = apiResponse.data;
+
+    if (reactionsUpdate.added) {
+      reactions[reactionsUpdate.added] ??= 0;
+      reactions[reactionsUpdate.added]++;
+    }
+
+    if (reactionsUpdate.removed) {
+      reactions[reactionsUpdate.removed]--;
+    }
+
+    setReactions({...reactions});
+  };
 
   return (
     <div className="flex space-x-2">
@@ -77,11 +64,11 @@ const Reaction: React.FC<ReactionProps> = ({ issueId, initialReactions }) => {
           key={emoji}
           onClick={() => handleReaction(emoji)}
           className={`flex items-center space-x-1 p-2 rounded-full ${
-            reactionCounts[emoji] ? "bg-green-200 text-green-600" : "bg-gray-200 text-gray-600"
+            reactions[emoji] ? "bg-green-200 text-green-600" : "bg-gray-200 text-gray-600"
           }`}
         >
           <span>{emoji}</span>
-          <span>{reactionCounts[emoji] || 0}</span>
+          <span>{reactions[emoji] || 0}</span>
         </button>
       ))}
     </div>

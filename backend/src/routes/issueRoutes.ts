@@ -1,13 +1,15 @@
 import { Router } from "express";
-import issueController from "../controllers/issueController";
+import * as issueController from "../controllers/issueController";
+import { verifyAndGetUser } from "../middleware/middleware";
 
 const router = Router();
 
-router.get("/", issueController.getAllIssues);
-router.get("/:id", issueController.getIssueById);
-router.post("/", issueController.createIssue);
-router.put("/:id", issueController.updateIssue);
-router.delete("/:id", issueController.deleteIssue);
-router.put("/resolve/:id", issueController.resolveIssue);
+router.use(verifyAndGetUser);
+router.post("/", issueController.getIssues);
+router.post("/single", issueController.getIssueById);
+router.post("/create", issueController.createIssue);
+router.put("/", issueController.updateIssue);
+router.delete("/", issueController.deleteIssue);
+router.put("/resolve/", issueController.resolveIssue);
 
 export default router;

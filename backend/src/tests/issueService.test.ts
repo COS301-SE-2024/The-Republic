@@ -1,6 +1,7 @@
 import IssueService from "../services/issueService";
 import IssueRepository from "../db/issueRepository";
 import { Issue } from "../models/issue";
+import { APIResponse } from "../types/response";
 
 jest.mock("../db/issueRepository");
 
@@ -40,12 +41,12 @@ describe("IssueService", () => {
         reactions: []
       }
     ];
-    issueRepository.getAllIssues.mockResolvedValue(mockIssues);
+    issueRepository.getIssues.mockResolvedValue(mockIssues);
 
-    const issues = await issueService.getAllIssues();
+    const response = await issueService.getIssues({from: 0, amount: 999});
 
-    expect(issues).toEqual(mockIssues);
-    expect(issueRepository.getAllIssues).toHaveBeenCalledTimes(1);
+    expect(response.data).toEqual(mockIssues);
+    expect(issueRepository.getIssues).toHaveBeenCalledTimes(1);
   });
 
   it("should get an issue by ID", async () => {
@@ -74,10 +75,10 @@ describe("IssueService", () => {
     };
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
 
-    const issue = await issueService.getIssueById(1);
+    const response = await issueService.getIssueById({ issue_id: 1});
 
-    expect(issue).toEqual(mockIssue);
-    expect(issueRepository.getIssueById).toHaveBeenCalledWith(1);
+    expect(response.data).toEqual(mockIssue);
+    expect(issueRepository.getIssueById).toHaveBeenCalledWith(1, undefined);
     expect(issueRepository.getIssueById).toHaveBeenCalledTimes(1);
   });
 
@@ -111,9 +112,9 @@ describe("IssueService", () => {
       } as Issue;
       issueRepository.createIssue.mockResolvedValue(createdIssue);
 
-      const issue = await issueService.createIssue(newIssue);
+      const response = await issueService.createIssue(newIssue);
 
-      expect(issue).toEqual(createdIssue);
+      expect(response.data).toEqual(createdIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledWith(newIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
     });
@@ -121,7 +122,13 @@ describe("IssueService", () => {
     it("should throw an error when required fields are missing", async () => {
       const newIssue: Partial<Issue> = { user_id: "1", content: "New Issue" };
 
-      await expect(issueService.createIssue(newIssue)).rejects.toThrowError(
+      await expect((async () => {
+        try {
+          await issueService.createIssue(newIssue);
+        } catch(error) {
+          throw new Error((error as APIResponse).error);
+        }
+      })()).rejects.toThrow(
         "Missing required fields for creating an issue"
       );
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
@@ -138,7 +145,13 @@ describe("IssueService", () => {
         sentiment: "neutral",
       };
 
-      await expect(issueService.createIssue(newIssue)).rejects.toThrowError(
+      await expect((async () => {
+        try {
+          await issueService.createIssue(newIssue);
+        } catch(error) {
+          throw new Error((error as APIResponse).error);
+        }
+      })()).rejects.toThrow(
         "Issue content exceeds the maximum length of 500 characters"
       );
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
@@ -172,19 +185,19 @@ describe("IssueService", () => {
     };
     issueRepository.updateIssue.mockResolvedValue(updatedIssue);
 
-    const issue = await issueService.updateIssue(1, updateData);
+    const response = await issueService.updateIssue({ issue_id: 1, user_id: "1", ...updateData});
 
-    expect(issue).toEqual(updatedIssue);
-    expect(issueRepository.updateIssue).toHaveBeenCalledWith(1, updateData);
+    expect(response.data).toEqual(updatedIssue);
+    expect(issueRepository.updateIssue).toHaveBeenCalledWith(1, updateData, "1");
     expect(issueRepository.updateIssue).toHaveBeenCalledTimes(1);
   });
 
   it("should delete an issue", async () => {
     issueRepository.deleteIssue.mockResolvedValue();
 
-    await issueService.deleteIssue(1);
+    await issueService.deleteIssue({ issue_id: 1, user_id: "1" });
 
-    expect(issueRepository.deleteIssue).toHaveBeenCalledWith(1);
+    expect(issueRepository.deleteIssue).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledTimes(1);
   });
 });

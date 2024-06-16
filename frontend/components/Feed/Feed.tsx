@@ -16,14 +16,19 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
-        if (userId) {
-          url += `?user_id=${userId}`;
-        }
-
-        const response = await fetch(url);
-        const data: IssueType[] = await response.json();
-        setIssues(data);
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
+        const response = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({
+            from: 0,
+            amount: 99,
+          }),
+          headers: {
+            "content-type": "application/json"
+          }
+        });
+        const apiResponse = await response.json();
+        setIssues(apiResponse.data);
       } catch (error) {
         console.error("Error fetching issues:", error);
       }

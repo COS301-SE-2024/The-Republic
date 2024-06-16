@@ -37,18 +37,19 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (authUser) {
           try {
-            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`, {
               headers: {
                 Authorization: `Bearer ${session.access_token}`,
                 "Content-Type": "application/json",
               },
             });
 
-            if (!userResponse.ok) {
+            if (!response.ok) {
               throw new Error('Failed to fetch user data');
             }
-            const userData: User = await userResponse.json();
-            setUser(userData);
+
+            const apiResponse = await response.json();
+            setUser(apiResponse.data);
           } catch (error) {
             console.error('Failed to fetch user data:', error);
           }
