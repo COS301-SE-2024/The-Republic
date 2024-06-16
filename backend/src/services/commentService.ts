@@ -56,6 +56,7 @@ export class CommentService {
     }
 
     comment.parent_id ??= null;
+    delete comment.comment_id;
 
     return this.commentRepository.addComment(comment);
   }

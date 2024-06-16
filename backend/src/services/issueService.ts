@@ -61,6 +61,8 @@ export default class IssueService {
       });
     }
 
+    delete issue.issue_id;
+
     return this.issueRepository.createIssue(issue);
   }
 
@@ -90,6 +92,8 @@ export default class IssueService {
         error: "Cannot change the time an issue was created or resolved"
       });
     }
+
+    delete issue.issue_id;
 
     return this.issueRepository.updateIssue(issue_id, issue, user_id);
   }
