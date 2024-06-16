@@ -49,17 +49,17 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
   };
 
   return (
-    <form onSubmit={handleCommentSubmit} className="flex items-center space-x-2 mt-4 bg-white p-4 rounded shadow">
+    <form onSubmit={handleCommentSubmit} className="flex items-center space-x-2 mt-4 bg-card dark:bg-card p-4 rounded shadow">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="flex-grow p-2 border rounded resize-none"
+        className="flex-grow p-2 border rounded resize-none bg-background text-foreground dark:bg-background dark:text-foreground"
         placeholder="Add Comment..."
         rows={1}
       />
       <button
         type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded"
+        className="bg-primary text-primary-foreground px-4 py-2 rounded"
         disabled={!content.trim()}
       >
         Send
