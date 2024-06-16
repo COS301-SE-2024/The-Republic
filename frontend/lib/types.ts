@@ -42,7 +42,6 @@ interface Comment {
   user: User;
 }
 
-=======
 interface HomeAvatarProps {
   username: string;
   fullname: string;
