@@ -39,29 +39,34 @@ const Comment: React.FC<CommentProps> = ({
         </Avatar>
       </div>
       <div className="flex-1">
-        <div className="bg-gray-100 p-4 rounded-lg shadow">
+        <div className="bg-card text-card-foreground dark:bg-card dark:text-card-foreground p-4 rounded-lg shadow">
           <div className="font-bold">{comment.user.fullname}</div>
           <div>{comment.content}</div>
         </div>
         <div className="flex items-center space-x-2 mt-2">
-          {user && (
+          {user && !comment.parent_comment_id && (
             <Button
               variant="ghost"
               size="sm"
-              className="text-green-600"
+              className="text-primary dark:text-primary-foreground"
               onClick={() => setIsReplying(!isReplying)}
             >
               {isReplying ? "Cancel" : "Reply"}
             </Button>
           )}
           {isOwner && (
-            <Button variant="ghost" size="sm" onClick={() => onDelete(comment.comment_id)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-destructive dark:text-destructive-foreground"
+              onClick={() => onDelete(comment.comment_id)}
+            >
               Delete
             </Button>
           )}
           {replies.length > 0 && (
             <button
-              className="text-green-600"
+              className="text-primary dark:text-primary-foreground"
               onClick={() => setShowReplies(!showReplies)}
             >
               {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
@@ -84,7 +89,7 @@ const Comment: React.FC<CommentProps> = ({
                 onDelete={onDelete}
                 isOwner={user?.user_id === reply.user.user_id}
                 onReply={onReply}
-                replies={replies.filter((r) => r.parent_comment_id === reply.comment_id)}
+                replies={[]}
               />
             ))}
           </div>
