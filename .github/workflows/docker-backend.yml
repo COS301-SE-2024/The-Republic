@@ -6,21 +6,15 @@ on:
       - master
       - main
       - develop
-  workflow_run:
-    workflows:
-      - "Backend Unit Testing"
-    types:
-      - completed
+  pull_request:
     branches:
       - master
       - main
       - develop
-
 jobs:
   build-and-push-backend:
     runs-on: ubuntu-latest
     name: "DockerHub: Backend and Reverse Proxy"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
@@ -29,11 +23,9 @@ jobs:
       - name: Install dependencies
         run: |
           echo "--------- Installing dependencies -----------"
-          curl -LO https://nodejs.org/dist/v18.0.0/node-v18.0.0-linux-x64.tar.xz
-          tar -xvf node-v18.0.0-linux-x64.tar.xz
-          sudo cp -r node-v18.0.0-linux-x64/{bin,include,lib,share} /usr/
-          node --version # This should output v18.0.0
-          sudo apt install -y nodejs
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          node --version # This should output the latest version from the NodeSource repository
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
