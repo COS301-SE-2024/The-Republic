@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import supabase from "../services/supabaseClient";
+import { sendResponse } from "../utils/response";
+import { APIError } from "../types/response";
 
 export const serverMiddleare = (
   req: Request,
@@ -31,9 +33,17 @@ export const verifyAndGetUser = async (
     console.error(error);
 
     if (error.status === 403) {
-      res.sendStatus(403);
+      sendResponse(res, APIError({
+        code: 403,
+        success: false,
+        error: "Invalid token"
+      }));
     } else {
-      res.sendStatus(500);
+      sendResponse(res, APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      }));
     }
 
     return;
@@ -41,5 +51,6 @@ export const verifyAndGetUser = async (
 
   req.body.user_id = data.user.id;
   console.log(req.body);
+
   next();
 };
