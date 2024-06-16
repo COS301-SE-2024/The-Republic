@@ -1,4 +1,5 @@
 import supabase from "../services/supabaseClient";
+import { APIError } from "../types/response";
 
 export class CategoryRepository {
   async getCategoryId(name: string) {
@@ -10,11 +11,15 @@ export class CategoryRepository {
 
 
     if (error) {
-      console.log(error);
-      // TODO: Make errors follow spec
-      throw 500;
+      console.error(error);
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
     }
 
-    return data?.category_id;
+    return data!.category_id as number;
   }
 }
