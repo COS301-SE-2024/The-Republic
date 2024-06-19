@@ -18,17 +18,28 @@ interface ReactionCount {
 interface Issue {
   issue_id: number;
   user_id: string;
-  location_id: number | null;
   category_id: number;
   content: string;
+  sentiment: string;
   image_url: string | null;
   is_anonymous: boolean;
+  location_id: number | null;
+  location_data: {
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+    place_id: string;
+  } | null;
   created_at: string;
+  updated_at: string;
   resolved_at: string | null;
-  sentiment: string;
   user: User;
   category: Category;
   reactions: ReactionCount[];
+  user_reaction: string | null;
+  comment_count: number;
+  is_owner: boolean;
 }
 
 export { User, Category, ReactionCount, Issue };
