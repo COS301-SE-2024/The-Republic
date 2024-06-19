@@ -28,9 +28,13 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/${issue.issue_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ issueId: issue.issue_id }),
         }
       );
 
