@@ -27,7 +27,7 @@ The emphasis on security and usability aligns with the business requirement of f
 
 ## User-Centric Design:
 
-As the platform targets the general public, including individuals from diverse backgrounds and demographics, addressing their requirements is paramount. Key considerations include:
+As the platform targets the general public, including individuals from diverse backgrounds and demographics, addressing their requirements is important. Key considerations include:
 
 - **Intuitive User Experience:** Prioritizing usability ensures that the platform is easy to navigate and interact with, regardless of the user's technical proficiency or ability. This aligns with the quality requirement of delivering a user-friendly experience that encourages widespread adoption.
 - **Accurate and Relevant Information:** By emphasizing reliability and performance, the platform can provide citizens with accurate and up-to-date visualizations and insights into governmental service delivery. This transparency and information accuracy foster trust and enable informed decision-making.
@@ -116,6 +116,16 @@ Maintainability ensures that the system can be easily updated and improved over 
 | Stimulus Source                         | Stimulus                                                    | Response                                                                                                  | Response Measure                                                                                                                             | Environment                           | Artifact                                          |
 | --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------- |
 | Need for updates / New feature requests | Introduction of new features, bug fixes, and system updates | - Write clean, modular code.<br> - Maintain comprehensive documentation.<br> - Implement CI/CD practices. | - Time taken to implement updates and new features.<br> - Ease of identifying and fixing issues.<br> - Minimal disruption during deployment. | Ongoing development / Regular updates | Codebase, documentation, and deployment pipeline. |
+
+## Usability 🖐️
+
+Usability ensures that the system is easy to use and provides a good user experience for users of all backgrounds.
+
+- **Intuitive UI/UX:** Designing interfaces that are intuitive and easy to navigate. Users can perform necessary actions effortlessly, even without prior training.
+
+| Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
+| --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
+| User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
 
 [Back to Full Documentation](./../README.md)
 
