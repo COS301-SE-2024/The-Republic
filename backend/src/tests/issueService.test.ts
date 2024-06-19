@@ -1,18 +1,23 @@
 import IssueService from "../services/issueService";
 import IssueRepository from "../db/issueRepository";
+import { LocationRepository } from "../db/locationRepository";
 import { Issue } from "../models/issue";
 import { APIResponse } from "../types/response";
 
 jest.mock("../db/issueRepository");
+jest.mock("../db/locationRepository");
 
 describe("IssueService", () => {
   let issueService: IssueService;
   let issueRepository: jest.Mocked<IssueRepository>;
+  let locationRepository: jest.Mocked<LocationRepository>;
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
+    locationRepository = new LocationRepository() as jest.Mocked<LocationRepository>;
     issueService = new IssueService();
     issueService.setIssueRepository(issueRepository);
+    issueService.setLocationRepository(locationRepository);
   });
 
   it("should get all issues", async () => {
@@ -21,11 +26,13 @@ describe("IssueService", () => {
         issue_id: 1,
         user_id: "1",
         location_id: null,
+        location_data: null,
         category_id: 1,
         content: "Test Issue",
         resolved_at: null,
         is_anonymous: false,
         created_at: "2024-06-01",
+        updated_at: "2024-06-01",
         sentiment: "angry",
         image_url: null,
         user: {
@@ -38,7 +45,10 @@ describe("IssueService", () => {
         category: {
           name: "Category 1"
         },
-        reactions: []
+        reactions: [],
+        user_reaction: null,
+        comment_count: 0,
+        is_owner: false
       }
     ];
     issueRepository.getIssues.mockResolvedValue(mockIssues);
@@ -54,11 +64,13 @@ describe("IssueService", () => {
       issue_id: 1,
       user_id: "1",
       location_id: null,
+      location_data: null,
       category_id: 1,
       content: "Test Issue",
       resolved_at: null,
       is_anonymous: false,
       created_at: "2022-01-01",
+      updated_at: "2022-01-01",
       sentiment: "neutral",
       image_url: null,
       user: {
@@ -71,7 +83,10 @@ describe("IssueService", () => {
       category: {
         name: "Category 1"
       },
-      reactions: []
+      reactions: [],
+      user_reaction: null,
+      comment_count: 0,
+      is_owner: false
     };
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
 
@@ -87,6 +102,13 @@ describe("IssueService", () => {
       const newIssue: Partial<Issue> = {
         user_id: "1",
         location_id: null,
+        location_data: {
+          province: "Province",
+          city: "City",
+          suburb: "Suburb",
+          district: "District",
+          place_id: "place_id",
+        },
         category_id: 1,
         content: "New Issue",
         resolved_at: null,
@@ -94,9 +116,23 @@ describe("IssueService", () => {
         sentiment: "neutral",
       };
       const createdIssue: Issue = {
-        ...newIssue,
         issue_id: 1,
+        user_id: "1",
+        location_id: null,
+        location_data: {
+          province: "Province",
+          city: "City",
+          suburb: "Suburb",
+          district: "District",
+          place_id: "place_id",
+        },
+        category_id: 1,
+        content: "New Issue",
+        resolved_at: null,
+        is_anonymous: false,
         created_at: "2022-01-01",
+        updated_at: "2022-01-01",
+        sentiment: "neutral",
         image_url: null,
         user: {
           user_id: "1",
@@ -108,8 +144,11 @@ describe("IssueService", () => {
         category: {
           name: "Category 1"
         },
-        reactions: []
-      } as Issue;
+        reactions: [],
+        user_reaction: null,
+        comment_count: 0,
+        is_owner: true
+      };
       issueRepository.createIssue.mockResolvedValue(createdIssue);
 
       const response = await issueService.createIssue(newIssue);
@@ -138,6 +177,13 @@ describe("IssueService", () => {
       const newIssue: Partial<Issue> = {
         user_id: "1",
         location_id: null,
+        location_data: {
+          province: "Province",
+          city: "City",
+          suburb: "Suburb",
+          district: "District",
+          place_id: "place_id",
+        },
         category_id: 1,
         content: "A".repeat(501),
         resolved_at: null,
@@ -164,11 +210,13 @@ describe("IssueService", () => {
       issue_id: 1,
       user_id: "1",
       location_id: null,
+      location_data: null,
       category_id: 1,
       content: "Updated Issue",
       resolved_at: null,
       is_anonymous: false,
       created_at: "2022-01-01",
+      updated_at: "2022-01-01",
       sentiment: "neutral",
       image_url: null,
       user: {
@@ -181,7 +229,10 @@ describe("IssueService", () => {
       category: {
         name: "Category 1"
       },
-      reactions: []
+      reactions: [],
+      user_reaction: null,
+      comment_count: 0,
+      is_owner: true
     };
     issueRepository.updateIssue.mockResolvedValue(updatedIssue);
 
@@ -199,5 +250,73 @@ describe("IssueService", () => {
 
     expect(issueRepository.deleteIssue).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledTimes(1);
+  });
+
+  it("should use existing location if it already exists", async () => {
+    const newIssue: Partial<Issue> = {
+      user_id: "1",
+      location_data: {
+        province: "Province",
+        city: "City",
+        suburb: "Suburb",
+        district: "District",
+        place_id: "place_id",
+      },
+      category_id: 1,
+      content: "New Issue",
+      is_anonymous: false,
+      sentiment: "neutral",
+    };
+    const createdIssue: Issue = {
+      issue_id: 1,
+      user_id: "1",
+      location_id: 1,
+      location_data: {
+        province: "Province",
+        city: "City",
+        suburb: "Suburb",
+        district: "District",
+        place_id: "place_id",
+      },
+      category_id: 1,
+      content: "New Issue",
+      is_anonymous: false,
+      sentiment: "neutral",
+      created_at: "2022-01-01",
+      updated_at: "2022-01-01",
+      user: {
+        user_id: "1",
+        email_address: "test@example.com",
+        username: "testuser",
+        fullname: "Test User",
+        image_url: "https://example.com/image.png"
+      },
+      category: {
+        name: "Category 1"
+      },
+      reactions: [],
+      user_reaction: null,
+      comment_count: 0,
+      is_owner: true,
+      resolved_at: null,
+      image_url: null,
+    };
+
+    locationRepository.getLocationByPlacesId.mockResolvedValue({
+      location_id: 1,
+      province: "Province",
+      city: "City",
+      suburb: "Suburb",
+      district: "District",
+      place_id: "place_id",
+    });
+
+    issueRepository.createIssue.mockResolvedValue(createdIssue);
+
+    const response = await issueService.createIssue(newIssue);
+
+    expect(response.data).toEqual(createdIssue);
+    expect(locationRepository.createLocation).not.toHaveBeenCalled();
+    expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
   });
 });

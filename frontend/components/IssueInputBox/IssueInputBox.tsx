@@ -4,15 +4,16 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import { MapPin } from 'lucide-react';
-import { Image as LucideImage } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from 'react-textarea-autosize';
 import CircularProgress from '../CircularProgressBar/CircularProgressBar';
 import { categoryOptions, moodOptions } from '@/lib/constants';
 import { supabase } from '@/lib/globals';
+import LocationAutocomplete from '@/components/LocationAutocomplete/LocationAutocomplete';
+import Dropdown from "@/components/Dropdown/Dropdown";
+import { Image as LucideImage } from 'lucide-react';
+import { LocationType } from '@/lib/types';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -21,7 +22,7 @@ interface IssueInputBoxProps {
     user_id: string;
     fullname: string;
     image_url: string;
-  } | null; // Allow user to be null
+  } | null;
 }
 
 const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
@@ -29,6 +30,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [location, setLocation] = useState<LocationType | null>(null);
   const { toast } = useToast();
 
   const handleIssueSubmit = async () => {
@@ -38,25 +40,30 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       });
       return;
     }
-
+  
     const categoryID = parseInt(category);
     const { data } = await supabase.auth.getSession();
-
+  
+    const requestBody = {
+      category_id: categoryID,
+      content,
+      sentiment: mood,
+      is_anonymous: isAnonymous,
+      location_data: location ? location.value : {},
+      created_at: new Date().toISOString(),
+    };
+  
+    console.log("Request Body:", requestBody);
+  
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`, {
       method: "POST",
-      body: JSON.stringify({
-        category_id: categoryID,
-        content,
-        sentiment: mood,
-        is_anonymous: isAnonymous,
-        created_at: new Date().toISOString(),
-      }),
+      body: JSON.stringify(requestBody),
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${data.session!.access_token}`,
       },
     });
-
+  
     if (!res.ok) {
       toast({
         variant: "destructive",
@@ -67,7 +74,8 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       setCategory("");
       setMood("");
       setIsAnonymous(false);
-
+      setLocation(null);
+  
       toast({
         description: "Post successful",
       });
@@ -118,13 +126,14 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           onChange={setMood}
           placeholder="Mood"
         />
-        <div className="mx-2">
-          <MapPin />
-        </div>
-        <div className="mx-2">
+        <LocationAutocomplete
+          location={location}
+          setLocation={setLocation}
+        />
+        <Button variant="ghost" size="sm" className="mx-2">
           <LucideImage />
-        </div>
-        <div className="mx-2">
+        </Button>
+        <div className="mx-2 flex items-center">
           <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)} />
           <label
             htmlFor="anon"

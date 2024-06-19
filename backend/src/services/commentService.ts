@@ -6,6 +6,10 @@ import { APIData, APIError } from "../types/response";
 export class CommentService {
   private commentRepository = new CommentRepository();
 
+  setCommentRepository(commentRepository: CommentRepository): void{
+    this.commentRepository = commentRepository;
+  }
+
   async getNumComments({ issue_id, parent_id }: Partial<GetCommentsParams>) {
     if (!issue_id) {
       throw APIError({

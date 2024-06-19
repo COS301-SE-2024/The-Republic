@@ -2,16 +2,23 @@ import IssueRepository from "../db/issueRepository";
 import { Issue } from "../models/issue";
 import { GetIssuesParams } from "../types/issue";
 import { APIData, APIError } from "../types/response";
+import { LocationRepository } from "../db/locationRepository";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
+  private locationRepository: LocationRepository;
 
   constructor() {
     this.issueRepository = new IssueRepository();
+    this.locationRepository = new LocationRepository();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
     this.issueRepository = issueRepository;
+  }
+  
+  setLocationRepository(locationRepository: LocationRepository): void {
+    this.locationRepository = locationRepository;
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {

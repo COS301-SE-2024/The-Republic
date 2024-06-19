@@ -9,6 +9,10 @@ export default class ReactionService {
     this.reactionRepository = new ReactionRepository();
   }
 
+  setReactionRepository(reactionRepository: ReactionRepository): void{
+    this.reactionRepository = reactionRepository;
+  }
+
   async addOrRemoveReaction(reaction: Partial<Reaction>) {
     if (!reaction.user_id) {
       throw APIError({
