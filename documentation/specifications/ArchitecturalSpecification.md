@@ -73,11 +73,24 @@ Performance requirements ensure that the system can handle a high volume of user
 
 Reliability ensures that the system is available and functional when users need it. Users should be able to perform critical tasks like creating accounts, posting, or resetting passwords without issues.
 
+- **Redundancy:** Critical components must have redundant systems in place to handle failures gracefully. This includes redundant servers, databases, and network connections.
+- **Backups:** Regular backups of all critical data ensure that data can be restored quickly in case of a failure, minimizing downtime and data loss.
+
 | Stimulus Source              | Stimulus                                                     | Response                                                                                                                                                                   | Response Measure                                                                                                                                                                                   | Environment                                    | Artifact                                               |
 | ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
 | System demand/ User Activity | User attempts to create accounts, log in, or reset passwords | - The system should have high uptime and minimal downtime. <br> - Implement redundancy to handle failures gracefully. <br> - Perform regular backups to prevent data loss. | - System uptime percentage (99.9%).<br> - Successful completion of critical user actions (account creation success rate above 99%).<br> - Minimal downtime incidents (less than 1 hour per month). | System operating normally / During maintenance | User authentication and account management components. |
 
 ## Scalability 🛡️
+
+The system is built to scale efficiently to handle growth in users, data, and complexity.
+
+- **Microservices Architecture** Although currently using a monolithic design, the system is planned to transition to a microservices architecture. This will allow different functionalities to be managed independently and scaled as needed.
+- **Horizontal Scaling:** Services are designed to scale horizontally by adding more instances to handle increased load, ensuring that performance remains stable as the user base grows.
+- **Database Partitioning:** Employing database partitioning and sharding to manage data growth efficiently. This ensures that large datasets are handled effectively without degrading performance.
+
+| Stimulus Source                          | Stimulus                               | Response                                                                                                                            | Response Measure                                                                                                                  | Environment                                | Artifact                                                      |
+| ---------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
+| Increasing number of users / Data growth | Addition of new users, posts, and data | - Design for horizontal scaling.<br> - Plan transition to microservices architecture.<br> - Use database partitioning and sharding. | - Stable performance with growing user base.<br> - Efficient data handling.<br> - Seamless addition of new services and features. | Growing user base / Increasing data volume | Core functionalities like post management and data analytics. |
 
 [Back to Full Documentation](./../README.md)
 
