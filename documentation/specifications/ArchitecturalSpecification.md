@@ -61,15 +61,9 @@ The following Quality Requirements have been identified by the team and the clie
 
 Performance requirements ensure that the system can handle a high volume of users and interactions without significant latency. The system must maintain high speed and responsiveness even under load.
 
-| Stimulus Source                                               | Stimulus                                                               | Response                                                           | Response Measure | Environment |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------- | ----------- |
-| High number of concurrent users / High volume of interactions | User actions like creating posts, uploading media, and filtering posts | - The system should process user requests quickly and efficiently. |
-
-- Implement caching strategies to reduce load times.
-- Use load balancing to distribute traffic evenly across servers. | - User actions are processed within an acceptable time frame.
-- Average response time under load is kept below a specified threshold.
-- System can handle peak load without significant degradation in performance.
-  | High user activity / Peak usage times |
+| Stimulus Source                                               | Stimulus                                                                | Response                                                                                                                                                                                      | Response Measure                                                                                                                                                                                                        | Environment                           |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| High number of concurrent users / High volume of interactions | User actions like creating posts, uploading media, and filtering posts. | The system should process user requests quickly and efficiently. <br> Implement caching strategies to reduce load times. <br> Use load balancing to distribute traffic evenly across servers. | User actions are processed within an acceptable time frame. <br> Average response time under load is kept below a specified threshold. <br> System can handle peak load without significant degradation in performance. | High user activity / Peak usage times |
 
 [Back to Full Documentation](./../README.md)
 
