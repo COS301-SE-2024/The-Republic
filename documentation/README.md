@@ -15,4 +15,4 @@
 5. [User Manual](./specifications/UserManual.md)
 6. [Coding Standards](./specifications/CodingStandards.md)
 
-## [Back to main README](/README.md)
+[Back to Main](/README.md)
