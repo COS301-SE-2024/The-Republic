@@ -16,16 +16,16 @@
 
 The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, reliability, security, maintainability, and usability while facilitating future evolution from a monolithic to a microservice architecture.
 
-## Design Strategy
+# Design Strategy
 
-# Alignment with Business Requirements:
+## Alignment with Business Requirements:
 
 The architectural decisions and identification of quality requirements were made to directly align with the core business requirements of The Republic project. The functional requirements and user stories outline the need for a platform that allows citizens to report governmental service delivery issues and visualize the aggregated data. To meet these business needs effectively, the architectural choices and prioritized quality requirements were carefully selected.
 
 Furthermore, the prioritization of quality requirements such as performance, reliability, scalability, security, and usability directly addresses the business need for a robust, responsive, and user-friendly platform capable of handling a large user base. By ensuring high performance, reliability, and scalability, the system can effectively serve the intended audience of the general public, facilitating seamless reporting of service delivery issues and providing insightful visualizations.
 The emphasis on security and usability aligns with the business requirement of fostering trust and encouraging widespread adoption among citizens. A secure platform that protects user data and provides an intuitive user experience will be crucial for the project's success and sustained utilization.
 
-# User-Centric Design:\*\*
+## User-Centric Design:
 
 As the platform targets the general public, including individuals from diverse backgrounds and demographics, addressing their requirements is paramount. Key considerations include:
 
@@ -36,7 +36,7 @@ As the platform targets the general public, including individuals from diverse b
 
 This user-centric approach not only enhances the overall experience but also increases the likelihood of sustained engagement and utilization, aligning with the overarching business objectives of the project.
 
-# Facilitates Long-term Maintenance:\*\*
+# Facilitates Long-term Maintenance:
 
 By prioritizing aspects such as modularity, code quality, and comprehensive documentation, the system can be effectively maintained and evolved over time. Specific considerations include:
 
@@ -46,7 +46,7 @@ By prioritizing aspects such as modularity, code quality, and comprehensive docu
 
 While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
 
-## Quality Requirements
+# Quality Requirements
 
 [Back to Full Documentation](./../README.md)
 
