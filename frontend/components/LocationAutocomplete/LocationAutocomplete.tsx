@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { MapPin } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LocationType } from '@/lib/types';
+import { SingleValue } from 'react-select';
 
 interface LocationAutocompleteProps {
   location: LocationType | null;
@@ -14,10 +15,22 @@ interface LocationAutocompleteProps {
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
+interface GooglePlacesAutocompleteResult {
+  label: string;
+  value: {
+    place_id: string;
+  };
+}
+
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, setLocation }) => {
   const [locationInputVisible, setLocationInputVisible] = React.useState(false);
 
-  const handlePlaceSelect = async (loc: any) => {
+  const handlePlaceSelect = async (loc: SingleValue<GooglePlacesAutocompleteResult>) => {
+    if (!loc) {
+      setLocation(null);
+      return;
+    }
+
     const placeId = loc.value.place_id;
     const details = await geocodeByPlaceId(placeId);
 
@@ -50,7 +63,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, s
           ...detailedLocation
         }
       });
-
     }
   };
 
