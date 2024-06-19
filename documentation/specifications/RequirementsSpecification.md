@@ -1,10 +1,10 @@
 <div>
     <img src="../images/gifs/FunctionalRequirements.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
-    <h1 style="color: darkblue;">The Republic</h1>
-    <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
 
 ---
+
+# Requirement Specification
 
 ## Introduction
 
