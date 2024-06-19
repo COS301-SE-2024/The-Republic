@@ -69,7 +69,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleSubscribe = (type: string) => {
     setShowSubscribeDropdown(false);
-    // Perform additional logic here, such as making an API call
     console.log("Subscribed to:", type);
   };
 
@@ -174,6 +173,13 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <Badge variant="outline" className="">
             {issue.sentiment}
           </Badge>
+          {issue.location && (
+            <Badge variant="outline" className="">
+              {issue.location.suburb
+                ? `${issue.location.suburb}, ${issue.location.city}, ${issue.location.province}`
+                : `${issue.location.city}, ${issue.location.province}`}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>

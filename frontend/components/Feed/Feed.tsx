@@ -28,7 +28,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
           }
         });
         const apiResponse = await response.json();
-        
+
         if (apiResponse.success && apiResponse.data) {
           setIssues(apiResponse.data);
         } else {
