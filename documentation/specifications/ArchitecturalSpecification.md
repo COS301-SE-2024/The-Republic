@@ -12,11 +12,11 @@
 - Security Measures
 - Conclusion
 
-## Introduction
+# Introduction
 
 The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, reliability, security, maintainability, and usability while facilitating future evolution from a monolithic to a microservice architecture.
 
-# Design Strategy
+# Design Strategy 📃
 
 ## Alignment with Business Requirements:
 
@@ -36,7 +36,7 @@ As the platform targets the general public, including individuals from diverse b
 
 This user-centric approach not only enhances the overall experience but also increases the likelihood of sustained engagement and utilization, aligning with the overarching business objectives of the project.
 
-# Facilitates Long-term Maintenance:
+## Facilitates Long-term Maintenance:
 
 By prioritizing aspects such as modularity, code quality, and comprehensive documentation, the system can be effectively maintained and evolved over time. Specific considerations include:
 
@@ -47,6 +47,29 @@ By prioritizing aspects such as modularity, code quality, and comprehensive docu
 While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
 
 # Quality Requirements
+
+The following Quality Requirements have been identified by the team and the client. They are listed in order of importance and discussed in some detail below.
+
+- **1. Performance**
+- **2. Reliability**
+- **3. Scalability**
+- **4. Security**
+- **5. Maintainability**
+- **6. Usability**
+
+## Performance 🚀
+
+Performance requirements ensure that the system can handle a high volume of users and interactions without significant latency. The system must maintain high speed and responsiveness even under load.
+
+| Stimulus Source                                               | Stimulus                                                               | Response                                                           | Response Measure | Environment |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------- | ----------- |
+| High number of concurrent users / High volume of interactions | User actions like creating posts, uploading media, and filtering posts | - The system should process user requests quickly and efficiently. |
+
+- Implement caching strategies to reduce load times.
+- Use load balancing to distribute traffic evenly across servers. | - User actions are processed within an acceptable time frame.
+- Average response time under load is kept below a specified threshold.
+- System can handle peak load without significant degradation in performance.
+  | High user activity / Peak usage times |
 
 [Back to Full Documentation](./../README.md)
 
