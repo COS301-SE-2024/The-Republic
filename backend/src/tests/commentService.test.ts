@@ -2,7 +2,7 @@ import { CommentService } from "../services/commentService";
 import { CommentRepository } from "../db/commentRepository";
 import { Comment } from "../models/comment";
 import { GetCommentsParams } from "../types/comment";
-import { APIData, APIError } from "../types/response";
+import { APIError } from "../types/response";
 
 jest.mock("../db/commentRepository");
 
