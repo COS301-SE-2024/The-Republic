@@ -7,7 +7,7 @@ export interface Location {
   city: string;
   suburb: string;
   district: string;
-  places_id: string;
+  place_id: string;
 }
 
 export class LocationRepository {
@@ -15,7 +15,7 @@ export class LocationRepository {
     const { data, error } = await supabase
       .from("location")
       .select("*")
-      .eq("places_id", placesId)
+      .eq("place_id", placesId)
       .maybeSingle();
 
     if (error) {
