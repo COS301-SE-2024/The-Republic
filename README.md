@@ -33,7 +33,7 @@
 
 # Documentation
 
-The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [View Full Documentation Here](./documentation/README.md)
+The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines.
 
 #### Links to Specific Sections of the Documentation:
 
