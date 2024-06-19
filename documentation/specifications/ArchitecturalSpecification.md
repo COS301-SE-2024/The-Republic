@@ -1,9 +1,5 @@
 # Architectural Specification
 
-## Overview
-
-This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, and modularity requirements.
-
 ## Contents
 
 - Introduction
@@ -18,9 +14,7 @@ This document outlines the architectural design of The Republic project, focusin
 
 ## Introduction
 
-The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document provides a detailed description of the system architecture, including the technologies used and the design principles followed to ensure a robust, scalable, and secure system.
-
----
+## The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, reliability, security, maintainability, and usability while facilitating future evolution from a monolithic to a microservice architecture.
 
 [Back to Full Documentation](./../README.md)
 
