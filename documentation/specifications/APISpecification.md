@@ -1,4 +1,6 @@
-Here's the updated API specification with the requested changes:
+<div>
+    <img src="../images/gifs/API.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
+</div>
 
 # API Specification for "The Republic"
 
@@ -7,12 +9,15 @@ This document provides a detailed specification for the API endpoints and functi
 ## Base URL
 
 To run the server locally:
+
 ```sh
 cd backend
 npm i
 npm run dev
 ```
+
 The server will be accessible at:
+
 ```
 http://localhost:8080
 ```
@@ -22,10 +27,12 @@ Once the complete backend is available, it will be deployed and a link to that w
 ## Authentication
 
 All endpoints require authentication using a bearer token. Include the token in the `Authorization` header:
+
 ```http
 Authorization: Bearer <token>
 Content-type: application/json
 ```
+
 If the token is missing, invalid, or expired, the API will respond with a `401 Unauthorized` status code.
 
 ## Endpoints
@@ -827,9 +834,13 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 ## Rate Limiting
 
 To prevent abuse, rate limiting should be applied to all endpoints. Users are allowed a maximum number of requests per minute. If the limit is exceeded, the API will respond with a `429 Too Many Requests` status code along with an error message:
+
 ```json
 {
   "success": false,
   "error": "Too many requests. Please try again later."
 }
 ```
+
+[Back to Full Documentation](./../README.md)
+[Back to main](/README.md)

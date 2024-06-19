@@ -9,13 +9,10 @@
 ## Table of Contents
 
 1. [Architectural Specification](./specifications/ArchitecturalSpecification.md)
-2. [Design Specification](./specifications/DesignSpecification.md)
-3. [Project Plan](./specifications/ProjectPlan.md)
-4. [Testing Specification](./specifications/TestingSpecification.md)
-5. [Delivery Specification](./specifications/DeliverySpecification.md)
-6. [Implementation Specification](./specifications/ImplementationSpecification.md)
-7. [Requirements Specification](./specifications/RequirementsSpecification.md)
-8. [User Manual](./specifications/UserManual.md)
-9. [Coding Standards](./specifications/CodingStandards.md)
+2. [Testing Specification](./specifications/TestingSpecification.md)
+3. [Delivery Specification](./specifications/DeliverySpecification.md)
+4. [Requirements Specification](./specifications/RequirementsSpecification.md)
+5. [User Manual](./specifications/UserManual.md)
+6. [Coding Standards](./specifications/CodingStandards.md)
 
 ## [Back to main README](/README.md)

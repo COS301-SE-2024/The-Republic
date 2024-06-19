@@ -1,3 +1,7 @@
+<div>
+    <img src="../images/gifs/UserManual.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
+</div>
+
 # User Manual
 
 ## Overview
@@ -20,6 +24,7 @@ This document serves as a guide for end-users, providing instructions on how to 
 
 The Republic is a platform designed to enhance citizen engagement with government services. This user manual provides step-by-step instructions to help users navigate and utilize the platform's features effectively.
 
-[Back to Full Documentation](./../README.md)
+[Back](./../README.md)
+[Back to main](/README.md)
 
 ---

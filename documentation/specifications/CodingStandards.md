@@ -174,28 +174,30 @@ describe("Login Functionality", () => {
 
 ### Review Process
 
-  - Features based on the development branch.
-  - Automated checks for linting and unit tests.
-  - Manual review by testers.
+- Features based on the development branch.
+- Automated checks for linting and unit tests.
+- Manual review by testers.
 
 ### Commits
-  - Commit per feature or each aspect of a feature.
-  - Avoid the following:
-    - Commits with too many files.
-    - Committing tests, documentation, and code simultaneously.
-    - Vague commit messages.
 
+- Commit per feature or each aspect of a feature.
+- Avoid the following:
 
-  - Each commit should be focused and have a clear purpose.
-  - Write descriptive and concise commit messages.
-    - Summarize the changes made in the commit. Use as much detail as possible in the commit description if necessary.
+  - Commits with too many files.
+  - Committing tests, documentation, and code simultaneously.
+  - Vague commit messages.
 
-  - Use separate commits for code changes, tests, and documentation.
+- Each commit should be focused and have a clear purpose.
+- Write descriptive and concise commit messages.
 
-  - This allows for better tracking and understanding of the changes.
+  - Summarize the changes made in the commit. Use as much detail as possible in the commit description if necessary.
 
-  - Regularly push commits to the remote repository to keep the team in sync.
-  - Use interactive rebase or squash commits when necessary to maintain a clean commit history.
+- Use separate commits for code changes, tests, and documentation.
+
+- This allows for better tracking and understanding of the changes.
+
+- Regularly push commits to the remote repository to keep the team in sync.
+- Use interactive rebase or squash commits when necessary to maintain a clean commit history.
 
 ### CI/CD
 
@@ -207,8 +209,7 @@ These coding standards serve as a roadmap for maintaining consistency and qualit
 
 ---
 
-[Back to Full Documentation](./../README.md)<br>
-
+[Back](./../README.md)<br>
 [Back to main](/README.md)
 
 ---

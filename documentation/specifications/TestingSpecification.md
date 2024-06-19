@@ -1,3 +1,7 @@
+<div>
+    <img src="../images/gifs/TestingSpecifications.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
+</div>
+
 # Testing Specification
 
 ### Overview
@@ -92,129 +96,146 @@ The tests will ensure that the final product functions as expected. Specifically
 ### Performance Testing
 
 - **Test 1: High Volume of Textual Posts**
-    - **Objective:** Validate the system's handling of a large number of textual posts.
-    - **Procedure:** Simulate many users creating posts simultaneously.
-    - **Expected Outcome:** The system should remain fast and responsive without significant delays.
+
+  - **Objective:** Validate the system's handling of a large number of textual posts.
+  - **Procedure:** Simulate many users creating posts simultaneously.
+  - **Expected Outcome:** The system should remain fast and responsive without significant delays.
 
 - **Test 2: Media Uploads**
-    - **Objective:** Assess performance with concurrent media uploads.
-    - **Procedure:** Upload many images to posts at the same time.
-    - **Expected Outcome:** The system should handle uploads efficiently without slowing down.
+
+  - **Objective:** Assess performance with concurrent media uploads.
+  - **Procedure:** Upload many images to posts at the same time.
+  - **Expected Outcome:** The system should handle uploads efficiently without slowing down.
 
 - **Test 3: Concurrent Commenting**
-    - **Objective:** Evaluate performance with multiple users commenting on the same post.
-    - **Procedure:** Simulate numerous users commenting simultaneously.
-    - **Expected Outcome:** The system should handle concurrent comments without delays or errors.
+
+  - **Objective:** Evaluate performance with multiple users commenting on the same post.
+  - **Procedure:** Simulate numerous users commenting simultaneously.
+  - **Expected Outcome:** The system should handle concurrent comments without delays or errors.
 
 - **Test 4: Reactions to Posts**
-    - **Objective:** Test performance when processing a high volume of reactions.
-    - **Procedure:** Generate many reactions (likes, dislikes) on posts.
-    - **Expected Outcome:** The system should remain stable and responsive.
+  - **Objective:** Test performance when processing a high volume of reactions.
+  - **Procedure:** Generate many reactions (likes, dislikes) on posts.
+  - **Expected Outcome:** The system should remain stable and responsive.
 
 ### Reliability Testing
 
 - **Test 1: Account Creation**
-    - **Objective:** Ensure reliable account creation.
-    - **Procedure:** Create accounts with various valid and invalid information under different network conditions.
-    - **Expected Outcome:** Accounts should be created consistently without errors.
+
+  - **Objective:** Ensure reliable account creation.
+  - **Procedure:** Create accounts with various valid and invalid information under different network conditions.
+  - **Expected Outcome:** Accounts should be created consistently without errors.
 
 - **Test 2: Login Reliability**
-    - **Objective:** Verify reliable user logins.
-    - **Procedure:** Attempt logins with correct and incorrect credentials under normal and high load conditions.
-    - **Expected Outcome:** Users should log in reliably, and the system should handle logins well under heavy load.
+
+  - **Objective:** Verify reliable user logins.
+  - **Procedure:** Attempt logins with correct and incorrect credentials under normal and high load conditions.
+  - **Expected Outcome:** Users should log in reliably, and the system should handle logins well under heavy load.
 
 - **Test 3: Password Reset**
-    - **Objective:** Test the password reset process.
-    - **Procedure:** Initiate password resets and verify the process in different scenarios.
-    - **Expected Outcome:** Passwords should be reset securely and consistently.
+  - **Objective:** Test the password reset process.
+  - **Procedure:** Initiate password resets and verify the process in different scenarios.
+  - **Expected Outcome:** Passwords should be reset securely and consistently.
 
 ### Scalability Testing
 
 - **Test 1: Filtered Posts**
-    - **Objective:** Assess handling of filtered posts.
-    - **Procedure:** Apply various filters to posts and evaluate response time.
-    - **Expected Outcome:** The system should scale effectively for filtering without performance degradation.
+
+  - **Objective:** Assess handling of filtered posts.
+  - **Procedure:** Apply various filters to posts and evaluate response time.
+  - **Expected Outcome:** The system should scale effectively for filtering without performance degradation.
 
 - **Test 2: Role-Based Views**
-    - **Objective:** Evaluate scalability with different user roles.
-    - **Procedure:** Simulate concurrent access by different user roles.
-    - **Expected Outcome:** The system should serve role-based views efficiently without performance issues.
+
+  - **Objective:** Evaluate scalability with different user roles.
+  - **Procedure:** Simulate concurrent access by different user roles.
+  - **Expected Outcome:** The system should serve role-based views efficiently without performance issues.
 
 - **Test 3: Filtered Post Display**
-    - **Objective:** Test displaying posts with multiple filters.
-    - **Procedure:** Apply multiple filters simultaneously and assess response time.
-    - **Expected Outcome:** The system should handle concurrent filter requests without significant latency.
+  - **Objective:** Test displaying posts with multiple filters.
+  - **Procedure:** Apply multiple filters simultaneously and assess response time.
+  - **Expected Outcome:** The system should handle concurrent filter requests without significant latency.
 
 ### Security Testing
 
 - **Test 1: Secure Account Updates**
-    - **Objective:** Validate secure updates to account details.
-    - **Procedure:** Attempt updates with authorized and unauthorized access.
-    - **Expected Outcome:** Only authorized users should update account details.
+
+  - **Objective:** Validate secure updates to account details.
+  - **Procedure:** Attempt updates with authorized and unauthorized access.
+  - **Expected Outcome:** Only authorized users should update account details.
 
 - **Test 2: Secure Role Selection**
-    - **Objective:** Test role selection security during account creation.
-    - **Procedure:** Attempt to manipulate roles during creation.
-    - **Expected Outcome:** Roles should be securely assigned and protected from unauthorized manipulation.
+
+  - **Objective:** Test role selection security during account creation.
+  - **Procedure:** Attempt to manipulate roles during creation.
+  - **Expected Outcome:** Roles should be securely assigned and protected from unauthorized manipulation.
 
 - **Test 3: Secure Profile Access**
-    - **Objective:** Verify secure access to user profiles by government officials.
-    - **Procedure:** Attempt to access profiles as both authorized and unauthorized users.
-    - **Expected Outcome:** Only authorized officials should access user profiles.
+  - **Objective:** Verify secure access to user profiles by government officials.
+  - **Procedure:** Attempt to access profiles as both authorized and unauthorized users.
+  - **Expected Outcome:** Only authorized officials should access user profiles.
 
 ### Maintainability Testing
 
 - **Test 1: Profile Display Names**
-    - **Objective:** Validate ease of managing profile display names.
-    - **Procedure:** Attempt to change display names under various conditions.
-    - **Expected Outcome:** Users should easily update their display names.
+
+  - **Objective:** Validate ease of managing profile display names.
+  - **Procedure:** Attempt to change display names under various conditions.
+  - **Expected Outcome:** Users should easily update their display names.
 
 - **Test 2: Anonymous Posting**
-    - **Objective:** Assess ease of posting anonymously.
-    - **Procedure:** Test anonymous posting and changing anonymity settings.
-    - **Expected Outcome:** Users should easily post anonymously and change settings.
+
+  - **Objective:** Assess ease of posting anonymously.
+  - **Procedure:** Test anonymous posting and changing anonymity settings.
+  - **Expected Outcome:** Users should easily post anonymously and change settings.
 
 - **Test 3: Role Changes**
-    - **Objective:** Test flexibility of changing profile roles.
-    - **Procedure:** Attempt to change roles and assess the process.
-    - **Expected Outcome:** Users should change roles easily without issues.
+  - **Objective:** Test flexibility of changing profile roles.
+  - **Procedure:** Attempt to change roles and assess the process.
+  - **Expected Outcome:** Users should change roles easily without issues.
 
 ### Usability Testing
 
 - **Test 1: Viewing Own Posts**
-    - **Objective:** Evaluate convenience of viewing own posts.
-    - **Procedure:** Navigate profiles and assess post visibility.
-    - **Expected Outcome:** Users should easily locate and view their posts.
+
+  - **Objective:** Evaluate convenience of viewing own posts.
+  - **Procedure:** Navigate profiles and assess post visibility.
+  - **Expected Outcome:** Users should easily locate and view their posts.
 
 - **Test 2: Issue Category Selection**
-    - **Objective:** Test selecting issue categories when posting.
-    - **Procedure:** Attempt to select categories and assess usability.
-    - **Expected Outcome:** Users should intuitively choose categories.
+
+  - **Objective:** Test selecting issue categories when posting.
+  - **Procedure:** Attempt to select categories and assess usability.
+  - **Expected Outcome:** Users should intuitively choose categories.
 
 - **Test 3: Post Location Selection**
-    - **Objective:** Assess selecting post locations.
-    - **Procedure:** Test the process and evaluate usability.
-    - **Expected Outcome:** Users should select locations easily with clear indicators.
+
+  - **Objective:** Assess selecting post locations.
+  - **Procedure:** Test the process and evaluate usability.
+  - **Expected Outcome:** Users should select locations easily with clear indicators.
 
 - **Test 4: Data Analytics Visualizations**
-    - **Objective:** Evaluate viewing standard data analytics visualizations.
-    - **Procedure:** Access visualizations and assess user experience.
-    - **Expected Outcome:** Users should easily interpret and navigate visualizations.
+
+  - **Objective:** Evaluate viewing standard data analytics visualizations.
+  - **Procedure:** Access visualizations and assess user experience.
+  - **Expected Outcome:** Users should easily interpret and navigate visualizations.
 
 - **Test 5: Filtered Data Visualizations**
-    - **Objective:** Test viewing filtered data visualizations.
-    - **Procedure:** Apply filters and assess clarity of visualizations.
-    - **Expected Outcome:** Users should clearly view filtered visualizations.
+
+  - **Objective:** Test viewing filtered data visualizations.
+  - **Procedure:** Apply filters and assess clarity of visualizations.
+  - **Expected Outcome:** Users should clearly view filtered visualizations.
 
 - **Test 6: Report Creation**
-    - **Objective:** Assess ease of creating reports based on dates and locations.
-    - **Procedure:** Generate reports with specific criteria.
-    - **Expected Outcome:** Users should easily create reports with desired criteria.
+
+  - **Objective:** Assess ease of creating reports based on dates and locations.
+  - **Procedure:** Generate reports with specific criteria.
+  - **Expected Outcome:** Users should easily create reports with desired criteria.
 
 - **Test 7: Report Clarity**
-    - **Objective:** Evaluate clarity of statistically shown reports with visualizations.
-    - **Procedure:** Access reports and assess clarity.
-    - **Expected Outcome:** Users should interpret reports easily with clear visualizations.
+  - **Objective:** Evaluate clarity of statistically shown reports with visualizations.
+  - **Procedure:** Access reports and assess clarity.
+  - **Expected Outcome:** Users should interpret reports easily with clear visualizations.
 
 ---
 
@@ -258,6 +279,7 @@ This testing specification outlines a comprehensive approach to ensure the quali
 
 ---
 
-[Back to Full Documentation](./../README.md)
+[Back](./../README.md)
+[Back to main](/README.md)
 
 ---
