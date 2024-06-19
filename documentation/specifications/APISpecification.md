@@ -17,38 +17,40 @@ The server will be accessible at:
 http://localhost:8080
 ```
 
-Once the complete backend is available, it will be deployed and a link to that will be added to this docuet.
+Once the complete backend is available, it will be deployed and a link to that will be added to this document.
 
 ## Authentication
 
-All endpoints require authentication using a bearer token. Include the token in the `Authorization` header:
+Some endpoints require authentication using a bearer token. Include the token in the `Authorization` header:
 ```http
 Authorization: Bearer <token>
 Content-type: application/json
 ```
-If the token is missing, invalid, or expired, the API will respond with a `401 Unauthorized` status code.
+If the token is missing for an endpoint where it is required the API will respond with `401 Unauthorized`. If it is invalid or expired the response will be `403 Forbidden`.
 
 ## Endpoints
+
+> Note:`?` after a parameter name means it is optional
 
 ### 1. Create a New Issue
 
 - **Method:** `POST`
-- **Endpoint:** `/api/issues`
+- **Endpoint:** `/api/issues/create`
 - **Description:** Create a new issue.
+- **Authentication:** Required
 - **Request Body:**
   ```json
   {
-    "user_id": "string", // required
-    "location_id": "number", // required
-    "category_id": "number", // required
-    "content": "string", // required
-    "image_url": "string", // optional
-    "is_anonymous": "boolean", // required
-    "sentiment": "string" // required
+    "location_id": "number",
+    "category_id": "number",
+    "content": "string",
+    "image_url?": "string",
+    "is_anonymous": "boolean",
+    "sentiment": "string"
   }
   ```
 - **Response:**
-  - **201 Created**
+  - **201 Created** (`data` will contain the created issue)
     ```json
     {
       "success": true,
@@ -59,7 +61,14 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
     ```json
     {
       "success": false,
-      "error": "Invalid input data. Please provide all required fields."
+      "error": "Missing required fields for creating an issue"
+    }
+    ```
+  - **401 Unauthorized**
+    ```json
+    {
+      "success": false,
+      "error": "You need to be signed in to create an issue."
     }
     ```
   - **500 Internal Server Error**
@@ -70,14 +79,24 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
     }
     ```
 
-### 2. Get All Issues
+### 2. Get Issues
 
-- **Method:** `GET`
+- **Method:** `POST`
 - **Endpoint:** `/api/issues`
-- **Description:** Retrieve all issues.
-- **Query Parameters:**
-  - `sort` (string) - Sort issues by "newest", "oldest", or "most_comments"
-  - `category` (number) - Filter issues by category ID
+- **Description:** Get a range of issues.
+- **Request Body:**
+  ```json
+  {
+    "from": "number",
+    "amount": "number",
+    "order_by?": "string",
+    "ascending?": "boolean",
+    "category?": "string",
+    "mood?": "string",
+    "user_id?": "string"
+  }
+  ```
+  > Issues are sorted by latest first by default
 - **Response:**
   - **200 OK**
     ```json
@@ -111,6 +130,7 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
               "count": "number"
             }
           ],
+          "user_reaction": "string",
           "comment_count": "number",
           "is_owner": "boolean"
         }
@@ -120,10 +140,15 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 
 ### 3. Get Issue by ID
 
-- **Method:** `GET`
-- **Endpoint:** `/api/issues/{id}`
+- **Method:** `POST`
+- **Endpoint:** `/api/issues/single`
 - **Description:** Retrieve an issue by its ID.
-- **Path Parameters:** `id` (number) - ID of the issue
+- **Request Body:**
+  ```json
+  {
+    "issue_id": "number"
+  }
+  ```
 - **Response:**
   - **200 OK**
     ```json
@@ -157,6 +182,7 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
             "user_reacted": "boolean"
           }
         ],
+        "user_reaction": "string",
         "comment_count": "number",
         "is_owner": "boolean",
         "is_subscribed": "boolean"
@@ -167,7 +193,7 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
     ```json
     {
       "success": false,
-      "error": "Issue not found."
+      "error": "Issue does not exist."
     }
     ```
   - **500 Internal Server Error**
@@ -181,22 +207,35 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 ### 4. Resolve an Issue
 
 - **Method:** `PUT`
-- **Endpoint:** `/api/issues/resolve/{id}`
+- **Endpoint:** `/api/issues/resolve`
 - **Description:** Mark an issue as resolved.
-- **Path Parameters:** `id` (number) - ID of the issue
+- **Authentication:** Required
+- **Request Body:**
+  ```json
+  {
+    "issue_id": "number"
+  }
+  ```
 - **Response:**
-  - **200 OK**
+  - **200 OK** (`data` will contain the resolved issue)
     ```json
     {
       "success": true,
       "data": {}
     }
     ```
-  - **404 Not Found** (Issue not found)
+  - **401 Unauthorized**
     ```json
     {
       "success": false,
-      "error": "Issue not found."
+      "error": "You need be to signed in to resolve an issue."
+    }
+    ```
+  - **404 Not Found**
+    ```json
+    {
+      "success": false,
+      "error": "Issue does not exist."
     }
     ```
   - **500 Internal Server Error**
@@ -212,36 +251,38 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 - **Method:** `POST`
 - **Endpoint:** `/api/reactions`
 - **Description:** React to an issue with an emoji.
+- **Authentication:** Required
 - **Request Body:**
   ```json
   {
-    "issue_id": "number", // required
-    "user_id": "string", // required
-    "emoji": "string" // required
+    "issue_id": "number",
+    "emoji": "string"
   }
   ```
 - **Response:**
-  - **201 Created**
-    ```json
-    {
-      "success": true,
-      "data": {}
-    }
-    ```
-  - **200 OK** (Reaction removed)
+  - **200 OK**
     ```json
     {
       "success": true,
       "data": {
-        "message": "Reaction removed"
+        "added?": "string",
+        "removed?": "string"
       }
     }
     ```
+    > The given emoji is added as a reaction and returned. If the user already had a reaction it is removed and also returned. If the new reaction is the same as the old one, the reaction is just removed
   - **400 Bad Request** (Invalid input data)
     ```json
     {
       "success": false,
-      "error": "Invalid input data. Please provide all required fields."
+      "error": "Missing required fields for reacting"
+    }
+    ```
+  - **401 Unauthorized**
+    ```json
+    {
+      "success": false,
+      "error": "You need to be signed in to react."
     }
     ```
   - **500 Internal Server Error**
@@ -255,19 +296,20 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 ### 6. Comment on an Issue
 
 - **Method:** `POST`
-- **Endpoint:** `/api/comments`
+- **Endpoint:** `/api/comments/add`
 - **Description:** Comment on an issue.
+- **Authentication:** Required
 - **Request Body:**
   ```json
   {
-    "issue_id": "number", // required
-    "user_id": "string", // required
-    "content": "string", // required
-    "parent_comment_id": "number" // optional
+    "issue_id": "number",
+    "content": "string",
+    "is_anonymous": "boolean",
+    "parent_id?": "number"
   }
   ```
 - **Response:**
-  - **201 Created**
+  - **201 Created** (`data` will contain the created comment)
     ```json
     {
       "success": true,
@@ -278,7 +320,14 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
     ```json
     {
       "success": false,
-      "error": "Invalid input data. Please provide all required fields."
+      "error": "Missing required fields for creating a comment"
+    }
+    ```
+  - **401 Unauthorized**
+    ```json
+    {
+      "success": false,
+      "error": "You need to be signed in to comment."
     }
     ```
   - **500 Internal Server Error**
@@ -291,10 +340,19 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
 
 ### 7. Get Comments for an Issue
 
-- **Method:** `GET`
-- **Endpoint:** `/api/comments/{issue_id}`
-- **Description:** Retrieve all comments for an issue.
-- **Path Parameters:** `issue_id` (number) - ID of the issue
+- **Method:** `POST`
+- **Endpoint:** `/api/comments`
+- **Description:** Retrieve a range comments for an issue.
+- **Request Body:**
+  ```json
+  {
+    "issue_id": "number",
+    "from": "number",
+    "amount": "number",
+    "parent_id?": "number",
+    "user_id?": "string"
+  }
+  ```
 - **Response:**
   - **200 OK**
     ```json
@@ -314,16 +372,17 @@ If the token is missing, invalid, or expired, the API will respond with a `401 U
             "username": "string",
             "fullname": "string",
             "image_url": "string"
-          }
+          },
+          "is_owner": "boolean"
         }
       ]
     }
     ```
-  - **404 Not Found** (Issue not found)
+  - **404 Not Found**
     ```json
     {
       "success": false,
-      "error": "Issue not found."
+      "error": "Comment does not exist."
     }
     ```
   - **500 Internal Server Error**
