@@ -1,10 +1,10 @@
 <div>
     <img src="../images/gifs/FunctionalRequirements.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
-    <h1 style="color: darkblue;">The Republic</h1>
-    <p style="color: darkblue;">A Project for EPI-USE Labs</p>
 </div>
 
 ---
+
+# Requirement Specification
 
 ## Introduction
 
@@ -290,8 +290,7 @@ Usability requirements ensure that the system is easy to use and provides a good
 
 _Note: This is where we will put old sections which have changed. Keep this document updated incrementally as changes are made to the project._
 
-[Back to Full Documentation](./../README.md)<br>
-
-[Back to main README](/README.md)
+[Back](./../README.md)<br>
+[Back to main](/README.md)
 
 ---

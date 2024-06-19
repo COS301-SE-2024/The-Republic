@@ -33,7 +33,7 @@
 
 # Documentation
 
-The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [View Full Documentation Here](./documentation/README.md)
+The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [Documentation](./documentation/README.md)
 
 #### Links to Specific Sections of the Documentation:
 
@@ -41,13 +41,13 @@ The documentation will guide you through various aspects of the project, includi
 - [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
 - [Link to Delivery Specification](./documentation/specifications/DeliverySpecification.md)
 - [Link to Testing Specification](./documentation/specifications/TestingSpecification.md)
+- [Link to User Manual](./documentation/specifications/UserManual.md)
+- [Link to Architectural Specification](./documentation/specifications/ArchitecturalSpecification.md)
 
 <!--
 - [Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md)
-- [Link to User Manual](./documentation/specifications/UserManual.md)
 - [Link to Project Plan](./documentation/specifications/ProjectPlan.md)
 - [Link to Design Specification](./documentation/specifications/DesignSpecification.md)
-- [Link to Architectural Specification](./documentation/specifications/ArchitecturalSpecification.md)
 -->
 
 <p align="center">
