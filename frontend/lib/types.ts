@@ -119,7 +119,17 @@ interface RenderItemResult {
     };
   };
 }
+interface LocationType {
+  label: string;
+  value: {
+    place_id: string;
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+  };
+}
 
 export type { User, Category, Reaction, Issue, HomeAvatarProps,
-   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment
+   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };
