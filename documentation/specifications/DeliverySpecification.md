@@ -168,13 +168,7 @@ Our goal is to ensure high reliability and availability of The Republic platform
   - Our goal is to ensure high reliability and availability of The Republic platform.
   - By deploying to AWS and implementing robust scaling strategies, we aim to minimize downtime and ensure that our services are always accessible to users.
 
-## Conclusion
-
-This document provides the necessary steps and guidelines for deploying and supporting The Republic project. Adhering to these instructions will ensure a smooth and efficient deployment process, leveraging the capabilities of both Heroku and Docker for robust and scalable application hosting. Our future plans for AWS hosting and horizontal autoscaling will further enhance the reliability and availability of our platform.
-
 ---
 
-[Back to Full Documentation](./../README.md)
+[Back](./../README.md)<br>
 [Back to main](/README.md)
-
----

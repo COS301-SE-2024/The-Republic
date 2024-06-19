@@ -24,7 +24,7 @@ This document serves as a guide for end-users, providing instructions on how to 
 
 The Republic is a platform designed to enhance citizen engagement with government services. This user manual provides step-by-step instructions to help users navigate and utilize the platform's features effectively.
 
-[Back](./../README.md)
+[Back](./../README.md)<br>
 [Back to main](/README.md)
 
 ---

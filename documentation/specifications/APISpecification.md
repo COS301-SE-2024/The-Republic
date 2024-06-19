@@ -842,5 +842,5 @@ To prevent abuse, rate limiting should be applied to all endpoints. Users are al
 }
 ```
 
-[Back to Full Documentation](./../README.md)
+[Back](./../README.md)<br>
 [Back to main](/README.md)
