@@ -46,7 +46,7 @@ By prioritizing aspects such as modularity, code quality, and comprehensive docu
 
 While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
 
-# Quality Requirements
+# Quality Requirements 📋
 
 The following Quality Requirements have been identified by the team and the client. They are listed in order of importance and discussed in some detail below.
 
@@ -126,6 +126,29 @@ Usability ensures that the system is easy to use and provides a good user experi
 | Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
 | --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
 | User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
+
+# Architectural Constraints ⚠️
+
+## Monolithic Architecture Transition
+
+The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
+
+## Deployment Model
+
+- The system must not follow a serverless model and should not be cloud-native.
+- It must be able to run on one or more Linux virtual machines (VMs).
+
+## Library and Service Restrictions
+
+All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
+
+## Database Requirement
+
+The system uses PostgreSQL as the primary database due to its robustness, scalability, and support for complex queries and transactions.
+
+## Compliance with POPIA
+
+The system must comply with the Protection of Personal Information Act (POPIA) in South Africa, necessitating secure handling of personal data and stringent access controls.
 
 [Back to Full Documentation](./../README.md)
 
