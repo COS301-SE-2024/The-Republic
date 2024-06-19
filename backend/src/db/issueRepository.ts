@@ -149,7 +149,7 @@ export default class IssueRepository {
         locationId = existingLocation.location_id;
       } else {
         const newLocation = await locationRepository.createLocation({
-          places_id: issue.location_data.place_id,
+          place_id: issue.location_data.place_id,
           province: issue.location_data.province,
           city: issue.location_data.city,
           suburb: issue.location_data.suburb,
