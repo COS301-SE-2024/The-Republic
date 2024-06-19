@@ -16,6 +16,17 @@ interface Reaction {
   count: number;
 }
 
+interface LocationType {
+  label: string;
+  value: {
+    place_id: string;
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+  };
+}
+
 interface Issue {
   issue_id: number;
   user_id: string;
@@ -29,7 +40,12 @@ interface Issue {
   sentiment: string;
   user: User;
   category: Category;
-  reactions: Reaction[]; 
+  reactions: Reaction[];
+  location: {
+    province: string;
+    city: string;
+    suburb: string;
+  } | null;
 }
 
 interface Comment {
@@ -121,5 +137,5 @@ interface RenderItemResult {
 }
 
 export type { User, Category, Reaction, Issue, HomeAvatarProps,
-   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment
+   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };

@@ -28,9 +28,13 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/${issue.issue_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ issueId: issue.issue_id }),
         }
       );
 
@@ -65,7 +69,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const handleSubscribe = (type: string) => {
     setShowSubscribeDropdown(false);
-    // Perform additional logic here, such as making an API call
     console.log("Subscribed to:", type);
   };
 
@@ -170,6 +173,13 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <Badge variant="outline" className="">
             {issue.sentiment}
           </Badge>
+          {issue.location && (
+            <Badge variant="outline" className="">
+              {issue.location.suburb
+                ? `${issue.location.suburb}, ${issue.location.city}, ${issue.location.province}`
+                : `${issue.location.city}, ${issue.location.province}`}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>

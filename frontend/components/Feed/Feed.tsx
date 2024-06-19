@@ -28,7 +28,12 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
           }
         });
         const apiResponse = await response.json();
-        setIssues(apiResponse.data);
+
+        if (apiResponse.success && apiResponse.data) {
+          setIssues(apiResponse.data);
+        } else {
+          console.error("Error fetching issues:", apiResponse.error);
+        }
       } catch (error) {
         console.error("Error fetching issues:", error);
       }
@@ -40,9 +45,13 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   return (
     <div className="w-full px-6">
       {showInputBox && <IssueInputBox user={user} />}
-      {issues.map((issue) => (
-        <Issue key={issue.issue_id} issue={issue} />
-      ))}
+      {issues && issues.length > 0 ? (
+        issues.map((issue) => (
+          <Issue key={issue.issue_id} issue={issue} />
+        ))
+      ) : (
+        <p>No issues found.</p>
+      )}
     </div>
   );
 };

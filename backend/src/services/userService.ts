@@ -1,16 +1,32 @@
 import UserRepository from "../db/userRepository";
-import { APIData } from "../types/response";
+import { User } from "../models/issue";
+import { APIResponse } from "../types/response";
 
 export class UserService {
-  userRepository = new UserRepository();
+  private userRepository: UserRepository;
 
-  async getUserById(user_id: string) {
-    const user = await this.userRepository.getUserById(user_id);
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
 
-    return APIData({
+  setUserRepository(userRepository: UserRepository) {
+    this.userRepository = userRepository;
+  }
+
+  async getUserById(userId: string): Promise<APIResponse<User>> {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) {
+      throw {
+        code: 404,
+        success: false,
+        error: "User not found"
+      };
+    }
+
+    return {
       code: 200,
       success: true,
-      data: user
-    });
+      data: user,
+    };
   }
 }
