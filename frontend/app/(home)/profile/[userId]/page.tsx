@@ -7,14 +7,15 @@ import Feed from "@/components/Feed/Feed";
 import { User } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { useRouter, useParams } from "next/navigation";
+import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const router = useRouter();
   const params = useParams();
   const userId = params.userId as string;
+  const [selectedTab, setSelectedTab] = useState<"issues" | "resolved">("issues");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -63,9 +64,9 @@ const ProfilePage: React.FC = () => {
   return (
     <div>
       <ProfileHeader user={user} isOwner={isOwner} handleUpdate={handleUpdate} handleCancel={handleCancel} isEditing={isEditing} setIsEditing={setIsEditing} />
-      <ProfileStats userId={user.user_id} />
+      <ProfileStats userId={user.user_id} totalIssues={user.total_issues} resolvedIssues={user.resolved_issues} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
       <div className="mt-5"></div>
-      <Feed userId={user.user_id} showInputBox={false} />
+      <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />
     </div>
   );
 };

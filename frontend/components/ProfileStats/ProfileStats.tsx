@@ -1,18 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import CreatePost from "@/components/CreatePost/CreatePost";
 
 interface ProfileStatsProps {
   userId: string;
+  totalIssues: number | null;
+  resolvedIssues: number | null;
+  selectedTab: "issues" | "resolved";
+  setSelectedTab: (tab: "issues" | "resolved") => void;
 }
 
-const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
-  const [selectedTab, setSelectedTab] = useState("issues");
-
-  const handleTabClick = (tab: string) => {
+const ProfileStats: React.FC<ProfileStatsProps> = ({
+  userId,
+  totalIssues,
+  resolvedIssues,
+  selectedTab,
+  setSelectedTab,
+}) => {
+  const handleTabClick = (tab: "issues" | "resolved") => {
     setSelectedTab(tab);
   };
+
+  const displayResolvedIssues = resolvedIssues ?? 0;
+  const displayTotalIssues = totalIssues ?? 0;
 
   return (
     <div className="flex space-x-4 px-4 py-1 border-b">
@@ -23,7 +34,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
           }`}
           onClick={() => handleTabClick("issues")}
         >
-          <span className="font-bold">42</span>{" "}
+          <span className="font-bold">{displayTotalIssues}</span>{" "}
           <span className="text-gray-600">Issues</span>
           {selectedTab === "issues" && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-green-500"></div>
@@ -37,16 +48,14 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
           }`}
           onClick={() => handleTabClick("resolved")}
         >
-          <span className="font-bold">28</span>{" "}
+          <span className="font-bold">{displayResolvedIssues}</span>{" "}
           <span className="text-gray-600">Resolved</span>
           {selectedTab === "resolved" && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-green-500"></div>
           )}
         </div>
       </div>
-      <div className="flex items-center ml-auto py-3">
-        <CreatePost />
-      </div>
+      {/* ... */}
     </div>
   );
 };
