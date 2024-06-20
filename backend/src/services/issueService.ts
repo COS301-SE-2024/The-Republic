@@ -29,12 +29,12 @@ export default class IssueService {
         error: "Missing required fields for getting issues"
       });
     }
-
+  
     const issues = await this.issueRepository.getIssues(params);
-
+  
     const issuesWithUserInfo = issues.map(issue => {
       const isOwner = issue.user_id === params.user_id;
-      
+  
       if (issue.is_anonymous) {
         issue.user = {
           user_id: null,
@@ -47,19 +47,20 @@ export default class IssueService {
           resolved_issues: null,
         };
       }
-      
+  
       return {
         ...issue,
         is_owner: isOwner
       };
     });
-
+  
     return APIData({
       code: 200,
       success: true,
       data: issuesWithUserInfo,
     });
   }
+  
 
   async getIssueById(issue: Partial<Issue>) {
     const issue_id = issue.issue_id;
