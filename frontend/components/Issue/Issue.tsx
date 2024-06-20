@@ -23,7 +23,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     menuItems.push("Resolve Issue");
   }
 
-  const isOwner = true; // will have to get this from api
+  const isOwner = issue.is_owner;
 
   const handleDelete = async () => {
     try {
