@@ -11,8 +11,8 @@ The Republic is a platform that aims to improve citizen interaction with governm
 1. [Signing Up](#signing-up)
 2. [Logging In](#logging-in)
 3. [Homepage](#homepage)
-4. [Different Nav Bars](#navbar)
-5. [Domain Watch](#domain-watch)
+4. [Navigation Bar](#navbar)
+5. [Writing a post](#writing-a-post)
 6. [Organisation Setting](#organisation)
 7. [Domain Watch Passive](#domain-watch-passive)
 8. [API Key](#api-key)
@@ -31,7 +31,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 
 <img src="../images/User Manual Screenshots/LOGIN_1.jpg"/>
 
-**1. Click on login**
+**1. Click on "login"**
 
  <img src="../images/User Manual Screenshots/LOGIN_2.jpg"/>
 
@@ -49,6 +49,28 @@ When you log in, you will be taken to the homepage. This is an example of what t
 The NavBar consists of your General section which includes, home page, visualization, reports and notifcations page. It also consists of the Accounts section whereby users can manage their accounts. It consists of the Profile, Settings and an option to logout.
 
  <img src="../images/User Manual Screenshots/NavBar.png"/>
+
+## Writing a Post
+
+ <img src="../images/User Manual Screenshots/IssuePost.png"/>
+
+**1. Write in the input box**
+
+<img src="../images/User Manual Screenshots/IssuePost_2.png"/>
+
+**2. Select a category under which your issue falls under**
+
+<img src="../images/User Manual Screenshots/IssuePost_3.png"/>
+
+**3. Select a Mood under which your issue falls under**
+
+<img src="../images/User Manual Screenshots/IssuePost_4.png"/>
+
+**4. You can choose to be annonymous or not by clicking the checkbox**
+
+<img src="../images/User Manual Screenshots/IssuePost_5.png"/>
+
+**5. Once down, you can click on "Post" to post your issue**
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
