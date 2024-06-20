@@ -52,6 +52,7 @@ interface Issue {
   comment_count: number;
   is_owner: boolean;
   profile_user_id: string;
+  user_reaction: string;
 }
 
 interface Comment {
