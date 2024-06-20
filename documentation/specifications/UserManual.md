@@ -24,7 +24,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 
 <img src="../images/User Manual Screenshots/Signing Up.jpg"/>
 
-**1. Fill in your details in the relevant fields**
+**1. Fill in your details in the relevant fields**<br>
 **2. Click "Signup" at the bottom of the screen**
 
 ## Logging In
@@ -35,8 +35,14 @@ The Republic is a platform that aims to improve citizen interaction with governm
 
  <img src="../images/User Manual Screenshots/LOGIN_2.jpg"/>
 
-**2. Fill in your details in the relevant fields**
+**2. Fill in your details in the relevant fields**<br>
 **3. Click "Login" at the bottom of the screen**
+
+## Homepage
+
+When you log in, you will be taken to the homepage. This is an example of what the homepage will look like.
+
+ <img src="../images/User Manual Screenshots/HomePage.png"/>
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
