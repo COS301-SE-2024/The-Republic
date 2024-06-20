@@ -195,8 +195,7 @@ As our project evolves, we aim to transition from the current monolithic archite
   The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
 
 - **Deployment Model**<br>
-- The system must not follow a serverless model and should not be cloud-native.
-- It must be able to run on one or more Linux virtual machines (VMs).
+  The system must not follow a serverless model and should not be cloud-native. It must be able to run on one or more Linux virtual machines (VMs).
 
 - **Library and Service Restrictions**<br>
   All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
