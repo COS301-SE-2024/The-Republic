@@ -52,7 +52,10 @@ export class CommentService {
           email_address: null,
           username: 'Anonymous',
           fullname: 'Anonymous',
-          image_url: null
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
         };
       }
       

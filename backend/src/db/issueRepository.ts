@@ -317,4 +317,121 @@ export default class IssueRepository {
 
     return data as Issue;
   }
+
+  async getUserIssues(userId: string) {
+    const { data, error } = await supabase
+      .from("issue")
+      .select(`
+        *,
+        user: user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url
+        ),
+        category: category_id (
+          name
+        ),
+        location: location_id (
+          suburb,
+          city,
+          province
+        )
+      `)
+      .eq('user_id', userId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+    const issues = await Promise.all(data.map(
+      async (issue: Issue) => {
+        const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+        const userReaction = await reactionRepository.getReactionByUserAndIssue(issue.issue_id, userId);
+        const commentCount = await commentRepository.getNumComments(issue.issue_id);
+        return {
+          ...issue,
+          reactions,
+          user_reaction: userReaction?.emoji || null,
+          comment_count: commentCount,
+          is_owner: issue.user_id === userId,
+          user: issue.is_anonymous ? {
+            user_id: null,
+            email_address: null,
+            username: 'Anonymous',
+            fullname: 'Anonymous',
+            image_url: null
+          } : issue.user
+        };
+      }
+    ));
+
+    return issues as Issue[];
+  }
+
+  async getUserResolvedIssues(userId: string) {
+    const { data, error } = await supabase
+      .from("issue")
+      .select(`
+        *,
+        user: user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url
+        ),
+        category: category_id (
+          name
+        ),
+        location: location_id (
+          suburb,
+          city,
+          province
+        )
+      `)
+      .eq('user_id', userId)
+      .not('resolved_at', 'is', null)
+      .order("created_at", { ascending: false });
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+  
+    const issues = await Promise.all(data.map(
+      async (issue: Issue) => {
+        const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+        const userReaction = await reactionRepository.getReactionByUserAndIssue(issue.issue_id, userId);
+        const commentCount = await commentRepository.getNumComments(issue.issue_id);
+        return {
+          ...issue,
+          reactions,
+          user_reaction: userReaction?.emoji || null,
+          comment_count: commentCount,
+          is_owner: issue.user_id === userId,
+          user: issue.is_anonymous ? {
+            user_id: null,
+            email_address: null,
+            username: 'Anonymous',
+            fullname: 'Anonymous',
+            image_url: null
+          } : issue.user
+        };
+      }
+    ));
+  
+    return issues as Issue[];
+  }
 }
