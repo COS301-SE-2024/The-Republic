@@ -28,16 +28,17 @@ Our frontend utilizes a component-based architecture, allowing for the reuse of 
 
 <img src="../images/diagrams/Architectura.jpg"/>
 
-## User-Centric Design:
+## Client-Server
 
-As the platform targets the general public, including individuals from diverse backgrounds and demographics, addressing their requirements is important. Key considerations include:
+Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
 
-- **Intuitive User Experience:** Prioritizing usability ensures that the platform is easy to navigate and interact with, regardless of the user's technical proficiency or ability. This aligns with the quality requirement of delivering a user-friendly experience that encourages widespread adoption.
-- **Accurate and Relevant Information:** By emphasizing reliability and performance, the platform can provide citizens with accurate and up-to-date visualizations and insights into governmental service delivery. This transparency and information accuracy foster trust and enable informed decision-making.
-- **Consistent Availability:** Aligning with the reliability quality requirement, the system must remain consistently accessible and operational, especially during critical situations when citizens need to report service delivery issues promptly.
-- **Responsive Interactions:** Focusing on performance ensures that the platform responds swiftly to user inputs, queries, and interactions, providing a seamless and efficient experience that meets citizens' expectations for responsiveness.
+- **User Management:** The backend server manages user authentication, registration, and profile management functionality through a User Management Service. This service would handle user-related data and enforce access controls.
+- **Post Management:** This service is responsible for managing user posts, comments, reactions, and providing filtering/sorting functionality for the posts.
+- **Data Analytics and Visualization:** This component performs sentiment analysis on user posts, processes the data, and generates visualizations based on the analyzed data. It may utilize machine learning models or data processing pipelines to extract insights from the user-generated content.
+- **Security and Access Control:** The backend server is responsible for implementing security measures, such as entry point validation, token-based middleware for session management, and enforcing role-based access controls to protect sensitive data and ensure authorized access.
+- **Database Management:** The backend server manages the interactions with the primary database for storing and retrieving data related to users, posts, and other application data.
 
-This user-centric approach not only enhances the overall experience but also increases the likelihood of sustained engagement and utilization, aligning with the overarching business objectives of the project.
+<img src="../images/diagrams/Client Server.jpg"/>
 
 ## Facilitates Long-term Maintenance:
 
