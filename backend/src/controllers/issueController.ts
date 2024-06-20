@@ -50,7 +50,7 @@ export const deleteIssue = async (req: Request, res: Response) => {
   }
 };
 
- export  const resolveIssue = async (req: Request, res: Response) => {
+export const resolveIssue = async (req: Request, res: Response) => {
   try {
     const response = await issueService.resolveIssue(req.body);
     sendResponse(res, response);

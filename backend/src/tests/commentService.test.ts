@@ -67,7 +67,7 @@ describe("CommentService", () => {
             fullname: "Test User",
             image_url: "https://example.com/image.png",
           },
-          is_owner: true,
+          is_owner: false,
         },
       ];
       commentRepository.getComments.mockResolvedValue(mockComments);
