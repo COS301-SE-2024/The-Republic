@@ -4,25 +4,28 @@
 
 # User Manual
 
-## Overview
-
-This document serves as a guide for end-users, providing instructions on how to use The Republic platform effectively.
+The Republic is a platform that aims to improve citizen interaction with government services, fostering transparency, accountability, and engagement through organised incident reports and data visualisation.
 
 ## Contents
 
-- Introduction
-- Getting Started
-- User Registration
-- Posting and Interacting
-- Filtering Posts
-- Viewing Analytics
-- Account Settings
-- FAQs
-- Support
+1. [Signing Up](#signing-up)
+2. [Logging In](#logging-in)
+3. [Homepage](#homepage)
+4. [Different Nav Bars](#navbar)
+5. [Domain Watch](#domain-watch)
+6. [Organisation Setting](#organisation)
+7. [Domain Watch Passive](#domain-watch-passive)
+8. [API Key](#api-key)
+9. [Custom Dashboards](#custom-dashboards)
+10. [QBee](#qbee)
+11. [Help Page](#help-page)
 
-## Introduction
+## Signing Up
 
-The Republic is a platform designed to enhance citizen engagement with government services. This user manual provides step-by-step instructions to help users navigate and utilize the platform's features effectively.
+<img src="../images/User Manual Screenshots/Signing Up.jpg/>
+
+- **1. Fill in your details in the relevant fields**
+- **2. Click "Signup" at the bottom of the screen**
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
