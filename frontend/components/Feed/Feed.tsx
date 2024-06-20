@@ -4,6 +4,19 @@ import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { Issue as IssueType } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 
+interface User {
+  user_id: string;
+  email_address: string;
+  username: string;
+  fullname: string;
+  image_url: string;
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
+}
+
 interface FeedProps {
   userId?: string;
   showInputBox?: boolean;
@@ -11,14 +24,26 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [issues, setIssues] = useState<IssueType[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: sessionData, error } = await supabase.auth.getSession();
       if (!error && sessionData.session) {
         const session = sessionData.session;
-        setUser({ ...session.user, access_token: session.access_token });
+        const userDetails: User = {
+          user_id: session.user.id,
+          fullname: session.user.user_metadata.full_name,
+          image_url: session.user.user_metadata.avatar_url,
+          email_address: session.user.email as string,
+          username: session.user.user_metadata.user_name,
+          bio: session.user.user_metadata.bio,
+          is_owner: false, // Assuming this field needs to be filled later
+          total_issues: 0, // Assuming this field needs to be filled later
+          resolved_issues: 0, // Assuming this field needs to be filled later
+          access_token: session.access_token,
+        };
+        setUser(userDetails);
       }
     };
 
@@ -32,7 +57,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
           "Content-Type": "application/json",
         };
 
-        if (user && user.access_token) {
+        if (user) {
           headers.Authorization = `Bearer ${user.access_token}`;
         }
 
@@ -63,7 +88,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
 
   return (
     <div className="w-full px-6">
-      {showInputBox && <IssueInputBox user={user} />}
+      {showInputBox && user && <IssueInputBox user={user} />}
       {issues && issues.length > 0 ? (
         issues.map((issue) => (
           <Issue key={issue.issue_id} issue={issue} />

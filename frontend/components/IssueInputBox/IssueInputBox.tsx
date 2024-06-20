@@ -133,7 +133,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
             <div className="pr-2">
               <Avatar>
                 <AvatarImage src={user.image_url} />
-                <AvatarFallback>{user.fullname ? user.fullname[0] : ''}</AvatarFallback>
+                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
           )}

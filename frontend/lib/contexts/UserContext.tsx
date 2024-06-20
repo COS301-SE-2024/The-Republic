@@ -4,11 +4,16 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from "@/lib/globals";
 
 interface User {
+  user_id: string;
+  email_address: string;
+  username: string;
   fullname: string;
   image_url: string;
-  user_id: string;
-  username: string;
-  access_token: string; // Add the access token here
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
 }
 
 interface UserContextType {
