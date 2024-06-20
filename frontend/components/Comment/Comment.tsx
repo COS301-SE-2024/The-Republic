@@ -44,7 +44,7 @@ const Comment: React.FC<CommentProps> = ({
           <div>{comment.content}</div>
         </div>
         <div className="flex items-center space-x-2 mt-2">
-          {user && !comment.parent_comment_id && (
+          {user && !comment.parent_id && (
             <Button
               variant="ghost"
               size="sm"
@@ -80,20 +80,20 @@ const Comment: React.FC<CommentProps> = ({
             onCommentAdded={handleReplySubmit}
           />
         )}
-        {showReplies && (
-          <div className="ml-8">
-            {replies.map((reply) => (
-              <Comment
-                key={reply.comment_id}
-                comment={reply}
-                onDelete={onDelete}
-                isOwner={user?.user_id === reply.user.user_id}
-                onReply={onReply}
-                replies={[]}
-              />
-            ))}
-          </div>
-        )}
+          {showReplies && (
+            <div className="ml-8">
+              {replies.map((reply) => (
+                <Comment
+                  key={reply.comment_id}
+                  comment={reply}
+                  onDelete={onDelete}
+                  isOwner={user?.user_id === reply.user?.user_id}
+                  onReply={onReply}
+                  replies={[]}
+                />
+              ))}
+            </div>
+          )}
       </div>
     </div>
   );

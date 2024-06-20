@@ -8,6 +8,7 @@ interface User {
   image_url: string;
   user_id: string;
   username: string;
+  access_token: string; // Add the access token here
 }
 
 interface UserContextType {
@@ -49,7 +50,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             }
 
             const apiResponse = await response.json();
-            setUser(apiResponse.data);
+            setUser({ ...apiResponse.data, access_token: session.access_token });
           } catch (error) {
             console.error('Failed to fetch user data:', error);
           }

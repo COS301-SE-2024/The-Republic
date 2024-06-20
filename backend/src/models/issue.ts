@@ -4,7 +4,7 @@ interface User {
   username: string;
   fullname: string;
   image_url: string | null;
-  is_owner: boolean;  
+  is_owner: boolean | null;  
   total_issues: number | null;
   resolved_issues: number | null;
 } 
