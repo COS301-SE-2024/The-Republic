@@ -1,9 +1,9 @@
 interface User {
-  user_id: string;
-  email_address: string;
+  user_id: string | null;
+  email_address: string | null;
   username: string;
   fullname: string;
-  image_url: string;
+  image_url: string | null;
 }
 
 interface Category {
