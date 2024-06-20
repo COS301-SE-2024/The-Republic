@@ -76,6 +76,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     router.push(`/issues/${issue.issue_id}`);
   };
 
+  const handleAvatarClick = () => {
+    if (!issue.is_anonymous) {
+      router.push(`/profile/${issue.user.user_id}`);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -94,7 +100,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <div className="pr-2">
+            <div className="pr-2" onClick={handleAvatarClick} style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}>
               <Avatar>
                 <AvatarImage src={issue.user.image_url} />
                 <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>

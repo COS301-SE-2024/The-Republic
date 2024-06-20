@@ -41,7 +41,10 @@ export default class IssueService {
           email_address: null,
           username: 'Anonymous',
           fullname: 'Anonymous',
-          image_url: null
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
         };
       }
       
@@ -78,7 +81,10 @@ export default class IssueService {
         email_address: null,
         username: 'Anonymous',
         fullname: 'Anonymous',
-        image_url: null
+        image_url: null,
+        is_owner: false,
+        total_issues: null,
+        resolved_issues: null,
       };
     }
 
@@ -219,6 +225,88 @@ export default class IssueService {
       code: 200,
       success: true,
       data: resolvedIssue,
+    });
+  }
+  
+  async getUserIssues(issue: Partial<Issue>) {
+    const userId = issue.profile_user_id;
+    if (!userId) {
+      throw APIError({
+        code: 401,
+        success: false,
+        error: "Missing profile user ID"
+      });
+    }
+  
+    const issues = await this.issueRepository.getUserIssues(userId);
+  
+    const issuesWithUserInfo = issues.map(issue => {
+      const isOwner = issue.user_id === userId;
+      
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      }
+      
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+  
+    return APIData({
+      code: 200,
+      success: true,
+      data: issuesWithUserInfo,
+    });
+  }
+  
+  async getUserResolvedIssues(issue: Partial<Issue>) {
+    const userId = issue.profile_user_id;
+    if (!userId) {
+      throw APIError({
+        code: 401,
+        success: false,
+        error: "Missing profile user ID"
+      });
+    }
+  
+    const resolvedIssues = await this.issueRepository.getUserResolvedIssues(userId);
+  
+    const issuesWithUserInfo = resolvedIssues.map(issue => {
+      const isOwner = issue.user_id === userId;
+      
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      }
+      
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+  
+    return APIData({
+      code: 200,
+      success: true,
+      data: issuesWithUserInfo,
     });
   }
 }
