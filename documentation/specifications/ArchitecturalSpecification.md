@@ -9,12 +9,9 @@
 - Introduction
 - Design Strategy
 - Quality Requirements
-- Data Flow
-- Technology Stack
-- Performance Considerations
-- Scalability Strategies
-- Security Measures
-- Conclusion
+- Architectural Strategies
+- Architectural Diagram
+- Architectural Constraints
 
 # Introduction
 
@@ -131,28 +128,83 @@ Usability ensures that the system is easy to use and provides a good user experi
 | --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
 | User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
 
+# Architectural Strategies 🔨
+
+## Components
+
+Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
+
+<img src="../images/diagrams/Architectura.jpg"/>
+
+## Client-Server
+
+Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
+
+- **User Management:** The backend server manages user authentication, registration, and profile management functionality through a User Management Service. This service would handle user-related data and enforce access controls.
+- **Post Management:** This service is responsible for managing user posts, comments, reactions, and providing filtering/sorting functionality for the posts.
+- **Data Analytics and Visualization:** This component performs sentiment analysis on user posts, processes the data, and generates visualizations based on the analyzed data. It may utilize machine learning models or data processing pipelines to extract insights from the user-generated content.
+- **Security and Access Control:** The backend server is responsible for implementing security measures, such as entry point validation, token-based middleware for session management, and enforcing role-based access controls to protect sensitive data and ensure authorized access.
+- **Database Management:** The backend server manages the interactions with the primary database for storing and retrieving data related to users, posts, and other application data.
+
+<img src="../images/diagrams/Client Server.jpg"/>
+
+## REST
+
+The application leverages a RESTful API for communication between client and server. This approach, characterized by stateless interactions, minimizes server load and enhances the application's scalability.
+
+- **Stateless Communication:** RESTful APIs follow a stateless communication protocol, which means that each request from the client contains all the necessary information for the server to understand and process it. This stateless approach reduces server overhead and improves scalability.
+- **Separation of Concerns:** The use of RESTful APIs promotes a clear separation between the client (frontend) and server (backend) components, enabling them to evolve independently and facilitating easier testing and maintenance.
+- **Scalability:** The stateless nature of RESTful APIs reduces server load, contributing to the overall scalability of the application. The server can handle a higher volume of requests more efficiently.
+- **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
+
+<img src="../images/diagrams/REST.jpg"/>
+
+## Pipe - Filter
+
+The data processing pipeline can be enhanced by applying the pipe-filter pattern. This approach breaks down the processing stages into distinct modules, each acting as a "filter" that performs a specific task on the data.
+
+- **Sequential Processing:** The conversion of data (e.g., data transformations, validations, calculations) can happen in sequential phases. Each phase processes the input data, applies the necessary transformations, and outputs the data for the next phase.
+- **Separation of Concerns:** Implementing a pipe-filter pattern helps in separating concerns. Each filter (module) is responsible for a specific task, making the system easier to understand, maintain, and test.
+- **Scalability and Maintainability:** Organizing the system into smaller, well-defined processing stages enhances scalability and maintainability. Individual filters can be optimized or refactored without affecting the entire system.
+
+<img src="../images/diagrams/Pipe&Filter.jpg"/>
+
+## Multi Tier
+
+Our monolithic application leverages a multi-tier architecture to enforce separation of concerns. This means the system is divided into four distinct layers: presentation, security, logic, and data access. Each layer has a well-defined responsibility, ensuring cleaner code and easier maintenance. The presentation layer handles the user interface, the security layer safeguards communication, the logic layer manages business rules, and the data access layer interacts with the database.
+
+<img src="../images/diagrams/Multi Tier.jpg"/>
+
+## MVC
+
+The React framework used in our frontend can be structured to follow the MVC pattern, ensuring a clear separation of concerns within the application. This approach helps in organizing the codebase and enhancing maintainability.
+
+- **Model:** The model is represented by the state management in React. This includes handling business logic, data fetching, and state updates using React's built-in state management, Context API, or Redux.
+- **View:** The view is composed of React components and JSX templates. These components define the user interface and dynamically render content based on the state.
+- **Controller:** The controller role is managed by the React components that handle user interactions. These components contain event handlers and methods to respond to user input, update the state (model), and re-render the UI (view).
+
+<img src="../images/diagrams/MVC.jpg"/>
+
+## Future Migration to Microservices Architecture
+
+As our project evolves, we aim to transition from the current monolithic architecture to a microservices architecture. This strategic shift will enhance our system's scalability, maintainability, and resilience, allowing us to better meet the growing demands and complexity of our application.
+
 # Architectural Constraints ⚠️
 
-## Monolithic Architecture Transition
+- **Monolithic Architecture Transition**<br>
+  The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
 
-The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
+- **Deployment Model**<br>
+  The system must not follow a serverless model and should not be cloud-native. It must be able to run on one or more Linux virtual machines (VMs).
 
-## Deployment Model
+- **Library and Service Restrictions**<br>
+  All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
 
-- The system must not follow a serverless model and should not be cloud-native.
-- It must be able to run on one or more Linux virtual machines (VMs).
+- **Database Requirement**<br>
+  The system uses PostgreSQL as the primary database due to its robustness, scalability, and support for complex queries and transactions.
 
-## Library and Service Restrictions
-
-All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
-
-## Database Requirement
-
-The system uses PostgreSQL as the primary database due to its robustness, scalability, and support for complex queries and transactions.
-
-## Compliance with POPIA
-
-The system must comply with the Protection of Personal Information Act (POPIA) in South Africa, necessitating secure handling of personal data and stringent access controls.
+- **Compliance with POPIA**<br>
+  The system must comply with the Protection of Personal Information Act (POPIA) in South Africa, necessitating secure handling of personal data and stringent access controls.
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
