@@ -8,12 +8,15 @@ import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/contexts/UserContext";
+import { toast } from "../ui/use-toast";
 
 interface IssueProps {
   issue: IssueType;
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
+  const { user } = useUser();
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -26,6 +29,13 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   const isOwner = issue.is_owner;
 
   const handleDelete = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "You need to be logged in to delete.",
+      });
+      return;
+    }
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
@@ -33,8 +43,9 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
           },
-          body: JSON.stringify({ issueId: issue.issue_id }),
+          body: JSON.stringify({ issue_id: issue.issue_id }),
         }
       );
 
@@ -49,11 +60,23 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   };
 
   const handleResolve = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "You need to be logged in to resolve.",
+      });
+      return;
+    }
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/${issue.issue_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve`,
         {
           method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({ issue_id: issue.issue_id }),
         }
       );
 
@@ -163,13 +186,15 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
                 </div>
               )}
             </div>
-            <MoreMenu
-              menuItems={menuItems}
-              isOwner={isOwner}
-              onDelete={handleDelete}
-              onResolve={handleResolve}
-              onSubscribe={handleSubscribe}
-            />
+            {isOwner && (
+              <MoreMenu
+                menuItems={menuItems}
+                isOwner={isOwner}
+                onDelete={handleDelete}
+                onResolve={handleResolve}
+                onSubscribe={handleSubscribe}
+              />
+            )}
           </div>
         </div>
         <div className="flex space-x-2 pt-2">
@@ -196,9 +221,10 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex space-x-2 items-center">
-        <div className="flex items-center" onClick={handleCommentClick}>
-          <MessageCircle className="mr-1 cursor-pointer" />
+      <CardFooter className="flex space-x-4 items-center">
+        <div className="flex items-center cursor-pointer" onClick={handleCommentClick}>
+          <MessageCircle className="mr-1" />
+          <span>{issue.comment_count}</span>
         </div>
         <Reaction
           issueId={issue.issue_id}
