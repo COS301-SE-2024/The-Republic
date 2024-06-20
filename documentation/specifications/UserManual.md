@@ -44,6 +44,12 @@ When you log in, you will be taken to the homepage. This is an example of what t
 
  <img src="../images/User Manual Screenshots/HomePage.png"/>
 
+## NavBar
+
+The NavBar consists of your General section which includes, home page, visualization, reports and notifcations page. It also consists of the Accounts section whereby users can manage their accounts. It consists of the Profile, Settings and an option to logout.
+
+ <img src="../images/User Manual Screenshots/NavBar.png"/>
+
 [Back](./../README.md)<br>
 [Back to main](/README.md)
 
