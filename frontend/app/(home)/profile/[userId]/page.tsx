@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from "react";
 import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
-import Feed from "@/components/Feed/Feed";
 import { User } from "@/lib/types";
 import { supabase } from "@/lib/globals";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
 
 const ProfilePage: React.FC = () => {

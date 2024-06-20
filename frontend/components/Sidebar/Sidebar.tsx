@@ -17,7 +17,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 
 import Link from 'next/link';
 
-const Sidebar: React.FC<HomeAvatarProps> = ({ username = 'johndoe', fullname = 'John Doe', imageUrl = '' }) => {
+const Sidebar: React.FC<HomeAvatarProps> = () => {
   const { user } = useUser();
 
   return (

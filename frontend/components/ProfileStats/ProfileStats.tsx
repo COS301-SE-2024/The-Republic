@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import CreatePost from "@/components/CreatePost/CreatePost";
 
 interface ProfileStatsProps {
   userId: string;
@@ -12,7 +11,6 @@ interface ProfileStatsProps {
 }
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({
-  userId,
   totalIssues,
   resolvedIssues,
   selectedTab,
