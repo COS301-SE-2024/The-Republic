@@ -10,7 +10,7 @@
 - Design Strategy
 - Quality Requirements
 - Architectural Strategies
-- Architectural Diagram
+- Architecture Diagram
 - Architectural Constraints
 
 # Introduction
@@ -55,8 +55,7 @@ The following Quality Requirements have been identified by the team and the clie
 - **2. Reliability**
 - **3. Scalability**
 - **4. Security**
-- **5. Maintainability**
-- **6. Usability**
+- **5. Usability**
 
 ## Performance 🚀
 
@@ -106,7 +105,17 @@ The system addresses the crucial attribute of security with a comprehensive, lay
 | ------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------- |
 | Malicious actors / Unauthorized users | Attempts to access sensitive data or perform unauthorized actions | - Validate and sanitize incoming requests.<br> - Use token-based middleware for session management.<br> - Implement role-based access control.<br> - Encrypt data at rest and in transit. | - Unauthorized access attempts identified and flagged.<br> - Only authorized users access sensitive data.<br> - No unauthorized modifications to the database. | System running normally | API endpoints, data access layers, user management service. |
 
-## Mainatainability 🔧
+## Usability 🖐️
+
+Usability ensures that the system is easy to use and provides a good user experience for users of all backgrounds.
+
+- **Intuitive UI/UX:** Designing interfaces that are intuitive and easy to navigate. Users can perform necessary actions effortlessly, even without prior training.
+
+| Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
+| --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
+| User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
+
+## Maintainability 🔧
 
 Maintainability ensures that the system can be easily updated and improved over time.
 
@@ -117,16 +126,6 @@ Maintainability ensures that the system can be easily updated and improved over 
 | Stimulus Source                         | Stimulus                                                    | Response                                                                                                  | Response Measure                                                                                                                             | Environment                           | Artifact                                          |
 | --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------- |
 | Need for updates / New feature requests | Introduction of new features, bug fixes, and system updates | - Write clean, modular code.<br> - Maintain comprehensive documentation.<br> - Implement CI/CD practices. | - Time taken to implement updates and new features.<br> - Ease of identifying and fixing issues.<br> - Minimal disruption during deployment. | Ongoing development / Regular updates | Codebase, documentation, and deployment pipeline. |
-
-## Usability 🖐️
-
-Usability ensures that the system is easy to use and provides a good user experience for users of all backgrounds.
-
-- **Intuitive UI/UX:** Designing interfaces that are intuitive and easy to navigate. Users can perform necessary actions effortlessly, even without prior training.
-
-| Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
-| --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
-| User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
 
 # Architectural Patterns 🔨
 
@@ -142,13 +141,13 @@ Microservices architecture can enhance reliability by isolating failures to spec
 
 <img src="../images/diagrams/Microservice.jpg"/>
 
-## Components
+## Components Based Pattern
 
 Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
 
 <img src="../images/diagrams/Components.jpg"/>
 
-## Client-Server
+## Client-Server Pattern
 
 Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
 
