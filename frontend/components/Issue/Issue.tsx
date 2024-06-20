@@ -26,28 +26,26 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     menuItems.push("Resolve Issue");
   }
 
-  const isOwner = issue.is_owner;
+  const isOwner = user && user.user_id === issue.user_id;
+  // console.log("Issue object:", issue);
 
   const handleDelete = async () => {
     if (!user) {
       toast({
         variant: "destructive",
-        description: "You need to be logged in to delete.",
+        description: "Please log in to delete issues.",
       });
       return;
     }
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
+        },
+        body: JSON.stringify({ issue_id: issue.issue_id }),
+      });
 
       if (response.ok) {
         window.location.reload();
@@ -63,22 +61,19 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     if (!user) {
       toast({
         variant: "destructive",
-        description: "You need to be logged in to resolve.",
+        description: "Please log in to resolve issues.",
       });
       return;
     }
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
+        },
+        body: JSON.stringify({ issue_id: issue.issue_id }),
+      });
 
       if (response.ok) {
         window.location.reload();
@@ -221,14 +216,15 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex space-x-4 items-center">
-        <div className="flex items-center cursor-pointer" onClick={handleCommentClick}>
-          <MessageCircle className="mr-1" />
+      <CardFooter className="flex space-x-2 items-center">
+        <div className="flex items-center" onClick={handleCommentClick}>
+          <MessageCircle className="mr-1 cursor-pointer" />
           <span>{issue.comment_count}</span>
         </div>
         <Reaction
           issueId={issue.issue_id}
           initialReactions={issue.reactions}
+          userReaction={issue.user_reaction}
         />
       </CardFooter>
     </Card>
