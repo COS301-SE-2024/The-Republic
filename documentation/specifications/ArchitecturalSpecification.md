@@ -169,6 +169,26 @@ The data processing pipeline can be enhanced by applying the pipe-filter pattern
 
 <img src="../images/diagrams/Pipe&Filter.jpg"/>
 
+## Multi Tier
+
+Our monolithic application leverages a multi-tier architecture to enforce separation of concerns. This means the system is divided into four distinct layers: presentation, security, logic, and data access. Each layer has a well-defined responsibility, ensuring cleaner code and easier maintenance. The presentation layer handles the user interface, the security layer safeguards communication, the logic layer manages business rules, and the data access layer interacts with the database.
+
+<img src="../images/diagrams/Multi Tier.jpg"/>
+
+## MVC
+
+The React framework used in our frontend can be structured to follow the MVC pattern, ensuring a clear separation of concerns within the application. This approach helps in organizing the codebase and enhancing maintainability.
+
+- **Model:** The model is represented by the state management in React. This includes handling business logic, data fetching, and state updates using React's built-in state management, Context API, or Redux.
+- **View:** The view is composed of React components and JSX templates. These components define the user interface and dynamically render content based on the state.
+- **Controller:** The controller role is managed by the React components that handle user interactions. These components contain event handlers and methods to respond to user input, update the state (model), and re-render the UI (view).
+
+<img src="../images/diagrams/MVC.jpg"/>
+
+## Future Migration to Microservices Architecture
+
+As our project evolves, we aim to transition from the current monolithic architecture to a microservices architecture. This strategic shift will enhance our system's scalability, maintainability, and resilience, allowing us to better meet the growing demands and complexity of our application.
+
 # Architectural Constraints ⚠️
 
 - **Monolithic Architecture Transition**<br>
