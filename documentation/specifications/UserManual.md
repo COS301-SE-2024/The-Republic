@@ -14,11 +14,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 4. [Navigation Bar](#navbar)
 5. [Writing a post](#writing-a-post)
 6. [Subscription & Filtering](#subscription-and-Filtering)
-7. [Domain Watch Passive](#domain-watch-passive)
-8. [API Key](#api-key)
-9. [Custom Dashboards](#custom-dashboards)
-10. [QBee](#qbee)
-11. [Help Page](#help-page)
+7. [Profile Page Manangement](#Profile-Page-Management)
 
 ## Signing Up
 
@@ -85,11 +81,23 @@ Users can subscribe to what they are interested in. Users can also filter and so
 **3. You can sort and Filter the issue posts displayed by clicking the sort and filter found on the right hand side bar**
 <img src="../images/User Manual Screenshots/Subscribe_3.png"/><br>
 
-**4. You can sort the issues according to "Newest", "Oldest" or "Most Comments**
+**4. You can sort the issues according to "Newest", "Oldest" or "Most Comments**<br>
 <img src="../images/User Manual Screenshots/Subscribe_4.png"/><br>
 
 **5. You can Filter the issues according to your subscriptions or the different categories**<br>
 <img src="../images/User Manual Screenshots/Subscribe_5.png"/>
+
+## Profile Page Management
+
+Clicking on Profile on the left side bar will take you to the profile page whereby users may make changes<br>
+<img src="../images/User Manual Screenshots/ProfilePage.png"/>
+
+**1. To edit your profile click on "Edit Profile**<br>
+<img src="../images/User Manual Screenshots/ProfilePage_2.png"/><br>
+
+**2. Add the relevant information then click on "Save" to make the changes.**<br>
+
+<img src="../images/User Manual Screenshots/ProfilePage_4.png"/><br>
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
