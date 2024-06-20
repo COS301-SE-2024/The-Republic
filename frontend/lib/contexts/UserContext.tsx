@@ -44,7 +44,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 "Content-Type": "application/json",
               },
             });
-            console.log(session.access_token)
 
             if (!response.ok) {
               throw new Error('Failed to fetch user data');
