@@ -13,7 +13,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 3. [Homepage](#homepage)
 4. [Navigation Bar](#navbar)
 5. [Writing a post](#writing-a-post)
-6. [Subscription & Filtering](#subscription-&-filtering)
+6. [Subscription & Filtering](#subscription-and-Filtering)
 7. [Domain Watch Passive](#domain-watch-passive)
 8. [API Key](#api-key)
 9. [Custom Dashboards](#custom-dashboards)
@@ -72,23 +72,23 @@ The NavBar consists of your General section which includes, home page, visualiza
 
 <img src="../images/User Manual Screenshots/IssuePost_5.png"/>
 
-## Subscription & Filtering
+## Subscription and Filtering
 
 Users can subscribe to what they are interested in. Users can also filter and sort the issues displayed on the homepage.
 
-**1. To subscript click on the green bell icon**
+**1. To subscribe click on the green bell icon**
 <img src="../images/User Manual Screenshots/Subscribe.png"/>
 
-**2. Choose what you want to subscribe to. It could be the specific Issue, the category under which the issue falls under or the location of the issue**
+**2. Choose what you want to subscribe to. It could be the specific Issue, the category under which the issue falls under or the location of the issue**<br>
 <img src="../images/User Manual Screenshots/Subscribe_2.png"/>
 
 **3. You can sort and Filter the issue posts displayed by clicking the sort and filter found on the right hand side bar**
-<img src="../images/User Manual Screenshots/Subscribe_3.png"/>
+<img src="../images/User Manual Screenshots/Subscribe_3.png"/><br>
 
 **4. You can sort the issues according to "Newest", "Oldest" or "Most Comments**
-<img src="../images/User Manual Screenshots/Subscribe_4.png"/>
+<img src="../images/User Manual Screenshots/Subscribe_4.png"/><br>
 
-**5. You can Filter the issues according to your subscriptions or the different categories**
+**5. You can Filter the issues according to your subscriptions or the different categories**<br>
 <img src="../images/User Manual Screenshots/Subscribe_5.png"/>
 
 [Back](./../README.md)<br>
