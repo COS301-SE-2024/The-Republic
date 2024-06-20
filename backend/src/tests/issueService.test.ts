@@ -40,7 +40,10 @@ describe("IssueService", () => {
           email_address: "test@example.com",
           username: "testuser",
           fullname: "Test User",
-          image_url: "https://example.com/image.png"
+          image_url: "https://example.com/image.png",
+          is_owner: true,
+          total_issues: 10,
+          resolved_issues: 5,
         },
         category: {
           name: "Category 1"
@@ -48,7 +51,8 @@ describe("IssueService", () => {
         reactions: [],
         user_reaction: null,
         comment_count: 0,
-        is_owner: false
+        is_owner: false,
+        profile_user_id: "0"
       }
     ];
     issueRepository.getIssues.mockResolvedValue(mockIssues);
@@ -78,7 +82,10 @@ describe("IssueService", () => {
         email_address: "test@example.com",
         username: "testuser",
         fullname: "Test User",
-        image_url: "https://example.com/image.png"
+        image_url: "https://example.com/image.png",
+        is_owner: true,
+        total_issues: 10,
+        resolved_issues: 5,
       },
       category: {
         name: "Category 1"
@@ -86,7 +93,8 @@ describe("IssueService", () => {
       reactions: [],
       user_reaction: null,
       comment_count: 0,
-      is_owner: false
+      is_owner: false,
+      profile_user_id: "0"
     };
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
 
@@ -139,7 +147,10 @@ describe("IssueService", () => {
           email_address: "test@example.com",
           username: "testuser",
           fullname: "Test User",
-          image_url: "https://example.com/image.png"
+          image_url: "https://example.com/image.png",
+          is_owner: true,
+          total_issues: 10,
+          resolved_issues: 5,
         },
         category: {
           name: "Category 1"
@@ -147,7 +158,8 @@ describe("IssueService", () => {
         reactions: [],
         user_reaction: null,
         comment_count: 0,
-        is_owner: true
+        is_owner: true,
+        profile_user_id: "0"
       };
       issueRepository.createIssue.mockResolvedValue(createdIssue);
 
@@ -224,7 +236,10 @@ describe("IssueService", () => {
         email_address: "test@example.com",
         username: "testuser",
         fullname: "Test User",
-        image_url: "https://example.com/image.png"
+        image_url: "https://example.com/image.png",
+        is_owner: true,
+        total_issues: 10,
+        resolved_issues: 5,
       },
       category: {
         name: "Category 1"
@@ -232,7 +247,9 @@ describe("IssueService", () => {
       reactions: [],
       user_reaction: null,
       comment_count: 0,
-      is_owner: true
+      is_owner: true,        
+      profile_user_id: "0"
+    
     };
     issueRepository.updateIssue.mockResolvedValue(updatedIssue);
 
@@ -289,7 +306,10 @@ describe("IssueService", () => {
         email_address: "test@example.com",
         username: "testuser",
         fullname: "Test User",
-        image_url: "https://example.com/image.png"
+        image_url: "https://example.com/image.png",
+        is_owner: true,
+        total_issues: 10,
+        resolved_issues: 5,
       },
       category: {
         name: "Category 1"
@@ -300,6 +320,7 @@ describe("IssueService", () => {
       is_owner: true,
       resolved_at: null,
       image_url: null,
+      profile_user_id: "0"
     };
 
     locationRepository.getLocationByPlacesId.mockResolvedValue({
