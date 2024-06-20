@@ -128,7 +128,7 @@ Usability ensures that the system is easy to use and provides a good user experi
 | --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
 | User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
 
-# Architectural Strategies 📃
+# Architectural Strategies 🔨
 
 ## Components
 
@@ -158,6 +158,16 @@ The application leverages a RESTful API for communication between client and ser
 - **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
 
 <img src="../images/diagrams/REST.jpg"/>
+
+## Pipe - Filter
+
+The data processing pipeline can be enhanced by applying the pipe-filter pattern. This approach breaks down the processing stages into distinct modules, each acting as a "filter" that performs a specific task on the data.
+
+- **Sequential Processing:** The conversion of data (e.g., data transformations, validations, calculations) can happen in sequential phases. Each phase processes the input data, applies the necessary transformations, and outputs the data for the next phase.
+- **Separation of Concerns:** Implementing a pipe-filter pattern helps in separating concerns. Each filter (module) is responsible for a specific task, making the system easier to understand, maintain, and test.
+- **Scalability and Maintainability:** Organizing the system into smaller, well-defined processing stages enhances scalability and maintainability. Individual filters can be optimized or refactored without affecting the entire system.
+
+<img src="../images/diagrams/Pipe&Filter.jpg"/>
 
 # Architectural Constraints ⚠️
 
