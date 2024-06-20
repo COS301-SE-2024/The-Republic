@@ -20,14 +20,13 @@
 
 The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, reliability, security, maintainability, and usability while facilitating future evolution from a monolithic to a microservice architecture.
 
-# Design Strategy 📃
+# Architectural Strategies 📃
 
-## Alignment with Business Requirements:
+## Components
 
-The architectural decisions and identification of quality requirements were made to directly align with the core business requirements of The Republic project. The functional requirements and user stories outline the need for a platform that allows citizens to report governmental service delivery issues and visualize the aggregated data. To meet these business needs effectively, the architectural choices and prioritized quality requirements were carefully selected.
+Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
 
-Furthermore, the prioritization of quality requirements such as performance, reliability, scalability, security, and usability directly addresses the business need for a robust, responsive, and user-friendly platform capable of handling a large user base. By ensuring high performance, reliability, and scalability, the system can effectively serve the intended audience of the general public, facilitating seamless reporting of service delivery issues and providing insightful visualizations.
-The emphasis on security and usability aligns with the business requirement of fostering trust and encouraging widespread adoption among citizens. A secure platform that protects user data and provides an intuitive user experience will be crucial for the project's success and sustained utilization.
+<img src="../images/diagrams/Architectura.jpg"/>
 
 ## User-Centric Design:
 
@@ -133,26 +132,21 @@ Usability ensures that the system is easy to use and provides a good user experi
 
 # Architectural Constraints ⚠️
 
-## Monolithic Architecture Transition
+- **Monolithic Architecture Transition**<br>
+  The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
 
-The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
-
-## Deployment Model
-
+- **Deployment Model**<br>
 - The system must not follow a serverless model and should not be cloud-native.
 - It must be able to run on one or more Linux virtual machines (VMs).
 
-## Library and Service Restrictions
+- **Library and Service Restrictions**<br>
+  All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
 
-All libraries and services used within the system must be open source to ensure transparency, security, and cost-efficiency.
+- **Database Requirement**<br>
+  The system uses PostgreSQL as the primary database due to its robustness, scalability, and support for complex queries and transactions.
 
-## Database Requirement
-
-The system uses PostgreSQL as the primary database due to its robustness, scalability, and support for complex queries and transactions.
-
-## Compliance with POPIA
-
-The system must comply with the Protection of Personal Information Act (POPIA) in South Africa, necessitating secure handling of personal data and stringent access controls.
+- **Compliance with POPIA**<br>
+  The system must comply with the Protection of Personal Information Act (POPIA) in South Africa, necessitating secure handling of personal data and stringent access controls.
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
