@@ -7,7 +7,7 @@ interface User {
   is_owner: boolean;  
   total_issues: number | null;
   resolved_issues: number | null;
-}
+} 
 
 interface Category {
   name: string;
