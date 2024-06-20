@@ -20,8 +20,14 @@ const MAX_CHAR_COUNT = 500;
 interface IssueInputBoxProps {
   user: {
     user_id: string;
+    email_address: string;
+    username: string;
     fullname: string;
     image_url: string;
+    bio: string;
+    is_owner: boolean;
+    total_issues: number;
+    resolved_issues: number;
   } | null;
 }
 
@@ -127,7 +133,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
             <div className="pr-2">
               <Avatar>
                 <AvatarImage src={user.image_url} />
-                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                <AvatarFallback>{user.fullname ? user.fullname[0] : ''}</AvatarFallback>
               </Avatar>
             </div>
           )}
