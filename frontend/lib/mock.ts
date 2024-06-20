@@ -14,7 +14,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
-      bio: "This is John's bio."
+      bio: "This is John's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -30,7 +33,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/jane-smith.jpg",
       username: "janesmith",
       email_address: "jane@example.com",
-      bio: "This is Jane's bio."
+      bio: "This is Jane's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -46,7 +52,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
-      bio: "This is John's bio."
+      bio: "This is John's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -62,7 +71,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
-      bio: "This is John's bio."
+      bio: "This is John's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -78,7 +90,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
-      bio: "This is John's bio."
+      bio: "This is John's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -94,7 +109,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/jane-smith.jpg",
       username: "janesmith",
       email_address: "jane@example.com",
-      bio: "This is Jane's bio."
+      bio: "This is Jane's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
   {
@@ -110,7 +128,10 @@ export const mockComments: Comment[] = [
       image_url: "https://example.com/john-doe.jpg",
       username: "johndoe",
       email_address: "john@example.com",
-      bio: "This is John's bio."
+      bio: "This is John's bio.",
+      is_owner: false,
+      total_issues: 0,
+      resolved_issues: 0, 
     },
   },
 ];
