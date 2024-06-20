@@ -81,8 +81,6 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         if (user) {
           headers.Authorization = `Bearer ${user.access_token}`;
         }
-
-        console.log(user?.access_token);
     
         const requestBody: RequestBody = {
           from: 0,
