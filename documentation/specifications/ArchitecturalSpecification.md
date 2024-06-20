@@ -40,15 +40,16 @@ Our system is designed using a client-server architecture. In this setup, the fr
 
 <img src="../images/diagrams/Client Server.jpg"/>
 
-## Facilitates Long-term Maintenance:
+## REST
 
-By prioritizing aspects such as modularity, code quality, and comprehensive documentation, the system can be effectively maintained and evolved over time. Specific considerations include:
+The application leverages a RESTful API for communication between client and server. This approach, characterized by stateless interactions, minimizes server load and enhances the application's scalability.
 
-- **Modular Design:** Structuring the application into independent, self-contained modules or components promotes maintainability. This modular approach simplifies the process of updating, replacing, or extending specific functionalities without compromising the entire system's integrity.
-- **Robust Coding Practices:** Adherence to industry-standard coding conventions, rigorous code reviews, and automated testing frameworks contribute to a high-quality, maintainable codebase. This proactive approach minimizes technical debt and facilitates efficient identification and resolution of issues.
-- **Comprehensive Documentation:** Maintaining detailed and up-to-date documentation not only aids in knowledge transfer among development teams but also serves as a valuable resource for future maintenance and enhancement efforts. Well-documented code, architecture, and processes ensure smoother transitions and minimize the risk of disruptions.
+- **Stateless Communication:** RESTful APIs follow a stateless communication protocol, which means that each request from the client contains all the necessary information for the server to understand and process it. This stateless approach reduces server overhead and improves scalability.
+- **Separation of Concerns:** The use of RESTful APIs promotes a clear separation between the client (frontend) and server (backend) components, enabling them to evolve independently and facilitating easier testing and maintenance.
+- **Scalability:** The stateless nature of RESTful APIs reduces server load, contributing to the overall scalability of the application. The server can handle a higher volume of requests more efficiently.
+- **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
 
-While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
+<img src="../images/diagrams/REST.jpg"/>
 
 # Quality Requirements 📋
 
