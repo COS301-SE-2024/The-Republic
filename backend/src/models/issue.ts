@@ -4,7 +4,9 @@ interface User {
   username: string;
   fullname: string;
   image_url: string | null;
-  is_owner: boolean;
+  is_owner: boolean;  
+  total_issues: number | null;
+  resolved_issues: number | null;
 }
 
 interface Category {
@@ -41,6 +43,7 @@ interface Issue {
   user_reaction: string | null;
   comment_count: number;
   is_owner: boolean;
+  profile_user_id: string;
 }
 
 export { User, Category, ReactionCount, Issue };
