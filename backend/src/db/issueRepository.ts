@@ -73,7 +73,14 @@ export default class IssueRepository {
           reactions,
           user_reaction: userReaction?.emoji || null,
           comment_count: commentCount,
-          is_owner: issue.user_id === user_id
+          is_owner: issue.user_id === user_id,
+          user: issue.is_anonymous ? {
+            user_id: null,
+            email_address: null,
+            username: 'Anonymous',
+            fullname: 'Anonymous',
+            image_url: null
+          } : issue.user
         };
       }
     ));
@@ -131,10 +138,16 @@ export default class IssueRepository {
       reactions,
       user_reaction: userReaction?.emoji || null,
       comment_count: commentCount,
-      is_owner: data.user_id === user_id
+      is_owner: data.user_id === user_id,
+      user: data.is_anonymous ? {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      } : data.user
     } as Issue;
   }
-  
 
   async createIssue(issue: Partial<Issue>) {
     issue.created_at = new Date().toISOString();
@@ -188,10 +201,17 @@ export default class IssueRepository {
     return {
       ...data,
       reactions,
-      is_owner: true
+      is_owner: true,
+      user: data.is_anonymous ? {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      } : data.user
     } as Issue;
   }
-  
+
   async updateIssue(
     issueId: number,
     issue: Partial<Issue>,
@@ -228,7 +248,14 @@ export default class IssueRepository {
     return {
       ...data,
       reactions,
-      is_owner: true
+      is_owner: true,
+      user: data.is_anonymous ? {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      } : data.user
     } as Issue;
   }
 
@@ -261,8 +288,6 @@ export default class IssueRepository {
   }
 
   async resolveIssue(issueId: number, user_id: string) {
-    // TODO: Allow officials to resolve user issues
-
     const resolvedAt = DateTime.now().setZone('UTC+2').toISO();
     const { data, error } = await supabase
       .from("issue")

@@ -6,7 +6,7 @@ import { APIData, APIError } from "../types/response";
 export class CommentService {
   private commentRepository = new CommentRepository();
 
-  setCommentRepository(commentRepository: CommentRepository): void{
+  setCommentRepository(commentRepository: CommentRepository): void {
     this.commentRepository = commentRepository;
   }
 
@@ -43,10 +43,29 @@ export class CommentService {
 
     const comments = await this.commentRepository.getComments(params);
 
+    const commentsWithUserInfo = comments.map(comment => {
+      const isOwner = comment.user_id === params.user_id;
+      
+      if (comment.is_anonymous) {
+        comment.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null
+        };
+      }
+      
+      return {
+        ...comment,
+        is_owner: isOwner
+      };
+    });
+
     return APIData({
       code: 200,
       success: true,
-      data: comments
+      data: commentsWithUserInfo
     });
   }
 
