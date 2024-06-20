@@ -22,7 +22,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 
 ## Signing Up
 
-<img src="../images/User Manual Screenshots/Signing Up.jpg/>
+<img src="../images/User Manual Screenshots/Signing Up.jpg"/>
 
 - **1. Fill in your details in the relevant fields**
 - **2. Click "Signup" at the bottom of the screen**
