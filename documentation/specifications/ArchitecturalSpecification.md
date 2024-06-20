@@ -97,7 +97,6 @@ The system is built to scale efficiently to handle growth in users, data, and co
 The system addresses the crucial attribute of security with a comprehensive, layered approach to protect sensitive data and ensure secure user interactions.
 
 - **Entry Point Validation:** At the initial entry point, all incoming requests are validated and sanitized to defend against malformed or malicious data. This serves as the first line of defense, preventing potentially harmful requests from reaching deeper layers of the system.
-- **API Gateway:** Acting as the main entry point to the system, the API Gateway further screens and filters incoming requests. It uses token-based middleware to manage sessions securely. This middleware ensures that only authorized users with valid session tokens can access the system, thereby preventing unauthorized access.
 - **Service-Level Security:** Within the system, individual services such as User Management enforce strict access controls. Only users with the correct permissions can access or modify sensitive information. For example, the User Management service uses a dedicated PostgreSQL database with role-based access control to ensure that sensitive user data is protected.
 - **Data Storage Security:** The system ensures that sensitive information is masked, and access is restricted to read-only where appropriate, thus maintaining data integrity and confidentiality. Additionally, compliance with data protection regulations, such as the POPI Act, is ensured by implementing necessary data masking and encryption protocols.
 
