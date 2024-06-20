@@ -74,7 +74,14 @@ export class CommentRepository {
     const comments = data.map((comment: Comment) => {
       return {
         ...comment,
-        is_owner: comment.user_id === user_id
+        is_owner: comment.user_id === user_id,
+        user: comment.is_anonymous ? {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null
+        } : comment.user
       };
     });
 
@@ -100,7 +107,17 @@ export class CommentRepository {
       });
     }
 
-    return data as Comment;
+    return {
+      ...data,
+      is_owner: true,
+      user: data.is_anonymous ? {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      } : data.user
+    } as Comment;
   }
 
   async deleteComment(comment_id: number, user_id: string) {

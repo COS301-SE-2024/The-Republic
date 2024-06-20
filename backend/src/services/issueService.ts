@@ -22,7 +22,6 @@ export default class IssueService {
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {
-    // `from` can be 0
     if (params.from === undefined || !params.amount) {
       throw APIError({
         code: 400,
@@ -33,10 +32,29 @@ export default class IssueService {
 
     const issues = await this.issueRepository.getIssues(params);
 
+    const issuesWithUserInfo = issues.map(issue => {
+      const isOwner = issue.user_id === params.user_id;
+      
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null
+        };
+      }
+      
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+
     return APIData({
       code: 200,
       success: true,
-      data: issues,
+      data: issuesWithUserInfo,
     });
   }
 
@@ -52,10 +70,25 @@ export default class IssueService {
 
     const resIssue = await this.issueRepository.getIssueById(issue_id, issue.user_id);
 
+    const isOwner = resIssue.user_id === issue.user_id;
+
+    if (resIssue.is_anonymous) {
+      resIssue.user = {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      };
+    }
+
     return APIData({
       code: 200,
       success: true,
-      data: resIssue
+      data: {
+        ...resIssue,
+        is_owner: isOwner
+      }
     });
   }
 
