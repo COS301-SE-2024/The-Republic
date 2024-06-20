@@ -9,47 +9,43 @@
 - Introduction
 - Design Strategy
 - Quality Requirements
-- Data Flow
-- Technology Stack
-- Performance Considerations
-- Scalability Strategies
-- Security Measures
-- Conclusion
+- Architectural Strategies
+- Architectural Diagram
+- Architectural Constraints
 
 # Introduction
 
 The Republic is a platform aimed at revolutionizing citizen engagement with government services. This document outlines the architectural design of The Republic project, focusing on the system's performance, scalability, reliability, security, maintainability, and usability while facilitating future evolution from a monolithic to a microservice architecture.
 
-# Architectural Strategies 📃
+# Design Strategy 📃
 
-## Components
+## Alignment with Business Requirements:
 
-Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
+The architectural decisions and identification of quality requirements were made to directly align with the core business requirements of The Republic project. The functional requirements and user stories outline the need for a platform that allows citizens to report governmental service delivery issues and visualize the aggregated data. To meet these business needs effectively, the architectural choices and prioritized quality requirements were carefully selected.
 
-<img src="../images/diagrams/Architectura.jpg"/>
+Furthermore, the prioritization of quality requirements such as performance, reliability, scalability, security, and usability directly addresses the business need for a robust, responsive, and user-friendly platform capable of handling a large user base. By ensuring high performance, reliability, and scalability, the system can effectively serve the intended audience of the general public, facilitating seamless reporting of service delivery issues and providing insightful visualizations.
+The emphasis on security and usability aligns with the business requirement of fostering trust and encouraging widespread adoption among citizens. A secure platform that protects user data and provides an intuitive user experience will be crucial for the project's success and sustained utilization.
 
-## Client-Server
+## User-Centric Design:
 
-Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
+As the platform targets the general public, including individuals from diverse backgrounds and demographics, addressing their requirements is important. Key considerations include:
 
-- **User Management:** The backend server manages user authentication, registration, and profile management functionality through a User Management Service. This service would handle user-related data and enforce access controls.
-- **Post Management:** This service is responsible for managing user posts, comments, reactions, and providing filtering/sorting functionality for the posts.
-- **Data Analytics and Visualization:** This component performs sentiment analysis on user posts, processes the data, and generates visualizations based on the analyzed data. It may utilize machine learning models or data processing pipelines to extract insights from the user-generated content.
-- **Security and Access Control:** The backend server is responsible for implementing security measures, such as entry point validation, token-based middleware for session management, and enforcing role-based access controls to protect sensitive data and ensure authorized access.
-- **Database Management:** The backend server manages the interactions with the primary database for storing and retrieving data related to users, posts, and other application data.
+- **Intuitive User Experience:** Prioritizing usability ensures that the platform is easy to navigate and interact with, regardless of the user's technical proficiency or ability. This aligns with the quality requirement of delivering a user-friendly experience that encourages widespread adoption.
+- **Accurate and Relevant Information:** By emphasizing reliability and performance, the platform can provide citizens with accurate and up-to-date visualizations and insights into governmental service delivery. This transparency and information accuracy foster trust and enable informed decision-making.
+- **Consistent Availability:** Aligning with the reliability quality requirement, the system must remain consistently accessible and operational, especially during critical situations when citizens need to report service delivery issues promptly.
+- **Responsive Interactions:** Focusing on performance ensures that the platform responds swiftly to user inputs, queries, and interactions, providing a seamless and efficient experience that meets citizens' expectations for responsiveness.
 
-<img src="../images/diagrams/Client Server.jpg"/>
+This user-centric approach not only enhances the overall experience but also increases the likelihood of sustained engagement and utilization, aligning with the overarching business objectives of the project.
 
-## REST
+## Facilitates Long-term Maintenance:
 
-The application leverages a RESTful API for communication between client and server. This approach, characterized by stateless interactions, minimizes server load and enhances the application's scalability.
+By prioritizing aspects such as modularity, code quality, and comprehensive documentation, the system can be effectively maintained and evolved over time. Specific considerations include:
 
-- **Stateless Communication:** RESTful APIs follow a stateless communication protocol, which means that each request from the client contains all the necessary information for the server to understand and process it. This stateless approach reduces server overhead and improves scalability.
-- **Separation of Concerns:** The use of RESTful APIs promotes a clear separation between the client (frontend) and server (backend) components, enabling them to evolve independently and facilitating easier testing and maintenance.
-- **Scalability:** The stateless nature of RESTful APIs reduces server load, contributing to the overall scalability of the application. The server can handle a higher volume of requests more efficiently.
-- **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
+- **Modular Design:** Structuring the application into independent, self-contained modules or components promotes maintainability. This modular approach simplifies the process of updating, replacing, or extending specific functionalities without compromising the entire system's integrity.
+- **Robust Coding Practices:** Adherence to industry-standard coding conventions, rigorous code reviews, and automated testing frameworks contribute to a high-quality, maintainable codebase. This proactive approach minimizes technical debt and facilitates efficient identification and resolution of issues.
+- **Comprehensive Documentation:** Maintaining detailed and up-to-date documentation not only aids in knowledge transfer among development teams but also serves as a valuable resource for future maintenance and enhancement efforts. Well-documented code, architecture, and processes ensure smoother transitions and minimize the risk of disruptions.
 
-<img src="../images/diagrams/REST.jpg"/>
+While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
 
 # Quality Requirements 📋
 
@@ -131,6 +127,37 @@ Usability ensures that the system is easy to use and provides a good user experi
 | Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
 | --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
 | User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
+
+# Architectural Strategies 📃
+
+## Components
+
+Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
+
+<img src="../images/diagrams/Architectura.jpg"/>
+
+## Client-Server
+
+Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
+
+- **User Management:** The backend server manages user authentication, registration, and profile management functionality through a User Management Service. This service would handle user-related data and enforce access controls.
+- **Post Management:** This service is responsible for managing user posts, comments, reactions, and providing filtering/sorting functionality for the posts.
+- **Data Analytics and Visualization:** This component performs sentiment analysis on user posts, processes the data, and generates visualizations based on the analyzed data. It may utilize machine learning models or data processing pipelines to extract insights from the user-generated content.
+- **Security and Access Control:** The backend server is responsible for implementing security measures, such as entry point validation, token-based middleware for session management, and enforcing role-based access controls to protect sensitive data and ensure authorized access.
+- **Database Management:** The backend server manages the interactions with the primary database for storing and retrieving data related to users, posts, and other application data.
+
+<img src="../images/diagrams/Client Server.jpg"/>
+
+## REST
+
+The application leverages a RESTful API for communication between client and server. This approach, characterized by stateless interactions, minimizes server load and enhances the application's scalability.
+
+- **Stateless Communication:** RESTful APIs follow a stateless communication protocol, which means that each request from the client contains all the necessary information for the server to understand and process it. This stateless approach reduces server overhead and improves scalability.
+- **Separation of Concerns:** The use of RESTful APIs promotes a clear separation between the client (frontend) and server (backend) components, enabling them to evolve independently and facilitating easier testing and maintenance.
+- **Scalability:** The stateless nature of RESTful APIs reduces server load, contributing to the overall scalability of the application. The server can handle a higher volume of requests more efficiently.
+- **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
+
+<img src="../images/diagrams/REST.jpg"/>
 
 # Architectural Constraints ⚠️
 
