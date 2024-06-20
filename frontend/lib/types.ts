@@ -6,6 +6,8 @@ interface User {
   image_url: string;
   bio: string;
   is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
 }
 
 interface Category {
