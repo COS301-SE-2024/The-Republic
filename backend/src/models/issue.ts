@@ -4,6 +4,7 @@ interface User {
   username: string;
   fullname: string;
   image_url: string | null;
+  is_owner: boolean;
 }
 
 interface Category {

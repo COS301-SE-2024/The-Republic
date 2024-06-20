@@ -5,6 +5,7 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
+  is_owner: boolean;
 }
 
 interface Category {
