@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import * as echarts from 'echarts';
-// import { CatCounts } from "@/lib/reports";
 
 function BarChart() {
   const [data, setData] = useState<{ resolved: { [key: string]: number }, unresolved: { [key: string]: number } }>({ resolved: {}, unresolved: {} });
