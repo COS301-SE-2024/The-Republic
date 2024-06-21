@@ -96,6 +96,11 @@ interface DataItem {
     name: string;
 }
 
+interface DataItem2 {
+    max: number;
+    name: string;
+}
+
 interface GroupedCategoryCount {
     [categoryName: string]: number;
 }
@@ -116,7 +121,7 @@ interface CategoryAndDateCount {
 
 export type {
     TransitionOfParliamentModel, BarAndLineChartModel, StackedLineChartModel, RadarChartModel, DonutChartDataModel,
-    Counts, CatCounts, CatIssue, CategoryCounts, DataItem,
+    Counts, CatCounts, CatIssue, CategoryCounts, DataItem, DataItem2,
     Issue, GroupedIssuesResponse, ResolutionStatusCounts, GroupedCategoryCount,
     IssuesGroupedByDate, IssuesGroupedByCategory, CategoryAndDateCount
 };
