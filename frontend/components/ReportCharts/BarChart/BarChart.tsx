@@ -23,7 +23,6 @@ function BarChart() {
         const apiResponse = await response.json();
 
         if (apiResponse.success && apiResponse.data) {
-          console.log("Successfully: ", apiResponse.data);
           setData(apiResponse.data);
         } else {
           console.error("Error fetching issues:", apiResponse.error);
@@ -46,9 +45,8 @@ function BarChart() {
       const resolvedEntries: { [key: string]: number } = data.resolved;
       const unresolvedEntries: { [key: string]: number } = data.unresolved;
     
-      // Combine keys from both resolved and unresolved to ensure all categories are included
       const combinedCategories = new Set([...Object.keys(resolvedEntries), ...Object.keys(unresolvedEntries)]);
-    
+
       labels = Array.from(combinedCategories);
       unresolvedData = labels.map(label => Number(unresolvedEntries[label]) || 0);
       resolverData = labels.map(label => Number(resolvedEntries[label]) || 0);

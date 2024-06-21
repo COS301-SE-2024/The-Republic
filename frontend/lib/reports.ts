@@ -91,6 +91,11 @@ interface ResolutionStatusCounts {
     unresolved: number;
 }
 
+interface DataItem {
+    value: number;
+    name: string;
+}
+
 interface GroupedCategoryCount {
     [categoryName: string]: number;
 }
@@ -111,7 +116,7 @@ interface CategoryAndDateCount {
 
 export type {
     TransitionOfParliamentModel, BarAndLineChartModel, StackedLineChartModel, RadarChartModel, DonutChartDataModel,
-    Counts, CatCounts, CatIssue, CategoryCounts, 
+    Counts, CatCounts, CatIssue, CategoryCounts, DataItem,
     Issue, GroupedIssuesResponse, ResolutionStatusCounts, GroupedCategoryCount,
     IssuesGroupedByDate, IssuesGroupedByCategory, CategoryAndDateCount
 };

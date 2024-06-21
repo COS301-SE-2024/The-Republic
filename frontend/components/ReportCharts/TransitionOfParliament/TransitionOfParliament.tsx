@@ -1,9 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as echarts from 'echarts';
+import { DataItem, CatCounts } from "@/lib/reports";
 
 const TransitionOfParliament: React.FC = () => {
+    const [data, setData] = useState<DataItem[]>([]);
     useEffect(() => {
-        const data = [
+        const fetchIssues = async () => {   
+            try {
+                const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        from: 0,
+                        amount: 99,
+                    }),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                });
+                const apiResponse = await response.json();
+
+                if (apiResponse.success && apiResponse.data) {
+                    console.log("Successfully: ", apiResponse.data);
+                    setData(apiResponse.data);
+                } else {
+                    console.error("Error fetching issues:", apiResponse.error);
+                }
+            } catch (error) {
+                console.error("Error fetching issues:", error);
+            }
+        };
+
+        fetchIssues();
+    }, []);
+    
+    useEffect(() => {
+        const data: DataItem[] = [
             { value: 800, name: 'A' },
             { value: 635, name: 'B' },
             { value: 580, name: 'C' },
@@ -11,6 +43,24 @@ const TransitionOfParliament: React.FC = () => {
             { value: 300, name: 'E' },
             { value: 200, name: 'F' }
         ];
+
+        if (data && ('resolved' in data && 'unresolved' in data)) {
+            const transformData = (data: { resolved: { [key: string]: number }, unresolved: { [key: string]: number } }) => {
+                const merged = { ...data.resolved };
+                
+                Object.entries(data.unresolved).forEach(([key, value]) => {
+                    if (merged[key]) {
+                    merged[key] += value;
+                    } else {
+                    merged[key] = value;
+                    }
+                });
+                
+                return Object.entries(merged).map(([name, value]) => ({ name, value }));
+            };
+            
+            const data = transformData(data);     
+        }
 
         const defaultPalette = [
             '#5470c6',
