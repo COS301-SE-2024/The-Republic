@@ -32,7 +32,6 @@ function DonutChart() {
         const apiResponse = await response.json();
 
         if (apiResponse.success && apiResponse.data) {
-            console.log("Successfully: ", apiResponse.data);
             setData(apiResponse.data);
         } else {
             console.error("Error fetching issues:", apiResponse.error);
@@ -46,6 +45,7 @@ function DonutChart() {
   }, []);
   
   useEffect(() => {
+    // ECharts Donut Chart
     if (data && ('resolved' in data && 'unresolved' in data)) {
       const transformData = (data: { resolved: { [key: string]: number }, unresolved: { [key: string]: number } }) => {
       const merged = { ...data.resolved };
@@ -63,7 +63,6 @@ function DonutChart() {
       
       setDataArray(transformData(data));
     }
-    // ECharts Donut Chart
     const donutChart = echarts.init(document.querySelector("#donutChart") as HTMLElement);
     donutChart.setOption({
       tooltip: {
