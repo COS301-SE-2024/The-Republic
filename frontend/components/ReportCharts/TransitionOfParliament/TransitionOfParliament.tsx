@@ -33,7 +33,7 @@ const TransitionOfParliament: React.FC = () => {
                     id: 'distribution',
                     radius: radius,
                     label: {
-                        show: false
+                        show: true
                     },
                     universalTransition: true,
                     animationDurationUpdate: 1000,
