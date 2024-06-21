@@ -112,6 +112,6 @@ interface CategoryAndDateCount {
 export {
     TransitionOfParliamentModel, BarAndLineChartModel, StackedLineChartModel, RadarChartModel, DonutChartDataModel,
     Counts, CatCounts, CatIssue, CategoryCounts, 
-    Issue, GroupedIssuesResponse, ResolutionStatusCounts, GroupedCategoryCount, ResolutionAndCategoryCounts,
+    Issue, GroupedIssuesResponse, ResolutionStatusCounts, GroupedCategoryCount,
     IssuesGroupedByDate, IssuesGroupedByCategory, CategoryAndDateCount
 };
