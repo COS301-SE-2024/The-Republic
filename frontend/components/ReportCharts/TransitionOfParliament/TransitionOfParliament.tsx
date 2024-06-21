@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import * as echarts from 'echarts';
-import { DataItem, CatCounts } from "@/lib/reports";
+import { DataItem } from "@/lib/reports";
 
 const TransitionOfParliament: React.FC = () => {
-    const [data, setData] = useState<DataItem[]>([]);
+    const [data, setData] = useState<{ resolved: { [key: string]: number }; unresolved: { [key: string]: number } }>({ resolved: {}, unresolved: {} });
+    const [dataArray, setDataArray] = useState<DataItem[]>([
+        { value: 800, name: 'A' },
+        { value: 635, name: 'B' },
+        { value: 580, name: 'C' },
+        { value: 484, name: 'D' },
+        { value: 300, name: 'E' },
+        { value: 200, name: 'F' }
+    ]);
     useEffect(() => {
         const fetchIssues = async () => {   
             try {
@@ -35,15 +43,6 @@ const TransitionOfParliament: React.FC = () => {
     }, []);
     
     useEffect(() => {
-        const data: DataItem[] = [
-            { value: 800, name: 'A' },
-            { value: 635, name: 'B' },
-            { value: 580, name: 'C' },
-            { value: 484, name: 'D' },
-            { value: 300, name: 'E' },
-            { value: 200, name: 'F' }
-        ];
-
         if (data && ('resolved' in data && 'unresolved' in data)) {
             const transformData = (data: { resolved: { [key: string]: number }, unresolved: { [key: string]: number } }) => {
                 const merged = { ...data.resolved };
@@ -59,7 +58,7 @@ const TransitionOfParliament: React.FC = () => {
                 return Object.entries(merged).map(([name, value]) => ({ name, value }));
             };
             
-            const data = transformData(data);     
+            setDataArray(transformData(data));
         }
 
         const defaultPalette = [
@@ -87,18 +86,18 @@ const TransitionOfParliament: React.FC = () => {
                     },
                     universalTransition: true,
                     animationDurationUpdate: 1000,
-                    data: data
+                    data: dataArray
                 }
             ]
         };
 
         const parliamentOption = (() => {
-            const sum = data.reduce((sum, cur) => sum + cur.value, 0);
+            const sum = dataArray.reduce((sum, cur) => sum + cur.value, 0);
 
             const angles: number[] = [];
             const startAngle = -Math.PI / 2;
             let curAngle = startAngle;
-            data.forEach((item) => {
+            dataArray.forEach((item) => {
                 angles.push(curAngle);
                 curAngle += (item.value / sum) * Math.PI * 2;
             });
@@ -140,7 +139,7 @@ const TransitionOfParliament: React.FC = () => {
                 series: {
                     type: 'custom',
                     id: 'distribution',
-                    data: data,
+                    data: dataArray,
                     coordinateSystem: undefined,
                     universalTransition: true,
                     animationDurationUpdate: 1000,
@@ -201,7 +200,7 @@ const TransitionOfParliament: React.FC = () => {
                 myChart.dispose();
             };
         }
-    }, []);
+    }, [data]);
 
     return (
         <div className="col-lg-6">
