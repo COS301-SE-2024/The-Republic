@@ -94,7 +94,7 @@ function DonutChart() {
         data: dataArray
       }]
     });
-  }, []);
+  }, [data]);
 
   return (
     <div className="col-lg-6">
