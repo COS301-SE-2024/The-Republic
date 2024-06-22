@@ -29,7 +29,6 @@ const TransitionOfParliament: React.FC = () => {
                 const apiResponse = await response.json();
 
                 if (apiResponse.success && apiResponse.data) {
-                    console.log("Successfully: ", apiResponse.data);
                     setData(apiResponse.data);
                 } else {
                     console.error("Error fetching issues:", apiResponse.error);
