@@ -3,20 +3,21 @@
 import React, { useEffect, useState } from "react";
 import * as echarts from 'echarts';
 import { DataItem2 } from "@/lib/reports";
+// import { Combine } from "lucide-react";
 
 function RadarChart() {
   const [data, setData] = useState<{ resolved: { [key: string]: number }, unresolved: { [key: string]: number } }>({ resolved: {}, unresolved: {} });
   const [indicators, setIndicators] = useState<DataItem2[]>([
-    { name: 'Sales', max: 220 },
-    { name: 'Administration', max: 220 },
-    { name: 'Information Technology', max: 220 },
-    { name: 'Customer Support', max: 220 },
-    { name: 'Development', max: 220 },
-    { name: 'Marketing', max: 220 }
+    { "name": "Public Safety", "max": 5 },
+    { "name": "Healthcare Services", "max": 3 },
+    { "name": "Administrative Services", "max": 3 },
+    { "name": "Electricity", "max": 4 },
+    { "name": "Transportation", "max": 5 },
+    { "name": "Water", "max": 8 }
   ]);
-  const [labels, setLables] = useState<string[]>(['Water', 'Electricity', 'Potholes', 'Health', 'Services', 'Safety']);
-  const [unresolvedData, setUnResolvedData] = useState<number[]>([120, 200, 150, 80, 110, 130]);
-  const [resolvedData, setResolvedData] = useState<number[]>([60, 140, 180, 100, 80, 70]);
+
+  const [unresolvedData, setUnResolvedData] = useState<number[]>([1, 2, 2, 4, 4, 4]);
+  const [resolvedData, setResolvedData] = useState<number[]>([0, 1, 0, 3, 0, 6]);
 
   useEffect(() => {
     const fetchIssues = async () => {
@@ -50,59 +51,61 @@ function RadarChart() {
   useEffect(() => {
     // ECharts Bar Chart
     if (data && ('resolved' in data && 'unresolved' in data)) {
-      const resolvedEntries: { [key: string]: number } = data.resolved;
-      const unresolvedEntries: { [key: string]: number } = data.unresolved;
-    
-      const combinedCategories = new Set([...Object.keys(resolvedEntries), ...Object.keys(unresolvedEntries)]);
+      const resolvedEntries = data.resolved;
+      const unresolvedEntries = data.unresolved;
 
-      setLables(Array.from(combinedCategories));
-      setUnResolvedData(labels.map(label => Number(unresolvedEntries[label]) || 0));
-      setResolvedData(labels.map(label => Number(resolvedEntries[label]) || 0));
+      const combined = Array.from(new Set([...Object.keys(resolvedEntries), ...Object.keys(unresolvedEntries)]));
+      const resolved = combined.map(label => Number(resolvedEntries[label]) || 0);
+      const unResolved = combined.map(label => Number(unresolvedEntries[label]) || 0);
 
-      console.log(unresolvedEntries);
-      console.log(unresolvedEntries);
-      const maxValues = labels.map(label => {
-        const unresolved = Number.isFinite(resolvedEntries[label]) ? resolvedEntries[label] : 0;
-        const resolved = Number.isFinite(unresolvedEntries[label]) ? unresolvedEntries[label] : 0;
-        return Math.max(unresolved, resolved) + 2;
+      setResolvedData(resolved);
+      setUnResolvedData(unResolved);
+      
+      // Calculate max values for radar chart indicators
+      const maxValues = combined.map((_, index) => {
+        return Math.max(resolvedData[index], unresolvedData[index]) + 2;
       });
       
-      const indicate = labels.map((label, index) => ({ name: label, max: maxValues[index] }));
-      setIndicators(indicate);
+      setIndicators(combined.map((label, index) => ({ name: label, max: maxValues[index] })));
     }
   }, [data]);
-
+  
   // ECharts Radar Chart
   useEffect(() => {
-    const radarChartElement = document.querySelector("#radarChart") as HTMLElement | null;
-    if (radarChartElement) {
-      const radarChart = echarts.init(radarChartElement);
-      radarChart.setOption({
-        legend: {
-          data: ['Reported Issues', 'Resolved Issues']
-        },
-        radar: {
-          indicator: indicators
-        },
-        series: [{
-          name: 'Resolved vs Unresolved Issues',
-          type: 'radar',
-          data: [
-            {
-              value: resolvedData,
-              name: 'Resolved Issues'
-            },
-            {
-              value: unresolvedData,
-              name: 'UnResolved Issues'
-            }
-          ]
-        }]
-      });
-    } else {
-      console.error("Failed to initialize radar chart: #radarChart element not found.");
+    if (indicators.length > 0 && unresolvedData.length > 0 && resolvedData.length > 0) {
+      const radarChartElement = document.querySelector("#radarChart") as HTMLElement | null;
+      // console.log("Indicators: ", indicators)
+      if (radarChartElement) {
+        const radarChart = echarts.init(radarChartElement);
+        radarChart.setOption({
+          legend: {
+            data: ['Resolved Issues', 'UnResolved Issues']
+          },
+          radar: {
+            indicator: indicators
+          },
+          series: [{
+            name: 'Resolved vs Unresolved Issues',
+            type: 'radar',
+            data: [
+              {
+                value: resolvedData,
+                name: 'Resolved Issues',
+                itemStyle: {color: 'green'}
+              },
+              {
+                value: unresolvedData,
+                name: 'UnResolved Issues',
+                itemStyle: {color: 'red'}
+              }
+            ]
+          }]
+        });
+      } else {
+        console.error("Failed to initialize radar chart: #radarChart element not found.");
+      }
     }
-  }, []);
+  }, [indicators]);
 
   return (
     <div className="col-lg-6">
