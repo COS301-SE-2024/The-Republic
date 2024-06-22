@@ -7,10 +7,14 @@ const EChartsComponent = dynamic(() => import('@/components/Visualisations/DotVi
 
 function page() {
   return (
-    <div>
-      <h1>ECharts Visualization</h1>
-      <EChartsComponent />
-    </div>
+    <section className="section align-center mb-5">
+      <h3 className="mb-10 text-3xl font-extrabold leading-none tracking-tight text-gray-700 md:text-3xl lg:text-4xl dark:text-white text-center">
+        Discover the <span className="text-blue-600 dark:text-blue-500">Dot</span> Visualization Across Provinces.
+      </h3>
+      <div>
+        <EChartsComponent />
+      </div>
+    </section>
   );
 }
 
