@@ -60,25 +60,45 @@ function StackedLineChart() {
         }));
 
         const option = {
+          title: {
+            text: 'Stacked Line Chart Representation',
+            left: 'center',
+            top: '0%'
+          },
           tooltip: {
             trigger: 'axis'
           },
           legend: {
-            data: Object.keys(data)
+            data: Object.keys(data),
+            top: '5%'
           },
           grid: {
             left: '4%',
             right: '4%',
-            bottom: '3%',
+            bottom: '10%',
             containLabel: true
           },
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: formatMoreDate(dates)
+            data: formatMoreDate(dates),
+            name: 'Days (date)',
+            nameLocation: 'middle',
+            nameGap: 30,
+            nameTextStyle: {
+              fontSize: 16,
+              fontWeight: 'bold',
+            },
           },
           yAxis: {
-            type: 'value'
+            type: 'value',
+            name: 'Reported Issues Count',
+            nameLocation: 'middle',
+            nameGap: 30,
+            nameTextStyle: {
+              fontSize: 16,
+              fontWeight: 'bold',
+            },
           },
           series: seriesData
         };
@@ -101,11 +121,10 @@ function StackedLineChart() {
   };
 
   return (
-    <div className="col-12">
+    <div className="col-12 pb-5">
       <div className="card">
         <div className="card-body">
-          <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Stacked Line Chart Representation</h5>
-          <div ref={chartRef} style={{ width: '100%', height: 400 }}></div>
+          <div ref={chartRef} style={{ width: '100%', height: '600px' }}></div> {/* Increased height */}
         </div>
       </div>
     </div>
