@@ -15,6 +15,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 5. [Writing a post](#writing-a-post)
 6. [Subscription & Filtering](#subscription-and-Filtering)
 7. [Profile Page Manangement](#Profile-Page-Management)
+8. [Making a comment](#,aking-a-comment)
 
 ## Signing Up
 
@@ -81,10 +82,10 @@ Users can subscribe to what they are interested in. Users can also filter and so
 **3. You can sort and Filter the issue posts displayed by clicking the sort and filter found on the right hand side bar**
 <img src="../images/User Manual Screenshots/Subscribe_3.png"/><br>
 
-**4. You can sort the issues according to "Newest", "Oldest" or "Most Comments**<br>
+**4. You can sort the issues according to "Newest", "Oldest" or "Most Comments.**<br>
 <img src="../images/User Manual Screenshots/Subscribe_4.png"/><br>
 
-**5. You can Filter the issues according to your subscriptions or the different categories**<br>
+**5. You can Filter the issues according to your subscriptions or the different categories.**<br>
 <img src="../images/User Manual Screenshots/Subscribe_5.png"/>
 
 ## Profile Page Management
@@ -95,9 +96,21 @@ Clicking on Profile on the left side bar will take you to the profile page where
 **1. To edit your profile click on "Edit Profile**<br>
 <img src="../images/User Manual Screenshots/ProfilePage_2.png"/><br>
 
-**2. Add the relevant information then click on "Save" to make the changes.**<br>
+**2. Add the relevant information then click on "Save" to make the changes**<br>
 
 <img src="../images/User Manual Screenshots/ProfilePage_4.png"/><br>
+
+## Making a comment
+
+**1. Click on the chatbox icon in order to make a comment on a specific issue**<br>
+
+<img src="../images/User Manual Screenshots/Comments.jpg"/><br>
+
+**2. Type in your comment into the input box**<br>
+<img src="../images/User Manual Screenshots/Comments_2.jpg"/><br>
+
+**3. Once you are done typing out your comment, click on "Send" to post it**<br>
+<img src="../images/User Manual Screenshots/Comments_3.jpg"/><br>
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
