@@ -38,6 +38,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -76,6 +77,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   useEffect(() => {
     const fetchIssues = async () => {
       setLoading(true);
+      setError(null);
       try {
         const headers: HeadersInit = {
           "Content-Type": "application/json",
@@ -108,10 +110,11 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         if (apiResponse.success && apiResponse.data) {
           setIssues(apiResponse.data);
         } else {
-          console.error("Error fetching issues:", apiResponse.error);
+          throw new Error(apiResponse.error || "Failed to fetch issues");
         }
       } catch (error) {
         console.error("Error fetching issues:", error);
+        setError("Failed to fetch issues. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -132,12 +135,14 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         {showInputBox && user && <IssueInputBox user={user} />}
         {loading ? (
           <LoadingIndicator />
+        ) : error ? (
+          <p className="text-red-500 text-center mt-4">{error}</p>
         ) : issues.length > 0 ? (
           issues.map((issue) => (
             <Issue key={issue.issue_id} issue={issue} />
           ))
         ) : (
-          <p>No issues found.</p>
+          <p className="text-gray-500 text-center mt-4">No issues found.</p>
         )}
       </div>
       <RightSidebar sortBy={sortBy} setSortBy={setSortBy} filter={filter} setFilter={setFilter} />
