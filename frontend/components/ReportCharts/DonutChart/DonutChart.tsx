@@ -100,7 +100,7 @@ function DonutChart() {
     <div className="col-lg-6">
       <div className="card">
         <div className="card-body pb-0">
-          <h5 className="card-title">Donut Chart Representation</h5>
+          <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Donut Chart Representation</h5>
           <div id="donutChart" style={{ minHeight: "400px" }} className="echart"></div>
         </div>
       </div>
