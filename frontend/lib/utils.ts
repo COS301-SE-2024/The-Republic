@@ -73,3 +73,11 @@ export function formatDate(dateString: string): string {
     const month = months[date.getMonth()];
     return `${day} ${month}`;
 }
+
+export function formatMoreDate(dateString: string[]): string[] {
+    const dates = [];
+    for (const date of dateString) {
+        dates.push(formatDate(date));
+    }
+    return dates;
+}
