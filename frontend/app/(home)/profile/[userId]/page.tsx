@@ -7,6 +7,7 @@ import { User } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
+import { FaSpinner } from 'react-icons/fa';
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -57,13 +58,30 @@ const ProfilePage: React.FC = () => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-24">
+        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      </div>
+    );
   }
 
   return (
     <div>
-      <ProfileHeader user={user} isOwner={isOwner} handleUpdate={handleUpdate} handleCancel={handleCancel} isEditing={isEditing} setIsEditing={setIsEditing} />
-      <ProfileStats userId={user.user_id} totalIssues={user.total_issues} resolvedIssues={user.resolved_issues} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <ProfileHeader 
+        user={user} 
+        isOwner={isOwner} 
+        handleUpdate={handleUpdate} 
+        handleCancel={handleCancel} 
+        isEditing={isEditing} 
+        setIsEditing={setIsEditing} 
+      />
+      <ProfileStats 
+        userId={user.user_id} 
+        totalIssues={user.total_issues} 
+        resolvedIssues={user.resolved_issues} 
+        selectedTab={selectedTab} 
+        setSelectedTab={setSelectedTab} 
+      />
       <div className="mt-5"></div>
       <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />
     </div>
