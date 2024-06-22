@@ -66,10 +66,15 @@ function DonutChart() {
     const donutChart = echarts.init(document.querySelector("#donutChart") as HTMLElement);
     donutChart.setOption({
       tooltip: {
-        trigger: 'item'
+        trigger: 'item' 
+      },
+      title: {
+        text: 'Donut Chart Representation',
+        left: 'center',
+        top: '0%'
       },
       legend: {
-        top: '5%',
+        top: '8%',
         left: 'center'
       },
       series: [{
@@ -100,7 +105,6 @@ function DonutChart() {
     <div className="col-lg-6">
       <div className="card">
         <div className="card-body pb-0">
-          <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Donut Chart Representation</h5>
           <div id="donutChart" style={{ minHeight: "400px" }} className="echart"></div>
         </div>
       </div>
