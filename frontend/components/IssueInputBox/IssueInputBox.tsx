@@ -20,8 +20,14 @@ const MAX_CHAR_COUNT = 500;
 interface IssueInputBoxProps {
   user: {
     user_id: string;
+    email_address: string;
+    username: string;
     fullname: string;
     image_url: string;
+    bio: string;
+    is_owner: boolean;
+    total_issues: number;
+    resolved_issues: number;
   } | null;
 }
 
@@ -40,10 +46,20 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       });
       return;
     }
-  
+
+    const isContentAppropriate = await checkContentAppropriateness(content);
+
+    if (!isContentAppropriate) {
+      toast({
+        variant: "destructive",
+        description: "Please use appropriate language.",
+      });
+      return;
+    }
+
     const categoryID = parseInt(category);
     const { data } = await supabase.auth.getSession();
-  
+
     const requestBody = {
       category_id: categoryID,
       content,
@@ -52,9 +68,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       location_data: location ? location.value : {},
       created_at: new Date().toISOString(),
     };
-  
-    console.log("Request Body:", requestBody);
-  
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`, {
       method: "POST",
       body: JSON.stringify(requestBody),
@@ -63,7 +77,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
         "Authorization": `Bearer ${data.session!.access_token}`,
       },
     });
-  
+
     if (!res.ok) {
       toast({
         variant: "destructive",
@@ -75,12 +89,41 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       setMood("");
       setIsAnonymous(false);
       setLocation(null);
-  
+
       toast({
         description: "Post successful",
       });
       window.location.reload();
     }
+  };
+
+  const checkContentAppropriateness = async (text: string): Promise<boolean> => {
+    const apiKey = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
+    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
+  
+    const headers = {
+      "Ocp-Apim-Subscription-Key": apiKey,
+      "Content-Type": "text/plain",
+    };
+  
+    const response = await fetch(`${url}`, {
+      method: "POST",
+      headers,
+      body: text,
+    });
+  
+    const result = await response.json();
+  
+    if (
+      (result.Terms && result.Terms.length > 0) ||
+      result.Classification.Category1.Score > 0.5 ||
+      result.Classification.Category2.Score > 0.5 ||
+      result.Classification.Category3.Score > 0.5
+    ) {
+      return false;
+    }
+  
+    return true;
   };
 
   const charCount = content.length;

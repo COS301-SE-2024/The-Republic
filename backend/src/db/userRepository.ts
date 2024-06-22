@@ -31,7 +31,7 @@ export default class UserRepository {
   
     const [{ count: totalIssues }, { count: resolvedIssues }] = await Promise.all([
       supabase.from("issue").select("*", { count: "exact" }).eq("user_id", userId),
-      supabase.from("issue").select("*", { count: "exact" }).eq("user_id", userId).eq("status", "RESOLVED"),
+      supabase.from("issue").select("*", { count: "exact" }).eq("user_id", userId).not("resolved_at", "is", null),
     ]);
   
     return {

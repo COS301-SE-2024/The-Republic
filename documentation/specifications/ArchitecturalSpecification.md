@@ -10,7 +10,7 @@
 - Design Strategy
 - Quality Requirements
 - Architectural Strategies
-- Architectural Diagram
+- Architecture Diagram
 - Architectural Constraints
 
 # Introduction
@@ -55,8 +55,7 @@ The following Quality Requirements have been identified by the team and the clie
 - **2. Reliability**
 - **3. Scalability**
 - **4. Security**
-- **5. Maintainability**
-- **6. Usability**
+- **5. Usability**
 
 ## Performance 🚀
 
@@ -98,25 +97,12 @@ The system is built to scale efficiently to handle growth in users, data, and co
 The system addresses the crucial attribute of security with a comprehensive, layered approach to protect sensitive data and ensure secure user interactions.
 
 - **Entry Point Validation:** At the initial entry point, all incoming requests are validated and sanitized to defend against malformed or malicious data. This serves as the first line of defense, preventing potentially harmful requests from reaching deeper layers of the system.
-- **API Gateway:** Acting as the main entry point to the system, the API Gateway further screens and filters incoming requests. It uses token-based middleware to manage sessions securely. This middleware ensures that only authorized users with valid session tokens can access the system, thereby preventing unauthorized access.
 - **Service-Level Security:** Within the system, individual services such as User Management enforce strict access controls. Only users with the correct permissions can access or modify sensitive information. For example, the User Management service uses a dedicated PostgreSQL database with role-based access control to ensure that sensitive user data is protected.
 - **Data Storage Security:** The system ensures that sensitive information is masked, and access is restricted to read-only where appropriate, thus maintaining data integrity and confidentiality. Additionally, compliance with data protection regulations, such as the POPI Act, is ensured by implementing necessary data masking and encryption protocols.
 
 | Stimulus Source                       | Stimulus                                                          | Response                                                                                                                                                                                  | Response Measure                                                                                                                                               | Environment             | Artifact                                                    |
 | ------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------- |
 | Malicious actors / Unauthorized users | Attempts to access sensitive data or perform unauthorized actions | - Validate and sanitize incoming requests.<br> - Use token-based middleware for session management.<br> - Implement role-based access control.<br> - Encrypt data at rest and in transit. | - Unauthorized access attempts identified and flagged.<br> - Only authorized users access sensitive data.<br> - No unauthorized modifications to the database. | System running normally | API endpoints, data access layers, user management service. |
-
-## Mainatainability 🔧
-
-Maintainability ensures that the system can be easily updated and improved over time.
-
-- **Modular Code:** Writing clean, modular code to simplify updates and enhancements. Each module can be developed, tested, and maintained independently.
-- **Documentation:** Comprehensive and up-to-date documentation is maintained for developers and users, ensuring that the system is easy to understand and modify.
-- **CI/CD Practices:** Implementing continuous integration and continuous deployment (CI/CD) practices to streamline development and deployment processes. This allows for frequent updates and quick delivery of new features.
-
-| Stimulus Source                         | Stimulus                                                    | Response                                                                                                  | Response Measure                                                                                                                             | Environment                           | Artifact                                          |
-| --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------- |
-| Need for updates / New feature requests | Introduction of new features, bug fixes, and system updates | - Write clean, modular code.<br> - Maintain comprehensive documentation.<br> - Implement CI/CD practices. | - Time taken to implement updates and new features.<br> - Ease of identifying and fixing issues.<br> - Minimal disruption during deployment. | Ongoing development / Regular updates | Codebase, documentation, and deployment pipeline. |
 
 ## Usability 🖐️
 
@@ -128,15 +114,39 @@ Usability ensures that the system is easy to use and provides a good user experi
 | --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
 | User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
 
-# Architectural Strategies 🔨
+## Maintainability 🔧
 
-## Components
+Maintainability ensures that the system can be easily updated and improved over time.
+
+- **Modular Code:** Writing clean, modular code to simplify updates and enhancements. Each module can be developed, tested, and maintained independently.
+- **Documentation:** Comprehensive and up-to-date documentation is maintained for developers and users, ensuring that the system is easy to understand and modify.
+- **CI/CD Practices:** Implementing continuous integration and continuous deployment (CI/CD) practices to streamline development and deployment processes. This allows for frequent updates and quick delivery of new features.
+
+| Stimulus Source                         | Stimulus                                                    | Response                                                                                                  | Response Measure                                                                                                                             | Environment                           | Artifact                                          |
+| --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------- |
+| Need for updates / New feature requests | Introduction of new features, bug fixes, and system updates | - Write clean, modular code.<br> - Maintain comprehensive documentation.<br> - Implement CI/CD practices. | - Time taken to implement updates and new features.<br> - Ease of identifying and fixing issues.<br> - Minimal disruption during deployment. | Ongoing development / Regular updates | Codebase, documentation, and deployment pipeline. |
+
+# Architectural Patterns 🔨
+
+## Layered Pattern
+
+A layered architecture can help improve performance by separating concerns, allowing for optimization at each layer. Each layer has a well-defined responsibility, ensuring cleaner code and easier maintenance. The presentation layer handles the user interface, the logic layer manages business rules, and the data access layer interacts with the database. Security can be ensured at multiple levels as well thus improving security.
+
+<img src="../images/diagrams/Layered.jpg"/>
+
+## Micro-Services
+
+Microservices architecture can enhance reliability by isolating failures to specific services, preventing a single point of failure and it supports horizontal scaling, improving scalability.
+
+<img src="../images/diagrams/Microservice.jpg"/>
+
+## Components Based Pattern
 
 Our frontend utilizes a component-based architecture, allowing for the reuse of individual components across different parts of the application. This approach minimizes code duplication and enhances the consistency of the user interface. Each component is designed to be independently testable, aligning with our structural style and test-driven development methodology.
 
-<img src="../images/diagrams/Architectura.jpg"/>
+<img src="../images/diagrams/Components.jpg"/>
 
-## Client-Server
+## Client-Server Pattern
 
 Our system is designed using a client-server architecture. In this setup, the frontend acts as a client that requests data from the backend server. The backend server then provides content to multiple clients. This separation of frontend and backend components allows them to function independently, facilitating easier testing of individual components due to their loose coupling.
 
@@ -148,42 +158,9 @@ Our system is designed using a client-server architecture. In this setup, the fr
 
 <img src="../images/diagrams/Client Server.jpg"/>
 
-## REST
+## Architecture Diagram
 
-The application leverages a RESTful API for communication between client and server. This approach, characterized by stateless interactions, minimizes server load and enhances the application's scalability.
-
-- **Stateless Communication:** RESTful APIs follow a stateless communication protocol, which means that each request from the client contains all the necessary information for the server to understand and process it. This stateless approach reduces server overhead and improves scalability.
-- **Separation of Concerns:** The use of RESTful APIs promotes a clear separation between the client (frontend) and server (backend) components, enabling them to evolve independently and facilitating easier testing and maintenance.
-- **Scalability:** The stateless nature of RESTful APIs reduces server load, contributing to the overall scalability of the application. The server can handle a higher volume of requests more efficiently.
-- **Caching Capabilities:** RESTful APIs support caching mechanisms, which can further improve performance and reduce server load by serving cached responses for repeated requests.
-
-<img src="../images/diagrams/REST.jpg"/>
-
-## Pipe - Filter
-
-The data processing pipeline can be enhanced by applying the pipe-filter pattern. This approach breaks down the processing stages into distinct modules, each acting as a "filter" that performs a specific task on the data.
-
-- **Sequential Processing:** The conversion of data (e.g., data transformations, validations, calculations) can happen in sequential phases. Each phase processes the input data, applies the necessary transformations, and outputs the data for the next phase.
-- **Separation of Concerns:** Implementing a pipe-filter pattern helps in separating concerns. Each filter (module) is responsible for a specific task, making the system easier to understand, maintain, and test.
-- **Scalability and Maintainability:** Organizing the system into smaller, well-defined processing stages enhances scalability and maintainability. Individual filters can be optimized or refactored without affecting the entire system.
-
-<img src="../images/diagrams/Pipe&Filter.jpg"/>
-
-## Multi Tier
-
-Our monolithic application leverages a multi-tier architecture to enforce separation of concerns. This means the system is divided into four distinct layers: presentation, security, logic, and data access. Each layer has a well-defined responsibility, ensuring cleaner code and easier maintenance. The presentation layer handles the user interface, the security layer safeguards communication, the logic layer manages business rules, and the data access layer interacts with the database.
-
-<img src="../images/diagrams/Multi Tier.jpg"/>
-
-## MVC
-
-The React framework used in our frontend can be structured to follow the MVC pattern, ensuring a clear separation of concerns within the application. This approach helps in organizing the codebase and enhancing maintainability.
-
-- **Model:** The model is represented by the state management in React. This includes handling business logic, data fetching, and state updates using React's built-in state management, Context API, or Redux.
-- **View:** The view is composed of React components and JSX templates. These components define the user interface and dynamically render content based on the state.
-- **Controller:** The controller role is managed by the React components that handle user interactions. These components contain event handlers and methods to respond to user input, update the state (model), and re-render the UI (view).
-
-<img src="../images/diagrams/MVC.jpg"/>
+<img src="../images/diagrams/Architectural Diagram.jpg"/>
 
 ## Future Migration to Microservices Architecture
 

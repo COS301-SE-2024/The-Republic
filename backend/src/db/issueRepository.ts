@@ -18,7 +18,9 @@ export default class IssueRepository {
     amount,
     category,
     mood,
-    user_id
+    user_id,
+    order_by = "created_at",
+    ascending = false
   }: Partial<GetIssuesParams>) {
     let query = supabase
       .from("issue")
@@ -40,7 +42,6 @@ export default class IssueRepository {
           province
         )
       `)
-      .order("created_at", { ascending: false })
       .range(from!, from! + amount! - 1);
   
     if (category) {
@@ -52,19 +53,43 @@ export default class IssueRepository {
       query = query.eq("sentiment", mood);
     }
   
-    const { data, error } = await query;
+    if (order_by === "comment_count") {
+      const issues = await query;
   
-    if (error) {
-      console.error(error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred. Please try again later."
-      });
-    }
+      if (issues.error) {
+        console.error(issues.error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later."
+        });
+      }
   
-    const issues = await Promise.all(data.map(
-      async (issue: Issue) => {
+      const issuesWithComments = await Promise.all(issues.data.map(async (issue: Issue) => {
+        const commentCount = await commentRepository.getNumComments(issue.issue_id);
+        return {
+          ...issue,
+          comment_count: commentCount
+        };
+      }));
+  
+      issuesWithComments.sort((a, b) => ascending ? a.comment_count - b.comment_count : b.comment_count - a.comment_count);
+  
+      return issuesWithComments as Issue[];
+    } else {
+      query = query.order(order_by, { ascending });
+      const { data, error } = await query;
+  
+      if (error) {
+        console.error(error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later."
+        });
+      }
+  
+      const issues = await Promise.all(data.map(async (issue: Issue) => {
         const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
         const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(issue.issue_id, user_id) : null;
         const commentCount = await commentRepository.getNumComments(issue.issue_id);
@@ -82,11 +107,12 @@ export default class IssueRepository {
             image_url: null
           } : issue.user
         };
-      }
-    ));
+      }));
   
-    return issues as Issue[];
+      return issues as Issue[];
+    }
   }
+  
   
   async getIssueById(issueId: number, user_id?: string) {
     const { data, error } = await supabase
