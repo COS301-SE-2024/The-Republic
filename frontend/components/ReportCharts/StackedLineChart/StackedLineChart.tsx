@@ -104,7 +104,7 @@ function StackedLineChart() {
     <div className="col-12">
       <div className="card">
         <div className="card-body">
-          <h5 className="card-title">Stacked Line Chart Representation</h5>
+          <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Stacked Line Chart Representation</h5>
           <div ref={chartRef} style={{ width: '100%', height: 400 }}></div>
         </div>
       </div>
