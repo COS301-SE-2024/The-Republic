@@ -90,7 +90,7 @@ function BarChart() {
     <div className="col-lg-6">
         <div className="card">
             <div className="card-body">
-                <h5 className="card-title">Bar Chart Representation</h5>
+                <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Bar Chart Representation</h5>
                 <div id="barChart" style={{ minHeight: "400px" }} className="echart"></div>
             </div>
         </div>
