@@ -53,6 +53,11 @@ function BarChart() {
 
     const barChart = echarts.init(document.querySelector("#barChart") as HTMLElement);
     barChart.setOption({
+      title: {
+        text: 'Bar Chart Representation',
+        left: 'center',
+        top: '0%'
+      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -60,14 +65,29 @@ function BarChart() {
         }
       },
       legend: {
-        data: ['Unresolved', 'Reolved']
+        data: ['Unresolved', 'Reolved'],
+        top: '8%'
       },
       xAxis: {
         type: 'category',
-        data: labels
+        data: labels,
+        name: 'Issue Categories (Status)',
+        nameLocation: 'middle',
+        nameGap: 30,
+        nameTextStyle: {
+          fontSize: 16,
+          fontWeight: 'bold',
+        },
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        name: 'Reported Issues Count',
+        nameLocation: 'middle',
+        nameGap: 30,
+        nameTextStyle: {
+          fontSize: 16,
+          fontWeight: 'bold',
+        },
       },
       series: [
         {
@@ -90,7 +110,6 @@ function BarChart() {
     <div className="col-lg-6">
         <div className="card">
             <div className="card-body">
-                <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Bar Chart Representation</h5>
                 <div id="barChart" style={{ minHeight: "400px" }} className="echart"></div>
             </div>
         </div>
