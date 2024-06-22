@@ -9,15 +9,15 @@ The Republic is a platform that aims to improve citizen interaction with governm
 ## Contents
 
 1. [Signing Up](#signing-up)
-2. [Logging In](#logging-in)
-3. [Homepage](#homepage)
-4. [Navigation Bar](#navbar)
-5. [Writing a post](#writing-a-post)
-6. [Making a comment](#Making-a-comment)
-7. [Subscription & Filtering](#subscription-and-Filtering)
-8. [Profile Page Manangement](#Profile-Page-Management)
+2. [Logging In](#logging-in-back-to-contents)
+3. [Homepage](#homepage-back-to-contents)
+4. [Navigation Bar](#navbar-back-to-contents)
+5. [Writing a post](#writing-a-post-back-to-contents)
+6. [Making a comment](#making-a-comment-back-to-contents)
+7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
+8. [Profile Page Manangement](#profile-page-management-back-to-contents)
 
-## Signing Up<br> [Back to contents](#contents)
+## Signing Up
 
 **1. Fill in your details in the relevant fields**<br>
 **2. Click "Signup" at the bottom of the screen**
