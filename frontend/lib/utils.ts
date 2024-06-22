@@ -65,3 +65,11 @@ export function objectToQuery(obj: { [key: string]: string | number | boolean}) 
 
     return params.join("&");
 }
+
+export function formatDate(dateString: string): string {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    return `${day} ${month}`;
+}
