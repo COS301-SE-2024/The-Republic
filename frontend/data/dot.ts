@@ -19,6 +19,9 @@ const mockData = {
     },
     "Pretoria": {
       "$count": 1430,
+      "West": {
+        "$count": 120,
+      },
       "Hatfield": {
         "$count": 1430,
         "Water": {
@@ -36,8 +39,44 @@ const mockData = {
       },
       "Arcadia": {
         "$count": 798
+      },
+      "Soshanguve": {
+        "$count": 1234,
+        "Water": {
+          "$count": 500
+        },
+        "Electricity": {
+          "$count": 434
+        },
+        "Health Services": {
+          "$count": 300
+        }
+      },
+      "Atteridgeville": {
+        "$count": 987,
+        "Water": {
+          "$count": 400
+        },
+        "Electricity": {
+          "$count": 287
+        },
+        "Health Services": {
+          "$count": 300
+        }
+      },
+      "Mamelodi": {
+        "$count": 1500,
+        "Water": {
+          "$count": 800
+        },
+        "Electricity": {
+          "$count": 500
+        },
+        "Health Services": {
+          "$count": 200
+        }
       }
-    }
+    }    
   },
   "Western Cape": {
     "$count": 8456,
