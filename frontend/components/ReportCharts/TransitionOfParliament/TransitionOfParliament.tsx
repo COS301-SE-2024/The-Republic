@@ -75,6 +75,11 @@ const TransitionOfParliament: React.FC = () => {
         const radius = ['30%', '80%'];
 
         const pieOption: echarts.EChartsOption = {
+            title: {
+                text: 'Transition of Parliament Representation',
+                left: 'center',
+                top: '0%'
+            },
             series: [
                 {
                     type: 'pie',
@@ -205,7 +210,6 @@ const TransitionOfParliament: React.FC = () => {
         <div className="col-lg-6">
             <div className="card">
                 <div className="card-body">
-                    <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Transition of Parliament Representation</h5>
                     <div id="transitionOfParliament" style={{ width: '100%', height: '400px' }} className="echart"></div>
                 </div>
             </div>
