@@ -78,11 +78,18 @@ function RadarChart() {
       if (radarChartElement) {
         const radarChart = echarts.init(radarChartElement);
         radarChart.setOption({
+          title: {
+            text: 'Radar Chart Representation',
+            left: 'center',
+            top: '0%'
+          },
           legend: {
-            data: ['Resolved Issues', 'UnResolved Issues']
+            data: ['Resolved Issues', 'UnResolved Issues'],
+            top: '8%',
           },
           radar: {
-            indicator: indicators
+            indicator: indicators,
+            center: ['50%', '60%']
           },
           series: [{
             name: 'Resolved vs Unresolved Issues',
@@ -111,7 +118,6 @@ function RadarChart() {
     <div className="col-lg-6">
         <div className="card">
             <div className="card-body pb-0">
-                <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Radar Chart Representation</h5>
                 <div id="radarChart" style={{ minHeight: "400px" }} className="echart"></div>
             </div>
         </div>
