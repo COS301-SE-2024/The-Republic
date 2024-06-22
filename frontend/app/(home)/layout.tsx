@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from "@/components/Header/Header";
 import Sidebar from "@/components/Sidebar/Sidebar";
-import HelpMenu from "@/components/HelpMenu/HelpMenu";
+import HelpMenu from "@/components/Helpmenu/Helpmenu";
 import { UserProvider } from "@/lib/contexts/UserContext";
 import type { Metadata } from "next";
 import { HomeAvatarProps } from '@/lib/types';
