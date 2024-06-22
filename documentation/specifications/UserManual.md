@@ -12,7 +12,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 2. [Logging In](#logging-in-back-to-contents)
 3. [Homepage](#homepage-back-to-contents)
 4. [Navigation Bar](#navbar-back-to-contents)
-5. [Writing a post](#writing-a-post-back-to-contents)
+5. [Making a post](#Making-a-post-back-to-contents)
 6. [Making a comment](#making-a-comment-back-to-contents)
 7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
 8. [Profile Page Manangement](#profile-page-management-back-to-contents)
@@ -47,7 +47,7 @@ The NavBar consists of your General section which includes, home page, visualiza
 
  <img src="../images/User Manual Screenshots/NavBar.png"/>
 
-## Writing a Post<br> [Back to contents](#contents)
+## Making a Post<br> [Back to contents](#contents)
 
 **1. Write in the input box**
 
