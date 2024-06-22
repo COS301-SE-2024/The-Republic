@@ -4,6 +4,7 @@ import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import { Issue as IssueType } from "@/lib/types";
 import { supabase } from "@/lib/globals";
+import { FaSpinner } from 'react-icons/fa';
 
 interface User {
   user_id: string;
@@ -36,6 +37,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [user, setUser] = useState<User | null>(null);
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -58,9 +60,9 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
             email_address: session.user.email as string,
             username: userDetails.data.username,
             bio: userDetails.data.bio,
-            is_owner: false, // Assuming this field needs to be filled later
-            total_issues: 0, // Assuming this field needs to be filled later
-            resolved_issues: 0, // Assuming this field needs to be filled later
+            is_owner: false,
+            total_issues: 0,
+            resolved_issues: 0,
             access_token: session.access_token,
           };
           setUser(user);
@@ -73,6 +75,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
 
   useEffect(() => {
     const fetchIssues = async () => {
+      setLoading(true);
       try {
         const headers: HeadersInit = {
           "Content-Type": "application/json",
@@ -109,17 +112,27 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         }
       } catch (error) {
         console.error("Error fetching issues:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchIssues();
   }, [user, userId, sortBy, filter]);
 
+  const LoadingIndicator = () => (
+    <div className="flex justify-center items-center h-24">
+      <FaSpinner className="animate-spin text-4xl text-blue-500" />
+    </div>
+  );
+
   return (
     <div className="flex">
       <div className="w-full px-6">
         {showInputBox && user && <IssueInputBox user={user} />}
-        {issues && issues.length > 0 ? (
+        {loading ? (
+          <LoadingIndicator />
+        ) : issues.length > 0 ? (
           issues.map((issue) => (
             <Issue key={issue.issue_id} issue={issue} />
           ))

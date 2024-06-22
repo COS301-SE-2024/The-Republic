@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Issue as IssueType } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import Issue from "../Issue/Issue";
+import { FaSpinner } from 'react-icons/fa';
 
 interface ProfileFeedProps {
   userId: string;
@@ -12,9 +13,11 @@ interface ProfileFeedProps {
 
 const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
   const [issues, setIssues] = useState<IssueType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchIssues = async () => {
+      setLoading(true);
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData?.session;
@@ -44,6 +47,8 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
         }
       } catch (error) {
         console.error("Error fetching issues:", error);
+      } finally {
+        setLoading(false);
       }
     };
   
@@ -54,14 +59,22 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
   // TODO: filter out from backend
   const nonAnonymousIssues = issues.filter((issue) => !issue.is_anonymous);
 
+  const LoadingIndicator = () => (
+    <div className="flex justify-center items-center h-24">
+      <FaSpinner className="animate-spin text-4xl text-blue-500" />
+    </div>
+  );
+
   return (
     <div className="w-full px-6">
-      {nonAnonymousIssues && nonAnonymousIssues.length > 0 ? (
+      {loading ? (
+        <LoadingIndicator />
+      ) : nonAnonymousIssues.length > 0 ? (
         nonAnonymousIssues.map((issue) => (
           <Issue key={issue.issue_id} issue={issue} />
         ))
       ) : (
-        <p>No issues found.</p>
+        <p className="text-center text-gray-500 mt-4">No issues found.</p>
       )}
     </div>
   );
