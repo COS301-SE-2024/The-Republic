@@ -205,7 +205,7 @@ const TransitionOfParliament: React.FC = () => {
         <div className="col-lg-6">
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">Transition of Parliament Representation</h5>
+                    <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Transition of Parliament Representation</h5>
                     <div id="transitionOfParliament" style={{ width: '100%', height: '400px' }} className="echart"></div>
                 </div>
             </div>
