@@ -65,12 +65,31 @@ function LineChart() {
     if (dates.length > 0 && data.length > 0) {
       const lineChart = echarts.init(document.querySelector("#lineChart") as HTMLElement);
       lineChart.setOption({
+        title: {
+          text: 'Line Chart Representation',
+          left: 'center',
+          top: '0%'
+        },
         xAxis: {
           type: 'category',
-          data: dates
+          data: dates,
+          name: 'Days (date)',
+          nameLocation: 'middle',
+          nameGap: 30,
+          nameTextStyle: {
+            fontSize: 16,
+            fontWeight: 'bold',
+          },
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          name: 'Reported Issues Count',
+          nameLocation: 'middle',
+          nameGap: 30,
+          nameTextStyle: {
+            fontSize: 16,
+            fontWeight: 'bold',
+          },
         },
         series: [{
           data: data,
@@ -85,7 +104,6 @@ function LineChart() {
     <div className="col-lg-6">
         <div className="card">
             <div className="card-body">
-                <h5 className="text-xl font-bold text-gray-700 dark:text-white mt-5">Line Chart Representation</h5>
                 <div id="lineChart" style={{ minHeight: "400px" }} className="echart"></div>
             </div>
         </div>
