@@ -83,4 +83,72 @@ As a user, I want to log in using my credentials, so that I can access my accoun
 
 **5.3: Role Selection**  
 As a user, I want to choose my role (general public, government official) during account creation, so that I can have a customised experience based on my role.
+## Functional Requirements Sorted by Subsystems
+
+---
+
+#### 1. Profile Management
+
+---
+
+- **FR1.1**: Users can manage their profile display name.
+- **FR1.2**: Users can choose to post anonymously.
+- **FR1.3**: Users can change their profile roles.
+- **FR1.4**: Users should be able to update their profile picture.
+- **FR1.5**: Users should be able to view their own posts on their profile.
+
+---
+
+#### 2. User Authentication
+
+---
+
+- **FR2.1**: Users can create accounts with a username, email address, and password.
+- **FR2.2**: Users can log in using their credentials.
+- **FR2.3**: Users can reset their password if forgotten.
+- **FR2.4**: Users can update their account details.
+- **FR2.5**: Users can select their role during account creation.
+
+---
+
+#### 3. Posting
+
+---
+
+- **FR3.1**: Users can create textual posts about governmental service delivery shortcomings and interactions.
+- **FR3.2**: Users should be able to upload media (images) limited to 1 per post.
+- **FR3.3**: Users should be able to choose the category of the issue when posting.
+- **FR3.4**: Users should be able to pick their location showing their municipality when making a post.
+
+---
+
+#### 4. Interactions
+
+---
+
+- **FR4.1**: Users can comment on other users' posts.
+- **FR4.2**: Users can react to other users' posts.
+- **FR4.3**: Comments are displayed alongside the respective post.
+- **FR4.4**: Users should be able to view each others profile.
+
+---
+
+#### 5. Feed
+
+---
+
+- **FR5.1**: Users can filter posts by department, date, or location.
+- **FR5.2**: Users should see the feed according to their roles - different roles have different views.
+- **FR5.3**: Filtered posts are displayed based on selected criteria.
+- **FR5.4**: Users can view standard data analytics visualisations.
+- **FR5.5**: Users should be able to see data visualisation solely based on their filter selected.
+
+---
+
+#### 6. Reporting
+
+---
+
+- **FR6.1**: Users should be able to create a report according to the dates and locations they choose.
+- **FR6.2**: Reports should be statistically shown with analytics visualisation.
 
