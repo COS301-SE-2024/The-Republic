@@ -169,9 +169,9 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 # Technology Choices 💭
 
-## Frontend Technologies
+## **Frontend Technologies**
 
-## **NextJs**
+### **NextJs**
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
 
@@ -238,13 +238,13 @@ SvelteKit is a framework for building web applications using Svelte. It offers b
 
 ---
 
-### Final Choice
+## Final Choice
 
 We picked React for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
 
-## Backend Technologies
+## **Backend Technologies**
 
-## **NodeJs with ExpressJs**
+### **NodeJs with ExpressJs**
 
 ![Node.js](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) <br>
 ![Express.js](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) <br>
@@ -268,7 +268,7 @@ Node.js is a runtime that allows JavaScript to be used on the server-side. Expre
 
 ---
 
-## **Java with Spring Boot**
+### **Java with Spring Boot**
 
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot) <br>
 
@@ -290,7 +290,7 @@ Spring Boot is an extension of the Spring framework that simplifies the developm
 
 ---
 
-## **.NET**
+### **.NET**
 
 ![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) <br>
 
@@ -311,14 +311,14 @@ Spring Boot is an extension of the Spring framework that simplifies the developm
 
 ---
 
-### Final Choice
+## Final Choice
 
 Node.js was picked for its non-blocking, event-driven architecture, which fits our performance and scalability requirements and
 Express.js for its simplicity and efficiency in building RESTful APIs, aligning with our microservices approach and maintainability needs.
 
-## Data Science Technologies
+## **Data Science Technologies**
 
-## **Python via Django**
+### **Python via Django**
 
 ![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) <br>
 ![Django](https://img.shields.io/badge/daphne-092E20?style=for-the-badge&logo=django&logoColor=green) <br>
@@ -341,7 +341,7 @@ Django is a high-level Python web framework that encourages rapid development an
 
 ---
 
-## **R**
+### **R**
 
 ![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white) <br>
 
@@ -363,7 +363,7 @@ R is a programming language and environment specifically designed for statistica
 
 ---
 
-## **Apache Spark**
+### **Apache Spark**
 
 ![Apache Spark](https://img.shields.io/badge/Apache_Spark-FFFFFF?style=for-the-badge&logo=apachespark&logoColor=#E35A16) <br>
 
@@ -385,13 +385,13 @@ Apache Spark is an open-source unified analytics engine for big data processing,
 
 ---
 
-### Final Choice
+## Final Choice
 
 Python's extensive data science libraries combined with Django's robust framework provide a comprehensive solution for data analytics and visualization needs. This choice ensures rapid development, scalability, and maintainability.
 
-## Database Technologies
+## **Database Technologies**
 
-## **PostgreSQL**
+### **PostgreSQL**
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) <br>
 
@@ -413,7 +413,7 @@ PostgreSQL is a powerful, open-source object-relational database system with ove
 
 ---
 
-## **MySQL**
+### **MySQL**
 
 ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) <br>
 
@@ -435,7 +435,7 @@ MySQL is an open-source relational database management system known for its reli
 
 ---
 
-## **MongoDB**
+### **MongoDB**
 
 ![MongooDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) <br>
 
@@ -457,11 +457,11 @@ MongoDB is a NoSQL database that uses a document-oriented data model. It is know
 
 ---
 
-### Final Choice
+## Final Choice
 
 PostgreSQL's advanced features, scalability, and robustness make it the ideal choice for handling the data management needs. Its strong support for complex queries, indexing, and data integrity aligns well with our architectural requirements for reliability, performance, and security.
 
-# Architectural Constraints ⚠️
+# Architectural Contraints ⚠️
 
 <!--- **Monolithic Architecture Transition**<br>
   The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability. -->
