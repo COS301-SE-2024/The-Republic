@@ -225,7 +225,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
             <Image
               src={URL.createObjectURL(image)}
               alt="Uploaded"
-              layout="fill"
               objectFit="cover"
               className="rounded-lg"
             />
