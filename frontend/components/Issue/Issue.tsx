@@ -10,6 +10,7 @@ import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "../ui/use-toast";
+import Image from "next/image";
 
 interface IssueProps {
   issue: IssueType;
@@ -27,7 +28,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   }
 
   const isOwner = user && user.user_id === issue.user_id;
-  // console.log("Issue object:", issue);
 
   const handleDelete = async () => {
     if (!user) {
@@ -210,6 +210,18 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       </CardHeader>
       <CardContent>
         <p>{issue.content}</p>
+        {issue.image_url && (
+          <div className="relative w-1/4 h-auto mt-4">
+          <Image 
+            src={issue.image_url} 
+            alt="Issue" 
+            layout="responsive"
+            width={100}
+            height={100}
+            className="rounded-lg"
+          />
+          </div>
+        )}
         {issue.resolved_at && (
           <div className="flex space-x-2 pt-2">
             <Badge className="">Resolved {timeSince(issue.resolved_at)}</Badge>

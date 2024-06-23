@@ -180,22 +180,41 @@ export default class IssueRepository {
     issue.created_at = new Date().toISOString();
 
     let locationId: number | null = null;
+  
+    if (issue.location_data) {
+      // console.log("Raw location data:", issue.location_data);
+  
+      let locationDataObj;
+      try {
+        locationDataObj = typeof issue.location_data === 'string' 
+          ? JSON.parse(issue.location_data) 
+          : issue.location_data;
+  
+        // console.log("Parsed location data:", locationDataObj);
+  
+        const locationRepository = new LocationRepository();
+        const existingLocation = await locationRepository.getLocationByPlacesId(locationDataObj.place_id);
+  
+        if (existingLocation) {
+          locationId = existingLocation.location_id;
+        } else {
+          const newLocation = await locationRepository.createLocation({
+            place_id: locationDataObj.place_id,
+            province: locationDataObj.province,
+            city: locationDataObj.city,
+            suburb: locationDataObj.suburb,
+            district: locationDataObj.district
+          });
+          locationId = newLocation.location_id;
+        }
+      } catch (error) {
+        console.error("Error processing location data:", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while processing location data."
 
-    if (issue.location_data && issue.location_data.place_id) {
-      const locationRepository = new LocationRepository();
-      const existingLocation = await locationRepository.getLocationByPlacesId(issue.location_data.place_id);
-
-      if (existingLocation) {
-        locationId = existingLocation.location_id;
-      } else {
-        const newLocation = await locationRepository.createLocation({
-          place_id: issue.location_data.place_id,
-          province: issue.location_data.province,
-          city: issue.location_data.city,
-          suburb: issue.location_data.suburb,
-          district: issue.location_data.district
         });
-        locationId = newLocation.location_id;
       }
     }
 
@@ -209,6 +228,7 @@ export default class IssueRepository {
         is_anonymous: issue.is_anonymous,
         location_id: locationId,
         created_at: issue.created_at,
+        image_url: issue.image_url || null,
       })
       .select()
       .single();

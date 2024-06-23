@@ -34,7 +34,7 @@ describe("IssueService", () => {
         created_at: "2024-06-01",
         updated_at: "2024-06-01",
         sentiment: "angry",
-        image_url: null,
+        image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
           email_address: "test@example.com",
@@ -76,7 +76,7 @@ describe("IssueService", () => {
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
       sentiment: "neutral",
-      image_url: null,
+      image_url: "https://example.com/image.png",
       user: {
         user_id: "1",
         email_address: "test@example.com",
@@ -122,6 +122,7 @@ describe("IssueService", () => {
         resolved_at: null,
         is_anonymous: false,
         sentiment: "neutral",
+        image_url: null,
       };
       const createdIssue: Issue = {
         issue_id: 1,
@@ -141,7 +142,7 @@ describe("IssueService", () => {
         created_at: "2022-01-01",
         updated_at: "2022-01-01",
         sentiment: "neutral",
-        image_url: null,
+        image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
           email_address: "test@example.com",
@@ -261,10 +262,45 @@ describe("IssueService", () => {
   });
 
   it("should delete an issue", async () => {
+    const mockIssue: Issue = {
+      issue_id: 1,
+      user_id: "1",
+      location_id: null,
+      location_data: null,
+      category_id: 1,
+      content: "Test Issue",
+      resolved_at: null,
+      is_anonymous: false,
+      created_at: "2022-01-01",
+      updated_at: "2022-01-01",
+      sentiment: "neutral",
+      image_url: "https://example.com/image.png",
+      user: {
+        user_id: "1",
+        email_address: "test@example.com",
+        username: "testuser",
+        fullname: "Test User",
+        image_url: "https://example.com/image.png",
+        is_owner: true,
+        total_issues: 10,
+        resolved_issues: 5,
+      },
+      category: {
+        name: "Category 1"
+      },
+      reactions: [],
+      user_reaction: null,
+      comment_count: 0,
+      is_owner: true,
+      profile_user_id: "0"
+    };
+  
+    issueRepository.getIssueById.mockResolvedValue(mockIssue);
     issueRepository.deleteIssue.mockResolvedValue();
-
+  
     await issueService.deleteIssue({ issue_id: 1, user_id: "1" });
-
+  
+    expect(issueRepository.getIssueById).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledTimes(1);
   });
@@ -319,7 +355,7 @@ describe("IssueService", () => {
       comment_count: 0,
       is_owner: true,
       resolved_at: null,
-      image_url: null,
+      image_url: "https://example.com/image.png",
       profile_user_id: "0"
     };
 

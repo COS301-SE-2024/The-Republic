@@ -3,6 +3,19 @@ import { Issue } from "../models/issue";
 import { GetIssuesParams } from "../types/issue";
 import { APIData, APIError } from "../types/response";
 import { LocationRepository } from "../db/locationRepository";
+import supabase from "../services/supabaseClient";
+
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -99,7 +112,7 @@ export default class IssueService {
     });
   }
 
-  async createIssue(issue: Partial<Issue>) {
+  async createIssue(issue: Partial<Issue>, image?: MulterFile) {
     if (!issue.user_id) {
       throw APIError({
         code: 401,
@@ -124,9 +137,32 @@ export default class IssueService {
       });
     }
 
+    let imageUrl: string | null = null;
+
+    if (image) {
+      const fileName = `${issue.user_id}_${Date.now()}-${image.originalname}`;
+      const { error } = await supabase.storage.from('issues').upload(fileName, image.buffer);
+    
+      if (error) {
+        console.error(error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while uploading the image. Please try again."
+        });
+      }
+    
+      const { data: urlData } = supabase.storage.from('issues').getPublicUrl(fileName);
+    
+      imageUrl = urlData.publicUrl;
+    }
+    
+
     delete issue.issue_id;
 
-    const createdIssue = await this.issueRepository.createIssue(issue);
+    console.log(issue);
+
+    const createdIssue = await this.issueRepository.createIssue({ ...issue, image_url: imageUrl });
 
     return APIData({
       code: 201,
@@ -183,7 +219,7 @@ export default class IssueService {
         error: "You need to be signed in to delete an issue"
       });
     }
-
+  
     const issue_id = issue.issue_id;
     if (!issue_id) {
       throw APIError({
@@ -192,14 +228,32 @@ export default class IssueService {
         error: "Missing required fields for deleting an issue"
       });
     }
-
+  
+    const issueToDelete = await this.issueRepository.getIssueById(issue_id, user_id);
+  
+    if (issueToDelete.image_url) {
+      const imageUrlParts = issueToDelete.image_url.split('/');
+      const imageName = imageUrlParts.slice(-2).join('/'); // Join the last two parts to get the full path
+      const { error } = await supabase.storage.from('issues').remove([imageName]);
+  
+      if (error) {
+        console.error("Failed to delete image from storage:", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while deleting the image. Please try again."
+        });
+      }
+    }
+  
     await this.issueRepository.deleteIssue(issue_id, user_id);
-
+  
     return APIData({
       code: 204,
       success: true
     });
   }
+  
 
   async resolveIssue(issue: Partial<Issue>) {
     const user_id = issue.user_id;
