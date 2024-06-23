@@ -158,13 +158,39 @@ Our system is designed using a client-server architecture. In this setup, the fr
 
 <img src="../images/diagrams/Client Server.jpg"/>
 
-## Architecture Diagram
+<!--## Architecture Diagram
 
 <img src="../images/diagrams/Architectural Diagram.jpg"/>
+-->
 
 ## Future Migration to Microservices Architecture
 
 As our project evolves, we aim to transition from the current monolithic architecture to a microservices architecture. This strategic shift will enhance our system's scalability, maintainability, and resilience, allowing us to better meet the growing demands and complexity of our application.
+
+# Technology Choices 💭
+
+## Frontend Technologies
+
+### NextJs <br>
+
+![](https://ibb.co/BsJG8Lg)<br>
+
+Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
+
+### Pros:
+
+- Server-Side Rendering (SSR) and Static Site Generation (SSG)
+- Built-in routing and CSS support
+- Optimized for performance
+
+### Cons:
+
+- Requires server for SSR
+- Learning curve for advanced features
+
+### Fit with Architecture
+
+- SSR reduces client-side processing, improving performance during high user activity.
 
 # Architectural Constraints ⚠️
 
