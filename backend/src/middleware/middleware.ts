@@ -27,6 +27,8 @@ export const verifyAndGetUser = async (
   }
 
   const jwt = authHeader.split(" ")[1];
+  // console.log("Token: ", jwt);
+
   const { data, error } = await supabase.auth.getUser(jwt);
 
   if (error) {
