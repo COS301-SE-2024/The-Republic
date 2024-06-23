@@ -175,3 +175,193 @@ As a user, I want to choose my role (general public, government official) during
     <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
 </div>
 
+
+## 📄 Service Contract
+
+The following specifies our service contract.
+
+### Base URL
+
+In order to access the API URL you will need to run the server on your local machine. We will be deploying our backend at a later stage.
+
+```
+cd backend
+npm i
+npm run dev
+```
+
+You will see that the server is running on:
+
+```
+localhost:8080
+```
+
+### Authentication
+
+All endpoints require authentication using a bearer token. The token should be included in the Authorization header of the request.
+Header:
+
+```
+Authorization: Bearer <token>
+Content-type: application/json
+```
+
+If the token is missing, invalid, or expired, the API will respond with a 401 Unauthorized status code.
+
+### Endpoints
+
+#### 1. Create a New Issue
+
+- **Method:** `POST`
+- **Endpoint:** `/api/issues`
+- **Description:** Create a new issue.
+- **Request Body:**
+  ```json
+  {
+    "user_id": "string", // UUID of the user
+    "location_id": "number", // ID of the location (nullable)
+    "category_id": "number", // ID of the category
+    "content": "string", // Content of the issue
+    "image_url": "string", // URL to any media related to the issue (nullable)
+    "is_anonymous": "boolean", // Whether the issue is reported anonymously
+    "sentiment": "string" // Sentiment of the issue
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+      "success": true
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+  - **500 Internal Server Error**
+
+### 2. Get All Issues
+
+- **Method:** `GET`
+- **Endpoint:** `/api/issues`
+- **Description:** Retrieve all issues.
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+      "success": true,
+      "data": [
+        {
+          "issue_id": "number",
+          "user_id": "string",
+          "location_id": "number",
+          "category_id": "number",
+          "content": "string",
+          "image_url": "string",
+          "is_anonymous": "boolean",
+          "created_at": "string",
+          "resolved_at": "string",
+          "sentiment": "string",
+          "user": {
+            "user_id": "string",
+            "email_address": "string",
+            "username": "string",
+            "fullname": "string",
+            "image_url": "string"
+          },
+          "category": {
+            "name": "string"
+          },
+          "reactions": [
+            {
+              "emoji": "string",
+              "count": "number"
+            }
+          ]
+        }
+      ]
+    }
+    ```
+
+### 3. Get Issue by ID
+
+- **Method:** `GET`
+- **Endpoint:** `/api/issues/{id}`
+- **Description:** Retrieve an issue by its ID.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+      "issue_id": "number",
+      "user_id": "string",
+      "location_id": "number",
+      "category_id": "number",
+      "content": "string",
+      "image_url": "string",
+      "is_anonymous": "boolean",
+      "created_at": "string",
+      "resolved_at": "string",
+      "sentiment": "string",
+      "user": {
+        "user_id": "string",
+        "email_address": "string",
+        "username": "string",
+        "fullname": "string",
+        "image_url": "string"
+      },
+      "category": {
+        "name": "string"
+      },
+      "reactions": [
+        {
+          "emoji": "string",
+          "count": "number"
+        }
+      ]
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+  - **500 Internal Server Error**
+
+### 4. Resolve an Issue
+
+- **Method:** `PUT`
+- **Endpoint:** `/api/issues/resolve/{id}`
+- **Description:** Mark an issue as resolved.
+- **Path Parameters:** `id` (number) - ID of the issue
+- **Response:**
+  - **200 OK**
+    ```json
+    {
+      "success": true
+    }
+    ```
+  - **404 Not Found** (Issue not found)
+
+### 5. React to an Issue
+
+- **Method:** `POST`
+- **Endpoint:** `/api/reactions`
+- **Description:** React to an issue with an emoji.
+- **Request Body:**
+  ```json
+  {
+    "issue_id": "number", // ID of the issue
+    "user_id": "string", // UUID of the user reacting
+    "emoji": "string" // Emoji reaction
+  }
+  ```
+- **Response:**
+  - **201 Created**
+    ```json
+    {
+      "success": true
+    }
+    ```
+  - **200 OK** (Reaction removed)
+    ```json
+    {
+      "message": "Reaction removed"
+    }
+    ```
+  - **400 Bad Request** (Invalid input data)
+  - **500 Internal Server Error**
+
