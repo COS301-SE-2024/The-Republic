@@ -4,23 +4,23 @@
 
 ---
 
-# Requirement Specification
+# 📝 Requirement Specification
 
-## Introduction
+## 🌟 Introduction
 
 This document outlines the development of a Progressive Web App designed for users to post complaints about government service delivery. These posts will be analyzed and visualized to provide insights into government services.
 
 This platform aims to improve citizen interaction with government services, fostering transparency, accountability, and engagement through organized incident reports and data visualization.
 
-## User Stories and Characteristics
+## 👥 User Stories and Characteristics
 
-### Intended Users
+### 🏷️ Intended Users
 
 **1. General Public**: Post complaints or compliments, view and interact with posts.
 
 **2. Government Officials**: Monitor and respond to posts, generate reports.
 
-### User Stories
+### 📚 User Stories
 
 ---
 
@@ -56,7 +56,7 @@ As a user, I want to create an account with my details, so that I can have a per
 As a user, I want to log in using my credentials, so that I can access my account and interact with the platform.
 
 **2.3: Sign Up**  
-As a new user, I want tobe able to create an account so that I can be able to post, react, and interact on the platform.
+As a new user, I want to be able to create an account so that I can be able to post, react, and interact on the platform.
 
 ---
 
@@ -106,7 +106,7 @@ As a user, I want to sort my feed of issues from oldest to newest or by most com
 **5.3. Feed Filtering**  
 As a user, I want to filter my feed by category, such as electricity or water, so that I can easily find posts related to my interests or concerns.
 
-## Functional Requirements Sorted by Subsystems
+## ⚙️ Functional Requirements Sorted by Subsystems
 
 ---
 
@@ -166,7 +166,6 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR5.2**: Users can filter the posts on their feed by category, such as electricity, water, etc.
 - **FR5.3**: Users can subscribe to specific issues or categories to receive updates.
 
-
 ---
 
 #### 6. Reporting and Analytics
@@ -200,4 +199,3 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 <div>
     <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
 </div>
-
