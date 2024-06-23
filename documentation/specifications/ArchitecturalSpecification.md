@@ -170,10 +170,9 @@ Our system incorporates the proxy architectural pattern to enhance both performa
 
 <img src="../images/diagrams/Proxy.jpg"/>
 
-<!--## Architecture Diagram
+## Architecture Diagram
 
 <img src="../images/diagrams/Architectural Diagram.jpg"/>
--->
 
 ## Future Migration to Microservices Architecture
 
