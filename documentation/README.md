@@ -8,11 +8,11 @@
 
 ## Table of Contents
 
-1. [Architectural Specification](./specifications/ArchitecturalSpecification.md)
-2. [Testing Specification](./specifications/TestingSpecification.md)
-3. [Delivery Specification](./specifications/DeliverySpecification.md)
-4. [Requirements Specification](./specifications/RequirementsSpecification.md)
-5. [User Manual](./specifications/UserManual.md)
-6. [Coding Standards](./specifications/CodingStandards.md)
+1. [Architectural Specification](./specifications/ArchitecturalSpecificationVersion2.md)
+2. [Testing Specification](./specifications/TestingSpecificationVersion2.md)
+3. [Delivery Specification](./specifications/DeliverySpecificationVersion2.md)
+4. [Requirements Specification](./specifications/RequirementsSpecificationVersion2.md)
+5. [User Manual](./specifications/UserManualVersion2.md)
+6. [Coding Standards](./specifications/CodingStandardsVersion2.md)
 
 [Back to Main](/README.md)
