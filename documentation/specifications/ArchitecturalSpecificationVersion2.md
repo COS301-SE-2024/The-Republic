@@ -251,7 +251,7 @@ SvelteKit is a framework for building web applications using Svelte. It offers b
 
 ## Final Choice
 
-We picked Next.js for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
+We picked React for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
 
 ## **Backend Technologies**
 
@@ -324,8 +324,8 @@ Spring Boot is an extension of the Spring framework that simplifies the developm
 
 ## Final Choice
 
-Express.js was picked for its non-blocking, event-driven architecture, which fits our performance and scalability requirements and also has the
-the benefit of simplicity and efficiency in building RESTful APIs, aligning with our microservices approach and maintainability needs.
+Node.js was picked for its non-blocking, event-driven architecture, which fits our performance and scalability requirements and
+Express.js for its simplicity and efficiency in building RESTful APIs, aligning with our microservices approach and maintainability needs.
 
 ## **Data Science Technologies**
 
