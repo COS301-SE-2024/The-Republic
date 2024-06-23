@@ -93,32 +93,17 @@ As a user, I want to edit my profile display name, bio, and profile picture by n
 
 ---
 
-#### 🔑 User Story 5: User Authentication
+#### 📋 User Story 5: Subscriptions and Filtering
 
 ---
 
-**5.1: Account Creation**  
-As a user, I want to create an account with my details, so that I can have a personalized experience on the platform.
-
-**5.2: Log In**  
-As a user, I want to log in using my credentials, so that I can access my account and interact with the platform.
-
-**5.3: Role Selection**  
-As a user, I want to choose my role (general public, government official) during account creation, so that I can have a customized experience based on my role.
-
----
-
-#### 📋 User Story 6: Subscriptions and Filtering
-
----
-
-**6.1. Issue Subscription**  
+**5.1. Issue Subscription**  
 As a user, I want to subscribe to an issue or a category if I am interested in that specific issue because it is in my area and I need updates on it, so that I can stay informed.
 
-**6.2. Feed Sorting**  
+**5.2. Feed Sorting**  
 As a user, I want to sort my feed of issues from oldest to newest or by most comments, so that I can view the posts in the order that interests me most.
 
-**6.3. Feed Filtering**  
+**5.3. Feed Filtering**  
 As a user, I want to filter my feed by category, such as electricity or water, so that I can easily find posts related to my interests or concerns.
 
 ## Functional Requirements Sorted by Subsystems
@@ -134,6 +119,7 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR1.3**: Users can change their profile roles.
 - **FR1.4**: Users should be able to update their profile picture.
 - **FR1.5**: Users should be able to view their own posts on their profile.
+- **FR1.6**: Users should be able to edit their bio information.
 
 ---
 
@@ -157,6 +143,7 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR3.2**: Users should be able to upload media (images) limited to 1 per post.
 - **FR3.3**: Users should be able to choose the category of the issue when posting.
 - **FR3.4**: Users should be able to pick their location showing their municipality when making a post.
+- **FR3.5**: Users should be able to mark their posts as resolved.
 
 ---
 
@@ -167,7 +154,8 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR4.1**: Users can comment on other users' posts.
 - **FR4.2**: Users can react to other users' posts.
 - **FR4.3**: Comments are displayed alongside the respective post.
-- **FR4.4**: Users should be able to view each others profile.
+- **FR4.4**: Users should be able to view each other's profiles.
+- **FR4.5**: Users should be able to react to their own posts.
 
 ---
 
@@ -175,6 +163,9 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 
 ---
 
+- **FR5.1**: Users can sort the posts on their feed from oldest to newest, or by most comments.
+- **FR5.2**: Users can filter the posts on their feed by category, such as electricity, water, etc.
+- **FR5.3**: Users can subscribe to specific issues or categories to receive updates.
 - **FR5.4**: Users can view standard data analytics visualizations.
 - **FR5.5**: Users should be able to see data visualization solely based on their filter selected.
 
