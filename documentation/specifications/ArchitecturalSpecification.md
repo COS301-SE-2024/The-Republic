@@ -6,12 +6,12 @@
 
 ## Contents
 
-- Introduction
-- Design Strategy
-- Quality Requirements
-- Architectural Strategies
-- Architecture Diagram
-- Architectural Constraints
+1. [Introduction](#Introduction)
+2. [Design Strategy](#Design-Strategy-📃)
+3. [Quality Requirements](#Quality-Requirements-📋)
+4. [Architectural Patterns](#Architectural-Patterns-🔨)
+5. [Technology Choices](#Technology-Choices-💭)
+6. [Architectural Constraints](#Architectural-Constraints-⚠️)
 
 # Introduction
 
@@ -171,9 +171,9 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 ## Frontend Technologies
 
-### NextJs <br>
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
 
-<img src="https://i.ibb.co/4NL2BWj/Next.png"/><br>
+### NextJs
 
 Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
 
