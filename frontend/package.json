@@ -14,6 +14,8 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-react": "^7.24.7",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@cypress/webpack-dev-server": "^3.10.0",
