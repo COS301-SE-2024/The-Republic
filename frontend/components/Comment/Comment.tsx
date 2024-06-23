@@ -30,17 +30,20 @@ const Comment: React.FC<CommentProps> = ({
     setShowReplies(true);
   };
 
+  const userAvatar = comment.user?.image_url || '';
+  const userFullname = comment.user?.fullname || 'Anonymous';
+
   return (
     <div className="flex items-start space-x-4 space-y-4 mb-4">
       <div className="relative space-y-6">
         <Avatar>
-          <AvatarImage src={comment.user.image_url} />
-          <AvatarFallback>{comment.user.fullname[0]}</AvatarFallback>
+          <AvatarImage src={userAvatar} />
+          <AvatarFallback>{userFullname[0]}</AvatarFallback>
         </Avatar>
       </div>
       <div className="flex-1">
         <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
-          <div className="font-bold">{comment.user.fullname}</div>
+          <div className="font-bold">{userFullname}</div>
           <div>{comment.content}</div>
         </div>
         <div className="flex items-center space-x-2 mt-2">
@@ -80,20 +83,20 @@ const Comment: React.FC<CommentProps> = ({
             onCommentAdded={handleReplySubmit}
           />
         )}
-          {showReplies && (
-            <div className="ml-8">
-              {replies.map((reply) => (
-                <Comment
-                  key={reply.comment_id}
-                  comment={reply}
-                  onDelete={onDelete}
-                  isOwner={user?.user_id === reply.user?.user_id}
-                  onReply={onReply}
-                  replies={[]}
-                />
-              ))}
-            </div>
-          )}
+        {showReplies && (
+          <div className="ml-8">
+            {replies.map((reply) => (
+              <Comment
+                key={reply.comment_id}
+                comment={reply}
+                onDelete={() => onDelete(reply.comment_id)}
+                isOwner={reply.is_owner}
+                onReply={onReply}
+                replies={[]}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
