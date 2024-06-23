@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from "@/components/Header/Header";
-import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import HelpMenu from "@/components/HelpMenu/Helpmenu";
 import { UserProvider } from "@/lib/contexts/UserContext";
 import type { Metadata } from "next";
 import { HomeAvatarProps } from '@/lib/types';
@@ -28,8 +28,8 @@ export default function HomeLayout({
         <div className="flex flex-1">
           <Sidebar  {...sidebarProps}/>
           <main className="flex-1 p-4">{children}</main>
-          <RightSidebar />
         </div>
+        <HelpMenu />
       </UserProvider>
     </div>
   );

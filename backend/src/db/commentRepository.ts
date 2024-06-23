@@ -34,12 +34,11 @@ export class CommentRepository {
 
   async getComments({
     issue_id,
-    parent_id,
     user_id,
     from,
     amount
   }: GetCommentsParams) {
-    let query = supabase
+    const { data, error } = await supabase
       .from("comment")
       .select(`
         *,
@@ -54,30 +53,33 @@ export class CommentRepository {
       .eq("issue_id", issue_id)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
-
-    query = !parent_id
-      ? query.is("parent_id", null)
-      : query.eq("parent_id", parent_id);
-
-    const { data, error } = await query;
-
+  
     if (error) {
       console.error(error);
-
+  
       throw APIError({
         code: 500,
         success: false,
         error: "An unexpected error occurred. Please try again later."
       });
     }
-
+  
     const comments = data.map((comment: Comment) => {
+      const isOwner = comment.is_anonymous ? comment.user_id === user_id : comment.user_id === user_id;
+      
       return {
         ...comment,
-        is_owner: comment.user_id === user_id
+        is_owner: isOwner,
+        user: comment.is_anonymous ? {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null
+        } : comment.user
       };
     });
-
+  
     return comments as Comment[];
   }
 
@@ -100,7 +102,17 @@ export class CommentRepository {
       });
     }
 
-    return data as Comment;
+    return {
+      ...data,
+      is_owner: true,
+      user: data.is_anonymous ? {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null
+      } : data.user
+    } as Comment;
   }
 
   async deleteComment(comment_id: number, user_id: string) {

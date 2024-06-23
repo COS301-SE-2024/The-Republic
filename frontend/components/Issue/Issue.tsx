@@ -8,12 +8,15 @@ import { Issue as IssueType } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/contexts/UserContext";
+import { toast } from "../ui/use-toast";
 
 interface IssueProps {
   issue: IssueType;
 }
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
+  const { user } = useUser();
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,20 +26,26 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     menuItems.push("Resolve Issue");
   }
 
-  const isOwner = true; // will have to get this from api
+  const isOwner = user && user.user_id === issue.user_id;
+  // console.log("Issue object:", issue);
 
   const handleDelete = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "Please log in to delete issues.",
+      });
+      return;
+    }
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ issueId: issue.issue_id }),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
+        },
+        body: JSON.stringify({ issue_id: issue.issue_id }),
+      });
 
       if (response.ok) {
         window.location.reload();
@@ -49,13 +58,22 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   };
 
   const handleResolve = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "Please log in to resolve issues.",
+      });
+      return;
+    }
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/${issue.issue_id}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
+        },
+        body: JSON.stringify({ issue_id: issue.issue_id }),
+      });
 
       if (response.ok) {
         window.location.reload();
@@ -76,6 +94,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
     router.push(`/issues/${issue.issue_id}`);
   };
 
+  const handleAvatarClick = () => {
+    if (!issue.is_anonymous) {
+      router.push(`/profile/${issue.user.user_id}`);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -94,7 +118,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <div className="pr-2">
+            <div className="pr-2" onClick={handleAvatarClick} style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}>
               <Avatar>
                 <AvatarImage src={issue.user.image_url} />
                 <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
@@ -157,13 +181,15 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
                 </div>
               )}
             </div>
-            <MoreMenu
-              menuItems={menuItems}
-              isOwner={isOwner}
-              onDelete={handleDelete}
-              onResolve={handleResolve}
-              onSubscribe={handleSubscribe}
-            />
+            {isOwner && (
+              <MoreMenu
+                menuItems={menuItems}
+                isOwner={isOwner}
+                onDelete={handleDelete}
+                onResolve={handleResolve}
+                onSubscribe={handleSubscribe}
+              />
+            )}
           </div>
         </div>
         <div className="flex space-x-2 pt-2">
@@ -193,10 +219,12 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       <CardFooter className="flex space-x-2 items-center">
         <div className="flex items-center" onClick={handleCommentClick}>
           <MessageCircle className="mr-1 cursor-pointer" />
+          <span>{issue.comment_count}</span>
         </div>
         <Reaction
           issueId={issue.issue_id}
           initialReactions={issue.reactions}
+          userReaction={issue.user_reaction}
         />
       </CardFooter>
     </Card>

@@ -50,9 +50,27 @@ export const deleteIssue = async (req: Request, res: Response) => {
   }
 };
 
- export  const resolveIssue = async (req: Request, res: Response) => {
+export const resolveIssue = async (req: Request, res: Response) => {
   try {
     const response = await issueService.resolveIssue(req.body);
+    sendResponse(res, response);
+  } catch (err) {
+    sendResponse(res, err as APIResponse);
+  }
+};
+
+export const getUserIssues = async (req: Request, res: Response) => {
+  try {
+    const response = await issueService.getUserIssues(req.body);
+    sendResponse(res, response);
+  } catch (err) {
+    sendResponse(res, err as APIResponse);
+  }
+};
+
+export const getUserResolvedIssues = async (req: Request, res: Response) => {
+  try {
+    const response = await issueService.getUserResolvedIssues(req.body);
     sendResponse(res, response);
   } catch (err) {
     sendResponse(res, err as APIResponse);

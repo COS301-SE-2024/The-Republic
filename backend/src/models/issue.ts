@@ -1,10 +1,13 @@
 interface User {
-  user_id: string;
-  email_address: string;
+  user_id: string | null;
+  email_address: string | null;
   username: string;
   fullname: string;
-  image_url: string;
-}
+  image_url: string | null;
+  is_owner: boolean | null;  
+  total_issues: number | null;
+  resolved_issues: number | null;
+} 
 
 interface Category {
   name: string;
@@ -40,6 +43,7 @@ interface Issue {
   user_reaction: string | null;
   comment_count: number;
   is_owner: boolean;
+  profile_user_id: string;
 }
 
 export { User, Category, ReactionCount, Issue };

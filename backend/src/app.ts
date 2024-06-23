@@ -3,6 +3,7 @@ import issueRoutes from "./routes/issueRoutes";
 import reactionRoutes from "./routes/reactionRoutes";
 import userRoutes from "./routes/userRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import reportsRoutes from "./routes/reportsRoutes";
 import { serverMiddleare } from "./middleware/middleware";
 
 const app = express();
@@ -14,7 +15,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   next();
 });
@@ -24,6 +25,7 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/reactions", reactionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/reports", reportsRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({

@@ -66,8 +66,11 @@ describe("CommentService", () => {
             username: "testuser",
             fullname: "Test User",
             image_url: "https://example.com/image.png",
+            is_owner: false,
+            total_issues: 10,
+            resolved_issues: 5,
           },
-          is_owner: true,
+          is_owner: false,
         },
       ];
       commentRepository.getComments.mockResolvedValue(mockComments);
@@ -117,6 +120,9 @@ describe("CommentService", () => {
           username: "testuser",
           fullname: "Test User",
           image_url: "https://example.com/image.png",
+          is_owner: true,
+          total_issues: 10,
+          resolved_issues: 5,
         },
         is_owner: true,
       };

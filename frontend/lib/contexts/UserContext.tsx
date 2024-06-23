@@ -4,10 +4,16 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from "@/lib/globals";
 
 interface User {
+  user_id: string;
+  email_address: string;
+  username: string;
   fullname: string;
   image_url: string;
-  user_id: string;
-  username: string;
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
 }
 
 interface UserContextType {
@@ -49,7 +55,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             }
 
             const apiResponse = await response.json();
-            setUser(apiResponse.data);
+            setUser({ ...apiResponse.data, access_token: session.access_token });
           } catch (error) {
             console.error('Failed to fetch user data:', error);
           }

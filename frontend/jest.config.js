@@ -1,15 +1,24 @@
 module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
+  preset: 'ts-jest',
+  testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|scss|sass)$': '<rootDir>/styleMock.ts',
   },
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/**/*.{ts,tsx}",
-    "!src/**/*.d.ts",
-    "!src/**/index.ts",
+    '**/*.{ts,tsx}',
+    '!**/*.d.ts',
+    '!**/index.ts',
+    '!**/node_modules/**',
+    '!**/.next/**',
+    '!coverage/**',
   ],
-  coverageDirectory: "coverage",
-  coverageReporters: ["text", "lcov"],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+  },
 };

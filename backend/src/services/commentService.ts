@@ -6,7 +6,7 @@ import { APIData, APIError } from "../types/response";
 export class CommentService {
   private commentRepository = new CommentRepository();
 
-  setCommentRepository(commentRepository: CommentRepository): void{
+  setCommentRepository(commentRepository: CommentRepository): void {
     this.commentRepository = commentRepository;
   }
 
@@ -29,26 +29,47 @@ export class CommentService {
   }
 
   async getComments(params: GetCommentsParams) {
-    if (
-      !params.issue_id ||
-      !params.amount ||
-      params.from === undefined
-    ) {
+    if (!params.issue_id || !params.amount || params.from === undefined) {
       throw APIError({
         code: 400,
         success: false,
         error: "Missing required fields for getting comments"
       });
     }
-
+  
     const comments = await this.commentRepository.getComments(params);
-
+  
+    const commentsWithUserInfo = comments.map(comment => {
+      const isOwner = comment.user_id === params.user_id;
+  
+      if (comment.is_anonymous) {
+        comment.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: isOwner,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      } else {
+        comment.user.is_owner = isOwner;
+      }
+  
+      return {
+        ...comment,
+        is_owner: isOwner,
+      };
+    });
+  
     return APIData({
       code: 200,
       success: true,
-      data: comments
+      data: commentsWithUserInfo
     });
   }
+  
 
   async addComment(comment: Partial<Comment>) {
     if (!comment.user_id) {
@@ -59,11 +80,7 @@ export class CommentService {
       });
     }
 
-    if (
-      !comment.issue_id ||
-      !comment.content ||
-      comment.is_anonymous === undefined
-    ) {
+    if (!comment.issue_id || !comment.content || comment.is_anonymous === undefined) {
       throw APIError({
         code: 400,
         success: false,

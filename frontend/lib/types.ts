@@ -5,6 +5,9 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
 }
 
 interface Category {
@@ -46,16 +49,21 @@ interface Issue {
     city: string;
     suburb: string;
   } | null;
+  comment_count: number;
+  is_owner: boolean;
+  profile_user_id: string;
+  user_reaction: string;
 }
 
 interface Comment {
   comment_id: string;
   issue_id: string;
   user_id: string;
-  parent_comment_id: string | null;
+  parent_id: string | null;
   content: string;
   created_at: string;
   user: User;
+  is_owner: boolean;
 }
 
 interface HomeAvatarProps {

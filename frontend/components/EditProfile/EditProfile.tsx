@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { User } from "@/lib/types";
-import { Upload } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { supabase } from "@/lib/globals";
 
 interface EditProfileProps {
   user: User;
@@ -20,6 +21,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   onCancel,
 }) => {
   const [updatedUser, setUpdatedUser] = useState(user);
+  const [file, setFile] = useState<File | null>(null);
   const { theme } = useTheme();
 
   const handleInputChange = (
@@ -31,57 +33,114 @@ const EditProfile: React.FC<EditProfileProps> = ({
     }));
   };
 
-  const handleImageUpload = (
-    e: ChangeEvent<HTMLInputElement>,
-    type: "avatar"
-  ) => {
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setUpdatedUser((prev) => ({
           ...prev,
-          [type === "avatar" ? "image_url" : "image_url"]: reader.result as string,
+          image_url: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
-    onUpdate(updatedUser);
+  const handleSave = async () => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+
+      if (session && session.user) {
+        const formData = new FormData();
+        formData.append("fullname", updatedUser.fullname);
+        formData.append("username", updatedUser.username);
+        formData.append("bio", updatedUser.bio);
+        if (file) {
+          formData.append("profile_picture", file);
+        }
+
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${user.user_id}`;
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            "Authorization": `Bearer ${session.access_token}`
+          },
+          body: formData,
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+          onUpdate(responseData.data);
+        } else {
+          console.error("Failed to update profile:", responseData.error);
+        }
+      } else {
+        console.error("User ID not found in session");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   const handleCancel = () => {
     onCancel();
   };
 
+  const removeImage = () => {
+    setFile(null);
+    setUpdatedUser((prev) => ({
+      ...prev,
+      image_url: user.image_url, // Revert to original image URL
+    }));
+  };
+
   return (
     <form>
-      <div className={cn("space-y-4", theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800")}>
+      <div
+        className={cn(
+          "space-y-4",
+          theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
+        )}
+      >
         <div>
           <label htmlFor="avatar" className="block text-sm font-medium">
             Profile Picture
           </label>
-          <label
-            htmlFor="avatar"
-            className={cn(
-              "mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer",
-              theme === "dark"
-                ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
-                : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white"
+          <div className="flex items-center">
+            <label
+              htmlFor="avatar"
+              className={cn(
+                "mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer",
+                theme === "dark"
+                  ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
+                  : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white"
+              )}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              <span className="text-base leading-normal">Upload Image</span>
+              <Input
+                id="avatar"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+            </label>
+            {file && (
+              <Button
+                type="button"
+                className="ml-4 inline-flex items-center justify-center rounded-md px-4 py-2 font-medium text-white bg-red-600 hover:bg-red-700"
+                onClick={removeImage}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Remove
+              </Button>
             )}
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            <span className="text-base leading-normal">Upload Image</span>
-            <Input
-              id="avatar"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleImageUpload(e, "avatar")}
-            />
-          </label>
+          </div>
         </div>
         <div>
           <label htmlFor="fullname" className="block text-sm font-medium">

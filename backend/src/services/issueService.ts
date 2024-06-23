@@ -22,7 +22,6 @@ export default class IssueService {
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {
-    // `from` can be 0
     if (params.from === undefined || !params.amount) {
       throw APIError({
         code: 400,
@@ -30,15 +29,38 @@ export default class IssueService {
         error: "Missing required fields for getting issues"
       });
     }
-
+  
     const issues = await this.issueRepository.getIssues(params);
-
+  
+    const issuesWithUserInfo = issues.map(issue => {
+      const isOwner = issue.user_id === params.user_id;
+  
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      }
+  
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+  
     return APIData({
       code: 200,
       success: true,
-      data: issues,
+      data: issuesWithUserInfo,
     });
   }
+  
 
   async getIssueById(issue: Partial<Issue>) {
     const issue_id = issue.issue_id;
@@ -52,10 +74,28 @@ export default class IssueService {
 
     const resIssue = await this.issueRepository.getIssueById(issue_id, issue.user_id);
 
+    const isOwner = resIssue.user_id === issue.user_id;
+
+    if (resIssue.is_anonymous) {
+      resIssue.user = {
+        user_id: null,
+        email_address: null,
+        username: 'Anonymous',
+        fullname: 'Anonymous',
+        image_url: null,
+        is_owner: false,
+        total_issues: null,
+        resolved_issues: null,
+      };
+    }
+
     return APIData({
       code: 200,
       success: true,
-      data: resIssue
+      data: {
+        ...resIssue,
+        is_owner: isOwner
+      }
     });
   }
 
@@ -186,6 +226,88 @@ export default class IssueService {
       code: 200,
       success: true,
       data: resolvedIssue,
+    });
+  }
+  
+  async getUserIssues(issue: Partial<Issue>) {
+    const userId = issue.profile_user_id;
+    if (!userId) {
+      throw APIError({
+        code: 401,
+        success: false,
+        error: "Missing profile user ID"
+      });
+    }
+  
+    const issues = await this.issueRepository.getUserIssues(userId);
+  
+    const issuesWithUserInfo = issues.map(issue => {
+      const isOwner = issue.user_id === userId;
+      
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      }
+      
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+  
+    return APIData({
+      code: 200,
+      success: true,
+      data: issuesWithUserInfo,
+    });
+  }
+  
+  async getUserResolvedIssues(issue: Partial<Issue>) {
+    const userId = issue.profile_user_id;
+    if (!userId) {
+      throw APIError({
+        code: 401,
+        success: false,
+        error: "Missing profile user ID"
+      });
+    }
+  
+    const resolvedIssues = await this.issueRepository.getUserResolvedIssues(userId);
+  
+    const issuesWithUserInfo = resolvedIssues.map(issue => {
+      const isOwner = issue.user_id === userId;
+      
+      if (issue.is_anonymous) {
+        issue.user = {
+          user_id: null,
+          email_address: null,
+          username: 'Anonymous',
+          fullname: 'Anonymous',
+          image_url: null,
+          is_owner: false,
+          total_issues: null,
+          resolved_issues: null,
+        };
+      }
+      
+      return {
+        ...issue,
+        is_owner: isOwner
+      };
+    });
+  
+    return APIData({
+      code: 200,
+      success: true,
+      data: issuesWithUserInfo,
     });
   }
 }
