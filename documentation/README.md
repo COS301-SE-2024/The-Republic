@@ -6,7 +6,17 @@
 
 > Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation includes the links to various aspects of the project, including architectural design, implementation details, and user guidelines.
 
-## Table of Contents
+## Demo 1
+
+
+1. [Architectural Specification](./specifications/RequirementsSpecificationVersion1.md)
+2. [Testing Specification](./specifications/TestingSpecificationVersion1.md)
+3. [Delivery Specification](./specifications/DeliverySpecificationVersion1.md)
+4. [Requirements Specification](./specifications/RequirementsSpecificationVersion1.md)
+5. [User Manual](./specifications/UserManualVersion1.md)
+6. [Coding Standards](./specifications/CodingStandardsVersion1.md)
+
+## Demo 2
 
 1. [Architectural Specification](./specifications/ArchitecturalSpecificationVersion2.md)
 2. [Testing Specification](./specifications/TestingSpecificationVersion2.md)
