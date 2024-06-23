@@ -33,9 +33,7 @@
 
 # Documentation
 
-The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines.
-
-[Documentation](./documentation/README.md)
+The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
 ## Links to the Latest Documentation of the Project
 
@@ -45,6 +43,7 @@ The documentation provides different versions and progress for each demo, guidin
 - [Testing Specification](./documentation/specifications/TestingSpecificationVersion2.md)
 - [User Manual](./documentation/specifications/UserManualVersion2.md)
 - [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion2.md)
+- [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
 
 <p align="center">
