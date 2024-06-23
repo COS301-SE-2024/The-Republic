@@ -13,7 +13,7 @@
 2. [Delivery Specification](./specifications/DeliverySpecificationVersion1.md)
 3. [Requirements Specification](./specifications/RequirementsSpecificationVersion1.md)
 4. [Coding Standards](./specifications/CodingStandardsVersion1.md)
-5. [API / Services Contract](./specifications/APISpecificationVersion1.md)
+5. [API / Services Contract](./specifications/RequirementsSpecificationVersion1.md)
 
 ## Demo 2
 
