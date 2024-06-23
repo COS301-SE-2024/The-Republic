@@ -37,25 +37,26 @@ export default class IssueRepository {
           name
         ),
         location: location_id (
-          suburb,
+          province,
           city,
-          province
+          suburb,
+          district
         )
       `)
       .range(from!, from! + amount! - 1);
-  
+
     if (category) {
       const categoryId = await categoryRepository.getCategoryId(category);
       query = query.eq("category_id", categoryId);
     }
-  
+
     if (mood) {
       query = query.eq("sentiment", mood);
     }
-  
+
     if (order_by === "comment_count") {
       const issues = await query;
-  
+
       if (issues.error) {
         console.error(issues.error);
         throw APIError({
@@ -64,7 +65,7 @@ export default class IssueRepository {
           error: "An unexpected error occurred. Please try again later."
         });
       }
-  
+
       const issuesWithComments = await Promise.all(issues.data.map(async (issue: Issue) => {
         const commentCount = await commentRepository.getNumComments(issue.issue_id);
         return {
@@ -72,14 +73,14 @@ export default class IssueRepository {
           comment_count: commentCount
         };
       }));
-  
+
       issuesWithComments.sort((a, b) => ascending ? a.comment_count - b.comment_count : b.comment_count - a.comment_count);
-  
+
       return issuesWithComments as Issue[];
     } else {
       query = query.order(order_by, { ascending });
       const { data, error } = await query;
-  
+
       if (error) {
         console.error(error);
         throw APIError({
@@ -88,7 +89,7 @@ export default class IssueRepository {
           error: "An unexpected error occurred. Please try again later."
         });
       }
-  
+
       const issues = await Promise.all(data.map(async (issue: Issue) => {
         const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
         const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(issue.issue_id, user_id) : null;
@@ -108,12 +109,12 @@ export default class IssueRepository {
           } : issue.user
         };
       }));
-  
+
       return issues as Issue[];
     }
   }
-  
-  
+
+
   async getIssueById(issueId: number, user_id?: string) {
     const { data, error } = await supabase
       .from("issue")
@@ -137,7 +138,7 @@ export default class IssueRepository {
       `)
       .eq("issue_id", issueId)
       .maybeSingle();
-  
+
     if (error) {
       console.error(error);
       throw APIError({
@@ -146,7 +147,7 @@ export default class IssueRepository {
         error: "An unexpected error occurred. Please try again later."
       });
     }
-  
+
     if (!data) {
       throw APIError({
         code: 404,
@@ -154,11 +155,11 @@ export default class IssueRepository {
         error: "Issue does not exist"
       });
     }
-  
+
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
     const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(data.issue_id, user_id) : null;
     const commentCount = await commentRepository.getNumComments(data.issue_id);
-  
+
     return {
       ...data,
       reactions,
@@ -177,7 +178,7 @@ export default class IssueRepository {
 
   async createIssue(issue: Partial<Issue>) {
     issue.created_at = new Date().toISOString();
-  
+
     let locationId: number | null = null;
   
     if (issue.location_data) {
@@ -212,10 +213,11 @@ export default class IssueRepository {
           code: 500,
           success: false,
           error: "An error occurred while processing location data."
+
         });
       }
     }
-  
+
     const { data, error } = await supabase
       .from("issue")
       .insert({
@@ -230,19 +232,19 @@ export default class IssueRepository {
       })
       .select()
       .single();
-  
+
     if (error) {
       console.error(error);
-  
+
       throw APIError({
         code: 500,
         success: false,
         error: "An unexpected error occurred. Please try again later."
       });
     }
-  
+
     const reactions = await reactionRepository.getReactionCountsByIssueId(data.issue_id);
-  
+
     return {
       ...data,
       reactions,
@@ -445,7 +447,7 @@ export default class IssueRepository {
       .eq('user_id', userId)
       .not('resolved_at', 'is', null)
       .order("created_at", { ascending: false });
-  
+
     if (error) {
       console.error(error);
       throw APIError({
@@ -454,7 +456,7 @@ export default class IssueRepository {
         error: "An unexpected error occurred. Please try again later."
       });
     }
-  
+
     const issues = await Promise.all(data.map(
       async (issue: Issue) => {
         const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
@@ -476,7 +478,7 @@ export default class IssueRepository {
         };
       }
     ));
-  
+
     return issues as Issue[];
   }
 }

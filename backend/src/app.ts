@@ -3,6 +3,7 @@ import issueRoutes from "./routes/issueRoutes";
 import reactionRoutes from "./routes/reactionRoutes";
 import userRoutes from "./routes/userRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import visualizationRoutes from "./routes/visualizationRoutes";
 import reportsRoutes from "./routes/reportsRoutes";
 import { serverMiddleare } from "./middleware/middleware";
 
@@ -25,6 +26,7 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/reactions", reactionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/visualization", visualizationRoutes);
 app.use("/api/reports", reportsRoutes);
 
 app.get("/", (req, res) => {

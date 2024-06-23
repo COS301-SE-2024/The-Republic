@@ -67,6 +67,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
+
     if (!location) {
       toast({
         variant: "destructive",
@@ -76,6 +77,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     const isContentAppropriate = await checkContentAppropriateness(content);
+
     if (!isContentAppropriate) {
       toast({
         variant: "destructive",

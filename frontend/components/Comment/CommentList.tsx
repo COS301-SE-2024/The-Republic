@@ -55,6 +55,19 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
       return;
     }
 
+    setCommentToDelete(commentId);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!commentToDelete) return;
+
+    if (!user) {
+      toast({
+        description: "You need to be logged in to delete a comment",
+      });
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`, {
         method: "DELETE",
@@ -62,11 +75,12 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.access_token}`,
         },
-        body: JSON.stringify({ comment_id: commentId }),
+        body: JSON.stringify({ comment_id: commentToDelete }),
       });
 
       if (response.ok) {
-        setComments((prevComments) => prevComments.filter((comment) => comment.comment_id !== commentId));
+        setComments((prevComments) => prevComments.filter((comment) => comment.comment_id !== commentToDelete));
+        setCommentToDelete(null);
         toast({
           description: "Comment deleted successfully",
         });
@@ -86,7 +100,8 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
   };
 
   const handleReply = (parentCommentId: string, reply: CommentType) => {
-    setComments((prevComments) => [...prevComments, reply]);
+    const updatedReply = { ...reply, parent_id: parentCommentId };
+    setComments((prevComments) => [...prevComments, updatedReply]);
   };
 
   const renderComments = (parentId: string | null) => {
@@ -98,7 +113,7 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
       <div key={comment.comment_id} className={parentId ? "ml-8" : ""}>
         <Comment
           comment={comment}
-          onDelete={() => setCommentToDelete(comment.comment_id)}
+          onDelete={handleDeleteComment}
           isOwner={comment.is_owner}
           onReply={handleReply}
           replies={comments.filter((c) => c.parent_id === comment.comment_id)}
@@ -125,10 +140,7 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => {
-                  handleDeleteComment(commentToDelete);
-                  setCommentToDelete(null);
-                }}
+                onClick={confirmDeleteComment}
               >
                 Delete
               </Button>

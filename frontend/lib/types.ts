@@ -73,8 +73,8 @@ interface HomeAvatarProps {
 }
 
 type SubData<T = unknown> = {
-  $count: number;
-  [key: string]: T | SubData<T> | number;
+  $count?: number;
+  [key: string]: T | SubData<T> | number | undefined;
 }
 
 interface SeriesDataItem {
@@ -113,6 +113,7 @@ interface RenderItemResult {
   textContent: {
     type: string;
     style: {
+      transition?: string[];
       text: string;
       fontFamily: string;
       width: number;
@@ -141,6 +142,11 @@ interface RenderItemResult {
       shadowOffsetY: number;
       shadowColor: string;
     };
+  };
+  blur: {
+    style: {
+      opacity: number;
+    }
   };
 }
 
