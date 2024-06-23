@@ -158,6 +158,18 @@ Our system is designed using a client-server architecture. In this setup, the fr
 
 <img src="../images/diagrams/Client Server.jpg"/>
 
+## Proxy Pattern
+
+Our system incorporates the proxy architectural pattern to enhance both performance and security. In this setup, proxies act as intermediaries between clients and servers, managing requests and responses to optimize system efficiency and protect sensitive data.
+
+- **User Management:** The proxy caches frequently requested user profiles, reducing load times and server queries. It also validates user authentication requests, filtering out invalid or malicious attempts before forwarding them to the backend.
+- **Post Management:** Frequently accessed posts and comments are cached by the proxy, enabling faster retrieval and reduced backend load. The proxy also manages filtering and sorting operations to optimize performance.
+- **Data Analytics and Visualization:** The proxy can pre-process and cache analyzed data, ensuring quick access to visualizations and insights without repeated backend processing.
+- **Security and Access Control:** The proxy validates all incoming requests for security compliance, manages session tokens, and enforces role-based access controls to protect sensitive data and ensure authorized access.
+- **Database Management:** The proxy caches common database queries, reducing the number of direct interactions with the primary database and improving query response times.
+
+<img src="../images/diagrams/Proxy.jpg"/>
+
 <!--## Architecture Diagram
 
 <img src="../images/diagrams/Architectural Diagram.jpg"/>
