@@ -173,64 +173,100 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
 
-## NextJs
+## **NextJs**
 
 Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
 
-### Pros:
+### **Pros:**
 
 - Server-Side Rendering (SSR) and Static Site Generation (SSG)
 - Built-in routing and CSS support
 - Optimized for performance
 
-### Cons:
+### **Cons:**
 
 - Requires server for SSR
 - Learning curve for advanced features
 
-### Fit with Architecture
+### **Fit with Architecture**
 
 - SSR reduces client-side processing, improving performance during high user activity.
 
+---
+
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) <br>
 
-## React
+### **React**
 
 React is a JavaScript library for building user interfaces with a component-based approach. It’s highly popular and widely used.
 
-### Pros:
+### **Pros:**
 
 - Large ecosystem and community support
 - Supports a component-based architecture
 
-### Cons:
+### **Cons:**
 
 - Requires additional setup for SSR (using frameworks like Next.js)
 - Steep learning curve for beginners
 
-### Fit with Architecture
+### **Fit with Architecture**
 
 - Enables rapid development of interactive and responsive user interfaces, improving user experience during high interaction.
 
-![SvelteKit](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) <br>
+---
 
-## SvelteKit
+### **SvelteKit**
+
+![Sveltekit](https://img.shields.io/badge/SvelteKit-FF3E00?style=for-the-badge&logo=Svelte&logoColor=white) <br>
 
 SvelteKit is a framework for building web applications using Svelte. It offers both server-side rendering and static site generation.
 
-### Pros:
+### **Pros:**
 
 - Optimized for performance
 - Built-in SSR and SSG
 
-### Cons:
+### **Cons:**
 
 - Smaller community compared to React
 - Less mature ecosystem
 
-### Fit with Architecture
+### **Fit with Architecture**
 
 - Highly efficient rendering and smaller bundle sizes ensure faster response times.
+
+---
+
+### Final Choice
+
+We select React for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
+
+## Backend Technologies
+
+![Node.js](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) <br>
+![Express.js](https://img.shields.io/badge/fastify-202020?style=for-the-badge&logo=fastify&logoColor=white) <br>
+
+## **NodeJs with ExpressJs**
+
+Node.js is a runtime that allows JavaScript to be used on the server-side. Express.js is a minimal and flexible Node.js web application framework.
+
+### **Pros:**
+
+- Efficient handling of multiple requests.
+- Simplifies development by using JavaScript on both frontend and backend.
+- Rich set of libraries and tools via npm.
+
+### **Cons:**
+
+- Can lead to complex and hard-to-maintain code.
+- Not suitable for CPU-intensive operations.
+
+### **Fit with Architecture**
+
+- Asynchronous nature and event-driven architecture ensure efficient handling of multiple requests.
+
+---
 
 # Architectural Constraints ⚠️
 
