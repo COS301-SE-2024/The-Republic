@@ -55,8 +55,8 @@ As a user, I want to create an account with my details, so that I can have a per
 **2.2: Log In**  
 As a user, I want to log in using my credentials, so that I can access my account and interact with the platform.
 
-**2.3: Role Selection**  
-As a user, I want to choose my role (general public, government official) during account creation, so that I can have a customized experience based on my role.
+**2.3: Sign Up**  
+As a new user, I want tobe able to create an account so that I can be able to post, react, and interact on the platform.
 
 ---
 
@@ -64,11 +64,11 @@ As a user, I want to choose my role (general public, government official) during
 
 ---
 
-**3.1. Viewing Data Analytics Visualizations**  
+**3.1. Viewing Data Analytics Visualizations and Reports**  
 As a user, I want to view analytics based on the data generated on the platform and standard data visualizations in a visually appealing way, so that I can understand the state of different government services.
 
 **3.2. Province-Wide Visualizations**  
-As a user, I want to see visualizations showing issues faced across all provinces, and by pressing on the circles representing different categories, I can identify which areas have the most issues.
+As a user, I want to see visualizations showing issues faced across all provinces, and by pressing on the circles representing different categories, I can identify which areas have the most issues, by the size of the circles.
 
 **3.3. Progress Reports**  
 As a user, I want to see reports that show the progress of most issues over the past weeks or years in different formats like bar graphs and line graphs, so that I can track improvements or ongoing problems.
@@ -117,9 +117,9 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR1.1**: Users can manage their profile display name.
 - **FR1.2**: Users can choose to post anonymously.
 - **FR1.3**: Users can change their profile roles.
-- **FR1.4**: Users should be able to update their profile picture.
-- **FR1.5**: Users should be able to view their own posts on their profile.
-- **FR1.6**: Users should be able to edit their bio information.
+- **FR1.4**: Users can update their profile picture.
+- **FR1.5**: Users can view their posts on their profile.
+- **FR1.6**: Users can edit their bio information.
 
 ---
 
@@ -129,9 +129,8 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 
 - **FR2.1**: Users can create accounts with a username, email address, and password.
 - **FR2.2**: Users can log in using their credentials.
-- **FR2.3**: Users can reset their password if forgotten.
-- **FR2.4**: Users can update their account details.
-- **FR2.5**: Users can select their role during account creation.
+- **FR2.3**: Users can update their account details.
+- **FR2.4**: Users can sign up and create an account.
 
 ---
 
@@ -140,10 +139,10 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 ---
 
 - **FR3.1**: Users can create textual posts about governmental service delivery shortcomings and interactions.
-- **FR3.2**: Users should be able to upload media (images) limited to 1 per post.
-- **FR3.3**: Users should be able to choose the category of the issue when posting.
-- **FR3.4**: Users should be able to pick their location showing their municipality when making a post.
-- **FR3.5**: Users should be able to mark their posts as resolved.
+- **FR3.2**: Users can upload media (images) limited to 1 per post.
+- **FR3.3**: Users can choose the category of the issue when posting.
+- **FR3.4**: Users can pick their location showing their municipality when making a post.
+- **FR3.5**: Users can to mark their posts as resolved.
 
 ---
 
@@ -154,8 +153,8 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR4.1**: Users can comment on other users' posts.
 - **FR4.2**: Users can react to other users' posts.
 - **FR4.3**: Comments are displayed alongside the respective post.
-- **FR4.4**: Users should be able to view each other's profiles.
-- **FR4.5**: Users should be able to react to their own posts.
+- **FR4.4**: Users can subscribe to the issue or category of that post.
+- **FR4.5**: Users can react to their posts.
 
 ---
 
@@ -166,17 +165,18 @@ As a user, I want to filter my feed by category, such as electricity or water, s
 - **FR5.1**: Users can sort the posts on their feed from oldest to newest, or by most comments.
 - **FR5.2**: Users can filter the posts on their feed by category, such as electricity, water, etc.
 - **FR5.3**: Users can subscribe to specific issues or categories to receive updates.
-- **FR5.4**: Users can view standard data analytics visualizations.
-- **FR5.5**: Users should be able to see data visualization solely based on their filter selected.
+
 
 ---
 
-#### 6. Reporting
+#### 6. Reporting and Analytics
 
 ---
 
 - **FR6.1**: Users should be able to create a report according to the dates and locations they choose.
 - **FR6.2**: Reports should be statistically shown with analytics visualization.
+- **FR6.3**: Users can view standard data analytics visualizations according to the province.
+- **FR6.4**: Users can zoom into an issue analytics circle to see how huge it is in that area.
 
 ### 📊 Use Case Diagrams
 
