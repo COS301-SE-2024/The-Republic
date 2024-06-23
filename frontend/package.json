@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test": "jest --passWithNoTests",
     "test:coverage": "jest --coverage",
-    "formatter": "npx prettier --write ."
+    "formatter": "npx prettier --write .",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
