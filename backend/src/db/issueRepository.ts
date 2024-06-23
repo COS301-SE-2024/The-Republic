@@ -55,10 +55,10 @@ export default class IssueRepository {
     }
 
     if (order_by === "comment_count") {
-      const issues = await query;
+      const { data, error } = await query;
 
-      if (issues.error) {
-        console.error(issues.error);
+      if (error) {
+        console.error(error);
         throw APIError({
           code: 500,
           success: false,
@@ -66,17 +66,29 @@ export default class IssueRepository {
         });
       }
 
-      const issuesWithComments = await Promise.all(issues.data.map(async (issue: Issue) => {
+      const issues = await Promise.all(data.map(async (issue: Issue) => {
+        const reactions = await reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+        const userReaction = user_id ? await reactionRepository.getReactionByUserAndIssue(issue.issue_id, user_id) : null;
         const commentCount = await commentRepository.getNumComments(issue.issue_id);
         return {
           ...issue,
-          comment_count: commentCount
+          reactions,
+          user_reaction: userReaction?.emoji || null,
+          comment_count: commentCount,
+          is_owner: issue.user_id === user_id,
+          user: issue.is_anonymous ? {
+            user_id: null,
+            email_address: null,
+            username: 'Anonymous',
+            fullname: 'Anonymous',
+            image_url: null
+          } : issue.user
         };
       }));
 
-      issuesWithComments.sort((a, b) => ascending ? a.comment_count - b.comment_count : b.comment_count - a.comment_count);
+      issues.sort((a, b) => ascending ? a.comment_count - b.comment_count : b.comment_count - a.comment_count);
 
-      return issuesWithComments as Issue[];
+      return issues as Issue[];
     } else {
       query = query.order(order_by, { ascending });
       const { data, error } = await query;
@@ -180,21 +192,21 @@ export default class IssueRepository {
     issue.created_at = new Date().toISOString();
 
     let locationId: number | null = null;
-  
+
     if (issue.location_data) {
       // console.log("Raw location data:", issue.location_data);
-  
+
       let locationDataObj;
       try {
-        locationDataObj = typeof issue.location_data === 'string' 
-          ? JSON.parse(issue.location_data) 
+        locationDataObj = typeof issue.location_data === 'string'
+          ? JSON.parse(issue.location_data)
           : issue.location_data;
-  
+
         // console.log("Parsed location data:", locationDataObj);
-  
+
         const locationRepository = new LocationRepository();
         const existingLocation = await locationRepository.getLocationByPlacesId(locationDataObj.place_id);
-  
+
         if (existingLocation) {
           locationId = existingLocation.location_id;
         } else {
