@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast as shadToast } from "@/components/ui/use-toast";
 import { supabase } from "./globals";
+import { Api } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -64,4 +65,13 @@ export function objectToQuery(obj: { [key: string]: string | number | boolean}) 
     }
 
     return params.join("&");
+}
+
+export function colorFromCategory(api: Api, category: string) {
+  switch(category) {
+    case "Transportation":
+      return "#e7e7e7";
+    default:
+      return api.visual("color");
+  }
 }

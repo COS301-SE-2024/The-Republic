@@ -141,7 +141,7 @@ const EChartsComponent = () => {
             position: 'inside'
           },
           style: {
-            fill: api.visual('color')
+            fill: colorFromCategory(api, nodeName)
           },
           emphasis: {
             style: {
@@ -151,6 +151,11 @@ const EChartsComponent = () => {
               shadowOffsetX: 3,
               shadowOffsetY: 5,
               shadowColor: 'rgba(0,0,0,0.3)'
+            }
+},
+          blur: {
+            style: {
+              opacity: 0.4
             }
           }
         };
