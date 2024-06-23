@@ -171,9 +171,9 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 ## Frontend Technologies
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
-
 ## **NextJs**
+
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
 
 Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
 
@@ -194,9 +194,9 @@ Next.js is a React framework that enables server-side rendering and static site 
 
 ---
 
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) <br>
-
 ### **React**
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) <br>
 
 React is a JavaScript library for building user interfaces with a component-based approach. It’s highly popular and widely used.
 
@@ -240,14 +240,14 @@ SvelteKit is a framework for building web applications using Svelte. It offers b
 
 ### Final Choice
 
-We select React for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
+We picked React for its component-based architecture, performance benefits, and strong community support, ensuring we can build a robust and scalable user interface. We also chose Next.js due to its ability to enhance performance through SSR and SSG, its seamless integration with React, and its flexibility in building complex, scalable frontend applications.
 
 ## Backend Technologies
 
-![Node.js](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) <br>
-![Express.js](https://img.shields.io/badge/fastify-202020?style=for-the-badge&logo=fastify&logoColor=white) <br>
-
 ## **NodeJs with ExpressJs**
+
+![Node.js](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) <br>
+![Express.js](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) <br>
 
 Node.js is a runtime that allows JavaScript to be used on the server-side. Express.js is a minimal and flexible Node.js web application framework.
 
@@ -267,6 +267,54 @@ Node.js is a runtime that allows JavaScript to be used on the server-side. Expre
 - Asynchronous nature and event-driven architecture ensure efficient handling of multiple requests.
 
 ---
+
+## **Java with Spring Boot**
+
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot) <br>
+
+Spring Boot is an extension of the Spring framework that simplifies the development of new Spring applications. It provides a wide range of features for building modern web applications.
+
+### **Pros:**
+
+- Robust and mature ecosystem
+- Support for microservices architecture
+
+### **Cons:**
+
+- Heavier compared to Node.js
+- Steeper learning curve
+
+### **Fit with Architecture**
+
+- Provides robust tools for handling critical operations and maintaining high uptime.
+
+---
+
+## **.NET**
+
+![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) <br>
+
+.NET Core is a cross-platform, high-performance framework for building modern, cloud-based, internet-connected applications.
+
+### **Pros:**
+
+- High performance and scalability
+- Cross-platform
+
+### **Cons:**
+
+- Requires knowledge of C#
+
+### **Fit with Architecture**
+
+- Designed to scale efficiently and handle increased loads seamlessly.
+
+---
+
+### Final Choice
+
+Node.js was picked for its non-blocking, event-driven architecture, which fits our performance and scalability requirements and
+Express.js for its simplicity and efficiency in building RESTful APIs, aligning with our microservices approach and maintainability needs.
 
 # Architectural Constraints ⚠️
 
