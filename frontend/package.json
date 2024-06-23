@@ -14,8 +14,11 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
     "@babel/preset-react": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@cypress/webpack-dev-server": "^3.10.0",
@@ -56,7 +59,7 @@
     "next": "^14.2.3",
     "next-themes": "^0.3.0",
     "postcss": "^8",
-    "react": "^18",
+    "react": "^18.3.1",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18",
     "react-google-places-autocomplete": "^4.0.1",
