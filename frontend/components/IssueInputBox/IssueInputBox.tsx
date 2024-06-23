@@ -47,8 +47,32 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
-    const isContentAppropriate = await checkContentAppropriateness(content);
+    if (!category) {
+      toast({
+        variant: "destructive",
+        description: "Please select a category.",
+      });
+      return;
+    }
 
+    if (!mood) {
+      toast({
+        variant: "destructive",
+        description: "Please select a mood.",
+      });
+      return;
+    }
+
+    if (!location) {
+      toast({
+        variant: "destructive",
+        description: "Please set a location.",
+      });
+      return;
+    }
+
+    const isContentAppropriate = await checkContentAppropriateness(content);
+    console.log(isContentAppropriate);
     if (!isContentAppropriate) {
       toast({
         variant: "destructive",
