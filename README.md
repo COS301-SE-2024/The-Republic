@@ -14,7 +14,7 @@
 [![Backend Unit Testing](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml)
 [![Docker Deployment](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml)
 [![Backend Linter](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml)
-
+[![End-To-End Testing With Cypress](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/cypress.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/cypress.yml)
 </div>
 
 # Demo Resources

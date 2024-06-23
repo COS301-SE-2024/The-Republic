@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json", // Adjust the path as necessary
+    "compilerOptions": {
+        // Override settings specific to Cypress here
+        // For example, if "bundler" is not suitable for Cypress, you might switch to "Node"
+        "moduleResolution": "node"
+    },
+    "include": [
+        "cypress/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "./app"
+    ]
+}
