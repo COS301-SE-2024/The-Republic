@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +12,7 @@ import { categoryOptions, moodOptions } from '@/lib/constants';
 import { supabase } from '@/lib/globals';
 import LocationAutocomplete from '@/components/LocationAutocomplete/LocationAutocomplete';
 import Dropdown from "@/components/Dropdown/Dropdown";
-import { Image as LucideImage } from 'lucide-react';
+import { Image as LucideImage, X } from 'lucide-react';
 import { LocationType } from '@/lib/types';
 
 const MAX_CHAR_COUNT = 500;
@@ -37,7 +37,10 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [location, setLocation] = useState<LocationType | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const handleIssueSubmit = async () => {
     if (!user) {
@@ -47,8 +50,31 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
-    const isContentAppropriate = await checkContentAppropriateness(content);
+    if (!category) {
+      toast({
+        variant: "destructive",
+        description: "Please select a category.",
+      });
+      return;
+    }
 
+    if (!mood) {
+      toast({
+        variant: "destructive",
+        description: "Please select a mood.",
+      });
+      return;
+    }
+
+    if (!location) {
+      toast({
+        variant: "destructive",
+        description: "Please set a location.",
+      });
+      return;
+    }
+
+    const isContentAppropriate = await checkContentAppropriateness(content);
     if (!isContentAppropriate) {
       toast({
         variant: "destructive",
@@ -60,20 +86,23 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     const categoryID = parseInt(category);
     const { data } = await supabase.auth.getSession();
 
-    const requestBody = {
-      category_id: categoryID,
-      content,
-      sentiment: mood,
-      is_anonymous: isAnonymous,
-      location_data: location ? location.value : {},
-      created_at: new Date().toISOString(),
-    };
+    const requestBody = new FormData();
+    requestBody.append("category_id", categoryID.toString());
+    requestBody.append("content", content);
+    requestBody.append("sentiment", mood);
+    requestBody.append("is_anonymous", isAnonymous.toString());
+    requestBody.append("location_data", JSON.stringify(location ? location.value : {}));
+    requestBody.append("created_at", new Date().toISOString());
+    requestBody.append("user_id", user.user_id);
+    if (image) {
+      requestBody.append("image", image);
+    }
+
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`, {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: requestBody,
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Bearer ${data.session!.access_token}`,
       },
     });
@@ -89,6 +118,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       setMood("");
       setIsAnonymous(false);
       setLocation(null);
+      setImage(null);
 
       toast({
         description: "Post successful",
@@ -124,6 +154,19 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
   
     return true;
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const charCount = content.length;
@@ -173,9 +216,24 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           location={location}
           setLocation={setLocation}
         />
-        <Button variant="ghost" size="sm" className="mx-2">
+        <Button variant="ghost" size="sm" className="mx-2" onClick={() => fileInputRef.current?.click()}>
           <LucideImage />
         </Button>
+        {image && (
+          <div className="relative">
+            <img src={URL.createObjectURL(image)} alt="Uploaded" className="w-32 h-32 object-cover rounded-lg" />
+            <Button variant="ghost" size="sm" className="absolute top-0 right-0" onClick={removeImage}>
+              <X />
+            </Button>
+          </div>
+        )}
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*"
+          onChange={handleImageUpload}
+          style={{ display: 'none' }}
+        />
         <div className="mx-2 flex items-center">
           <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)} />
           <label
