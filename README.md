@@ -26,7 +26,7 @@
 | Demo   | Video                                                                                                          | Slides                                                                                                                                                                         |
 | ------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGG4_iuy44/iqlGvxp0i5SekCY6Ez_RQA/edit?utm_content=DAGG4_iuy44&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
-| Demo 2 | [InfiniteLoopers-Demo2](https://drive.google.com/file/d/17EW3HTqoN-14ORK8A0OgFcvNDD3qFsIy/view?usp=drive_link)               | [Demo 2 Slides](https://www.canva.com/design/DAGIqTO5pm0/gMRKgqyizyPxgJumbBH-EA)                                                                                                             |
+| Demo 2 | [InfiniteLoopers-Demo2](https://drive.google.com/file/d/17EW3HTqoN-14ORK8A0OgFcvNDD3qFsIy/view?usp=drive_link)               | [Demo 2 Slides](https://www.canva.com/design/DAGIqTO5pm0/8a0ufCyylomFZPgixK5pjA/view?utm_content=DAGIqTO5pm0&utm_campaign=designshare&utm_medium=link&utm_source=editor)                                                                                                             |
 
 </div>
 
