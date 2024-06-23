@@ -71,10 +71,19 @@ export function colorFromCategory(api: Api, category: string) {
   switch(category) {
     case "Transportation":
       return "#e7e7e7";
+    case "Healthcare Services":
+      return "#c72c48";
+    case "Public Safety":
+      return "#f0dc82";
+    case "Water":
+      return "#f2f3f4";
+    case "Electricity":
+      return "#1dacd6";
     default:
       return api.visual("color");
   }
-  
+}
+
 export function formatDate(dateString: string): string {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const date = new Date(dateString);

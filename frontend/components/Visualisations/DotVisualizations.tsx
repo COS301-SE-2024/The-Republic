@@ -244,7 +244,11 @@ const EChartsComponent = () => {
   }, [vizData]);
 
   if (loading) {
-    return <LoadingSpinner className='mt-10 ml-16'/>;
+    return (
+      <div className='pt-64 w-full flex flex-row justify-center'>
+        <LoadingSpinner/>
+      </div>
+    );
   } else {
     return <div ref={chartRef} style={{ height: '100vh' }} />;
   }
