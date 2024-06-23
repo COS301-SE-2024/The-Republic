@@ -16,15 +16,14 @@ const filterOptions = {
   group: "Filter",
   items: [
     { value: "All", label: "All" },
-    { value: "Subscriptions", label: "Subscriptions"},
-    { value: "Healthcare", label: "Healthcare Services" },
+    { value: "Healthcare Services", label: "Healthcare Services" },
     { value: "Public Safety", label: "Public Safety" },
     { value: "Water", label: "Water" },
     { value: "Transportation", label: "Transportation" },
     { value: "Electricity", label: "Electricity" },
     { value: "Sanitation", label: "Sanitation" },
     { value: "Social Services", label: "Social Services" },
-    { value: "Administrative", label: "Administrative Services" },
+    { value: "Administrative Services", label: "Administrative Services" },
   ],
 };
 
