@@ -34,7 +34,7 @@ interface Issue {
     district: string;
     place_id: string;
   } | null;
-  location: {
+  location?: {
     province: string;
     city: string;
     suburb: string;
