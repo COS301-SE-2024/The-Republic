@@ -1,0 +1,29 @@
+name: End-To-End Testing With Cypress
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+      - 'feature/**'
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests
+        run: npm run cypress:run
