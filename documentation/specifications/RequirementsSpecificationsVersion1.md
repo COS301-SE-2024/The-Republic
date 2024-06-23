@@ -365,3 +365,37 @@ If the token is missing, invalid, or expired, the API will respond with a 401 Un
   - **400 Bad Request** (Invalid input data)
   - **500 Internal Server Error**
 
+## 🛠️ Technology Requirements
+
+**1. Frontend**
+
+- ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+- ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+
+**2. Backend**
+
+- ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=nodedotjs&logoColor=white)
+- ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+
+**3. Data Science**
+
+- ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+- ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
+
+**4. Database**
+
+- ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+- ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+
+---
+
+### Appendix: Changes to Previous Sections
+
+_Note: This is where we will put old sections which have changed. Keep this document updated incrementally as changes are made to the project._
+
+[Back to Full Documentation](./../README.md)<br>
+
+[Back to main README](/README.md)
+
+---
+
