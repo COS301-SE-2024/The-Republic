@@ -316,10 +316,155 @@ Spring Boot is an extension of the Spring framework that simplifies the developm
 Node.js was picked for its non-blocking, event-driven architecture, which fits our performance and scalability requirements and
 Express.js for its simplicity and efficiency in building RESTful APIs, aligning with our microservices approach and maintainability needs.
 
+## Data Science Technologies
+
+## **Python via Django**
+
+![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue) <br>
+![Django](https://img.shields.io/badge/daphne-092E20?style=for-the-badge&logo=django&logoColor=green) <br>
+
+Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It is well-suited for data science applications due to Python's extensive libraries and frameworks.
+
+### **Pros:**
+
+- Django's "batteries-included" philosophy means it comes with many built-in features, reducing the need for third-party plugins.
+- Django provides robust security features to protect against common threats.
+
+### **Cons:**
+
+- While Django simplifies many tasks, it can still be complex for beginners.
+- The full-stack nature of Django may introduce overhead for simpler applications.
+
+### **Fit with Architecture**
+
+- Django, combined with Python's data science libraries, can handle intensive data processing and analysis efficiently.
+
+---
+
+## **R**
+
+![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white) <br>
+
+R is a programming language and environment specifically designed for statistical computing and graphics. It is widely used in academia and industry for data analysis.
+
+### **Pros:**
+
+- Extensive support for statistical methods and data visualization.
+- Advanced data visualization capabilities with libraries like ggplot2.
+
+### **Cons:**
+
+- Can be slower than Python for certain tasks.
+- Less straightforward integration with web applications compared to Python.
+
+### **Fit with Architecture**
+
+- Provides robust statistical tools but may need integration with other systems for performance improvements.
+
+---
+
+## **Apache Spark**
+
+![Apache Spark](https://img.shields.io/badge/Apache_Spark-FFFFFF?style=for-the-badge&logo=apachespark&logoColor=#E35A16) <br>
+
+Apache Spark is an open-source unified analytics engine for big data processing, with built-in modules for streaming, SQL, machine learning, and graph processing.
+
+### **Pros:**
+
+- Designed to handle large-scale data processing.
+- In-memory data processing capabilities significantly speed up computations.
+
+### **Cons:**
+
+- Can be complex to set up and manage.
+- Requires significant resources for optimal performance.
+
+### **Fit with Architecture**
+
+- Efficiently handles and processes large datasets, ensuring quick response times during peak usage.
+
+---
+
+### Final Choice
+
+Python's extensive data science libraries combined with Django's robust framework provide a comprehensive solution for data analytics and visualization needs. This choice ensures rapid development, scalability, and maintainability.
+
+## Database Technologies
+
+## **PostgreSQL**
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) <br>
+
+PostgreSQL is a powerful, open-source object-relational database system with over 30 years of active development. It is known for its robustness, performance, and advanced features.
+
+### **Pros:**
+
+- Supports complex queries, indexing, and full ACID compliance.
+- Highly extensible with support for custom functions and data types.
+
+### **Cons:**
+
+- Can be complex to manage for beginners.
+- Requires careful tuning for optimal performance in high-load scenarios.
+
+### **Fit with Architecture**
+
+- Efficient indexing and query optimization ensure quick data retrieval and processing.
+
+---
+
+## **MySQL**
+
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) <br>
+
+MySQL is an open-source relational database management system known for its reliability, ease of use, and performance.
+
+### **Pros:**
+
+- High-performance capabilities, especially for read-heavy workloads.
+- Simple to set up and manage.
+
+### **Cons:**
+
+- Lacks some advanced features compared to PostgreSQL.
+- May require additional tools and configurations for handling very large datasets.
+
+### **Fit with Architecture**
+
+- Performs well for read-heavy operations but might require additional tools for high scalability.
+
+---
+
+## **MongoDB**
+
+![MongooDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) <br>
+
+MongoDB is a NoSQL database that uses a document-oriented data model. It is known for its flexibility and scalability.
+
+### **Pros:**
+
+- Designed to scale out horizontally.
+- Schema-less design allows for flexible data models.
+
+### **Cons:**
+
+- Trades off consistency for performance in certain scenarios.
+- Less efficient for complex queries compared to relational databases.
+
+### **Fit with Architecture**
+
+- Excels in environments with rapidly changing data and high write loads, ensuring quick adaptation and performance.
+
+---
+
+### Final Choice
+
+PostgreSQL's advanced features, scalability, and robustness make it the ideal choice for handling the data management needs. Its strong support for complex queries, indexing, and data integrity aligns well with our architectural requirements for reliability, performance, and security.
+
 # Architectural Constraints ⚠️
 
-- **Monolithic Architecture Transition**<br>
-  The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability.
+<!--- **Monolithic Architecture Transition**<br>
+  The system is initially designed using a monolithic architecture with plans to transition to a microservices architecture in the future to enhance scalability and maintainability. -->
 
 - **Deployment Model**<br>
   The system must not follow a serverless model and should not be cloud-native. It must be able to run on one or more Linux virtual machines (VMs).
