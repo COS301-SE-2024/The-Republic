@@ -4,10 +4,10 @@ interface User {
   username: string;
   fullname: string;
   image_url: string | null;
-  is_owner: boolean | null;  
+  is_owner: boolean | null;
   total_issues: number | null;
   resolved_issues: number | null;
-} 
+}
 
 interface Category {
   name: string;
@@ -28,6 +28,13 @@ interface Issue {
   is_anonymous: boolean;
   location_id: number | null;
   location_data: {
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+    place_id: string;
+  } | null;
+  location: {
     province: string;
     city: string;
     suburb: string;
