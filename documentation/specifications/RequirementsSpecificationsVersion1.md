@@ -151,4 +151,27 @@ As a user, I want to choose my role (general public, government official) during
 
 - **FR6.1**: Users should be able to create a report according to the dates and locations they choose.
 - **FR6.2**: Reports should be statistically shown with analytics visualisation.
+- 
+### 📊 Use Case Diagrams
+
+<div>
+    <img src="../images/diagrams/authentication.png" alt="authentication use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/profile_management.png" alt="profile use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/posting.png" alt="posting use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/interactions.png" alt="interactions use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/feed.png" alt="feed use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
+</div>
 
