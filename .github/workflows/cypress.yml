@@ -31,12 +31,6 @@ jobs:
           cd frontend
           npm install
           npm ci
-      - name: Run Backend
-        continue-on-error: true
-        run: |
-          cd backend
-          npm run build
-          npm start
       - name: Run cypress
         continue-on-error: true
         run: |
