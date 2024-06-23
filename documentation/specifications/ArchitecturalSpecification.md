@@ -173,7 +173,7 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 ### NextJs <br>
 
-![](https://ibb.co/BsJG8Lg)<br>
+<img src="https://i.ibb.co/4NL2BWj/Next.png"/><br>
 
 Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
 
