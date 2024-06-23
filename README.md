@@ -33,26 +33,18 @@
 
 # Documentation
 
-The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [Documentation](./documentation/README.md)
+The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
-#### Links to Specific Sections of the Documentation:
+## Links to the Latest Documentation of the Project
 
-- [Link to Coding Standards](./documentation/specifications/CodingStandards.md)
-- [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
-- [Link to Delivery Specification](./documentation/specifications/DeliverySpecification.md)
-- [Link to Testing Specification](./documentation/specifications/TestingSpecification.md)
-- [Link to User Manual](./documentation/specifications/UserManual.md)
-- [Link to Architectural Specification](./documentation/specifications/ArchitecturalSpecification.md)
+- [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
+- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion2.md)
+- [Delivery Specification](./documentation/specifications/DeliverySpecificationVersion2.md)
+- [Testing Specification](./documentation/specifications/TestingSpecificationVersion2.md)
+- [User Manual](./documentation/specifications/UserManualVersion2.md)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion2.md)
+- [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
-<!--
-- [Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md)
-- [Link to Project Plan](./documentation/specifications/ProjectPlan.md)
-- [Link to Design Specification](./documentation/specifications/DesignSpecification.md)
--->
-
-<p align="center">
-  <img src="./documentation/images/assets/il_logo_lighter.png" width="150" height="auto">
-</p>
 
 <h1 align="center">Meet The Infinite Loopers!</h1>
 

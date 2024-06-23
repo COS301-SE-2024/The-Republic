@@ -6,13 +6,23 @@
 
 > Welcome to The Republic project, an initiative aimed at revolutionizing citizen engagement with government services through a dynamic, user-friendly platform. This documentation includes the links to various aspects of the project, including architectural design, implementation details, and user guidelines.
 
-## Table of Contents
+## Demo 1
 
-1. [Architectural Specification](./specifications/ArchitecturalSpecification.md)
-2. [Testing Specification](./specifications/TestingSpecification.md)
-3. [Delivery Specification](./specifications/DeliverySpecification.md)
-4. [Requirements Specification](./specifications/RequirementsSpecification.md)
-5. [User Manual](./specifications/UserManual.md)
-6. [Coding Standards](./specifications/CodingStandards.md)
+
+1. [Architectural Specification](./specifications/RequirementsSpecificationVersion1.md)
+2. [Delivery Specification](./specifications/DeliverySpecificationVersion1.md)
+3. [Requirements Specification](./specifications/RequirementsSpecificationVersion1.md)
+4. [Coding Standards](./specifications/CodingStandardsVersion1.md)
+5. [API / Services Contract](./specifications/RequirementsSpecificationVersion1.md)
+
+## Demo 2
+
+1. [Architectural Specification](./specifications/ArchitecturalSpecificationVersion2.md)
+2. [Testing Specification](./specifications/TestingSpecificationVersion2.md)
+3. [Delivery Specification](./specifications/DeliverySpecificationVersion2.md)
+4. [Requirements Specification](./specifications/RequirementsSpecificationVersion2.md)
+5. [User Manual](./specifications/UserManualVersion2.md)
+6. [Coding Standards](./specifications/CodingStandardsVersion2.md)
+7. [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
 [Back to Main](/README.md)
