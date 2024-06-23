@@ -27,7 +27,6 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   }
 
   const isOwner = user && user.user_id === issue.user_id;
-  // console.log("Issue object:", issue);
 
   const handleDelete = async () => {
     if (!user) {
@@ -210,6 +209,9 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       </CardHeader>
       <CardContent>
         <p>{issue.content}</p>
+        {issue.image_url && (
+          <img src={issue.image_url} alt="Issue" className="w-1/4 h-auto mt-4 rounded-lg" />
+        )}
         {issue.resolved_at && (
           <div className="flex space-x-2 pt-2">
             <Badge className="">Resolved {timeSince(issue.resolved_at)}</Badge>
