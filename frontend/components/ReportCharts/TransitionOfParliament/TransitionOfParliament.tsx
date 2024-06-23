@@ -1,16 +1,64 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as echarts from 'echarts';
+import { DataItem } from "@/lib/reports";
 
 const TransitionOfParliament: React.FC = () => {
+    const [data, setData] = useState<{ resolved: { [key: string]: number }; unresolved: { [key: string]: number } }>({ resolved: {}, unresolved: {} });
+    const [dataArray, setDataArray] = useState<DataItem[]>([
+        { value: 800, name: 'A' },
+        { value: 635, name: 'B' },
+        { value: 580, name: 'C' },
+        { value: 484, name: 'D' },
+        { value: 300, name: 'E' },
+        { value: 200, name: 'F' }
+    ]);
     useEffect(() => {
-        const data = [
-            { value: 800, name: 'A' },
-            { value: 635, name: 'B' },
-            { value: 580, name: 'C' },
-            { value: 484, name: 'D' },
-            { value: 300, name: 'E' },
-            { value: 200, name: 'F' }
-        ];
+        const fetchIssues = async () => {   
+            try {
+                const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        from: 0,
+                        amount: 99,
+                    }),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                });
+                const apiResponse = await response.json();
+
+                if (apiResponse.success && apiResponse.data) {
+                    setData(apiResponse.data);
+                } else {
+                    console.error("Error fetching issues:", apiResponse.error);
+                }
+            } catch (error) {
+                console.error("Error fetching issues:", error);
+            }
+        };
+
+        fetchIssues();
+    }, []);
+    
+    useEffect(() => {
+        if (data && ('resolved' in data && 'unresolved' in data)) {
+            const transformData = (data: { resolved: { [key: string]: number }, unresolved: { [key: string]: number } }) => {
+                const merged = { ...data.resolved };
+                
+                Object.entries(data.unresolved).forEach(([key, value]) => {
+                    if (merged[key]) {
+                    merged[key] += value;
+                    } else {
+                    merged[key] = value;
+                    }
+                });
+                
+                return Object.entries(merged).map(([name, value]) => ({ name, value }));
+            };
+            
+            setDataArray(transformData(data));
+        }
 
         const defaultPalette = [
             '#5470c6',
@@ -27,28 +75,33 @@ const TransitionOfParliament: React.FC = () => {
         const radius = ['30%', '80%'];
 
         const pieOption: echarts.EChartsOption = {
+            title: {
+                text: 'Hierarchical Distribution of Issues by Service Category',
+                left: 'center',
+                top: '0%'
+            },
             series: [
                 {
                     type: 'pie',
                     id: 'distribution',
                     radius: radius,
                     label: {
-                        show: false
+                        show: true
                     },
                     universalTransition: true,
                     animationDurationUpdate: 1000,
-                    data: data
+                    data: dataArray
                 }
             ]
         };
 
         const parliamentOption = (() => {
-            const sum = data.reduce((sum, cur) => sum + cur.value, 0);
+            const sum = dataArray.reduce((sum, cur) => sum + cur.value, 0);
 
             const angles: number[] = [];
             const startAngle = -Math.PI / 2;
             let curAngle = startAngle;
-            data.forEach((item) => {
+            dataArray.forEach((item) => {
                 angles.push(curAngle);
                 curAngle += (item.value / sum) * Math.PI * 2;
             });
@@ -90,7 +143,7 @@ const TransitionOfParliament: React.FC = () => {
                 series: {
                     type: 'custom',
                     id: 'distribution',
-                    data: data,
+                    data: dataArray,
                     coordinateSystem: undefined,
                     universalTransition: true,
                     animationDurationUpdate: 1000,
@@ -151,13 +204,12 @@ const TransitionOfParliament: React.FC = () => {
                 myChart.dispose();
             };
         }
-    }, []);
+    }, [data]);
 
     return (
         <div className="col-lg-6">
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">Transition of Parliament Representation</h5>
                     <div id="transitionOfParliament" style={{ width: '100%', height: '400px' }} className="echart"></div>
                 </div>
             </div>
