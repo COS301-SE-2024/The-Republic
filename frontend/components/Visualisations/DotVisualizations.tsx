@@ -1,28 +1,42 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import * as d3 from 'd3';
 import 'd3-hierarchy';
-import mockData from "@/data/dot";
 
 import {
   SubData, SeriesDataItem, Params, Api, RenderItemResult
 } from "@/lib/types";
+import { colorFromCategory } from '@/lib/utils';
 
 const EChartsComponent = () => {
   const chartRef = useRef(null);
+  const [vizData, setVizData] = useState({});
+
+  useEffect(() => {
+    async function fetchVizData() {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        console.error(response.status);
+        return;
+      }
+
+      setVizData((await response.json()).data);
+    }
+
+    fetchVizData();
+  }, []);
 
   useEffect(() => {
     const chartDom = chartRef.current;
     const myChart = echarts.init(chartDom);
 
     function run() {
-      const myObject = {
-        $count: 1,
-        data: mockData
-      };
-      const dataWrap = prepareData(myObject);
+      const dataWrap = prepareData(vizData);
       initChart(dataWrap.seriesData, dataWrap.maxDepth);
     }
 
@@ -40,14 +54,14 @@ const EChartsComponent = () => {
         maxDepth = Math.max(depth, maxDepth);
         seriesData.push({
             id: basePath,
-            value: source.$count,
+            value: source.$count!,
             depth: depth,
             index: seriesData.length
         });
-        
+
         for (const key in source) {
             if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
-                const path = basePath + '.' + key;
+                const path = basePath + ', ' + key;
                 convert(source[key] as SubData<unknown>, path, depth + 1);
             }
         }
@@ -61,7 +75,7 @@ const EChartsComponent = () => {
 
     function initChart(seriesData: SeriesDataItem[], maxDepth: number) {
       let displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
-    
+
       function stratify() {
         return d3
           .stratify<SeriesDataItem>()
@@ -74,7 +88,7 @@ const EChartsComponent = () => {
           .sort((a: d3.HierarchyNode<SeriesDataItem>, b: d3.HierarchyNode<SeriesDataItem>): number => {
             return (b.value || 0) - (a.value || 0);
           });
-      }   
+      }
 
       function overallLayout(params: Params, api: Api): void {
         const context = params.context;
@@ -152,7 +166,7 @@ const EChartsComponent = () => {
               shadowOffsetY: 5,
               shadowColor: 'rgba(0,0,0,0.3)'
             }
-},
+          },
           blur: {
             style: {
               opacity: 0.4
@@ -223,7 +237,7 @@ const EChartsComponent = () => {
     return () => {
       myChart.dispose();
     };
-  }, []);
+  }, [vizData]);
 
   return <div ref={chartRef} style={{ height: '100vh' }} />;
 };
