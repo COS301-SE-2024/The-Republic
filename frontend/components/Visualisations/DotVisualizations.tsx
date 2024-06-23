@@ -52,7 +52,7 @@ const EChartsComponent = () => {
             }
         }
       }
-      convert(rawData, 'option', 0);
+      convert(rawData, 'South Africa', 0);
       return {
         seriesData: seriesData,
         maxDepth: maxDepth
@@ -66,7 +66,7 @@ const EChartsComponent = () => {
         return d3
           .stratify<SeriesDataItem>()
           .parentId((d: SeriesDataItem): string => {
-            return d.id.substring(0, d.id.lastIndexOf('.'));
+            return d.id.substring(0, d.id.lastIndexOf(', '));
           })(seriesData)
           .sum((d: SeriesDataItem): number => {
             return d.value || 0;
@@ -108,10 +108,7 @@ const EChartsComponent = () => {
           })
         );
         const nodeName = isLeaf
-          ? nodePath
-            .slice(nodePath.lastIndexOf('.') + 1)
-            .split(/(?=[A-Z][^A-Z])/g)
-            .join('\n')
+          ? nodePath.substring(nodePath.lastIndexOf(",") + 2, nodePath.length)
           : '';
         const z2 = Number(api.value('depth')) * 2;
         return {
