@@ -14,6 +14,7 @@ import LocationAutocomplete from '@/components/LocationAutocomplete/LocationAuto
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from 'lucide-react';
 import { LocationType } from '@/lib/types';
+import Image from 'next/image';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -220,8 +221,14 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
           <LucideImage />
         </Button>
         {image && (
-          <div className="relative">
-            <img src={URL.createObjectURL(image)} alt="Uploaded" className="w-32 h-32 object-cover rounded-lg" />
+          <div className="relative w-32 h-32">
+            <Image
+              src={URL.createObjectURL(image)}
+              alt="Uploaded"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-lg"
+            />
             <Button variant="ghost" size="sm" className="absolute top-0 right-0" onClick={removeImage}>
               <X />
             </Button>
