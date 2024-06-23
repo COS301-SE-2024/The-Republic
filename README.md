@@ -46,10 +46,6 @@ The documentation provides different versions and progress for each demo, guidin
 - [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
 
-<p align="center">
-  <img src="./documentation/images/assets/il_logo_lighter.png" width="150" height="auto">
-</p>
-
 <h1 align="center">Meet The Infinite Loopers!</h1>
 
 <table style="border-width: 1px; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse">
