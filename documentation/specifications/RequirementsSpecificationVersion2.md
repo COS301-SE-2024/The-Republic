@@ -34,10 +34,29 @@ As a user, I want to create posts about governmental service delivery shortcomin
 **1.2. Post Interaction**  
 As a user, I want to comment or otherwise interact with other users’ posts, so that I can engage in discussions and share my thoughts.
 
+**1.3. Complaint Post**  
+As a user, I want to create a post about a burst pipe in my area, choose my location, type my complaint, attach an image, and choose to remain anonymous, so that I can report the issue without revealing my identity.
+
+**1.4. React to Posts**  
+As a user, I want to react to my post or another user’s post, so that I can express my agreement or support for the issue.
+
+**1.5. Mark Issue as Resolved**  
+As a user, I want to mark a post as resolved once the municipality has solved the issue, so that others know the problem has been addressed.
+
 ---
 
-**Citizen of Pretoria User Story**  
-As a citizen of Pretoria, I want to post a complaint about the delayed repair of streetlights in my neighborhood, so that the local government can be aware of and address the issue.
+#### 🔑 User Story 2: User Authentication
+
+---
+
+**2.1: Account Creation**  
+As a user, I want to create an account with my details, so that I can have a personalized experience on the platform.
+
+**2.2: Log In**  
+As a user, I want to log in using my credentials, so that I can access my account and interact with the platform.
+
+**2.3: Role Selection**  
+As a user, I want to choose my role (general public, government official) during account creation, so that I can have a customized experience based on my role.
 
 ---
 
@@ -47,6 +66,12 @@ As a citizen of Pretoria, I want to post a complaint about the delayed repair of
 
 **3.1. Viewing Data Analytics Visualizations**  
 As a user, I want to view analytics based on the data generated on the platform and standard data visualizations in a visually appealing way, so that I can understand the state of different government services.
+
+**3.2. Province-Wide Visualizations**  
+As a user, I want to see visualizations showing issues faced across all provinces, and by pressing on the circles representing different categories, I can identify which areas have the most issues.
+
+**3.3. Progress Reports**  
+As a user, I want to see reports that show the progress of most issues over the past weeks or years in different formats like bar graphs and line graphs, so that I can track improvements or ongoing problems.
 
 ---
 
@@ -59,6 +84,12 @@ As a user, I want the option to post anonymously, so that I can control my priva
 
 **4.2: User Profile**  
 As a user, I want to share my details, such as username, surname, and email address, when I choose to, so that I can build a public profile on the platform.
+
+**4.3. Profile Management**  
+As a user, I want to navigate to my profile where it will show my details, issues, and what has been resolved either by me or the municipality, so that I can keep track of my activity on the platform.
+
+**4.4. Edit Profile**  
+As a user, I want to edit my profile display name, bio, and profile picture by navigating to the edit profile section and making the necessary updates, so that my profile reflects my current information.
 
 ---
 
@@ -74,6 +105,21 @@ As a user, I want to log in using my credentials, so that I can access my accoun
 
 **5.3: Role Selection**  
 As a user, I want to choose my role (general public, government official) during account creation, so that I can have a customized experience based on my role.
+
+---
+
+#### 📋 User Story 6: Subscriptions and Filtering
+
+---
+
+**6.1. Issue Subscription**  
+As a user, I want to subscribe to an issue or a category if I am interested in that specific issue because it is in my area and I need updates on it, so that I can stay informed.
+
+**6.2. Feed Sorting**  
+As a user, I want to sort my feed of issues from oldest to newest or by most comments, so that I can view the posts in the order that interests me most.
+
+**6.3. Feed Filtering**  
+As a user, I want to filter my feed by category, such as electricity or water, so that I can easily find posts related to my interests or concerns.
 
 ## Functional Requirements Sorted by Subsystems
 
@@ -164,47 +210,3 @@ As a user, I want to choose my role (general public, government official) during
     <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
 </div>
 
-## 🎨 Design Patterns
-
-**1. Singleton**: We will use the Singleton Pattern for managing user sessions in the User Management Module and for the Data Analytics Engine in the Data Analytics and Visualization Module. This pattern ensures that a class has only one instance and provides a global point of access to it, which is perfect for managing user sessions and ensuring there is only one active instance of the Data Analytics Engine.
-
-**2. Observer**: We will use the Observer Pattern in the Post Management Module for notifying other parts of the system about changes in posts (like a new post being created). This pattern is beneficial because it allows us to maintain a list of observers which are automatically notified of any changes to the subject. This way, we can easily add or remove observers without modifying the subject's code.
-
-**3. Factory**: We will use the Factory Pattern in the User Management Module for creating different types of users (regular user, municipal official, etc.), and in the Post Management Module for creating different types of posts. This pattern helps us encapsulate the complexities involved in creating different types of users and posts, making the code more maintainable and flexible.
-
-**4. Strategy**: We will use the Strategy Pattern in the Data Analytics and Visualization Module for switching between different data analysis and visualization algorithms. This pattern is beneficial because it allows an algorithm's behavior to be selected at runtime. This way, we can easily add new algorithms or modify existing ones without affecting the context class that uses them.
-
-## ⚖️ Constraints
-
-1. The system must not follow a serverless model.
-2. The system should not be cloud-native and must be able to run on one or more Linux VMs.
-3. All libraries/services used must be open source.
-
-## 🛠️ Technology Requirements
-
-**1. Frontend**
-
-- ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-- ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-
-**2. Backend**
-
-- ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=nodedotjs&logoColor=white)
-- ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-
-**3. Data Science**
-
-- ![Python](https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-- ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
-
-**4. Database**
-
-- ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-- ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
-
----
-
-[Back](./../README.md)<br>
-[Back to main](/README.md)
-
----
