@@ -7,11 +7,11 @@
 ## Contents
 
 1. [Introduction](#Introduction)
-2. [Design Strategy](#Design-Strategy-📃)
-3. [Quality Requirements](#Quality-Requirements-📋)
-4. [Architectural Patterns](#Architectural-Patterns-🔨)
-5. [Technology Choices](#Technology-Choices-💭)
-6. [Architectural Constraints](#Architectural-Constraints-⚠️)
+2. [Design Strategy](#Design-Strategy)
+3. [Quality Requirements](#Quality-Requirements)
+4. [Architectural Patterns](#Architectural-Patterns)
+5. [Technology Choices](#Technology-Choices)
+6. [Architectural Constraints](#Architectural-Constraints)
 
 # Introduction
 
@@ -171,9 +171,7 @@ As our project evolves, we aim to transition from the current monolithic archite
 
 ## Frontend Technologies
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) <br>
-
-### NextJs
+### NextJs ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 
 Next.js is a React framework that enables server-side rendering and static site generation. It simplifies the creation of dynamic web applications and enhances SEO.
 
@@ -191,6 +189,24 @@ Next.js is a React framework that enables server-side rendering and static site 
 ### Fit with Architecture
 
 - SSR reduces client-side processing, improving performance during high user activity.
+
+### React ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+
+React is a JavaScript library for building user interfaces with a component-based approach. It’s highly popular and widely used.
+
+### Pros:
+
+- Large ecosystem and community support
+- Supports a component-based architecture
+
+### Cons:
+
+- Requires additional setup for SSR (using frameworks like Next.js)
+- Steep learning curve for beginners
+
+### Fit with Architecture
+
+- Enables rapid development of interactive and responsive user interfaces, improving user experience during high interaction.
 
 # Architectural Constraints ⚠️
 
