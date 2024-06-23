@@ -9,10 +9,12 @@ import {
   SubData, SeriesDataItem, Params, Api, RenderItemResult
 } from "@/lib/types";
 import { colorFromCategory } from '@/lib/utils';
+import { LoadingSpinner } from '../Spinner/Spinner';
 
 const EChartsComponent = () => {
   const chartRef = useRef(null);
   const [vizData, setVizData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchVizData() {
@@ -26,12 +28,14 @@ const EChartsComponent = () => {
       }
 
       setVizData((await response.json()).data);
+      setLoading(false);
     }
 
     fetchVizData();
   }, []);
 
   useEffect(() => {
+    if (loading) return;
     const chartDom = chartRef.current;
     const myChart = echarts.init(chartDom);
 
@@ -239,7 +243,11 @@ const EChartsComponent = () => {
     };
   }, [vizData]);
 
-  return <div ref={chartRef} style={{ height: '100vh' }} />;
+  if (loading) {
+    return <LoadingSpinner className='mt-10 ml-16'/>;
+  } else {
+    return <div ref={chartRef} style={{ height: '100vh' }} />;
+  }
 };
 
 export default EChartsComponent;

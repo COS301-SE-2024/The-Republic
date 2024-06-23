@@ -8,7 +8,7 @@ const EChartsComponent = dynamic(() => import('@/components/Visualisations/DotVi
 function page() {
   return (
     <div>
-      <h1>ECharts Visualization</h1>
+      <h1>Number of issues per location</h1>
       <EChartsComponent />
     </div>
   );
