@@ -34,9 +34,10 @@
 # Documentation
 
 The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines.
+
 [Documentation](./documentation/README.md)
 
-#### Links to the Latest Sections of the Documentation:
+## Links to the Latest Documentation of the Project
 
 - [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
 - [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion2.md)
