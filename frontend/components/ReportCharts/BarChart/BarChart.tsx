@@ -54,7 +54,7 @@ function BarChart() {
     const barChart = echarts.init(document.querySelector("#barChart") as HTMLElement);
     barChart.setOption({
       title: {
-        text: 'Bar Chart Representation',
+        text: 'Count of Resolved vs Unresolved Issues by Category',
         left: 'center',
         top: '0%'
       },

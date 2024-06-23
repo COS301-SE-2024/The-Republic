@@ -69,7 +69,7 @@ function DonutChart() {
         trigger: 'item' 
       },
       title: {
-        text: 'Donut Chart Representation',
+        text: 'Distribution of Reported Issues by Category',
         left: 'center',
         top: '0%'
       },

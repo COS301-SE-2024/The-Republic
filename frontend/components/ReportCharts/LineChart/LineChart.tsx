@@ -66,7 +66,7 @@ function LineChart() {
       const lineChart = echarts.init(document.querySelector("#lineChart") as HTMLElement);
       lineChart.setOption({
         title: {
-          text: 'Line Chart Representation',
+          text: 'Trend of Reported Issues Over Time',
           left: 'center',
           top: '0%'
         },

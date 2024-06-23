@@ -76,7 +76,7 @@ const TransitionOfParliament: React.FC = () => {
 
         const pieOption: echarts.EChartsOption = {
             title: {
-                text: 'Transition of Parliament Representation',
+                text: 'Hierarchical Distribution of Issues by Service Category',
                 left: 'center',
                 top: '0%'
             },

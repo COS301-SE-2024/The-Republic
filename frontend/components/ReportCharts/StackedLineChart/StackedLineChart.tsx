@@ -61,7 +61,7 @@ function StackedLineChart() {
 
         const option = {
           title: {
-            text: 'Stacked Line Chart Representation',
+            text: 'Fluctuations in Daily Reported Issues Across Multiple Sectors',
             left: 'center',
             top: '0%'
           },

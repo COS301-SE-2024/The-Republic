@@ -79,7 +79,7 @@ function RadarChart() {
         const radarChart = echarts.init(radarChartElement);
         radarChart.setOption({
           title: {
-            text: 'Radar Chart Representation',
+            text: 'Comparison of Resolved and Unresolved Issues by Category',
             left: 'center',
             top: '0%'
           },
