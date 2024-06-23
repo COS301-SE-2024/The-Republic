@@ -1,85 +1,151 @@
 "use client";
-import React from "react";
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "../ui/command";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
 
-const Sidebar = () => {
-  const router = useRouter();
-  const pathname = usePathname();
+import React, { useEffect } from 'react';
+import {
+  HomeIcon,
+  ProfileIcon,
+  VisualizationsIcon,
+  LogoutIcon,
+  ReportsIcon,
+  NotificationsIcon,
+  SettingsIcon
+} from "../icons";
 
-  const sidebarList = [
-    {
-      group: "General",
-      items: [
-        { link: "/", text: "Home" },
-        { link: "/notifications", text: "Notifications" },
-        { link: "/reports", text: "View Reports" },
-        { link: "/visualizations", text: "Visualizations" },
-        { link: "/profile", text: "Profile" },
-      ],
-    },
-  ];
+import { supabase } from "@/lib/globals";
+import { useToast } from "@/components/ui/use-toast";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+import { HomeAvatarProps } from '@/lib/types';
+import styles from "@/styles/Custom.module.css";
+import { useUser } from "@/lib/contexts/UserContext";
+
+import Link from 'next/link';
+
+const Sidebar: React.FC<HomeAvatarProps> = () => {
+  const { user } = useUser();
+  const { toast } = useToast();
+  useEffect(() => {
+    if (user) {
+      const channelA = supabase
+        .channel('schema-db-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'comments',
+          // filter: `user_id=neq.${user.user_id}`,
+        }, (payload) => {
+          toast({
+            variant: "warning",
+            description: "Comments Flooding for a Reported Issue"
+          });
+          const { new: notification } = payload;
+          console.log("Comments Notification Data: ", notification);
+        })
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'reaction',
+        }, (payload) => {
+          toast({
+            variant: "warning",
+            description: "Issue Gaining Exposure, new Reactions"
+          });
+          const { new: notification } = payload;
+          console.log("Reaction Notification Data Now: ", notification);
+        })
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'issue',
+        }, (payload) => {
+          toast({
+            variant: "warning",
+            description: "New Issue Reported, Check it Out!",
+          });
+          const { new: notification } = payload;
+          console.log("Issue Notification Data: ", notification);
+        })
+        .subscribe((status) => {
+          console.log('Subscription Result: ', status);
+        });
+
+      return () => {
+        channelA.unsubscribe();
+      };
+    }
+  }, [user]);
 
   return (
     <div className="w-[300px] border-r min-h-80vh">
-      <div className="grow">
-        <Command className="shadow-md">
-          <CommandList>
-            {sidebarList.map((menu, key) => (
-              <CommandGroup key={key} heading={menu.group}>
-                {menu.items.map((option, optionKey) => (
-                  <CommandItem
-                    key={optionKey}
-                    className={`flex gap-2 cursor-pointer ${
-                      pathname === option.link ? "bg-gray-200" : ""
-                    }`}
-                    onSelect={() => router.push(option.link)}
-                  >
-                    {option.text}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            ))}
-            <CommandSeparator />
-            <CommandGroup heading="More">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <CommandItem>Settings</CommandItem>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onSelect={() =>
-                        router.push("/settings/RequestVerification")
-                      }
-                    >
-                      Request Verification
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={() => router.push("/settings/Preferences")}
-                    >
-                      Preferences
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CommandGroup>
-          </CommandList>
-        </Command>
+      <div className={`${styles.sidebar} grow`}>
+        <ul className={styles.sidebarLinks}>
+          <h4>
+            <span>General</span>
+          </h4>
+          <li>
+            <Link href="/">
+              <HomeIcon />
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link href="/visualizations">
+              <VisualizationsIcon />
+              Visualizations
+            </Link>
+          </li>
+          <li>
+            <Link href="/reports">
+              <ReportsIcon />
+              Reports
+            </Link>
+          </li>
+          {user && (
+            <>
+              <li>
+                <Link href="/notifications">
+                  <NotificationsIcon />
+                  Notifications
+                </Link>
+              </li>
+              <h4>
+                <span>Account</span>
+              </h4>
+              <li>
+                <Link href={`/profile/${user.user_id}`}>
+                  <ProfileIcon />
+                  Profile
+                </Link>
+              </li>
+              <li>
+                <Link href="/settings">
+                  <SettingsIcon />
+                  Settings
+                </Link>
+              </li>
+              <li>
+                <Link href="/login">
+                  <LogoutIcon />
+                  Logout
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
+        {user && (
+          <div className={styles.userAccount}>
+            <div className={styles.userProfile}>
+              <Avatar>
+                <AvatarImage src={user.image_url} />
+                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+              </Avatar>
+              <div className={styles.userDetail}>
+                <h3>{user.fullname}</h3>
+                <span>@{user.username}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

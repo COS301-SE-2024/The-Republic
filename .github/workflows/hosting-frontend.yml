@@ -5,12 +5,10 @@ on:
   push:
     branches:
       - master
-      - main
 
 jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: production
     env:

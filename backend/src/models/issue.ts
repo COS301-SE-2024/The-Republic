@@ -1,16 +1,19 @@
 interface User {
-  user_id: string;
-  email_address: string;
+  user_id: string | null;
+  email_address: string | null;
   username: string;
   fullname: string;
-  image_url: string;
+  image_url: string | null;
+  is_owner: boolean | null;
+  total_issues: number | null;
+  resolved_issues: number | null;
 }
 
 interface Category {
   name: string;
 }
 
-interface Reaction {
+interface ReactionCount {
   emoji: string;
   count: number;
 }
@@ -18,17 +21,36 @@ interface Reaction {
 interface Issue {
   issue_id: number;
   user_id: string;
-  location_id: number | null;
   category_id: number;
   content: string;
+  sentiment: string;
   image_url: string | null;
   is_anonymous: boolean;
+  location_id: number | null;
+  location_data: {
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+    place_id: string;
+  } | null;
+  location?: {
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+    place_id: string;
+  } | null;
   created_at: string;
+  updated_at: string;
   resolved_at: string | null;
-  sentiment: string;
   user: User;
   category: Category;
-  reactions: Reaction[]; 
+  reactions: ReactionCount[];
+  user_reaction: string | null;
+  comment_count: number;
+  is_owner: boolean;
+  profile_user_id: string;
 }
 
-export { User, Category, Reaction, Issue };
+export { User, Category, ReactionCount, Issue };

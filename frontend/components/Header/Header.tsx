@@ -1,41 +1,34 @@
-'use client';
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { ModeToggle } from "../ThemeToggle/ModeToggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser } from "@/lib/contexts/UserContext";
+import { HomeAvatar } from "../HomeAvatar/HomeAvatar";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/globals";
-import { User } from '@supabase/supabase-js';
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import styles from "@/styles/Custom.module.css";
+import { useTheme } from "next-themes";
 
-export default function Header() {
-  const [user, setUser] = useState<User | null>(null);
+const Header = () => {
+  const { user } = useUser();
   const router = useRouter();
+  const { theme } = useTheme();
+  const [logoSrc, setLogoSrc] = useState("/images/b-logo.png"); // Default to light mode logo
 
+  // Listen for changes in theme and update logo accordingly
   useEffect(() => {
-    async function checkAuth() {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Failed to retrieve session:', sessionError);
-        return;
-      }
-      if (session) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-          console.error('Failed to retrieve user:', userError);
-          return;
-        }
-        setUser(user);
-      }
-      
-    }
-
-    checkAuth();
-  }, []);
+    const newLogoSrc = theme === "dark" ? "/images/w-logo.png" : "/images/b-logo.png";
+    setLogoSrc(newLogoSrc);
+  }, [theme]);
 
   return (
     <header className="flex items-center justify-between p-5 border-b bg-background">
-      <div className="text-lg font-bold">The Republic</div>
+      <div className={styles.republicHeader}>
+        <Image width={24} height={24} src={logoSrc} alt="logo" />
+        <h2>The Republic</h2>
+      </div>
       <div className="flex items-center flex-grow mx-8">
         <div className="flex-grow mr-4">
           <SearchBar />
@@ -44,18 +37,12 @@ export default function Header() {
           <ModeToggle />
         </div>
         {user ? (
-          <Avatar>
-            <AvatarImage
-              src={"https://homecoming.messiah.edu/wp-content/uploads/2015/04/speaker-3-v2.jpg"}
-            />
-            <AvatarFallback>{"JD"}</AvatarFallback>
-          </Avatar>
+          <HomeAvatar imageUrl={user.image_url} />
         ) : (
           <Button
             onClick={() => {
               router.push("/signup");
             }}
-            
           >
             Sign Up
           </Button>
@@ -63,4 +50,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

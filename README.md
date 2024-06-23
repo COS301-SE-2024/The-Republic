@@ -1,47 +1,50 @@
 # Infinite Loopers - The Republic
 
 <img src="./documentation/images/InfiniteLoopers_13.jpeg" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
+
 > The Republic project aims to revolutionize citizen engagement with government services by providing a platform for individuals to share their experiences, report incidents, and voice their concerns. This initiative is designed to enhance transparency and accountability within government operations, allowing users to contribute to a public discourse that promotes improved service delivery. By organizing and analyzing user-generated content, The Republic seeks to provide a clear and comprehensive picture of government service performance, fostering a more informed and active citizenry.
 
 <div align="center">
 
-  ![last Push](https://img.shields.io/github/last-commit/COS301-SE-2024/The-Republic)
-  ![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2024/The-Republic)
-  [![Issues Closed](https://img.shields.io/github/issues-closed/COS301-SE-2024/The-Republic?color=blue)](https://github.com/COS301-SE-2024/The-Republic/issues?q=is%3Aissue+is%3Aclosed)
-  ![Languages](https://img.shields.io/github/languages/count/COS301-SE-2024/The-Republic)
-  ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/The-Republic)
-  [![Backend Unit Testing](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml)
-  [![Docker Deployment](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml)
-  [![Backend Linter](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml)
+![last Push](https://img.shields.io/github/last-commit/COS301-SE-2024/The-Republic)
+![GitHub Issues](https://img.shields.io/github/issues/COS301-SE-2024/The-Republic)
+[![Issues Closed](https://img.shields.io/github/issues-closed/COS301-SE-2024/The-Republic?color=blue)](https://github.com/COS301-SE-2024/The-Republic/issues?q=is%3Aissue+is%3Aclosed)
+![Languages](https://img.shields.io/github/languages/count/COS301-SE-2024/The-Republic)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/The-Republic)
+[![Backend Unit Testing](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/testing-backend.yml)
+[![Docker Deployment](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/docker-backend.yml)
+[![Backend Linter](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/linter-backend.yml)
+[![End-To-End Testing With Cypress](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/cypress.yml/badge.svg)](https://github.com/COS301-SE-2024/The-Republic/actions/workflows/cypress.yml)
+</div>
+
+# Demo Resources
+
+<div>
+
+| Demo   | Video                                                                                                          | Slides                                                                                                                                                                         |
+| ------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGG4_iuy44/iqlGvxp0i5SekCY6Ez_RQA/edit?utm_content=DAGG4_iuy44&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 
 </div>
 
-# Demo
-- [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link)
-
 # Link To Project Board
+
 - [The Republic Project Board](https://github.com/orgs/COS301-SE-2024/projects/79)
 
 # Documentation
 
-The documentation will guide you through various aspects of the project, including architectural design, implementation details, and user guidelines. [View Full Documentation Here](./documentation/README.md)
+The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
-#### `Links to Specific Sections of the Documentation`:
+## Links to the Latest Documentation of the Project
 
-- [Link to Requirements Specification](./documentation/specifications/RequirementsSpecification.md)
-- [Link to Coding Standards](./documentation/specifications/CodingStandards.md)
-<!-- - [Link to User Manual](./documentation/specifications/UserManual.md) -->
+- [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
+- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion2.md)
+- [Delivery Specification](./documentation/specifications/DeliverySpecificationVersion2.md)
+- [Testing Specification](./documentation/specifications/TestingSpecificationVersion2.md)
+- [User Manual](./documentation/specifications/UserManualVersion2.md)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion2.md)
+- [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
-<!-- -[Link to Implementation Specification](./documentation/specifications/ImplementationSpecification.md) -->
-- [Link to Delivery Specification](./documentation/specifications/DeliverySpecification.md)
-<!-- -[Link to Testing Specification](./documentation/specifications/TestingSpecification.md)
-- [Link to Project Plan](./documentation/specifications/ProjectPlan.md)
-- [Link to Design Specification](./documentation/specifications/DesignSpecification.md)
-- [Link to Architectural Specification](./documentation/specifications/ArchitecturalSpecification.md) -->
-
-<p align="center">
-  <img src="./documentation/images/assets/il_logo_lighter.png" width="150" height="auto">
-</p>
 
 <h1 align="center">Meet The Infinite Loopers!</h1>
 

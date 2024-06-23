@@ -33,8 +33,8 @@ Follow these steps to install the application:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-repo/node-express-ts-backend.git
-   cd node-express-ts-backend
+   git clone https://github.com/COS301-SE-2024/The-Republic.git
+   cd backend
    ```
 
 2. **Install dependencies:**
@@ -190,33 +190,43 @@ backend/
 
 ## Running the Project
 
-To run the backend project located at "path/to/The-Republic/backend," follow these steps:
+- #### Running The Development Server:
 
-1. **Compile TypeScript files:**
+  ```bash
+  cd backend
+  npm i
+  npm run dev
+  ```
 
-   First, navigate to the root directory of the backend project. Then, compile the TypeScript files by executing the following command:
+- #### Running the Application locally in a Docker Container
 
-   ```bash
-   npx tsc
-   ```
+  - Changing working directory to the backend folder
+    ```bash
+    cd backend
+    ```
+  - Building the application locally:
 
-   This command uses the TypeScript compiler (`tsc`) to transpile the TypeScript files in the project into JavaScript. The compiled files will be placed in the designated output directory, typically `public`.
+    ```bash
+    docker build -t backend_the_republic .
+    ```
 
-2. **Start the server:**
+  - Running the application locally:
+    ```bash
+    docker run -p 8080:8080 -d backend_the_republic
+    ```
+  - Stopping and Removing all Containers Locally:
 
-   After the TypeScript files have been successfully compiled, start the server by running:
+    ```bash
+    docker stop $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+    ```
 
-   ```bash
-   node public/server.js
-   ```
+  - Removing all Unused Docker Objects:
+    ```bash
+    docker system prune -a
+    ```
 
-   This command uses Node.js to execute the compiled server file (`server.js`) located in the `public` directory. Once the server starts, it will be ready to handle requests and run the backend services for the project.
-
-3. **Access the API:**
-
-   - Open your browser and navigate to `http://localhost:8080/` to see the welcome message.
-   - Navigate to `http://localhost:8080/users` to see the list of users.
-
+> Open [http://localhost:8080](http://localhost:8080) with your browser to see the result. The page auto-updates as you edit the file.
 ---
 
 [Read Project Documentation](./../documentation/README.md)

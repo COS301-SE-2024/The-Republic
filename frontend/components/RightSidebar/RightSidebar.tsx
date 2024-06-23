@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
 
 const sortOptions = {
@@ -15,22 +15,27 @@ const sortOptions = {
 const filterOptions = {
   group: "Filter",
   items: [
-    { value: "all", label: "All" },
-    { value: "healthcare", label: "Healthcare Services" },
-    { value: "publicSafety", label: "Public Safety" },
-    { value: "water", label: "Water" },
-    { value: "transportation", label: "Transportation" },
-    { value: "electricity", label: "Electricity" },
-    { value: "sanitation", label: "Sanitation" },
-    { value: "socialServices", label: "Social Services" },
-    { value: "administrative", label: "Administrative Services" },
+    { value: "All", label: "All" },
+    { value: "Subscriptions", label: "Subscriptions"},
+    { value: "Healthcare", label: "Healthcare Services" },
+    { value: "Public Safety", label: "Public Safety" },
+    { value: "Water", label: "Water" },
+    { value: "Transportation", label: "Transportation" },
+    { value: "Electricity", label: "Electricity" },
+    { value: "Sanitation", label: "Sanitation" },
+    { value: "Social Services", label: "Social Services" },
+    { value: "Administrative", label: "Administrative Services" },
   ],
 };
 
-const RightSidebar = () => {
-  const [sortBy, setSortBy] = useState("");
-  const [filter, setFilter] = useState("");
+interface RightSidebarProps {
+  sortBy: string;
+  setSortBy: (value: string) => void;
+  filter: string;
+  setFilter: (value: string) => void;
+}
 
+const RightSidebar: React.FC<RightSidebarProps> = ({ sortBy, setSortBy, filter, setFilter }) => {
   return (
     <div className="w-[300px] border-l min-h-80vh p-4">
       <div className="mb-4">
