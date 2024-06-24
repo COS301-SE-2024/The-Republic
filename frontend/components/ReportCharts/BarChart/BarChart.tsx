@@ -43,7 +43,7 @@ function BarChart() {
     if (data && ('resolved' in data && 'unresolved' in data)) {
       const resolvedEntries: { [key: string]: number } = data.resolved;
       const unresolvedEntries: { [key: string]: number } = data.unresolved;
-    
+
       const combinedCategories = new Set([...Object.keys(resolvedEntries), ...Object.keys(unresolvedEntries)]);
 
       labels = Array.from(combinedCategories);
@@ -65,7 +65,7 @@ function BarChart() {
         }
       },
       legend: {
-        data: ['Unresolved', 'Reolved'],
+        data: ['Unresolved', 'Resolved'],
         top: '8%'
       },
       xAxis: {
@@ -97,7 +97,7 @@ function BarChart() {
           color: '#ee6666'
         },
         {
-          name: 'Reolved',
+          name: 'Resolved',
           data: resolverData,
           type: 'bar',
           color: '#91cc75'
