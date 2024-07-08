@@ -16,8 +16,7 @@
     "types": [
       "node",
       "jest",
-      "@testing-library/jest-dom",
-      "@testing-library/jest-dom/extend-expect"
+      "@testing-library/jest-dom"
     ],
     "plugins": [
       {
