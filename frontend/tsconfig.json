@@ -13,7 +13,12 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": "./",
-    "types": ["jest"],
+    "types": [
+      "node",
+      "jest",
+      "@testing-library/jest-dom",
+      "@testing-library/jest-dom/extend-expect"
+    ],
     "plugins": [
       {
         "name": "next"
