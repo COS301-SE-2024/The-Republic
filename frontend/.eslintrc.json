@@ -18,11 +18,12 @@
     }
   },
   "env": {
+    "jest/globals": true,
     "browser": true,
     "es6": true,
     "node": true
   },
-  "plugins": ["react", "@next/next", "@typescript-eslint"],
+  "plugins": ["react", "@next/next", "@typescript-eslint", "jest"],
   "rules": {
     "semi": ["error", "always"],
     "@typescript-eslint/no-explicit-any": [
