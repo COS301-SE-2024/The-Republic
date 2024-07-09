@@ -2,6 +2,7 @@ import React from 'react';
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from '@/components/ui/toaster';
+import { UserProvider } from '@/lib/contexts/UserContext';
 
 export default function RootLayout({
   children,
@@ -17,8 +18,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-          {children}
-          <Toaster/>
+          <UserProvider>
+            {children}
+            <Toaster/>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
