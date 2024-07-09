@@ -7,7 +7,7 @@ const TransitionOfParliament: React.FC = () => {
     const [dataArray, setDataArray] = useState<DataItem[]>([]);
 
     useEffect(() => {
-        const fetchIssues = async () => {   
+        const fetchIssues = async () => {
             try {
                 const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
                 const response = await fetch(url, {
@@ -35,11 +35,11 @@ const TransitionOfParliament: React.FC = () => {
 
         fetchIssues();
     }, []);
-    
+
     useEffect(() => {
         const transformData = (data: { resolved: { [key: string]: number }, unresolved: { [key: string]: number } }) => {
             const merged = { ...data.resolved };
-            
+
             Object.entries(data.unresolved).forEach(([key, value]) => {
                 if (merged[key]) {
                     merged[key] += value;
@@ -47,7 +47,7 @@ const TransitionOfParliament: React.FC = () => {
                     merged[key] = value;
                 }
             });
-            
+
             return Object.entries(merged).map(([name, value]) => ({ name, value }));
         };
 
@@ -190,7 +190,11 @@ const TransitionOfParliament: React.FC = () => {
             const chartElement = document.getElementById("transitionOfParliament");
 
             if (chartElement) {
-                const myChart = echarts.init(chartElement);
+                const myChart = echarts.init(
+                  chartElement,
+                  null,
+                  { width: 500 }
+                );
                 myChart.setOption(currentOption);
 
                 chartElement.onmouseenter = () => {
@@ -213,7 +217,7 @@ const TransitionOfParliament: React.FC = () => {
         <div className="col-lg-6">
             <div className="card">
                 <div className="card-body">
-                    <div id="transitionOfParliament" style={{ width: '100%', height: '400px' }} className="echart"></div>
+                    <div id="transitionOfParliament" style={{ width: 'max-content', height: '400px' }} className="echart mx-auto"></div>
                 </div>
             </div>
         </div>
