@@ -186,7 +186,6 @@ const TransitionOfParliament: React.FC = () => {
                 } as echarts.EChartsOption;
             })();
 
-            let currentOption: echarts.EChartsOption = pieOption;
             const chartElement = document.getElementById("transitionOfParliament");
 
             if (chartElement) {
@@ -195,7 +194,7 @@ const TransitionOfParliament: React.FC = () => {
                   null,
                   { width: 500 }
                 );
-                myChart.setOption(currentOption);
+                myChart.setOption(pieOption);
 
                 chartElement.onmouseenter = () => {
                     myChart.setOption(parliamentOption);
