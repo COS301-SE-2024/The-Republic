@@ -193,13 +193,16 @@ const TransitionOfParliament: React.FC = () => {
                 const myChart = echarts.init(chartElement);
                 myChart.setOption(currentOption);
 
-                const intervalId = setInterval(() => {
-                    currentOption = currentOption === pieOption ? parliamentOption : pieOption;
-                    myChart.setOption(currentOption);
-                }, 2000);
+                chartElement.onmouseenter = () => {
+                    myChart.setOption(parliamentOption);
+                };
+
+                chartElement.onmouseleave = () => {
+                    myChart.setOption(pieOption);
+                };
+
 
                 return () => {
-                    clearInterval(intervalId);
                     myChart.dispose();
                 };
             }
