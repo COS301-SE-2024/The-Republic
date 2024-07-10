@@ -53,7 +53,7 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center rounded-full p-1 hover:bg-gray-200">
+          <button className="flex items-center rounded-full p-1 hover:bg-gray-200" title="More Options">
             <MoreHorizontal />
           </button>
         </DropdownMenuTrigger>
