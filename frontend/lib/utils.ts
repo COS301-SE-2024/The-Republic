@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast as shadToast } from "@/components/ui/use-toast";
 import { supabase } from "./globals";
-import { Api } from "./types";
+import { Api, AnalysisResult } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -117,4 +117,27 @@ export async function fileToBase64(file: File): Promise<string> {
     );
     reader.onerror = (error) => reject(error);
   });
+}
+
+export async function checkImageAppropriateness(base64Image: string): Promise<boolean> {
+  const apiKey = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_KEY as string;
+  const url = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_URL as string;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      image: {
+        content: base64Image,
+      }
+    }),
+  });
+
+  const result = await response.json();
+
+  return !(result.categoriesAnalysis as AnalysisResult[])
+    .some((analysisResult) => analysisResult.severity > 0);
 }

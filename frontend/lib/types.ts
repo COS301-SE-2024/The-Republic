@@ -150,6 +150,11 @@ interface RenderItemResult {
   };
 }
 
-export type { User, Category, Reaction, Issue, HomeAvatarProps,
+interface AnalysisResult {
+  category: string;
+  severity: number;
+}
+
+export type { User, Category, Reaction, Issue, HomeAvatarProps, AnalysisResult,
    SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };
