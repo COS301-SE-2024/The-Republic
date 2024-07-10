@@ -2,13 +2,11 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { describe, expect } from '@jest/globals';
 import Header from '@/components/Header/Header';
-// import { useParams } from 'next/navigation';
 import { useUser } from '@/lib/contexts/UserContext';
 import * as NextThemes from 'next-themes';
 import * as NextRouter from 'next/navigation';
 import { useRouter } from 'next/router';
 
-// Mock the next/image component
 jest.mock('next/image', () => ({
   __esModule: true,
   default: jest.fn(() => <img alt="" />)
@@ -18,12 +16,10 @@ jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }));
 
-// Mock the next-themes hook
 jest.mock('next-themes', () => ({
   useTheme: jest.fn()
 }));
 
-// Mock the next/router hook
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn()
 }));
