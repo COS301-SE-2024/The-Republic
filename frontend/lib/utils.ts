@@ -100,8 +100,14 @@ export function formatMoreDate(dateString: string[]): string[] {
     return dates;
 }
 
-export function fileToBase64(file: File) {
+export async function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
+    if (file.size > 1048576) {
+      // TODO: Make constant or replace with type
+      reject("File too big");
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.readAsDataURL(file);
