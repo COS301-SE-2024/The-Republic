@@ -15,6 +15,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from 'lucide-react';
 import { LocationType } from '@/lib/types';
 import Image from 'next/image';
+import { checkImageAppropriateness, fileToBase64 } from '@/lib/utils';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -86,6 +87,36 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
+    if (image) {
+      let base64Image;
+      try {
+        base64Image = await fileToBase64(image);
+      } catch (error) {
+       if (error === "File too big") {
+          toast({
+            variant: "destructive",
+            description: "File exceeds limit of 1MB",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: "A file system error occured. Please try again",
+          });
+        }
+        return;
+      }
+
+      const isImageAppropriate = await checkImageAppropriateness(base64Image!);
+
+      if (!isImageAppropriate) {
+        toast({
+          variant: "destructive",
+          description: "Please use an appropriate image.",
+        });
+        return;
+      }
+    }
+
     const categoryID = parseInt(category);
     const { data } = await supabase.auth.getSession();
 
@@ -133,20 +164,20 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const checkContentAppropriateness = async (text: string): Promise<boolean> => {
     const apiKey = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
     const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-  
+
     const headers = {
       "Ocp-Apim-Subscription-Key": apiKey,
       "Content-Type": "text/plain",
     };
-  
+
     const response = await fetch(`${url}`, {
       method: "POST",
       headers,
       body: text,
     });
-  
+
     const result = await response.json();
-  
+
     if (
       (result.Terms && result.Terms.length > 0) ||
       result.Classification.Category1.Score > 0.5 ||
@@ -155,7 +186,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     ) {
       return false;
     }
-  
+
     return true;
   };
 
