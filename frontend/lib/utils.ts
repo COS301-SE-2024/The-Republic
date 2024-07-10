@@ -39,22 +39,22 @@ export function timeSince(time: string) {
 }
 
 export async function signOutWithToast(toast: typeof shadToast) {
-    const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
 
-    if (error) {
-        toast({
-            variant: "destructive",
-            description: "Failed to sign out, please try again",
-        });
-    } else {
-        toast({
-            description: "Signed out succesfully",
-        });
+  if (error) {
+    toast({
+      variant: "destructive",
+      description: "Failed to sign out, please try again",
+    });
+  } else {
+    toast({
+      description: "Signed out succesfully",
+    });
 
-        setTimeout(() => {
-            window.location.assign("/");
-        }, 2000);
-    }
+    setTimeout(() => {
+      window.location.assign("/");
+    }, 2000);
+  }
 }
 
 export function objectToQuery(obj: { [key: string]: string | number | boolean}) {
@@ -98,4 +98,17 @@ export function formatMoreDate(dateString: string[]): string[] {
         dates.push(formatDate(date));
     }
     return dates;
+}
+
+export function fileToBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => resolve(
+      (reader.result as string).replace(/data:.+\/.+;base64,/, "")
+    );
+    reader.onerror = (error) => reject(error);
+  });
 }
