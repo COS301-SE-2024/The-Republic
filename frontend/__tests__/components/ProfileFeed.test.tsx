@@ -1,6 +1,6 @@
 import React from 'react';
-import { describe, expect } from '@jest/globals';
-import { render, screen } from '@testing-library/react';
+import { describe } from '@jest/globals';
+import { render } from '@testing-library/react';
 import ProfileFeed from '@/components/ProfileFeed/ProfileFeed';
 
 jest.mock('@supabase/supabase-js', () => ({

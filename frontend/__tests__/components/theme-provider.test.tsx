@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { describe, expect } from '@jest/globals';
 import { ThemeProvider } from '@/components/theme-provider';
 

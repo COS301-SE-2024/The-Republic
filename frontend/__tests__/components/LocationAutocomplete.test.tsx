@@ -1,5 +1,5 @@
-import { describe, expect } from '@jest/globals';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { describe } from '@jest/globals';
+import { render } from '@testing-library/react';
 import React from 'react';
 import LocationAutocomplete from '@/components/LocationAutocomplete/LocationAutocomplete';
 

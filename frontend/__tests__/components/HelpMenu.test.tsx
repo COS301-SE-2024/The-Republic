@@ -3,7 +3,6 @@ import { describe, expect } from '@jest/globals';
 import { render, fireEvent } from '@testing-library/react';
 import HelpMenu from '@/components/HelpMenu/Helpmenu';
 import { useTheme } from 'next-themes';
-import '@testing-library/jest-dom';
 
 jest.mock('next-themes', () => ({
   useTheme: jest.fn(),

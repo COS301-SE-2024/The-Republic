@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, expect } from '@jest/globals';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Reaction from '@/components/Reaction/Reaction';
 
 jest.mock('@supabase/supabase-js', () => ({
