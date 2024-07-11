@@ -1,9 +1,8 @@
 import React from 'react';
 import { describe, expect } from '@jest/globals';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { HomeAvatar } from '@/components/HomeAvatar/HomeAvatar';
 import * as useToastModule from '@/components/ui/use-toast';
-import * as utils from '@/lib/utils';
 
 jest.mock('@/components/ui/use-toast', () => ({
   useToast: jest.fn(),
