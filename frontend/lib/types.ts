@@ -18,6 +18,20 @@ interface ProfileStatsProps {
   setSelectedTab: (tab: "issues" | "resolved") => void;
 }
 
+interface IssueInputBoxProps {
+  user: {
+    user_id: string;
+    email_address: string;
+    username: string;
+    fullname: string;
+    image_url: string;
+    bio: string;
+    is_owner: boolean;
+    total_issues: number;
+    resolved_issues: number;
+  } | null;
+}
+
 interface Category {
   name: string;
 }
@@ -61,6 +75,9 @@ interface Issue {
   is_owner: boolean;
   profile_user_id: string;
   user_reaction: string;
+}
+interface IssueProps {
+  issue: Issue;
 }
 
 interface Comment {
@@ -158,6 +175,6 @@ interface RenderItemResult {
   };
 }
 
-export type { ProfileStatsProps, User, Category, Reaction, Issue, HomeAvatarProps,
+export type { IssueProps, IssueInputBoxProps, ProfileStatsProps, User, Category, Reaction, Issue, HomeAvatarProps,
    SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };
