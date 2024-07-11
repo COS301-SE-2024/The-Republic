@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 export function LoadingSpinner({ className }: {className?: string}) {
   return <svg
+      role="img"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
