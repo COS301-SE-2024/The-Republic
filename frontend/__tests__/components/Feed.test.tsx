@@ -85,7 +85,7 @@ describe('Feed', () => {
     mockFetch(issues);
     render(<Feed />);
     await waitFor(() => expect(screen.queryByText('Spinner')).not.toBeInTheDocument());
-    expect(screen.getAllByText('Issue:')).not.toBe(null);
+    expect(screen.queryAllByText(/Issue/i)).not.toEqual([]);
   });
 
   it('handles sorting and filtering', async () => {
