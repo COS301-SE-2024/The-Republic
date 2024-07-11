@@ -10,6 +10,14 @@ interface User {
   resolved_issues: number;
 }
 
+interface ProfileStatsProps {
+  userId: string;
+  totalIssues: number | null;
+  resolvedIssues: number | null;
+  selectedTab: "issues" | "resolved";
+  setSelectedTab: (tab: "issues" | "resolved") => void;
+}
+
 interface Category {
   name: string;
 }
@@ -150,6 +158,6 @@ interface RenderItemResult {
   };
 }
 
-export type { User, Category, Reaction, Issue, HomeAvatarProps,
+export type { ProfileStatsProps, User, Category, Reaction, Issue, HomeAvatarProps,
    SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };

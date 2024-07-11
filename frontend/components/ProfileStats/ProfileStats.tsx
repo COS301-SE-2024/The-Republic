@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-
-interface ProfileStatsProps {
-  userId: string;
-  totalIssues: number | null;
-  resolvedIssues: number | null;
-  selectedTab: "issues" | "resolved";
-  setSelectedTab: (tab: "issues" | "resolved") => void;
-}
+import { ProfileStatsProps } from '@/lib/types';
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({
   totalIssues,
