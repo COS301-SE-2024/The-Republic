@@ -2,39 +2,13 @@ import React, { useEffect, useState } from "react";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
-import { Issue as IssueType } from "@/lib/types";
+import { Issue as IssueType, UserAlt, RequestBody, FeedProps } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { FaSpinner } from 'react-icons/fa';
 
-interface User {
-  user_id: string;
-  email_address: string;
-  username: string;
-  fullname: string;
-  image_url: string;
-  bio: string;
-  is_owner: boolean;
-  total_issues: number;
-  resolved_issues: number;
-  access_token: string;
-}
-
-interface RequestBody {
-  from: number;
-  amount: number;
-  order_by: string;
-  ascending: boolean;
-  category?: string;
-}
-
-interface FeedProps {
-  userId?: string;
-  showInputBox?: boolean;
-}
-
 const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [issues, setIssues] = useState<IssueType[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserAlt | null>(null);
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -53,7 +27,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
 
         if (userDetailsResponse.ok) {
           const userDetails = await userDetailsResponse.json();
-          const user: User = {
+          const user: UserAlt = {
             user_id: session.user.id,
             fullname: userDetails.data.fullname,
             image_url: userDetails.data.image_url,

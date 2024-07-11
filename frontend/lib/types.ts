@@ -10,6 +10,19 @@ interface User {
   resolved_issues: number;
 }
 
+interface UserAlt {
+  user_id: string;
+  email_address: string;
+  username: string;
+  fullname: string;
+  image_url: string;
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
+}
+
 interface ProfileStatsProps {
   userId: string;
   totalIssues: number | null;
@@ -175,6 +188,19 @@ interface RenderItemResult {
   };
 }
 
-export type { IssueProps, IssueInputBoxProps, ProfileStatsProps, User, Category, Reaction, Issue, HomeAvatarProps,
+interface RequestBody {
+  from: number;
+  amount: number;
+  order_by: string;
+  ascending: boolean;
+  category?: string;
+}
+
+interface FeedProps {
+  userId?: string;
+  showInputBox?: boolean;
+}
+
+export type { FeedProps, RequestBody, UserAlt, IssueProps, IssueInputBoxProps, ProfileStatsProps, User, Category, Reaction, Issue, HomeAvatarProps,
    SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
 };
