@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "--------- Building frontend Docker image -----------"
           docker build -t infiniteloopers-frontend-app ./frontend
-          docker tag infiniteloopers-frontend-app ${{ secrets.DOCKERUSSER }}/infiniteloopers-frontend-app:v0
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-frontend-app:v0
+          docker tag infiniteloopers-frontend-app ${{ secrets.DOCKERUSSER }}/infiniteloopers-frontend-app:v1
+          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-frontend-app:v1
         env:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}

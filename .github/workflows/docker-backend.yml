@@ -40,8 +40,8 @@ jobs:
         run: |
           echo "--------- Building backend Docker image -----------"
           docker build -t infiniteloopers-backend-server ./backend
-          docker tag infiniteloopers-backend-server ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v0
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v0
+          docker tag infiniteloopers-backend-server ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v1
+          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-backend-server:v1
         env:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -50,5 +50,5 @@ jobs:
         run: |
           echo "--------- Building reverse proxy Docker image -----------"
           docker build -t infiniteloopers-reverseproxy ./reverseproxy
-          docker tag infiniteloopers-reverseproxy ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v0
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v0
+          docker tag infiniteloopers-reverseproxy ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
+          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
