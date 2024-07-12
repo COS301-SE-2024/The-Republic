@@ -15,7 +15,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from 'lucide-react';
 import { LocationType } from '@/lib/types';
 import Image from 'next/image';
-import { checkImageAppropriateness, fileToBase64 } from '@/lib/utils';
+import { checkImageFileAndToast } from '@/lib/utils';
 
 const MAX_CHAR_COUNT = 500;
 
@@ -87,34 +87,8 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
-    if (image) {
-      let base64Image;
-      try {
-        base64Image = await fileToBase64(image);
-      } catch (error) {
-       if (error === "File too big") {
-          toast({
-            variant: "destructive",
-            description: "File exceeds limit of 1MB",
-          });
-        } else {
-          toast({
-            variant: "destructive",
-            description: "A file system error occured. Please try again",
-          });
-        }
-        return;
-      }
-
-      const isImageAppropriate = await checkImageAppropriateness(base64Image!);
-
-      if (!isImageAppropriate) {
-        toast({
-          variant: "destructive",
-          description: "Please use an appropriate image.",
-        });
-        return;
-      }
+    if (image && !await checkImageFileAndToast(image, toast)) {
+      return;
     }
 
     const categoryID = parseInt(category);

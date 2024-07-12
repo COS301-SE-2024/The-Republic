@@ -141,3 +141,40 @@ export async function checkImageAppropriateness(base64Image: string): Promise<bo
   return !(result.categoriesAnalysis as AnalysisResult[])
     .some((analysisResult) => analysisResult.severity > 0);
 }
+
+export async function checkImageFileAndToast(
+  image: File,
+  toast: typeof shadToast
+): Promise<boolean> {
+  let base64Image;
+  try {
+    base64Image = await fileToBase64(image);
+  } catch (error) {
+   if (error === "File too big") {
+      toast({
+        variant: "destructive",
+        description: "File exceeds limit of 1MB",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        description: "A file system error occured. Please try again",
+      });
+    }
+
+    return false;
+  }
+
+  const isImageAppropriate = await checkImageAppropriateness(base64Image!);
+
+  if (!isImageAppropriate) {
+    toast({
+      variant: "destructive",
+      description: "Please use an appropriate image.",
+    });
+
+    return false;
+  }
+
+  return true;
+}
