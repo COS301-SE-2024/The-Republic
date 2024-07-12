@@ -21,7 +21,6 @@ const TransitionOfParliament: React.FC = () => {
                     }
                 });
                 const apiResponse = await response.json();
-                console.log('API Response:', apiResponse);
 
                 if (apiResponse.success && apiResponse.data) {
                     setData(apiResponse.data);
