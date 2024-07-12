@@ -10,7 +10,6 @@ function DonutChart() {
     const fetchIssues = async () => {   
       try {
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-        console.log('Fetching from URL:', url);
         const response = await fetch(url, {
           method: "POST",
           body: JSON.stringify({
@@ -22,7 +21,6 @@ function DonutChart() {
           }
         });
         const apiResponse = await response.json();
-        console.log('API Response:', apiResponse);
 
         if (apiResponse.success && apiResponse.data) {
           setData(apiResponse.data);
@@ -53,9 +51,7 @@ function DonutChart() {
     };
 
     if (data && ('resolved' in data && 'unresolved' in data)) {
-      console.log('Data:', data);
       const transformedData = transformData(data);
-      console.log('Transformed Data:', transformedData);
       setDataArray(transformedData);
     }
   }, [data]);
