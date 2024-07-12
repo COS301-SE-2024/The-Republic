@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from "@/lib/globals";
+import Cookies from "js-cookie";
 
 interface User {
   user_id: string;
@@ -64,6 +65,22 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     fetchUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // TODO: Extract strings into constants
+      if (event === "SIGNED_IN") {
+        Cookies.set(
+          "Authorization", session?.access_token ?? '', {
+          expires: new Date((session?.expires_at ?? 0) * 1000)
+        });
+      } else if (event === "SIGNED_OUT") {
+        Cookies.remove("Authorization");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
