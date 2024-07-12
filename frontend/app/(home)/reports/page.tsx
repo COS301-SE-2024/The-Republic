@@ -18,12 +18,12 @@ function Page() {
         Comprehensive <span className="text-green-600 dark:text-green-500">Report</span> on Issues.
       </h3>
       <div className="row">
-        <StackedLineChart />
         <TransitionOfParliament />
         <BarChart />
         <RadarChart />
         <LineChart />
         <DonutChart />
+        <StackedLineChart />
       </div>
     </section>
   );
