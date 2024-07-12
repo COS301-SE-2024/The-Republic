@@ -243,15 +243,13 @@ const EChartsComponent = () => {
     };
   }, [vizData]);
 
-  if (loading) {
-    return (
-      <div className='pt-64 w-full flex flex-row justify-center'>
-        <LoadingSpinner/>
-      </div>
-    );
-  } else {
-    return <div ref={chartRef} style={{ height: '100vh' }} />;
-  }
+  return loading ? (
+    <div className='pt-64 w-full flex flex-row justify-center' data-testid="loading-spinner">
+      <LoadingSpinner />
+    </div>
+  ) : (
+    <div ref={chartRef} style={{ height: '100vh' }} data-testid="echarts-container" />
+  );  
 };
 
 export default EChartsComponent;
