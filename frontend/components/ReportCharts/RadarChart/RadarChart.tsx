@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import * as echarts from 'echarts';
 import { DataItem2 } from "@/lib/reports";
-// import { Combine } from "lucide-react";
 
 function RadarChart() {
   const [data, setData] = useState<{ resolved: { [key: string]: number }, unresolved: { [key: string]: number } }>({ resolved: {}, unresolved: {} });
