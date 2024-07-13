@@ -33,6 +33,7 @@
     "luxon": "^3.4.4",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.1",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
