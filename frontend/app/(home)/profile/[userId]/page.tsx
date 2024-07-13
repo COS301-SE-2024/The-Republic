@@ -7,7 +7,7 @@ import { User } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner } from "react-icons/fa";
 
 const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -15,7 +15,9 @@ const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const params = useParams();
   const userId = params.userId as string;
-  const [selectedTab, setSelectedTab] = useState<"issues" | "resolved">("issues");
+  const [selectedTab, setSelectedTab] = useState<"issues" | "resolved">(
+    "issues",
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,7 +29,7 @@ const ProfilePage: React.FC = () => {
           const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}`;
           const response = await fetch(url, {
             headers: {
-              Authorization: `Bearer ${session.access_token}`
+              Authorization: `Bearer ${session.access_token}`,
             },
           });
           const responseData = await response.json();
@@ -67,20 +69,20 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div>
-      <ProfileHeader 
-        user={user} 
-        isOwner={isOwner} 
-        handleUpdate={handleUpdate} 
-        handleCancel={handleCancel} 
-        isEditing={isEditing} 
-        setIsEditing={setIsEditing} 
+      <ProfileHeader
+        user={user}
+        isOwner={isOwner}
+        handleUpdate={handleUpdate}
+        handleCancel={handleCancel}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
       />
-      <ProfileStats 
-        userId={user.user_id} 
-        totalIssues={user.total_issues} 
-        resolvedIssues={user.resolved_issues} 
-        selectedTab={selectedTab} 
-        setSelectedTab={setSelectedTab} 
+      <ProfileStats
+        userId={user.user_id}
+        totalIssues={user.total_issues}
+        resolvedIssues={user.resolved_issues}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
       />
       <div className="mt-5"></div>
       <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />

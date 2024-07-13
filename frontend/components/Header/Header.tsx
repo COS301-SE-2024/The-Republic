@@ -15,19 +15,19 @@ const Header = () => {
   const { user } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
-  const [logoSrc, setLogoSrc] = useState("/images/b-logo.png"); // Default to light mode logo
+  const [logoSrc, setLogoSrc] = useState("/images/b-logo-full.png"); // Default to light mode logo
 
   // Listen for changes in theme and update logo accordingly
   useEffect(() => {
-    const newLogoSrc = theme === "dark" ? "/images/w-logo.png" : "/images/b-logo.png";
+    const newLogoSrc =
+      theme === "dark" ? "/images/b-logo-full.png" : "/images/b-logo-full.png";
     setLogoSrc(newLogoSrc);
   }, [theme]);
 
   return (
     <header className="flex items-center justify-between p-5 border-b bg-background">
       <div className={styles.republicHeader}>
-        <Image width={24} height={24} src={logoSrc} alt="logo" />
-        <h2>The Republic</h2>
+        <Image width={200} height={200} src={logoSrc} alt="logo" />
       </div>
       <div className="flex items-center flex-grow mx-8">
         <div className="flex-grow mr-4">

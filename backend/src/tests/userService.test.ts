@@ -30,7 +30,10 @@ describe("UserService", () => {
       };
       userRepository.getUserById.mockResolvedValue(mockUser);
 
-      const response = await userService.getUserById(userId, authenticatedUserId);
+      const response = await userService.getUserById(
+        userId,
+        authenticatedUserId,
+      );
 
       expect(response.data).toEqual({ ...mockUser, is_owner: true });
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId);
@@ -42,12 +45,14 @@ describe("UserService", () => {
       const authenticatedUserId = "1";
       userRepository.getUserById.mockResolvedValue(null);
 
-      await expect(userService.getUserById(userId, authenticatedUserId)).rejects.toEqual(
+      await expect(
+        userService.getUserById(userId, authenticatedUserId),
+      ).rejects.toEqual(
         expect.objectContaining({
           code: 404,
           success: false,
           error: "User not found",
-        })
+        }),
       );
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId);
       expect(userRepository.getUserById).toHaveBeenCalledTimes(1);
@@ -68,12 +73,14 @@ describe("UserService", () => {
       };
       userRepository.getUserById.mockResolvedValue(mockUser);
 
-      const response = await userService.getUserById(userId, authenticatedUserId);
+      const response = await userService.getUserById(
+        userId,
+        authenticatedUserId,
+      );
 
       expect(response.data).toEqual({ ...mockUser, is_owner: false });
       expect(userRepository.getUserById).toHaveBeenCalledWith(userId);
       expect(userRepository.getUserById).toHaveBeenCalledTimes(1);
     });
   });
-
 });

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -26,19 +26,24 @@ const IssuePage = () => {
             headers.Authorization = `Bearer ${user.access_token}`;
           }
 
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/single`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({ issue_id: issueId }),
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/single`,
+            {
+              method: "POST",
+              headers,
+              body: JSON.stringify({ issue_id: issueId }),
+            },
+          );
 
           if (!response.ok) {
-            throw new Error('Failed to fetch issue details');
+            throw new Error("Failed to fetch issue details");
           }
 
           const responseData = await response.json();
           if (!responseData.success) {
-            throw new Error(responseData.error || 'Failed to fetch issue details');
+            throw new Error(
+              responseData.error || "Failed to fetch issue details",
+            );
           }
 
           setIssue(responseData.data);
@@ -65,7 +70,9 @@ const IssuePage = () => {
   return (
     <div className="container mx-auto p-2">
       <Issue issue={issue} />
-      {user && <AddCommentForm issueId={issueId as string} onCommentAdded={() => {}} />}
+      {user && (
+        <AddCommentForm issueId={issueId as string} onCommentAdded={() => {}} />
+      )}
       <CommentList issueId={issueId as string} />
     </div>
   );

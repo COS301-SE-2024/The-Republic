@@ -1,11 +1,14 @@
-module.exports = new Proxy({}, {
+module.exports = new Proxy(
+  {},
+  {
     get: function getter() {
-        return () => ({
-            className: 'className',
-            variable: 'variable',
-            style: {
-                fontFamily: 'fontFamily'
-            },
-        });
+      return () => ({
+        className: "className",
+        variable: "variable",
+        style: {
+          fontFamily: "fontFamily",
+        },
+      });
     },
-});
+  },
+);

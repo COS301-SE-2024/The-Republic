@@ -10,7 +10,7 @@ import { useTheme } from "next-themes";
 
 const CreatePost: React.FC = () => {
   const { user } = useUser();
-  const { theme } = useTheme(); 
+  const { theme } = useTheme();
 
   return (
     <Dialog.Root>
@@ -27,10 +27,14 @@ const CreatePost: React.FC = () => {
             theme === "dark" ? "bg-black text-white" : "bg-white text-black"
           }`}
         >
-          <Dialog.Title className="text-xl font-semibold mb-4">Create a Post</Dialog.Title>
+          <Dialog.Title className="text-xl font-semibold mb-4">
+            Create a Post
+          </Dialog.Title>
           <IssueInputBox user={user} />
           <Dialog.Close asChild>
-            <Button variant="outline" className="mt-4">Close</Button>
+            <Button variant="outline" className="mt-4">
+              Close
+            </Button>
           </Dialog.Close>
         </Dialog.Content>
       </Dialog.Portal>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/globals";
 import Cookies from "js-cookie";
 
@@ -28,37 +28,49 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
       if (sessionError) {
-        console.error('Failed to retrieve session:', sessionError);
+        console.error("Failed to retrieve session:", sessionError);
         return;
       }
 
       if (session) {
-        const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+        const {
+          data: { user: authUser },
+          error: userError,
+        } = await supabase.auth.getUser();
 
         if (userError) {
-          console.error('Failed to retrieve user:', userError);
+          console.error("Failed to retrieve user:", userError);
           return;
         }
 
         if (authUser) {
           try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`, {
-              headers: {
-                Authorization: `Bearer ${session.access_token}`,
-                "Content-Type": "application/json",
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                  "Content-Type": "application/json",
+                },
               },
-            });
+            );
 
             if (!response.ok) {
-              throw new Error('Failed to fetch user data');
+              throw new Error("Failed to fetch user data");
             }
 
             const apiResponse = await response.json();
-            setUser({ ...apiResponse.data, access_token: session.access_token });
+            setUser({
+              ...apiResponse.data,
+              access_token: session.access_token,
+            });
           } catch (error) {
-            console.error('Failed to fetch user data:', error);
+            console.error("Failed to fetch user data:", error);
           }
         }
       }
@@ -66,12 +78,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     fetchUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       // TODO: Extract strings into constants
       if (event === "SIGNED_IN") {
-        Cookies.set(
-          "Authorization", session?.access_token ?? '', {
-          expires: new Date((session?.expires_at ?? 0) * 1000)
+        Cookies.set("Authorization", session?.access_token ?? "", {
+          expires: new Date((session?.expires_at ?? 0) * 1000),
         });
       } else if (event === "SIGNED_OUT") {
         Cookies.remove("Authorization");
@@ -84,9 +97,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
   );
 };
 

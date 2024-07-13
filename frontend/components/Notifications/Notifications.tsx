@@ -1,6 +1,6 @@
-import React from 'react';
-import { Bell } from 'lucide-react';
-import NotificationsList from './NotificationsList';
+import React from "react";
+import { Bell } from "lucide-react";
+import NotificationsList from "./NotificationsList";
 
 const Notifications: React.FC = () => {
   return (

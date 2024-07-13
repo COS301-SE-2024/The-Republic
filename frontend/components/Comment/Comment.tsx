@@ -30,8 +30,8 @@ const Comment: React.FC<CommentProps> = ({
     setShowReplies(true);
   };
 
-  const userAvatar = comment.user?.image_url || '';
-  const userFullname = comment.user?.fullname || 'Anonymous';
+  const userAvatar = comment.user?.image_url || "";
+  const userFullname = comment.user?.fullname || "Anonymous";
 
   return (
     <div className="flex items-start space-x-4 space-y-4 mb-4">
@@ -72,7 +72,9 @@ const Comment: React.FC<CommentProps> = ({
               className="text-green-600 dark:text-green-400"
               onClick={() => setShowReplies(!showReplies)}
             >
-              {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
+              {showReplies
+                ? "Hide replies"
+                : `Show replies (${replies.length})`}
             </button>
           )}
         </div>

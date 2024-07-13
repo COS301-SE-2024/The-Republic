@@ -5,7 +5,7 @@ const issueRepository = new IssueRepository();
 
 export class VisualizationRepository {
   async getVizData() {
-    const issues = await issueRepository.getIssues({from: 0, amount: 99});
+    const issues = await issueRepository.getIssues({ from: 0, amount: 99 });
 
     const data: VizData = {};
 
@@ -15,13 +15,13 @@ export class VisualizationRepository {
         data,
         location
           ? [
-            location.province,
-            location.city,
-            location.suburb,
-            location.district
-          ]
+              location.province,
+              location.city,
+              location.suburb,
+              location.district,
+            ]
           : [],
-        issue.category.name
+        issue.category.name,
       );
     }
 
@@ -40,13 +40,13 @@ export class VisualizationRepository {
     }
 
     if (place.length === 0) {
-      data[category] ??= { "$count": 0 };
+      data[category] ??= { $count: 0 };
       (data[category] as VizData)["$count"]!++;
       return;
     }
 
     const placeName = place.shift()!;
-    data[placeName] ??= { "$count": 0 };
+    data[placeName] ??= { $count: 0 };
     (data[placeName] as VizData)["$count"]!++;
 
     this._addIssue(data[placeName] as VizData, place, category);
