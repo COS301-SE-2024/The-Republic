@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast as shadToast } from "@/components/ui/use-toast";
 import { supabase } from "./globals";
-import { Api } from "./types";
+import { Api, AnalysisResult } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -39,22 +39,22 @@ export function timeSince(time: string) {
 }
 
 export async function signOutWithToast(toast: typeof shadToast) {
-    const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
 
-    if (error) {
-        toast({
-            variant: "destructive",
-            description: "Failed to sign out, please try again",
-        });
-    } else {
-        toast({
-            description: "Signed out succesfully",
-        });
+  if (error) {
+    toast({
+      variant: "destructive",
+      description: "Failed to sign out, please try again",
+    });
+  } else {
+    toast({
+      description: "Signed out succesfully",
+    });
 
-        setTimeout(() => {
-            window.location.assign("/");
-        }, 2000);
-    }
+    setTimeout(() => {
+      window.location.assign("/");
+    }, 2000);
+  }
 }
 
 export function objectToQuery(obj: { [key: string]: string | number | boolean}) {
@@ -98,4 +98,83 @@ export function formatMoreDate(dateString: string[]): string[] {
         dates.push(formatDate(date));
     }
     return dates;
+}
+
+export async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (file.size > 1048576) {
+      // TODO: Make constant or replace with type
+      reject("File too big");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = () => resolve(
+      (reader.result as string).replace(/data:.+\/.+;base64,/, "")
+    );
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+export async function checkImageAppropriateness(base64Image: string): Promise<boolean> {
+  const apiKey = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_KEY as string;
+  const url = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_URL as string;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      image: {
+        content: base64Image,
+      }
+    }),
+  });
+
+  const result = await response.json();
+
+  return !(result.categoriesAnalysis as AnalysisResult[])
+    .some((analysisResult) => analysisResult.severity > 0);
+}
+
+export async function checkImageFileAndToast(
+  image: File,
+  toast: typeof shadToast
+): Promise<boolean> {
+  let base64Image;
+  try {
+    base64Image = await fileToBase64(image);
+  } catch (error) {
+   if (error === "File too big") {
+      toast({
+        variant: "destructive",
+        description: "File exceeds limit of 1MB",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        description: "A file system error occured. Please try again",
+      });
+    }
+
+    return false;
+  }
+
+  const isImageAppropriate = await checkImageAppropriateness(base64Image!);
+
+  if (!isImageAppropriate) {
+    toast({
+      variant: "destructive",
+      description: "Please use an appropriate image.",
+    });
+
+    return false;
+  }
+
+  return true;
 }
