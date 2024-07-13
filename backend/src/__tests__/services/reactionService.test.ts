@@ -1,9 +1,9 @@
-import ReactionService from "../services/reactionService";
-import ReactionRepository from "../db/reactionRepository";
-import { Reaction } from "../models/reaction";
-import { APIResponse } from "../types/response";
+import ReactionService from "../../services/reactionService";
+import ReactionRepository from "../../db/reactionRepository";
+import { Reaction } from "../../models/reaction";
+import { APIResponse } from "../../types/response";
 
-jest.mock("../db/reactionRepository");
+jest.mock("../../db/reactionRepository");
 
 describe("ReactionService", () => {
   let reactionService: ReactionService;
