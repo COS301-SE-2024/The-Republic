@@ -11,9 +11,10 @@ export default function RootLayout({
     <div className="flex flex-col w-dvw h-dvh items-center">
       <div className="flex flex-col items-center mt-16  mb-2"> 
         <Image
+          priority
           width={200} 
           height={200} 
-          src="/images/b-logo-full.png"
+          src="/images/b-logo-full-vert.png"
           alt="The Republic logo"
           className={styles.logo} 
         />
