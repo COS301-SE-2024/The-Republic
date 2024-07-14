@@ -1,6 +1,6 @@
 import { Comment } from "../models/comment";
 import supabase from "../services/supabaseClient";
-import { GetCommentsParams, } from "../types/comment";
+import { GetCommentsParams } from "../types/comment";
 import { APIError } from "../types/response";
 
 export class CommentRepository {
@@ -25,22 +25,18 @@ export class CommentRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
     return count!;
   }
 
-  async getComments({
-    issue_id,
-    user_id,
-    from,
-    amount
-  }: GetCommentsParams) {
+  async getComments({ issue_id, user_id, from, amount }: GetCommentsParams) {
     const { data, error } = await supabase
       .from("comment")
-      .select(`
+      .select(
+        `
         *,
         user: user_id (
           user_id,
@@ -49,37 +45,42 @@ export class CommentRepository {
           fullname,
           image_url
         )
-      `)
+      `,
+      )
       .eq("issue_id", issue_id)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
-  
+
     if (error) {
       console.error(error);
-  
+
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
-  
+
     const comments = data.map((comment: Comment) => {
-      const isOwner = comment.is_anonymous ? comment.user_id === user_id : comment.user_id === user_id;
-      
+      const isOwner = comment.is_anonymous
+        ? comment.user_id === user_id
+        : comment.user_id === user_id;
+
       return {
         ...comment,
         is_owner: isOwner,
-        user: comment.is_anonymous ? {
-          user_id: null,
-          email_address: null,
-          username: 'Anonymous',
-          fullname: 'Anonymous',
-          image_url: null
-        } : comment.user
+        user: comment.is_anonymous
+          ? {
+              user_id: null,
+              email_address: null,
+              username: "Anonymous",
+              fullname: "Anonymous",
+              image_url: null,
+            }
+          : comment.user,
       };
     });
-  
+
     return comments as Comment[];
   }
 
@@ -98,20 +99,22 @@ export class CommentRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
     return {
       ...data,
       is_owner: true,
-      user: data.is_anonymous ? {
-        user_id: null,
-        email_address: null,
-        username: 'Anonymous',
-        fullname: 'Anonymous',
-        image_url: null
-      } : data.user
+      user: data.is_anonymous
+        ? {
+            user_id: null,
+            email_address: null,
+            username: "Anonymous",
+            fullname: "Anonymous",
+            image_url: null,
+          }
+        : data.user,
     } as Comment;
   }
 
@@ -130,7 +133,7 @@ export class CommentRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
@@ -138,7 +141,7 @@ export class CommentRepository {
       throw APIError({
         code: 404,
         success: false,
-        error: "Comment does not exist"
+        error: "Comment does not exist",
       });
     }
   }

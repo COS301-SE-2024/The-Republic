@@ -17,7 +17,7 @@ export default class ReactionRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
@@ -39,7 +39,7 @@ export default class ReactionRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
@@ -47,7 +47,7 @@ export default class ReactionRepository {
       throw APIError({
         code: 404,
         success: false,
-        error: "Reaction does not exist"
+        error: "Reaction does not exist",
       });
     }
 
@@ -68,14 +68,14 @@ export default class ReactionRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
     return data as Reaction | null;
   }
 
-  async getReactionCountsByIssueId(issueId: number)  {
+  async getReactionCountsByIssueId(issueId: number) {
     const { data, error } = await supabase
       .from("reaction")
       .select("emoji")
@@ -87,7 +87,7 @@ export default class ReactionRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
@@ -102,9 +102,9 @@ export default class ReactionRepository {
     });
 
     // Convert the aggregated counts into an array
-    return Object.keys(reactionCounts).map(emoji => ({
+    return Object.keys(reactionCounts).map((emoji) => ({
       emoji,
-      count: reactionCounts[emoji]
+      count: reactionCounts[emoji],
     }));
   }
 }

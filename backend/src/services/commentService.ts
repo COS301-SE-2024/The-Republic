@@ -15,16 +15,19 @@ export class CommentService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for getting number of comments"
+        error: "Missing required fields for getting number of comments",
       });
     }
 
-    const count = await this.commentRepository.getNumComments(issue_id, parent_id);
+    const count = await this.commentRepository.getNumComments(
+      issue_id,
+      parent_id,
+    );
 
     return APIData({
       code: 200,
       success: true,
-      data: count!
+      data: count!,
     });
   }
 
@@ -33,21 +36,21 @@ export class CommentService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for getting comments"
+        error: "Missing required fields for getting comments",
       });
     }
-  
+
     const comments = await this.commentRepository.getComments(params);
-  
-    const commentsWithUserInfo = comments.map(comment => {
+
+    const commentsWithUserInfo = comments.map((comment) => {
       const isOwner = comment.user_id === params.user_id;
-  
+
       if (comment.is_anonymous) {
         comment.user = {
           user_id: null,
           email_address: null,
-          username: 'Anonymous',
-          fullname: 'Anonymous',
+          username: "Anonymous",
+          fullname: "Anonymous",
           image_url: null,
           is_owner: isOwner,
           total_issues: null,
@@ -56,35 +59,38 @@ export class CommentService {
       } else {
         comment.user.is_owner = isOwner;
       }
-  
+
       return {
         ...comment,
         is_owner: isOwner,
       };
     });
-  
+
     return APIData({
       code: 200,
       success: true,
-      data: commentsWithUserInfo
+      data: commentsWithUserInfo,
     });
   }
-  
 
   async addComment(comment: Partial<Comment>) {
     if (!comment.user_id) {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to create a comment"
+        error: "You need to be signed in to create a comment",
       });
     }
 
-    if (!comment.issue_id || !comment.content || comment.is_anonymous === undefined) {
+    if (
+      !comment.issue_id ||
+      !comment.content ||
+      comment.is_anonymous === undefined
+    ) {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for creating a comment"
+        error: "Missing required fields for creating a comment",
       });
     }
 
@@ -96,7 +102,7 @@ export class CommentService {
     return APIData({
       code: 201,
       success: true,
-      data: addedComment
+      data: addedComment,
     });
   }
 
@@ -105,7 +111,7 @@ export class CommentService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to delete a comment"
+        error: "You need to be signed in to delete a comment",
       });
     }
 
@@ -113,7 +119,7 @@ export class CommentService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for deleting a comment"
+        error: "Missing required fields for deleting a comment",
       });
     }
 
@@ -121,7 +127,7 @@ export class CommentService {
 
     return APIData({
       code: 204,
-      success: true
+      success: true,
     });
   }
 }

@@ -1,12 +1,18 @@
 "use client";
 
-import React from 'react';
-import GooglePlacesAutocomplete, { geocodeByPlaceId } from 'react-google-places-autocomplete';
-import { Button } from '../ui/button';
-import { MapPin } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LocationType } from '@/lib/types';
-import { SingleValue } from 'react-select';
+import React from "react";
+import GooglePlacesAutocomplete, {
+  geocodeByPlaceId,
+} from "react-google-places-autocomplete";
+import { Button } from "../ui/button";
+import { MapPin } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LocationType } from "@/lib/types";
+import { SingleValue } from "react-select";
 
 interface LocationAutocompleteProps {
   location: LocationType | null;
@@ -22,10 +28,15 @@ interface GooglePlacesAutocompleteResult {
   };
 }
 
-const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, setLocation }) => {
+const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
+  location,
+  setLocation,
+}) => {
   const [locationInputVisible, setLocationInputVisible] = React.useState(false);
 
-  const handlePlaceSelect = async (loc: SingleValue<GooglePlacesAutocompleteResult>) => {
+  const handlePlaceSelect = async (
+    loc: SingleValue<GooglePlacesAutocompleteResult>,
+  ) => {
     if (!loc) {
       setLocation(null);
       return;
@@ -41,17 +52,20 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, s
         province: "",
         city: "",
         suburb: "",
-        district: ""
+        district: "",
       };
 
-      addressComponents.forEach(component => {
-        if (component.types.includes('administrative_area_level_1')) {
+      addressComponents.forEach((component) => {
+        if (component.types.includes("administrative_area_level_1")) {
           detailedLocation.province = component.long_name;
-        } else if (component.types.includes('locality')) {
+        } else if (component.types.includes("locality")) {
           detailedLocation.city = component.long_name;
-        } else if (component.types.includes('sublocality') || component.types.includes('neighborhood')) {
+        } else if (
+          component.types.includes("sublocality") ||
+          component.types.includes("neighborhood")
+        ) {
           detailedLocation.suburb = component.long_name;
-        } else if (component.types.includes('administrative_area_level_2')) {
+        } else if (component.types.includes("administrative_area_level_2")) {
           detailedLocation.district = component.long_name;
         }
       });
@@ -60,8 +74,8 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, s
         label: loc.label,
         value: {
           place_id: placeId,
-          ...detailedLocation
-        }
+          ...detailedLocation,
+        },
       });
     }
   };
@@ -81,7 +95,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, s
           </Button>
         </div>
       ) : (
-        <Popover open={locationInputVisible} onOpenChange={setLocationInputVisible}>
+        <Popover
+          open={locationInputVisible}
+          onOpenChange={setLocationInputVisible}
+        >
           <PopoverTrigger asChild>
             <Button variant="ghost" size="sm" className="mx-2">
               <MapPin />
@@ -97,17 +114,17 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ location, s
                 styles: {
                   input: (provided) => ({
                     ...provided,
-                    color: 'var(--foreground)',
-                    backgroundColor: 'var(--background)',
+                    color: "var(--foreground)",
+                    backgroundColor: "var(--background)",
                   }),
                   singleValue: (provided) => ({
                     ...provided,
-                    color: 'var(--foreground)',
+                    color: "var(--foreground)",
                   }),
                 },
               }}
               autocompletionRequest={{
-                componentRestrictions: { country: 'za' },
+                componentRestrictions: { country: "za" },
               }}
             />
           </PopoverContent>

@@ -14,7 +14,8 @@ describe("IssueService", () => {
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
-    locationRepository = new LocationRepository() as jest.Mocked<LocationRepository>;
+    locationRepository =
+      new LocationRepository() as jest.Mocked<LocationRepository>;
     issueService = new IssueService();
     issueService.setIssueRepository(issueRepository);
     issueService.setLocationRepository(locationRepository);
@@ -46,18 +47,18 @@ describe("IssueService", () => {
           resolved_issues: 5,
         },
         category: {
-          name: "Category 1"
+          name: "Category 1",
         },
         reactions: [],
         user_reaction: null,
         comment_count: 0,
         is_owner: false,
-        profile_user_id: "0"
-      }
+        profile_user_id: "0",
+      },
     ];
     issueRepository.getIssues.mockResolvedValue(mockIssues);
 
-    const response = await issueService.getIssues({from: 0, amount: 999});
+    const response = await issueService.getIssues({ from: 0, amount: 999 });
 
     expect(response.data).toEqual(mockIssues);
     expect(issueRepository.getIssues).toHaveBeenCalledTimes(1);
@@ -88,17 +89,17 @@ describe("IssueService", () => {
         resolved_issues: 5,
       },
       category: {
-        name: "Category 1"
+        name: "Category 1",
       },
       reactions: [],
       user_reaction: null,
       comment_count: 0,
       is_owner: false,
-      profile_user_id: "0"
+      profile_user_id: "0",
     };
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
 
-    const response = await issueService.getIssueById({ issue_id: 1});
+    const response = await issueService.getIssueById({ issue_id: 1 });
 
     expect(response.data).toEqual(mockIssue);
     expect(issueRepository.getIssueById).toHaveBeenCalledWith(1, undefined);
@@ -154,13 +155,13 @@ describe("IssueService", () => {
           resolved_issues: 5,
         },
         category: {
-          name: "Category 1"
+          name: "Category 1",
         },
         reactions: [],
         user_reaction: null,
         comment_count: 0,
         is_owner: true,
-        profile_user_id: "0"
+        profile_user_id: "0",
       };
       issueRepository.createIssue.mockResolvedValue(createdIssue);
 
@@ -174,15 +175,15 @@ describe("IssueService", () => {
     it("should throw an error when required fields are missing", async () => {
       const newIssue: Partial<Issue> = { user_id: "1", content: "New Issue" };
 
-      await expect((async () => {
-        try {
-          await issueService.createIssue(newIssue);
-        } catch(error) {
-          throw new Error((error as APIResponse).error);
-        }
-      })()).rejects.toThrow(
-        "Missing required fields for creating an issue"
-      );
+      await expect(
+        (async () => {
+          try {
+            await issueService.createIssue(newIssue);
+          } catch (error) {
+            throw new Error((error as APIResponse).error);
+          }
+        })(),
+      ).rejects.toThrow("Missing required fields for creating an issue");
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
     });
 
@@ -204,14 +205,16 @@ describe("IssueService", () => {
         sentiment: "neutral",
       };
 
-      await expect((async () => {
-        try {
-          await issueService.createIssue(newIssue);
-        } catch(error) {
-          throw new Error((error as APIResponse).error);
-        }
-      })()).rejects.toThrow(
-        "Issue content exceeds the maximum length of 500 characters"
+      await expect(
+        (async () => {
+          try {
+            await issueService.createIssue(newIssue);
+          } catch (error) {
+            throw new Error((error as APIResponse).error);
+          }
+        })(),
+      ).rejects.toThrow(
+        "Issue content exceeds the maximum length of 500 characters",
       );
       expect(issueRepository.createIssue).not.toHaveBeenCalled();
     });
@@ -243,21 +246,28 @@ describe("IssueService", () => {
         resolved_issues: 5,
       },
       category: {
-        name: "Category 1"
+        name: "Category 1",
       },
       reactions: [],
       user_reaction: null,
       comment_count: 0,
-      is_owner: true,        
-      profile_user_id: "0"
-    
+      is_owner: true,
+      profile_user_id: "0",
     };
     issueRepository.updateIssue.mockResolvedValue(updatedIssue);
 
-    const response = await issueService.updateIssue({ issue_id: 1, user_id: "1", ...updateData});
+    const response = await issueService.updateIssue({
+      issue_id: 1,
+      user_id: "1",
+      ...updateData,
+    });
 
     expect(response.data).toEqual(updatedIssue);
-    expect(issueRepository.updateIssue).toHaveBeenCalledWith(1, updateData, "1");
+    expect(issueRepository.updateIssue).toHaveBeenCalledWith(
+      1,
+      updateData,
+      "1",
+    );
     expect(issueRepository.updateIssue).toHaveBeenCalledTimes(1);
   });
 
@@ -286,20 +296,20 @@ describe("IssueService", () => {
         resolved_issues: 5,
       },
       category: {
-        name: "Category 1"
+        name: "Category 1",
       },
       reactions: [],
       user_reaction: null,
       comment_count: 0,
       is_owner: true,
-      profile_user_id: "0"
+      profile_user_id: "0",
     };
-  
+
     issueRepository.getIssueById.mockResolvedValue(mockIssue);
     issueRepository.deleteIssue.mockResolvedValue();
-  
+
     await issueService.deleteIssue({ issue_id: 1, user_id: "1" });
-  
+
     expect(issueRepository.getIssueById).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledWith(1, "1");
     expect(issueRepository.deleteIssue).toHaveBeenCalledTimes(1);
@@ -348,7 +358,7 @@ describe("IssueService", () => {
         resolved_issues: 5,
       },
       category: {
-        name: "Category 1"
+        name: "Category 1",
       },
       reactions: [],
       user_reaction: null,
@@ -356,7 +366,7 @@ describe("IssueService", () => {
       is_owner: true,
       resolved_at: null,
       image_url: "https://example.com/image.png",
-      profile_user_id: "0"
+      profile_user_id: "0",
     };
 
     locationRepository.getLocationByPlacesId.mockResolvedValue({

@@ -5,7 +5,7 @@ import { supabase } from "./lib/globals";
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url);
 
-  const jwt = request.cookies.get("Authorization")?.value ?? '';
+  const jwt = request.cookies.get("Authorization")?.value ?? "";
   const { data: authData } = await supabase.auth.getUser(jwt);
 
   if (url.pathname.includes("admin")) {
@@ -36,9 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/notifications",
-    "/settings",
-    "/admin(/.+)*"
- ]
+  matcher: ["/notifications", "/settings", "/admin(/.+)*"],
 };

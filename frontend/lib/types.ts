@@ -75,7 +75,7 @@ interface HomeAvatarProps {
 type SubData<T = unknown> = {
   $count?: number;
   [key: string]: T | SubData<T> | number | undefined;
-}
+};
 
 interface SeriesDataItem {
   id: string;
@@ -146,7 +146,7 @@ interface RenderItemResult {
   blur: {
     style: {
       opacity: number;
-    }
+    };
   };
 }
 
@@ -155,6 +155,19 @@ interface AnalysisResult {
   severity: number;
 }
 
-export type { User, Category, Reaction, Issue, HomeAvatarProps, AnalysisResult,
-   SubData, SeriesDataItem, Context, Params, Api, RenderItemResult, Comment, LocationType
+export type {
+  User,
+  Category,
+  Reaction,
+  Issue,
+  HomeAvatarProps,
+  SubData,
+  SeriesDataItem,
+  Context,
+  Params,
+  Api,
+  RenderItemResult,
+  Comment,
+  LocationType,
+  AnalysisResult
 };

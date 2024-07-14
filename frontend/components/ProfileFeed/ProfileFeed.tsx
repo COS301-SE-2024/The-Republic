@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Issue as IssueType } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import Issue from "../Issue/Issue";
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner } from "react-icons/fa";
 
 interface ProfileFeedProps {
   userId: string;
@@ -21,12 +21,13 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData?.session;
-  
+
         if (session && session.user) {
-          const url = selectedTab === "issues"
-            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/user`
-            : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/user/resolved`;
-          
+          const url =
+            selectedTab === "issues"
+              ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/user`
+              : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/user/resolved`;
+
           const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -35,7 +36,7 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
             },
             body: JSON.stringify({ profile_user_id: userId }),
           });
-  
+
           const responseData = await response.json();
           if (responseData.success && responseData.data) {
             setIssues(responseData.data);
@@ -51,7 +52,7 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
         setLoading(false);
       }
     };
-  
+
     fetchIssues();
   }, [userId, selectedTab]);
 
@@ -61,7 +62,7 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
 
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center h-24">
-      <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      <FaSpinner className="animate-spin text-4xl text-green-500" />
     </div>
   );
 

@@ -3,7 +3,14 @@ import { Comment as CommentType } from "@/lib/types";
 import Comment from "./Comment";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 
 interface CommentListProps {
@@ -27,11 +34,14 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
           headers.Authorization = `Bearer ${user.access_token}`;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ issue_id: issueId, from: 0, amount: 99 }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments`,
+          {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ issue_id: issueId, from: 0, amount: 99 }),
+          },
+        );
 
         const responseData = await response.json();
         if (responseData.success) {
@@ -69,17 +79,24 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.access_token}`,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({ comment_id: commentToDelete }),
         },
-        body: JSON.stringify({ comment_id: commentToDelete }),
-      });
+      );
 
       if (response.ok) {
-        setComments((prevComments) => prevComments.filter((comment) => comment.comment_id !== commentToDelete));
+        setComments((prevComments) =>
+          prevComments.filter(
+            (comment) => comment.comment_id !== commentToDelete,
+          ),
+        );
         setCommentToDelete(null);
         toast({
           description: "Comment deleted successfully",
@@ -106,7 +123,7 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
 
   const renderComments = (parentId: string | null) => {
     const threadComments = comments.filter(
-      (comment) => comment.parent_id === parentId
+      (comment) => comment.parent_id === parentId,
     );
 
     return threadComments.map((comment) => (
@@ -131,17 +148,18 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
             <DialogHeader>
               <DialogTitle>Confirm Deletion</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete this comment? This action cannot be undone.
+                Are you sure you want to delete this comment? This action cannot
+                be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setCommentToDelete(null)}>
+              <Button
+                variant="outline"
+                onClick={() => setCommentToDelete(null)}
+              >
                 Cancel
               </Button>
-              <Button
-                variant="destructive"
-                onClick={confirmDeleteComment}
-              >
+              <Button variant="destructive" onClick={confirmDeleteComment}>
                 Delete
               </Button>
             </DialogFooter>

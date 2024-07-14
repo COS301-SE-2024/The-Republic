@@ -34,7 +34,12 @@ interface RightSidebarProps {
   setFilter: (value: string) => void;
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ sortBy, setSortBy, filter, setFilter }) => {
+const RightSidebar: React.FC<RightSidebarProps> = ({
+  sortBy,
+  setSortBy,
+  filter,
+  setFilter,
+}) => {
   return (
     <div className="w-[300px] border-l min-h-80vh p-4">
       <div className="mb-4">

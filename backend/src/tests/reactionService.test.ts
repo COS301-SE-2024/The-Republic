@@ -10,7 +10,8 @@ describe("ReactionService", () => {
   let reactionRepository: jest.Mocked<ReactionRepository>;
 
   beforeEach(() => {
-    reactionRepository = new ReactionRepository() as jest.Mocked<ReactionRepository>;
+    reactionRepository =
+      new ReactionRepository() as jest.Mocked<ReactionRepository>;
     reactionService = new ReactionService();
     reactionService.setReactionRepository(reactionRepository);
   });
@@ -33,14 +34,21 @@ describe("ReactionService", () => {
       reactionRepository.getReactionByUserAndIssue.mockResolvedValue(null);
       reactionRepository.addReaction.mockResolvedValue(addedReaction);
 
-      const response = await reactionService.addOrRemoveReaction(newReaction as Reaction);
+      const response = await reactionService.addOrRemoveReaction(
+        newReaction as Reaction,
+      );
 
       expect(response.data).toEqual({
         added: "👍",
         removed: undefined,
       });
-      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(1, "1");
-      expect(reactionRepository.addReaction).toHaveBeenCalledWith(newReaction as Reaction);
+      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(
+        1,
+        "1",
+      );
+      expect(reactionRepository.addReaction).toHaveBeenCalledWith(
+        newReaction as Reaction,
+      );
       expect(reactionRepository.addReaction).toHaveBeenCalledTimes(1);
     });
 
@@ -58,16 +66,23 @@ describe("ReactionService", () => {
         emoji: "👍",
         created_at: "2022-01-01",
       };
-      reactionRepository.getReactionByUserAndIssue.mockResolvedValue(existingReaction);
+      reactionRepository.getReactionByUserAndIssue.mockResolvedValue(
+        existingReaction,
+      );
       reactionRepository.deleteReaction.mockResolvedValue(existingReaction);
 
-      const response = await reactionService.addOrRemoveReaction(reaction as Reaction);
+      const response = await reactionService.addOrRemoveReaction(
+        reaction as Reaction,
+      );
 
       expect(response.data).toEqual({
         added: undefined,
         removed: "👍",
       });
-      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(1, "1");
+      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(
+        1,
+        "1",
+      );
       expect(reactionRepository.deleteReaction).toHaveBeenCalledWith(1, "1");
       expect(reactionRepository.deleteReaction).toHaveBeenCalledTimes(1);
     });
@@ -78,14 +93,18 @@ describe("ReactionService", () => {
         emoji: "👍",
       };
 
-      await expect((async () => {
-        try {
-          await reactionService.addOrRemoveReaction(reaction as Reaction);
-        } catch (error) {
-          throw new Error((error as APIResponse).error);
-        }
-      })()).rejects.toThrow("You need to be signed in to react");
-      expect(reactionRepository.getReactionByUserAndIssue).not.toHaveBeenCalled();
+      await expect(
+        (async () => {
+          try {
+            await reactionService.addOrRemoveReaction(reaction as Reaction);
+          } catch (error) {
+            throw new Error((error as APIResponse).error);
+          }
+        })(),
+      ).rejects.toThrow("You need to be signed in to react");
+      expect(
+        reactionRepository.getReactionByUserAndIssue,
+      ).not.toHaveBeenCalled();
       expect(reactionRepository.addReaction).not.toHaveBeenCalled();
       expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();
     });
@@ -95,14 +114,18 @@ describe("ReactionService", () => {
         user_id: "1",
       };
 
-      await expect((async () => {
-        try {
-          await reactionService.addOrRemoveReaction(reaction as Reaction);
-        } catch (error) {
-          throw new Error((error as APIResponse).error);
-        }
-      })()).rejects.toThrow("Missing required fields for reacting");
-      expect(reactionRepository.getReactionByUserAndIssue).not.toHaveBeenCalled();
+      await expect(
+        (async () => {
+          try {
+            await reactionService.addOrRemoveReaction(reaction as Reaction);
+          } catch (error) {
+            throw new Error((error as APIResponse).error);
+          }
+        })(),
+      ).rejects.toThrow("Missing required fields for reacting");
+      expect(
+        reactionRepository.getReactionByUserAndIssue,
+      ).not.toHaveBeenCalled();
       expect(reactionRepository.addReaction).not.toHaveBeenCalled();
       expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();
     });
