@@ -14,7 +14,5 @@ module.exports = {
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov"],
-  testPathIgnorePatterns: [
-    "<rootDir>/public/",
-  ],
+  testPathIgnorePatterns: ["<rootDir>/public/"],
 };

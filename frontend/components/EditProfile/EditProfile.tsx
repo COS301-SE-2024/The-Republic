@@ -3,11 +3,12 @@
 import React, { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { checkImageFileAndToast, cn } from "@/lib/utils";
 import { User } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { supabase } from "@/lib/globals";
+import { useToast } from "../ui/use-toast";
 
 interface EditProfileProps {
   user: User;
@@ -23,9 +24,10 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const [updatedUser, setUpdatedUser] = useState(user);
   const [file, setFile] = useState<File | null>(null);
   const { theme } = useTheme();
+  const { toast } = useToast();
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setUpdatedUser((prev) => ({
       ...prev,
@@ -59,14 +61,18 @@ const EditProfile: React.FC<EditProfileProps> = ({
         formData.append("username", updatedUser.username);
         formData.append("bio", updatedUser.bio);
         if (file) {
+          if (!(await checkImageFileAndToast(file, toast))) {
+            return;
+          }
+
           formData.append("profile_picture", file);
         }
 
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${user.user_id}`;
         const response = await fetch(url, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            "Authorization": `Bearer ${session.access_token}`
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: formData,
         });
@@ -103,7 +109,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
       <div
         className={cn(
           "space-y-4",
-          theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
+          theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800",
         )}
       >
         <div>
@@ -117,7 +123,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 "mt-1 flex items-center px-4 py-2 rounded-lg shadow-lg tracking-wide uppercase border cursor-pointer",
                 theme === "dark"
                   ? "bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
-                  : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white"
+                  : "bg-white text-blue-700 border-blue-500 hover:bg-blue-500 hover:text-white",
               )}
             >
               <Upload className="w-4 h-4 mr-2" />
@@ -153,7 +159,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             className={cn(
               theme === "dark"
                 ? "bg-gray-700 text-white border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+                : "bg-white text-gray-800 border-gray-300",
             )}
           />
         </div>
@@ -168,7 +174,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             className={cn(
               theme === "dark"
                 ? "bg-gray-700 text-white border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+                : "bg-white text-gray-800 border-gray-300",
             )}
           />
         </div>
@@ -183,7 +189,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             className={cn(
               theme === "dark"
                 ? "bg-gray-700 text-white border-gray-600"
-                : "bg-white text-gray-800 border-gray-300"
+                : "bg-white text-gray-800 border-gray-300",
             )}
           />
         </div>
@@ -195,7 +201,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             "inline-flex justify-center rounded-md px-4 py-2 font-medium",
             theme === "dark"
               ? "bg-gray-700 text-white hover:bg-gray-600"
-              : "bg-white text-gray-800 hover:bg-gray-200"
+              : "bg-white text-gray-800 hover:bg-gray-200",
           )}
           onClick={handleCancel}
         >
@@ -207,7 +213,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             "inline-flex justify-center rounded-md px-4 py-2 font-medium",
             theme === "dark"
               ? "bg-green-600 text-white hover:bg-green-700"
-              : "bg-green-600 text-white hover:bg-green-700"
+              : "bg-green-600 text-white hover:bg-green-700",
           )}
           onClick={handleSave}
         >

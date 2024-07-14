@@ -9,7 +9,7 @@ export async function getVizData(req: Request, res: Response) {
   try {
     const response = await visualizationService.getVizData();
     sendResponse(res, response);
-  } catch(error) {
-    sendResponse(res, (error as APIResponse));
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
   }
 }

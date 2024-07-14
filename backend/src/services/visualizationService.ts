@@ -10,7 +10,7 @@ export class VisualizationService {
     return APIData({
       code: 200,
       success: true,
-      data: vizData
+      data: vizData,
     });
   }
 }

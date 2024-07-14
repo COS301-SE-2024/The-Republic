@@ -1,13 +1,19 @@
 import React from "react";
-import { render, screen } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
+import { render, screen } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
 import userEvent from "@testing-library/user-event";
 import { Checkbox } from "@/components/ui/checkbox";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -66,4 +72,3 @@ describe("Checkbox Component", () => {
   //   // expect(checkIcon).toBeInTheDocument();
   // });
 });
-

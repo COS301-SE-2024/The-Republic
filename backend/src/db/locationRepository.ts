@@ -23,7 +23,7 @@ export class LocationRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 
@@ -42,7 +42,7 @@ export class LocationRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 

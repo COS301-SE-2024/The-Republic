@@ -6,6 +6,6 @@ export default defineConfig({
     setupNodeEvents() {
       // implement node event listeners here
     },
-    specPattern: 'cypress/integration/*.spec.ts'
+    specPattern: "cypress/integration/*.spec.ts",
   },
 });

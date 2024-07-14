@@ -1,12 +1,18 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { describe, expect } from '@jest/globals';
+import { describe, expect } from "@jest/globals";
 import { PopoverContent, Popover } from "@/components/ui/popover";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -20,7 +26,7 @@ describe("<PopoverContent />", () => {
     const { container } = render(
       <Popover>
         <PopoverContent data-testid="popover" />
-      </Popover>
+      </Popover>,
     );
 
     expect(container).not.toBe(null);
@@ -35,7 +41,7 @@ describe("<PopoverContent />", () => {
           sideOffset={8}
           className="custom-class"
         />
-      </Popover>
+      </Popover>,
     );
 
     expect(container).toBeInTheDocument();
@@ -46,7 +52,7 @@ describe("<PopoverContent />", () => {
     const { container } = render(
       <Popover>
         <PopoverContent ref={ref} />
-      </Popover>
+      </Popover>,
     );
     expect(container).toBeInTheDocument();
   });

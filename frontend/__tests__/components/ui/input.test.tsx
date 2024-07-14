@@ -1,12 +1,18 @@
-import { render } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
+import { render } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
 import React from "react";
 import { Input } from "@/components/ui/input";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -18,13 +24,13 @@ jest.mock('@supabase/supabase-js', () => ({
 describe("<Input />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
-  
+
   it("renders with default props", () => {
     const { getByTestId } = render(<Input data-testid="input" />);
     const inputElement = getByTestId("input");
@@ -37,7 +43,7 @@ describe("<Input />", () => {
 
   it("renders with custom props", () => {
     const { getByTestId } = render(
-      <Input data-testid="input" className="custom-class" type="email" />
+      <Input data-testid="input" className="custom-class" type="email" />,
     );
     const inputElement = getByTestId("input");
 

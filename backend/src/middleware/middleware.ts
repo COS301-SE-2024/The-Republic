@@ -33,17 +33,23 @@ export const verifyAndGetUser = async (
     console.error(error);
 
     if (error.status === 403) {
-      sendResponse(res, APIError({
-        code: 403,
-        success: false,
-        error: "Invalid token"
-      }));
+      sendResponse(
+        res,
+        APIError({
+          code: 403,
+          success: false,
+          error: "Invalid token",
+        }),
+      );
     } else {
-      sendResponse(res, APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred. Please try again later."
-      }));
+      sendResponse(
+        res,
+        APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later.",
+        }),
+      );
     }
 
     return;

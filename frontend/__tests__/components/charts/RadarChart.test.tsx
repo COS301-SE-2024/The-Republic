@@ -1,12 +1,12 @@
-import React from 'react';
-import { describe, expect } from '@jest/globals';
-import { render, waitFor } from '@testing-library/react';
-import RadarChart from '@/components/ReportCharts/RadarChart/RadarChart';
-import * as echarts from 'echarts';
+import React from "react";
+import { describe, expect } from "@jest/globals";
+import { render, waitFor } from "@testing-library/react";
+import RadarChart from "@/components/ReportCharts/RadarChart/RadarChart";
+import * as echarts from "echarts";
 
-jest.mock('echarts');
+jest.mock("echarts");
 
-describe('RadarChart', () => {
+describe("RadarChart", () => {
   const mockEchartsInstance = {
     setOption: jest.fn(),
     dispose: jest.fn(),
@@ -14,7 +14,7 @@ describe('RadarChart', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
     (echarts.init as jest.Mock).mockReturnValue(mockEchartsInstance);
   });
 
@@ -22,7 +22,7 @@ describe('RadarChart', () => {
     (console.error as jest.Mock).mockRestore();
   });
 
-  it('renders the chart and sets options correctly', async () => {
+  it("renders the chart and sets options correctly", async () => {
     render(<RadarChart />);
     await waitFor(() => {
       expect(echarts.init).toHaveBeenCalled();
@@ -30,17 +30,18 @@ describe('RadarChart', () => {
     });
   });
 
-  it('updates the chart options on data change', async () => {
+  it("updates the chart options on data change", async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
-        json: () => Promise.resolve({
-          success: true,
-          data: {
-            resolved: { "Public Safety": 5, "Healthcare Services": 3 },
-            unresolved: { "Public Safety": 2, "Healthcare Services": 1 }
-          }
-        })
-      })
+        json: () =>
+          Promise.resolve({
+            success: true,
+            data: {
+              resolved: { "Public Safety": 5, "Healthcare Services": 3 },
+              unresolved: { "Public Safety": 2, "Healthcare Services": 1 },
+            },
+          }),
+      }),
     ) as jest.Mock;
 
     render(<RadarChart />);

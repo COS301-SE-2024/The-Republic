@@ -16,7 +16,7 @@ const switchVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 const thumbVariants = cva(
@@ -31,17 +31,22 @@ const thumbVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
-interface SwitchProps extends React.HTMLAttributes<HTMLButtonElement>, VariantProps<typeof switchVariants> {
+interface SwitchProps
+  extends React.HTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof switchVariants> {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
 }
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
-  ({ checked, onCheckedChange, disabled = false, className, ...props }, ref) => {
+  (
+    { checked, onCheckedChange, disabled = false, className, ...props },
+    ref,
+  ) => {
     const handleClick = () => {
       if (!disabled) {
         onCheckedChange(!checked);
@@ -55,7 +60,7 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         onClick={handleClick}
         className={cn(
           switchVariants({ variant: checked ? "checked" : "default" }),
-          className
+          className,
         )}
         disabled={disabled}
         role="switch"
@@ -63,13 +68,15 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         {...props}
       >
         <span
-          className={cn(thumbVariants({ variant: checked ? "checked" : "default" }))}
+          className={cn(
+            thumbVariants({ variant: checked ? "checked" : "default" }),
+          )}
         >
           <span className="sr-only">{checked ? "Enabled" : "Disabled"}</span>
         </span>
       </button>
     );
-  }
+  },
 );
 
 Switch.displayName = "Switch";

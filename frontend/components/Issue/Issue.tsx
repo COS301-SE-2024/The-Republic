@@ -34,14 +34,17 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       return;
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.access_token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({ issue_id: issue.issue_id }),
         },
-        body: JSON.stringify({ issue_id: issue.issue_id }),
-      });
+      );
 
       if (response.ok) {
         window.location.reload();
@@ -62,14 +65,17 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       return;
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.access_token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({ issue_id: issue.issue_id }),
         },
-        body: JSON.stringify({ issue_id: issue.issue_id }),
-      });
+      );
 
       if (response.ok) {
         window.location.reload();
@@ -98,7 +104,10 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowSubscribeDropdown(false);
       }
     };
@@ -114,7 +123,11 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <div className="pr-2" onClick={handleAvatarClick} style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}>
+            <div
+              className="pr-2"
+              onClick={handleAvatarClick}
+              style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
+            >
               <Avatar>
                 <AvatarImage src={issue.user.image_url} />
                 <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
@@ -138,8 +151,14 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
                   type="button"
                   className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
                   id="subscribe-menu"
+<<<<<<< HEAD
                   onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
                   title="Subscribe"
+=======
+                  onClick={() =>
+                    setShowSubscribeDropdown(!showSubscribeDropdown)
+                  }
+>>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
                 >
                   <Bell className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -209,14 +228,14 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
         <p>{issue.content}</p>
         {issue.image_url && (
           <div className="relative w-1/4 h-auto mt-4">
-          <Image 
-            src={issue.image_url} 
-            alt="Issue" 
-            layout="responsive"
-            width={100}
-            height={100}
-            className="rounded-lg"
-          />
+            <Image
+              src={issue.image_url}
+              alt="Issue"
+              layout="responsive"
+              width={100}
+              height={100}
+              className="rounded-lg"
+            />
           </div>
         )}
         {issue.resolved_at && (

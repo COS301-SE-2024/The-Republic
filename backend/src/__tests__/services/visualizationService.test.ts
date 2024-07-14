@@ -10,7 +10,8 @@ describe("VisualizationService", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    visualizationRepository = new VisualizationRepository() as jest.Mocked<VisualizationRepository>;
+    visualizationRepository =
+      new VisualizationRepository() as jest.Mocked<VisualizationRepository>;
     visualizationService = new VisualizationService();
     visualizationService["visualizationRepository"] = visualizationRepository;
   });
@@ -19,17 +20,19 @@ describe("VisualizationService", () => {
     it("should return visualization data successfully", async () => {
       const mockVizData: VizData[] = [
         { $count: 1, "Chart 1": 3 },
-        { $count: 2, "Chart 2": 3 }
+        { $count: 2, "Chart 2": 3 },
       ];
       visualizationRepository.getVizData.mockResolvedValue(mockVizData[0]);
 
       const response = await visualizationService.getVizData();
 
-      expect(response).toEqual(APIData({
-        code: 200,
-        success: true,
-        data: mockVizData[0]
-      }));
+      expect(response).toEqual(
+        APIData({
+          code: 200,
+          success: true,
+          data: mockVizData[0],
+        }),
+      );
       expect(visualizationRepository.getVizData).toHaveBeenCalledTimes(1);
     });
 

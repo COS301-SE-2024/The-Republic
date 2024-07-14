@@ -70,13 +70,12 @@
 
 @media (prefers-color-scheme: dark) {
   .logo {
-    background-image: url('/images/w-logo.png');
+    background-image: url("/images/w-logo.png");
   }
 }
 
 @media (prefers-color-scheme: light) {
   .logo {
-    background-image: url('/images/b-logo.png');
+    background-image: url("/images/b-logo.png");
   }
 }
-

@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, expect } from '@jest/globals';
+import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import {
   Dialog,
@@ -13,10 +13,16 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -37,7 +43,7 @@ describe("Dialog components", () => {
             <DialogClose>Close</DialogClose>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog>,
     );
 
     const trigger = screen.getByText("Open Dialog");
@@ -48,7 +54,7 @@ describe("Dialog components", () => {
     const { container } = render(
       <Dialog>
         <DialogOverlay />
-      </Dialog>
+      </Dialog>,
     );
 
     expect(container).toBeInTheDocument();
@@ -64,7 +70,7 @@ describe("Dialog components", () => {
             <DialogClose>Close</DialogClose>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog>,
     );
 
     expect(container).toBeInTheDocument();
@@ -75,7 +81,7 @@ describe("Dialog components", () => {
     const { container } = render(
       <Dialog>
         <DialogClose onClose={handleClose}>Close</DialogClose>
-      </Dialog>
+      </Dialog>,
     );
 
     expect(container).not.toBeNull();
@@ -85,7 +91,7 @@ describe("Dialog components", () => {
     const { container } = render(
       <Dialog>
         <DialogTitle>Title</DialogTitle>
-      </Dialog>
+      </Dialog>,
     );
 
     expect(container).not.toBeNull();
@@ -95,7 +101,7 @@ describe("Dialog components", () => {
     render(
       <Dialog>
         <DialogDescription>Description</DialogDescription>
-      </Dialog>
+      </Dialog>,
     );
     const description = screen.getByText("Description");
     expect(description).toBeInTheDocument();
@@ -105,7 +111,7 @@ describe("Dialog components", () => {
     render(
       <Dialog>
         <DialogHeader>Header</DialogHeader>
-      </Dialog>
+      </Dialog>,
     );
     const header = screen.getByText("Header");
     expect(header).toBeInTheDocument();
@@ -117,4 +123,3 @@ describe("Dialog components", () => {
     expect(footer).toBeInTheDocument();
   });
 });
-

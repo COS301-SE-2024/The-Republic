@@ -11,7 +11,8 @@ describe("CommentService", () => {
   let commentRepository: jest.Mocked<CommentRepository>;
 
   beforeEach(() => {
-    commentRepository = new CommentRepository() as jest.Mocked<CommentRepository>;
+    commentRepository =
+      new CommentRepository() as jest.Mocked<CommentRepository>;
     commentService = new CommentService();
     commentService.setCommentRepository(commentRepository);
   });
@@ -26,7 +27,10 @@ describe("CommentService", () => {
       const response = await commentService.getNumComments(params);
 
       expect(response.data).toBe(10);
-      expect(commentRepository.getNumComments).toHaveBeenCalledWith(1, undefined);
+      expect(commentRepository.getNumComments).toHaveBeenCalledWith(
+        1,
+        undefined,
+      );
       expect(commentRepository.getNumComments).toHaveBeenCalledTimes(1);
     });
 
@@ -38,7 +42,7 @@ describe("CommentService", () => {
           code: 400,
           success: false,
           error: "Missing required fields for getting number of comments",
-        })
+        }),
       );
       expect(commentRepository.getNumComments).not.toHaveBeenCalled();
     });
@@ -87,12 +91,14 @@ describe("CommentService", () => {
         issue_id: 1,
       };
 
-      await expect(commentService.getComments(params as GetCommentsParams)).rejects.toEqual(
+      await expect(
+        commentService.getComments(params as GetCommentsParams),
+      ).rejects.toEqual(
         APIError({
           code: 400,
           success: false,
           error: "Missing required fields for getting comments",
-        })
+        }),
       );
       expect(commentRepository.getComments).not.toHaveBeenCalled();
     });
@@ -142,12 +148,14 @@ describe("CommentService", () => {
         is_anonymous: false,
       };
 
-      await expect(commentService.addComment(newComment as Comment)).rejects.toEqual(
+      await expect(
+        commentService.addComment(newComment as Comment),
+      ).rejects.toEqual(
         APIError({
           code: 401,
           success: false,
           error: "You need to be signed in to create a comment",
-        })
+        }),
       );
       expect(commentRepository.addComment).not.toHaveBeenCalled();
     });
@@ -157,12 +165,14 @@ describe("CommentService", () => {
         user_id: "1",
       };
 
-      await expect(commentService.addComment(newComment as Comment)).rejects.toEqual(
+      await expect(
+        commentService.addComment(newComment as Comment),
+      ).rejects.toEqual(
         APIError({
           code: 400,
           success: false,
           error: "Missing required fields for creating a comment",
-        })
+        }),
       );
       expect(commentRepository.addComment).not.toHaveBeenCalled();
     });
@@ -187,12 +197,14 @@ describe("CommentService", () => {
         comment_id: 1,
       };
 
-      await expect(commentService.deleteComment(deleteParams as Comment)).rejects.toEqual(
+      await expect(
+        commentService.deleteComment(deleteParams as Comment),
+      ).rejects.toEqual(
         APIError({
           code: 401,
           success: false,
           error: "You need to be signed in to delete a comment",
-        })
+        }),
       );
       expect(commentRepository.deleteComment).not.toHaveBeenCalled();
     });
@@ -202,12 +214,14 @@ describe("CommentService", () => {
         user_id: "1",
       };
 
-      await expect(commentService.deleteComment(deleteParams as Comment)).rejects.toEqual(
+      await expect(
+        commentService.deleteComment(deleteParams as Comment),
+      ).rejects.toEqual(
         APIError({
           code: 400,
           success: false,
           error: "Missing required fields for deleting a comment",
-        })
+        }),
       );
       expect(commentRepository.deleteComment).not.toHaveBeenCalled();
     });

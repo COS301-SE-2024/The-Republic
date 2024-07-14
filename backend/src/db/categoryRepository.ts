@@ -9,14 +9,13 @@ export class CategoryRepository {
       .eq("name", name)
       .single();
 
-
     if (error) {
       console.error(error);
 
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
 

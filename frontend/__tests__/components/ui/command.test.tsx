@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { describe, expect } from '@jest/globals';
+import { describe, expect } from "@jest/globals";
 import {
   CommandDialog,
   CommandInput,
@@ -11,10 +11,16 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -36,7 +42,7 @@ describe("CommandDialog Components", () => {
           </CommandGroup>
           <CommandEmpty>No commands found</CommandEmpty>
         </CommandList>
-      </CommandDialog>
+      </CommandDialog>,
     );
 
     expect(container).toBeInTheDocument();
@@ -47,7 +53,7 @@ describe("CommandDialog Components", () => {
       <CommandDialog>
         <CommandInput />
         <CommandList />
-      </CommandDialog>
+      </CommandDialog>,
     );
 
     expect(container).toBeInTheDocument();

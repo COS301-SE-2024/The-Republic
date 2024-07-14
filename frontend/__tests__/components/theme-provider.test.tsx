@@ -1,15 +1,15 @@
-import { render } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
-import { ThemeProvider } from '@/components/theme-provider';
+import { render } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
+import { ThemeProvider } from "@/components/theme-provider";
 
-describe('ThemeProvider', () => {
-  it('renders children correctly', () => {
+describe("ThemeProvider", () => {
+  it("renders children correctly", () => {
     const { getByText } = render(
       <ThemeProvider>
         <div>Test Child</div>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
-    expect(getByText('Test Child')).not.toBeNull();
+    expect(getByText("Test Child")).not.toBeNull();
   });
 });

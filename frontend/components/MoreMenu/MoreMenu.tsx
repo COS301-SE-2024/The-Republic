@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MoreHorizontal} from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MoreMenuProps {
@@ -36,7 +36,6 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
   onResolve,
   onSubscribe,
 }) => {
-
   const handleDelete = () => {
     onDelete();
   };
@@ -53,7 +52,10 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center rounded-full p-1 hover:bg-gray-200" title="More Options">
+          <button
+            className="flex items-center rounded-full p-1 hover:bg-gray-200"
+            title="More Options"
+          >
             <MoreHorizontal />
           </button>
         </DropdownMenuTrigger>
@@ -70,17 +72,21 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                 </DropdownMenuItem>
               ) : item === "Subscribe" ? (
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                  Subscribe 
-                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubTrigger>Subscribe</DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Issue")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Issue")}
+                    >
                       Issue
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Category")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Category")}
+                    >
                       Category
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Location")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Location")}
+                    >
                       Location
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
@@ -90,7 +96,6 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
               )}
             </React.Fragment>
           ))}
-        
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent>

@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import * as echarts from 'echarts';
-import * as d3 from 'd3';
-import 'd3-hierarchy';
+import { useEffect, useRef, useState } from "react";
+import * as echarts from "echarts";
+import * as d3 from "d3";
+import "d3-hierarchy";
 
 import {
-  SubData, SeriesDataItem, Params, Api, RenderItemResult
+  SubData,
+  SeriesDataItem,
+  Params,
+  Api,
+  RenderItemResult,
 } from "@/lib/types";
-import { colorFromCategory } from '@/lib/utils';
-import { LoadingSpinner } from '../Spinner/Spinner';
+import { colorFromCategory } from "@/lib/utils";
+import { LoadingSpinner } from "../Spinner/Spinner";
 
 const EChartsComponent = () => {
   const chartRef = useRef(null);
@@ -18,9 +22,12 @@ const EChartsComponent = () => {
 
   useEffect(() => {
     async function fetchVizData() {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`,
+        {
+          method: "POST",
+        },
+      );
 
       if (!response.ok) {
         console.error(response.status);
@@ -57,23 +64,26 @@ const EChartsComponent = () => {
         }
         maxDepth = Math.max(depth, maxDepth);
         seriesData.push({
-            id: basePath,
-            value: source.$count!,
-            depth: depth,
-            index: seriesData.length
+          id: basePath,
+          value: source.$count!,
+          depth: depth,
+          index: seriesData.length,
         });
 
         for (const key in source) {
-            if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
-                const path = basePath + ', ' + key;
-                convert(source[key] as SubData<unknown>, path, depth + 1);
-            }
+          if (
+            Object.prototype.hasOwnProperty.call(source, key) &&
+            !key.match(/^\$/)
+          ) {
+            const path = basePath + ", " + key;
+            convert(source[key] as SubData<unknown>, path, depth + 1);
+          }
         }
       }
-      convert(rawData, 'South Africa', 0);
+      convert(rawData, "South Africa", 0);
       return {
         seriesData: seriesData,
-        maxDepth: maxDepth
+        maxDepth: maxDepth,
       };
     }
 
@@ -84,14 +94,19 @@ const EChartsComponent = () => {
         return d3
           .stratify<SeriesDataItem>()
           .parentId((d: SeriesDataItem): string => {
-            return d.id.substring(0, d.id.lastIndexOf(', '));
+            return d.id.substring(0, d.id.lastIndexOf(", "));
           })(seriesData)
           .sum((d: SeriesDataItem): number => {
             return d.value || 0;
           })
-          .sort((a: d3.HierarchyNode<SeriesDataItem>, b: d3.HierarchyNode<SeriesDataItem>): number => {
-            return (b.value || 0) - (a.value || 0);
-          });
+          .sort(
+            (
+              a: d3.HierarchyNode<SeriesDataItem>,
+              b: d3.HierarchyNode<SeriesDataItem>,
+            ): number => {
+              return (b.value || 0) - (a.value || 0);
+            },
+          );
       }
 
       function overallLayout(params: Params, api: Api): void {
@@ -114,7 +129,7 @@ const EChartsComponent = () => {
           context.layout = true;
           overallLayout(params, api);
         }
-        const nodePath = api.value('id');
+        const nodePath = api.value("id");
         const node = context.nodes[nodePath];
         if (!node) {
           return;
@@ -123,65 +138,65 @@ const EChartsComponent = () => {
         const focus = new Uint32Array(
           node.descendants().map(function (node) {
             return node.data.index;
-          })
+          }),
         );
         const nodeName = isLeaf
           ? nodePath.substring(nodePath.lastIndexOf(",") + 2, nodePath.length)
-          : '';
-        const z2 = Number(api.value('depth')) * 2;
+          : "";
+        const z2 = Number(api.value("depth")) * 2;
         return {
-          type: 'circle',
+          type: "circle",
           focus: focus,
           shape: {
             cx: node.x,
             cy: node.y,
-            r: node.r
+            r: node.r,
           },
-          transition: ['shape'],
+          transition: ["shape"],
           z2: z2,
           textContent: {
-            type: 'text',
+            type: "text",
             style: {
               text: nodeName,
-              fontFamily: 'Arial',
+              fontFamily: "Arial",
               width: node.r * 1.3,
-              overflow: 'truncate',
-              fontSize: node.r / 3
+              overflow: "truncate",
+              fontSize: node.r / 3,
             },
             emphasis: {
               style: {
                 overflow: null,
-                fontSize: Math.max(node.r / 3, 12)
-              }
-            }
+                fontSize: Math.max(node.r / 3, 12),
+              },
+            },
           },
           textConfig: {
-            position: 'inside'
+            position: "inside",
           },
           style: {
-            fill: colorFromCategory(api, nodeName)
+            fill: colorFromCategory(api, nodeName),
           },
           emphasis: {
             style: {
-              fontFamily: 'Arial',
+              fontFamily: "Arial",
               fontSize: 12,
               shadowBlur: 20,
               shadowOffsetX: 3,
               shadowOffsetY: 5,
-              shadowColor: 'rgba(0,0,0,0.3)'
-            }
+              shadowColor: "rgba(0,0,0,0.3)",
+            },
           },
           blur: {
             style: {
-              opacity: 0.4
-            }
-          }
+              opacity: 0.4,
+            },
+          },
         };
       }
 
       const option = {
         dataset: {
-          source: seriesData
+          source: seriesData,
         },
         tooltip: {},
         visualMap: [
@@ -189,27 +204,31 @@ const EChartsComponent = () => {
             show: false,
             min: 0,
             max: maxDepth,
-            dimension: 'depth',
+            dimension: "depth",
             inRange: {
-              color: ['#006edd', '#e0ffff']
-            }
-          }
+              color: ["#006edd", "#e0ffff"],
+            },
+          },
         ],
         hoverLayerThreshold: Infinity,
         series: {
-          type: 'custom',
+          type: "custom",
           renderItem: renderItem,
           progressive: 0,
-          coordinateSystem: 'none',
+          coordinateSystem: "none",
           encode: {
-            tooltip: 'value',
-            itemName: 'id'
-          }
-        }
+            tooltip: "value",
+            itemName: "id",
+          },
+        },
       };
       myChart.setOption(option);
-      myChart.on('click', { seriesIndex: 0 }, function (params) {
-        if (params.data && typeof params.data === 'object' && 'id' in params.data) {
+      myChart.on("click", { seriesIndex: 0 }, function (params) {
+        if (
+          params.data &&
+          typeof params.data === "object" &&
+          "id" in params.data
+        ) {
           drillDown((params.data as { id: string }).id);
         }
       });
@@ -224,12 +243,12 @@ const EChartsComponent = () => {
         displayRoot.parent = null;
         myChart.setOption({
           dataset: {
-            source: seriesData
-          }
+            source: seriesData,
+          },
         });
       }
 
-      myChart.getZr().on('click', function (event) {
+      myChart.getZr().on("click", function (event) {
         if (!event.target) {
           drillDown();
         }
@@ -244,12 +263,19 @@ const EChartsComponent = () => {
   }, [vizData]);
 
   return loading ? (
-    <div className='pt-64 w-full flex flex-row justify-center' data-testid="loading-spinner">
+    <div
+      className="pt-64 w-full flex flex-row justify-center"
+      data-testid="loading-spinner"
+    >
       <LoadingSpinner />
     </div>
   ) : (
-    <div ref={chartRef} style={{ height: '100vh' }} data-testid="echarts-container" />
-  );  
+    <div
+      ref={chartRef}
+      style={{ height: "100vh" }}
+      data-testid="echarts-container"
+    />
+  );
 };
 
 export default EChartsComponent;

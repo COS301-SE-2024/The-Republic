@@ -25,7 +25,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   handleUpdate,
   handleCancel,
   isEditing,
-  setIsEditing
+  setIsEditing,
 }) => {
   const { theme } = useTheme();
 
@@ -50,11 +50,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <Dialog.Content
                   className={cn(
                     "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg w-96",
-                    theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
+                    theme === "dark"
+                      ? "bg-black text-white"
+                      : "bg-white text-gray-800",
                   )}
                 >
-                  <Dialog.Title className="text-xl font-semibold mb-4">Edit Profile</Dialog.Title>
-                  <EditProfile user={user} onUpdate={handleUpdate} onCancel={handleCancel} />
+                  <Dialog.Title className="text-xl font-semibold mb-4">
+                    Edit Profile
+                  </Dialog.Title>
+                  <EditProfile
+                    user={user}
+                    onUpdate={handleUpdate}
+                    onCancel={handleCancel}
+                  />
                 </Dialog.Content>
               </Dialog.Portal>
             </Dialog.Root>

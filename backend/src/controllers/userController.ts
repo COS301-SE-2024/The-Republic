@@ -19,7 +19,10 @@ const userService = new UserService();
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
-    const response = await userService.getUserById(req.params.id, req.body.user_id);
+    const response = await userService.getUserById(
+      req.params.id,
+      req.body.user_id,
+    );
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);
@@ -28,7 +31,11 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const updateUserProfile = async (req: Request, res: Response) => {
   try {
-    const response = await userService.updateUserProfile(req.params.id, req.body, req.file as MulterFile);
+    const response = await userService.updateUserProfile(
+      req.params.id,
+      req.body,
+      req.file as MulterFile,
+    );
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);

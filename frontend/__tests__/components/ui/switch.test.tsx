@@ -1,12 +1,18 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import { describe, expect } from '@jest/globals';
+import { describe, expect } from "@jest/globals";
 import { Switch } from "@/components/ui/switch";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -18,15 +24,17 @@ jest.mock('@supabase/supabase-js', () => ({
 describe("<Switch />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
-  
+
   it("renders default switch correctly", () => {
-    const { getByRole } = render(<Switch checked={false} onCheckedChange={() => {}} />);
+    const { getByRole } = render(
+      <Switch checked={false} onCheckedChange={() => {}} />,
+    );
     const switchElement = getByRole("switch");
 
     expect(switchElement).toBeInTheDocument();
@@ -35,7 +43,9 @@ describe("<Switch />", () => {
   });
 
   it("renders checked switch correctly", () => {
-    const { getByRole } = render(<Switch checked={true} onCheckedChange={() => {}} />);
+    const { getByRole } = render(
+      <Switch checked={true} onCheckedChange={() => {}} />,
+    );
     const switchElement = getByRole("switch");
 
     expect(switchElement).toBeInTheDocument();
@@ -45,7 +55,9 @@ describe("<Switch />", () => {
 
   it("calls onCheckedChange callback when clicked", () => {
     const mockOnCheckedChange = jest.fn();
-    const { getByRole } = render(<Switch checked={false} onCheckedChange={mockOnCheckedChange} />);
+    const { getByRole } = render(
+      <Switch checked={false} onCheckedChange={mockOnCheckedChange} />,
+    );
     const switchElement = getByRole("switch");
 
     fireEvent.click(switchElement);
@@ -56,7 +68,9 @@ describe("<Switch />", () => {
 
   it("does not call onCheckedChange callback when disabled", () => {
     const mockOnCheckedChange = jest.fn();
-    const { getByRole } = render(<Switch checked={false} onCheckedChange={mockOnCheckedChange} disabled />);
+    const { getByRole } = render(
+      <Switch checked={false} onCheckedChange={mockOnCheckedChange} disabled />,
+    );
     const switchElement = getByRole("switch");
 
     fireEvent.click(switchElement);

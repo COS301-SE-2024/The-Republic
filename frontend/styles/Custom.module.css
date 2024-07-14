@@ -1,116 +1,113 @@
-
 .sidebar {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 90vh;
-    display: flex;
-    overflow-x: hidden;
-    flex-direction: column;
-    background: hsl(var(--background));
-    padding: 25px 20px;
-    transition: all 0.4s ease;
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 90vh;
+  display: flex;
+  overflow-x: hidden;
+  flex-direction: column;
+  background: hsl(var(--background));
+  padding: 25px 20px;
+  transition: all 0.4s ease;
 }
 
 .republicHeader {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .republicHeader img {
-    width: 42px;
-    border-radius: 50%;
+  width: 180px;
+  border: none;
 }
 
-.republicHeader h2 {
-    color: hsl(var(--foreground));
-    font-size: 1.25rem;
-    font-weight: 600;
-    white-space: nowrap;
-    margin-left: 23px;
+.logo {
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
 }
 
 .sidebarLinks h4 {
-    color: hsl(var(--foreground));
-    font-weight: 500;
-    white-space: nowrap;
-    margin: 10px 0;
-    position: relative;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 10px 0;
+  position: relative;
 }
 
 .sidebarLinks h4 span {
-    opacity: 0;
+  opacity: 0;
 }
 
 .sidebarLinks h4 span {
-    opacity: 1;
-    color: hsl(var(--grey-medium));
+  opacity: 1;
+  color: hsl(var(--grey-medium));
 }
 
 .sidebarLinks {
-    list-style: none;
-    margin-top: 20px;
-    height: 80%;
-    overflow-y: auto;
-    scrollbar-width: none;
+  list-style: none;
+  margin-top: 20px;
+  height: 80%;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .sidebarLinks::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .sidebarLinks li a {
-    margin-top: 10px;
-    display: flex;
-    border-radius: 7px;
-    align-items: center;
-    gap: 0 20px;
-    color: hsl(var(--foreground));
-    font-weight: 500;
-    white-space: nowrap;
-    padding: 15px 10px;
-    text-decoration: none;
-    transition: 0.2s ease;
-    background: hsl(var(--grey));
+  margin-top: 10px;
+  display: flex;
+  border-radius: 7px;
+  align-items: center;
+  gap: 0 20px;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 15px 10px;
+  text-decoration: none;
+  transition: 0.2s ease;
+  background: hsl(var(--grey));
 }
 
 .sidebarLinks li a:hover {
-    background: hsl(var(--grey-dark));
-    border-radius: 4px;
+  background: hsl(var(--grey-dark));
+  border-radius: 4px;
 }
 
 .userAccount {
-    margin-top: auto;
-    padding: 12px 10px;
-    margin-left: -10px;
-    color: hsl(var(--foreground));
-    background: hsl(var(--grey));
-    border-radius: 14px;
+  margin-top: auto;
+  padding: 12px 10px;
+  margin-left: -10px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--grey));
+  border-radius: 14px;
 }
 
 .userProfile {
-    display: flex;
-    align-items: center;
-    color: hsl(var(--foreground));
+  display: flex;
+  align-items: center;
+  color: hsl(var(--foreground));
 }
 
 .userProfile img {
-    width: 42px;
-    border-radius: 50%;
-    border: 2px solid hsl(var(--foreground));
+  width: 42px;
+  border-radius: 50%;
+  border: 2px solid hsl(var(--foreground));
 }
 
 .userProfile h3 {
-    font-size: 1rem;
-    font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .userProfile span {
-    font-size: 0.775rem;
-    font-weight: 600;
+  font-size: 0.775rem;
+  font-weight: 600;
 }
 
 .userDetail {
-    margin-left: 23px;
-    white-space: nowrap;
+  margin-left: 23px;
+  white-space: nowrap;
 }

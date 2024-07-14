@@ -9,7 +9,7 @@ export default class ReactionService {
     this.reactionRepository = new ReactionRepository();
   }
 
-  setReactionRepository(reactionRepository: ReactionRepository): void{
+  setReactionRepository(reactionRepository: ReactionRepository): void {
     this.reactionRepository = reactionRepository;
   }
 
@@ -18,7 +18,7 @@ export default class ReactionService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to react"
+        error: "You need to be signed in to react",
       });
     }
 
@@ -26,7 +26,7 @@ export default class ReactionService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for reacting"
+        error: "Missing required fields for reacting",
       });
     }
 
@@ -34,12 +34,17 @@ export default class ReactionService {
     let removed: string | undefined;
 
     // Check if the user already has a reaction for this issue
-    const existingReaction = await this.reactionRepository
-      .getReactionByUserAndIssue(reaction.issue_id, reaction.user_id);
+    const existingReaction =
+      await this.reactionRepository.getReactionByUserAndIssue(
+        reaction.issue_id,
+        reaction.user_id,
+      );
 
     if (existingReaction) {
-      const removedReaction = await this.reactionRepository
-        .deleteReaction(reaction.issue_id, reaction.user_id);
+      const removedReaction = await this.reactionRepository.deleteReaction(
+        reaction.issue_id,
+        reaction.user_id,
+      );
 
       removed = removedReaction.emoji;
     }
@@ -49,14 +54,13 @@ export default class ReactionService {
       added = addedReaction.emoji;
     }
 
-
     return APIData({
       code: 200,
       success: true,
       data: {
         added,
-        removed
-      }
+        removed,
+      },
     });
   }
 }

@@ -1,12 +1,18 @@
 import React from "react";
-import { render } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
+import { render } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -18,7 +24,7 @@ jest.mock('@supabase/supabase-js', () => ({
 describe("Avatar Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -33,8 +39,12 @@ describe("Avatar Component", () => {
   test("AvatarImage renders correctly with className", () => {
     const { container } = render(
       <Avatar>
-        <AvatarImage src="test-image.jpg" alt="Test Image" className="custom-class" />
-      </Avatar>
+        <AvatarImage
+          src="test-image.jpg"
+          alt="Test Image"
+          className="custom-class"
+        />
+      </Avatar>,
     );
     expect(container.firstChild).not.toBe(null);
   });
@@ -43,7 +53,7 @@ describe("Avatar Component", () => {
     const { container } = render(
       <Avatar>
         <AvatarFallback className="custom-class" />
-      </Avatar>
+      </Avatar>,
     );
     expect(container.firstChild).not.toBe(null);
   });

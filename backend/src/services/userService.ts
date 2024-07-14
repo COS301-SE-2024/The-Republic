@@ -15,13 +15,16 @@ export class UserService {
     this.userRepository = userRepository;
   }
 
-  async getUserById(userId: string, authenticatedUserId: string): Promise<APIResponse<User>> {
+  async getUserById(
+    userId: string,
+    authenticatedUserId: string,
+  ): Promise<APIResponse<User>> {
     const user = await this.userRepository.getUserById(userId);
     if (!user) {
       throw APIError({
         code: 404,
         success: false,
-        error: "User not found"
+        error: "User not found",
       });
     }
 
@@ -34,13 +37,17 @@ export class UserService {
     };
   }
 
-  async updateUserProfile(userId: string, updateData: Partial<User>, file?: MulterFile): Promise<APIResponse<User>> {
+  async updateUserProfile(
+    userId: string,
+    updateData: Partial<User>,
+    file?: MulterFile,
+  ): Promise<APIResponse<User>> {
     const user = await this.userRepository.getUserById(userId);
     if (!user) {
       throw APIError({
         code: 404,
         success: false,
-        error: "User not found"
+        error: "User not found",
       });
     }
 
@@ -48,21 +55,21 @@ export class UserService {
       // Delete the old profile picture if it exists and is not the default one
       if (user.image_url && !user.image_url.includes("default.png")) {
         try {
-          const fileName = user.image_url.split('/').pop();
+          const fileName = user.image_url.split("/").pop();
           if (!fileName) {
             throw new Error("Invalid image URL format");
           }
-          
+
           const { error: deleteError } = await supabase.storage
-            .from('user')
+            .from("user")
             .remove([fileName]);
-      
+
           if (deleteError) {
             console.error("Failed to delete old profile picture:", deleteError);
             throw APIError({
               code: 500,
               success: false,
-              error: "Failed to delete old profile picture"
+              error: "Failed to delete old profile picture",
             });
           }
         } catch (error) {
@@ -70,7 +77,7 @@ export class UserService {
           throw APIError({
             code: 500,
             success: false,
-            error: "Failed to delete old profile picture"
+            error: "Failed to delete old profile picture",
           });
         }
       }
@@ -78,31 +85,34 @@ export class UserService {
       // Upload the new profile picture
       const fileName = `profile_pictures/${userId}-${Date.now()}-${file.originalname}`;
       const { error: uploadError } = await supabase.storage
-        .from('user')
+        .from("user")
         .upload(fileName, file.buffer);
 
       if (uploadError) {
         throw APIError({
           code: 500,
           success: false,
-          error: "Failed to upload new profile picture"
+          error: "Failed to upload new profile picture",
         });
       }
 
       // Retrieve the public URL for the new profile picture
       const { data: urlData } = supabase.storage
-        .from('user')
+        .from("user")
         .getPublicUrl(fileName);
 
       updateData.image_url = urlData.publicUrl;
     }
 
-    const updatedUser = await this.userRepository.updateUserProfile(userId, updateData);
+    const updatedUser = await this.userRepository.updateUserProfile(
+      userId,
+      updateData,
+    );
     if (!updatedUser) {
       throw APIError({
         code: 404,
         success: false,
-        error: "User does not exist"
+        error: "User does not exist",
       });
     }
 

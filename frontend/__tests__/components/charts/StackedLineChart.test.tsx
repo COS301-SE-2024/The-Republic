@@ -1,15 +1,21 @@
-import React from 'react';
-import { describe, expect } from '@jest/globals';
-import { render, waitFor } from '@testing-library/react';
-import StackedLineChart from '@/components/ReportCharts/StackedLineChart/StackedLineChart';
-import * as echarts from 'echarts';
+import React from "react";
+import { describe, expect } from "@jest/globals";
+import { render, waitFor } from "@testing-library/react";
+import StackedLineChart from "@/components/ReportCharts/StackedLineChart/StackedLineChart";
+import * as echarts from "echarts";
 
-jest.mock('echarts');
+jest.mock("echarts");
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -18,7 +24,7 @@ jest.mock('@supabase/supabase-js', () => ({
   }),
 }));
 
-describe('StackedLineChart', () => {
+describe("StackedLineChart", () => {
   const mockEchartsInstance = {
     setOption: jest.fn(),
     dispose: jest.fn(),
@@ -26,7 +32,7 @@ describe('StackedLineChart', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
     (echarts.init as jest.Mock).mockReturnValue(mockEchartsInstance);
   });
 
@@ -34,7 +40,7 @@ describe('StackedLineChart', () => {
     (console.error as jest.Mock).mockRestore();
   });
 
-  it('renders the chart and sets options correctly', async () => {
+  it("renders the chart and sets options correctly", async () => {
     render(<StackedLineChart />);
     await waitFor(() => {
       expect(echarts.init).toHaveBeenCalled();
@@ -42,17 +48,18 @@ describe('StackedLineChart', () => {
     });
   });
 
-  it('updates the chart options on data change', async () => {
+  it("updates the chart options on data change", async () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
-        json: () => Promise.resolve({
-          success: true,
-          data: {
-            'Public Safety': { '2023-07-01': 5, '2023-07-02': 10 },
-            'Water': { '2023-07-01': 2, '2023-07-02': 3 }
-          }
-        })
-      })
+        json: () =>
+          Promise.resolve({
+            success: true,
+            data: {
+              "Public Safety": { "2023-07-01": 5, "2023-07-02": 10 },
+              Water: { "2023-07-01": 2, "2023-07-02": 3 },
+            },
+          }),
+      }),
     ) as jest.Mock;
 
     render(<StackedLineChart />);
@@ -62,4 +69,3 @@ describe('StackedLineChart', () => {
     });
   });
 });
-

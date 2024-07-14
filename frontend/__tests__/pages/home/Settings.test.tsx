@@ -1,12 +1,14 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
-import Home from '@/app/(home)/settings/page';
+import { render, screen } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
+import Home from "@/app/(home)/settings/page";
 
-jest.mock('@/components/Settings/Settings', () => jest.fn(() => <div>Mocked Settings</div>));
+jest.mock("@/components/Settings/Settings", () =>
+  jest.fn(() => <div>Mocked Settings</div>),
+);
 
-describe('Settings Page', () => {
-  it('renders the Settings component', () => {
+describe("Settings Page", () => {
+  it("renders the Settings component", () => {
     render(<Home />);
-    expect(screen.getByText('Mocked Settings')).not.toBeNull();
+    expect(screen.getByText("Mocked Settings")).not.toBeNull();
   });
 });

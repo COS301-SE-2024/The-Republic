@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, expect } from '@jest/globals';
+import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import {
   DropdownMenu,
@@ -10,10 +10,16 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -25,13 +31,13 @@ jest.mock('@supabase/supabase-js', () => ({
 describe("DropdownMenu Components", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
-  
+
   const MockTrigger = () => (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -52,9 +58,9 @@ describe("DropdownMenu Components", () => {
         <DropdownMenuContent>
           <DropdownMenuItem DropdownMenuItem>Item 1</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
-    
+
     expect(container).toBeInTheDocument();
   });
 
@@ -62,9 +68,11 @@ describe("DropdownMenu Components", () => {
     const { container } = render(
       <DropdownMenu>
         <DropdownMenuContent>
-          <DropdownMenuCheckboxItem checked={true}>Checkbox Item</DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem checked={true}>
+            Checkbox Item
+          </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(container).toBeInTheDocument();
@@ -76,7 +84,7 @@ describe("DropdownMenu Components", () => {
         <DropdownMenuContent>
           <DropdownMenuRadioItem>Radio Item</DropdownMenuRadioItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(container).toBeInTheDocument();
@@ -89,7 +97,7 @@ describe("DropdownMenu Components", () => {
           <DropdownMenuItem>Item 1</DropdownMenuItem>
           <DropdownMenuItem>Item 2</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(container).toBeInTheDocument();

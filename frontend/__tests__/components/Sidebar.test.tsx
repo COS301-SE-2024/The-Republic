@@ -1,13 +1,19 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect } from '@jest/globals';
-import { useUser } from '@/lib/contexts/UserContext';
-import Sidebar from '@/components/Sidebar/Sidebar';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, expect } from "@jest/globals";
+import { useUser } from "@/lib/contexts/UserContext";
+import Sidebar from "@/components/Sidebar/Sidebar";
 
-jest.mock('@supabase/supabase-js', () => ({
+jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest.fn().mockResolvedValue({ user: { id: 'user-id' }, session: 'session-token', error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({
+          user: { id: "user-id" },
+          session: "session-token",
+          error: null,
+        }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -22,47 +28,47 @@ jest.mock('@supabase/supabase-js', () => ({
   }),
 }));
 
-jest.mock('@/lib/contexts/UserContext', () => ({
+jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: jest.fn(),
 }));
 
-describe('Sidebar', () => {
+describe("Sidebar", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
 
-  it('renders correctly for logged-in users', () => {
+  it("renders correctly for logged-in users", () => {
     (useUser as jest.Mock).mockReturnValue({
       user: {
-        user_id: '1',
-        email_address: 'user@example.com',
-        username: 'user1',
-        fullname: 'User One',
-        image_url: 'http://example.com/avatar.jpg',
-        bio: 'This is a bio',
+        user_id: "1",
+        email_address: "user@example.com",
+        username: "user1",
+        fullname: "User One",
+        image_url: "http://example.com/avatar.jpg",
+        bio: "This is a bio",
         is_owner: true,
         total_issues: 5,
         resolved_issues: 3,
-        access_token: 'access_token_example',
+        access_token: "access_token_example",
       },
     });
 
     render(<Sidebar />);
-    expect(screen.getByText('User One')).toBeInTheDocument();
+    expect(screen.getByText("User One")).toBeInTheDocument();
   });
 
-  it('renders correctly for guests', () => {
+  it("renders correctly for guests", () => {
     (useUser as jest.Mock).mockReturnValue({ user: null });
 
     render(<Sidebar />);
-    expect(screen.getByText('General')).toBeInTheDocument();
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Visualizations')).toBeInTheDocument();
-    expect(screen.getByText('Reports')).toBeInTheDocument();
+    expect(screen.getByText("General")).toBeInTheDocument();
+    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Visualizations")).toBeInTheDocument();
+    expect(screen.getByText("Reports")).toBeInTheDocument();
   });
 });

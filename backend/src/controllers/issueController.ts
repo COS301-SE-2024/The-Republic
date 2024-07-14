@@ -26,7 +26,7 @@ export const getIssueById = async (req: Request, res: Response) => {
 };
 
 export const createIssue = [
-  upload.single('image'),
+  upload.single("image"),
   async (req: Request, res: Response) => {
     try {
       const file = req.file;
@@ -35,7 +35,7 @@ export const createIssue = [
     } catch (err) {
       sendResponse(res, err as APIResponse);
     }
-  }
+  },
 ];
 
 export const updateIssue = async (req: Request, res: Response) => {

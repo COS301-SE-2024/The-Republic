@@ -227,6 +227,7 @@ backend/
     ```
 
 > Open [http://localhost:8080](http://localhost:8080) with your browser to see the result. The page auto-updates as you edit the file.
+
 ---
 
 [Read Project Documentation](./../documentation/README.md)

@@ -1,9 +1,9 @@
-import webpackPreprocessor from '@cypress/webpack-preprocessor';
-import { defineConfig } from 'cypress';
+import webpackPreprocessor from "@cypress/webpack-preprocessor";
+import { defineConfig } from "cypress";
 
 const webpackOptions = {
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [
@@ -12,20 +12,20 @@ const webpackOptions = {
         exclude: [/node_modules/],
         use: [
           {
-            loader: 'ts-loader'
-          }
-        ]
-      }
-    ]
-  }
+            loader: "ts-loader",
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      on('file:preprocessor', webpackPreprocessor({ webpackOptions }));
+      on("file:preprocessor", webpackPreprocessor({ webpackOptions }));
       // Removed dotenvPlugin related code
       return config;
-    }
-  }
+    },
+  },
 });

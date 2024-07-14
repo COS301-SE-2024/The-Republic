@@ -29,7 +29,7 @@ export default class IssueService {
   setIssueRepository(issueRepository: IssueRepository): void {
     this.issueRepository = issueRepository;
   }
-  
+
   setLocationRepository(locationRepository: LocationRepository): void {
     this.locationRepository = locationRepository;
   }
@@ -39,41 +39,40 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for getting issues"
+        error: "Missing required fields for getting issues",
       });
     }
-  
+
     const issues = await this.issueRepository.getIssues(params);
-  
-    const issuesWithUserInfo = issues.map(issue => {
+
+    const issuesWithUserInfo = issues.map((issue) => {
       const isOwner = issue.user_id === params.user_id;
-  
+
       if (issue.is_anonymous) {
         issue.user = {
           user_id: null,
           email_address: null,
-          username: 'Anonymous',
-          fullname: 'Anonymous',
+          username: "Anonymous",
+          fullname: "Anonymous",
           image_url: null,
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
         };
       }
-  
+
       return {
         ...issue,
-        is_owner: isOwner
+        is_owner: isOwner,
       };
     });
-  
+
     return APIData({
       code: 200,
       success: true,
       data: issuesWithUserInfo,
     });
   }
-  
 
   async getIssueById(issue: Partial<Issue>) {
     const issue_id = issue.issue_id;
@@ -81,11 +80,14 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for getting an issue"
+        error: "Missing required fields for getting an issue",
       });
     }
 
-    const resIssue = await this.issueRepository.getIssueById(issue_id, issue.user_id);
+    const resIssue = await this.issueRepository.getIssueById(
+      issue_id,
+      issue.user_id,
+    );
 
     const isOwner = resIssue.user_id === issue.user_id;
 
@@ -93,8 +95,8 @@ export default class IssueService {
       resIssue.user = {
         user_id: null,
         email_address: null,
-        username: 'Anonymous',
-        fullname: 'Anonymous',
+        username: "Anonymous",
+        fullname: "Anonymous",
         image_url: null,
         is_owner: false,
         total_issues: null,
@@ -107,8 +109,8 @@ export default class IssueService {
       success: true,
       data: {
         ...resIssue,
-        is_owner: isOwner
-      }
+        is_owner: isOwner,
+      },
     });
   }
 
@@ -117,7 +119,7 @@ export default class IssueService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to create an issue"
+        error: "You need to be signed in to create an issue",
       });
     }
 
@@ -125,7 +127,7 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for creating an issue"
+        error: "Missing required fields for creating an issue",
       });
     }
 
@@ -133,7 +135,7 @@ export default class IssueService {
       throw APIError({
         code: 413,
         success: false,
-        error: "Issue content exceeds the maximum length of 500 characters"
+        error: "Issue content exceeds the maximum length of 500 characters",
       });
     }
 
@@ -141,28 +143,35 @@ export default class IssueService {
 
     if (image) {
       const fileName = `${issue.user_id}_${Date.now()}-${image.originalname}`;
-      const { error } = await supabase.storage.from('issues').upload(fileName, image.buffer);
-    
+      const { error } = await supabase.storage
+        .from("issues")
+        .upload(fileName, image.buffer);
+
       if (error) {
         console.error(error);
         throw APIError({
           code: 500,
           success: false,
-          error: "An error occurred while uploading the image. Please try again."
+          error:
+            "An error occurred while uploading the image. Please try again.",
         });
       }
-    
-      const { data: urlData } = supabase.storage.from('issues').getPublicUrl(fileName);
-    
+
+      const { data: urlData } = supabase.storage
+        .from("issues")
+        .getPublicUrl(fileName);
+
       imageUrl = urlData.publicUrl;
     }
-    
 
     delete issue.issue_id;
 
     // console.log(issue);
 
-    const createdIssue = await this.issueRepository.createIssue({ ...issue, image_url: imageUrl });
+    const createdIssue = await this.issueRepository.createIssue({
+      ...issue,
+      image_url: imageUrl,
+    });
 
     return APIData({
       code: 201,
@@ -177,7 +186,7 @@ export default class IssueService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to update an issue"
+        error: "You need to be signed in to update an issue",
       });
     }
 
@@ -186,7 +195,7 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for updating an issue"
+        error: "Missing required fields for updating an issue",
       });
     }
 
@@ -194,19 +203,23 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Cannot change the time an issue was created or resolved"
+        error: "Cannot change the time an issue was created or resolved",
       });
     }
 
     delete issue.user_id;
     delete issue.issue_id;
 
-    const updatedIssue = await this.issueRepository.updateIssue(issue_id, issue, user_id);
+    const updatedIssue = await this.issueRepository.updateIssue(
+      issue_id,
+      issue,
+      user_id,
+    );
 
     return APIData({
       code: 200,
       success: true,
-      data: updatedIssue
+      data: updatedIssue,
     });
   }
 
@@ -216,44 +229,49 @@ export default class IssueService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to delete an issue"
+        error: "You need to be signed in to delete an issue",
       });
     }
-  
+
     const issue_id = issue.issue_id;
     if (!issue_id) {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for deleting an issue"
+        error: "Missing required fields for deleting an issue",
       });
     }
-  
-    const issueToDelete = await this.issueRepository.getIssueById(issue_id, user_id);
-  
+
+    const issueToDelete = await this.issueRepository.getIssueById(
+      issue_id,
+      user_id,
+    );
+
     if (issueToDelete.image_url) {
-      const imageUrlParts = issueToDelete.image_url.split('/');
-      const imageName = imageUrlParts.slice(-2).join('/'); // Join the last two parts to get the full path
-      const { error } = await supabase.storage.from('issues').remove([imageName]);
-  
+      const imageUrlParts = issueToDelete.image_url.split("/");
+      const imageName = imageUrlParts.slice(-2).join("/"); // Join the last two parts to get the full path
+      const { error } = await supabase.storage
+        .from("issues")
+        .remove([imageName]);
+
       if (error) {
         console.error("Failed to delete image from storage:", error);
         throw APIError({
           code: 500,
           success: false,
-          error: "An error occurred while deleting the image. Please try again."
+          error:
+            "An error occurred while deleting the image. Please try again.",
         });
       }
     }
-  
+
     await this.issueRepository.deleteIssue(issue_id, user_id);
-  
+
     return APIData({
       code: 204,
-      success: true
+      success: true,
     });
   }
-  
 
   async resolveIssue(issue: Partial<Issue>) {
     const user_id = issue.user_id;
@@ -261,7 +279,7 @@ export default class IssueService {
       throw APIError({
         code: 401,
         success: false,
-        error: "You need to be signed in to resolve an issue"
+        error: "You need to be signed in to resolve an issue",
       });
     }
 
@@ -270,11 +288,14 @@ export default class IssueService {
       throw APIError({
         code: 400,
         success: false,
-        error: "Missing required fields for resolving an issue"
+        error: "Missing required fields for resolving an issue",
       });
     }
 
-    const resolvedIssue = await this.issueRepository.resolveIssue(issue_id, user_id);
+    const resolvedIssue = await this.issueRepository.resolveIssue(
+      issue_id,
+      user_id,
+    );
 
     return APIData({
       code: 200,
@@ -282,82 +303,83 @@ export default class IssueService {
       data: resolvedIssue,
     });
   }
-  
+
   async getUserIssues(issue: Partial<Issue>) {
     const userId = issue.profile_user_id;
     if (!userId) {
       throw APIError({
         code: 401,
         success: false,
-        error: "Missing profile user ID"
+        error: "Missing profile user ID",
       });
     }
-  
+
     const issues = await this.issueRepository.getUserIssues(userId);
-  
-    const issuesWithUserInfo = issues.map(issue => {
+
+    const issuesWithUserInfo = issues.map((issue) => {
       const isOwner = issue.user_id === userId;
-      
+
       if (issue.is_anonymous) {
         issue.user = {
           user_id: null,
           email_address: null,
-          username: 'Anonymous',
-          fullname: 'Anonymous',
+          username: "Anonymous",
+          fullname: "Anonymous",
           image_url: null,
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
         };
       }
-      
+
       return {
         ...issue,
-        is_owner: isOwner
+        is_owner: isOwner,
       };
     });
-  
+
     return APIData({
       code: 200,
       success: true,
       data: issuesWithUserInfo,
     });
   }
-  
+
   async getUserResolvedIssues(issue: Partial<Issue>) {
     const userId = issue.profile_user_id;
     if (!userId) {
       throw APIError({
         code: 401,
         success: false,
-        error: "Missing profile user ID"
+        error: "Missing profile user ID",
       });
     }
-  
-    const resolvedIssues = await this.issueRepository.getUserResolvedIssues(userId);
-  
-    const issuesWithUserInfo = resolvedIssues.map(issue => {
+
+    const resolvedIssues =
+      await this.issueRepository.getUserResolvedIssues(userId);
+
+    const issuesWithUserInfo = resolvedIssues.map((issue) => {
       const isOwner = issue.user_id === userId;
-      
+
       if (issue.is_anonymous) {
         issue.user = {
           user_id: null,
           email_address: null,
-          username: 'Anonymous',
-          fullname: 'Anonymous',
+          username: "Anonymous",
+          fullname: "Anonymous",
           image_url: null,
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
         };
       }
-      
+
       return {
         ...issue,
-        is_owner: isOwner
+        is_owner: isOwner,
       };
     });
-  
+
     return APIData({
       code: 200,
       success: true,

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ProfileStatsProps } from '@/lib/types';
+import { ProfileStatsProps } from "@/lib/types";
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({
   totalIssues,
