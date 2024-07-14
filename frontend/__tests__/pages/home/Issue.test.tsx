@@ -50,12 +50,10 @@ describe("Issue Page", () => {
       () =>
         Promise.resolve({
           ok: true,
-          json: jest
-            .fn()
-            .mockResolvedValue({
-              success: true,
-              data: { id: "1", title: "Test Issue" },
-            } as unknown) as unknown,
+          json: jest.fn().mockResolvedValue({
+            success: true,
+            data: { id: "1", title: "Test Issue" },
+          } as unknown) as unknown,
           headers: new Headers(),
           redirected: false,
           status: 200,

@@ -14,14 +14,11 @@ const HelpMenu: React.FC = () => {
 
   return (
     <>
-<<<<<<< HEAD
-      <button onClick={toggleMenu} className="fixed bottom-4 right-4 bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg" title="Toggle Help Menu">
-=======
       <button
         onClick={toggleMenu}
         className="fixed bottom-4 right-4 bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+        title="Toggle Help Menu"
       >
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
         <CircleHelp />
       </button>
       {isOpen && (

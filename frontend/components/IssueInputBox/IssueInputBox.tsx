@@ -12,17 +12,9 @@ import { categoryOptions, moodOptions } from "@/lib/constants";
 import { supabase } from "@/lib/globals";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
-<<<<<<< HEAD
-import { Image as LucideImage, X } from 'lucide-react';
-import { LocationType, IssueInputBoxProps } from "@/lib/types";
-import Image from 'next/image';
-=======
 import { Image as LucideImage, X } from "lucide-react";
-import { LocationType } from "@/lib/types";
+import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
-import { checkImageFileAndToast } from '@/lib/utils';
-
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
 
 const MAX_CHAR_COUNT = 500;
 
@@ -78,7 +70,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
-    if (image && !await checkImageFileAndToast(image, toast)) {
+    if (image && !(await checkImageFileAndToast(image, toast))) {
       return;
     }
 

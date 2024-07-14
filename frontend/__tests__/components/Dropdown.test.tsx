@@ -16,13 +16,11 @@ const options = {
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signUp: jest
-        .fn()
-        .mockResolvedValue({
-          user: { id: "user-id" },
-          session: "session-token",
-          error: null,
-        }),
+      signUp: jest.fn().mockResolvedValue({
+        user: { id: "user-id" },
+        session: "session-token",
+        error: null,
+      }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),

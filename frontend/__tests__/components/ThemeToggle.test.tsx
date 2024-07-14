@@ -7,13 +7,11 @@ import * as nextThemes from "next-themes";
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest
-        .fn()
-        .mockResolvedValue({
-          user: { id: "user-id" },
-          session: "session-token",
-          error: null,
-        }),
+      signIn: jest.fn().mockResolvedValue({
+        user: { id: "user-id" },
+        session: "session-token",
+        error: null,
+      }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),

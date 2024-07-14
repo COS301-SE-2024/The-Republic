@@ -151,14 +151,10 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
                   type="button"
                   className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
                   id="subscribe-menu"
-<<<<<<< HEAD
-                  onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
-                  title="Subscribe"
-=======
                   onClick={() =>
                     setShowSubscribeDropdown(!showSubscribeDropdown)
                   }
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
+                  title="Subscribe"
                 >
                   <Bell className="h-5 w-5" aria-hidden="true" />
                 </button>

@@ -25,13 +25,11 @@ jest.mock("react-textarea-autosize", () => ({
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {
-      signIn: jest
-        .fn()
-        .mockResolvedValue({
-          user: { id: "user-id" },
-          session: "session-token",
-          error: null,
-        }),
+      signIn: jest.fn().mockResolvedValue({
+        user: { id: "user-id" },
+        session: "session-token",
+        error: null,
+      }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -85,12 +83,10 @@ describe("AddCommentForm", () => {
   it("submits a comment", async () => {
     const onCommentAdded = jest.fn();
     const fetchMock = jest.fn().mockResolvedValue({
-      json: jest
-        .fn()
-        .mockResolvedValue({
-          success: true,
-          data: { content: "This is a comment" },
-        }),
+      json: jest.fn().mockResolvedValue({
+        success: true,
+        data: { content: "This is a comment" },
+      }),
     });
     global.fetch = fetchMock;
 

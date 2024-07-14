@@ -1,10 +1,5 @@
-<<<<<<< HEAD:frontend/__tests__/misc/index.test.ts
-import { capitalize } from '../../lib/helper';
-import { describe, expect, test } from '@jest/globals';
-=======
-import { capitalize } from "../lib/helper";
+import { capitalize } from "../../lib/helper";
 import { describe, expect, test } from "@jest/globals";
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3:frontend/__tests__/index.test.ts
 
 describe("capitalize function", () => {
   test("capitalizes the first letter of a word", () => {

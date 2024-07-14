@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-import React from 'react';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-=======
 import React from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
 
 const MAX_CHAR_COUNT = 500;
 

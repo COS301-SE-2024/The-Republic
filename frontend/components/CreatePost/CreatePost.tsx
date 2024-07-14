@@ -27,16 +27,12 @@ const CreatePost: React.FC = () => {
             theme === "dark" ? "bg-black text-white" : "bg-white text-black"
           }`}
         >
-<<<<<<< HEAD
-          <Dialog.Title className="text-xl font-semibold mb-4">Create a Post</Dialog.Title>
-          <Dialog.Description  style={{ display: 'none' }}>
-            Fill in the details below to create a new post.
-          </Dialog.Description>
-=======
           <Dialog.Title className="text-xl font-semibold mb-4">
             Create a Post
           </Dialog.Title>
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
+          <Dialog.Description style={{ display: "none" }}>
+            Fill in the details below to create a new post.
+          </Dialog.Description>
           <IssueInputBox user={user} />
           <Dialog.Close asChild>
             <Button variant="outline" className="mt-4">

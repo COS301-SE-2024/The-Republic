@@ -13,10 +13,6 @@ function DonutChart() {
     const fetchIssues = async () => {
       try {
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-<<<<<<< HEAD
-=======
-        console.log("Fetching from URL:", url);
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
         const response = await fetch(url, {
           method: "POST",
           body: JSON.stringify({
@@ -28,10 +24,6 @@ function DonutChart() {
           },
         });
         const apiResponse = await response.json();
-<<<<<<< HEAD
-=======
-        console.log("API Response:", apiResponse);
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
 
         if (apiResponse.success && apiResponse.data) {
           setData(apiResponse.data);
@@ -64,15 +56,8 @@ function DonutChart() {
       return Object.entries(merged).map(([name, value]) => ({ name, value }));
     };
 
-<<<<<<< HEAD
-    if (data && ('resolved' in data && 'unresolved' in data)) {
-      const transformedData = transformData(data);
-=======
     if (data && "resolved" in data && "unresolved" in data) {
-      console.log("Data:", data);
       const transformedData = transformData(data);
-      console.log("Transformed Data:", transformedData);
->>>>>>> 3399dee0e5bc67293f9f83c4348d6fbd597ba7c3
       setDataArray(transformedData);
     }
   }, [data]);
