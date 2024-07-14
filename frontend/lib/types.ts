@@ -188,10 +188,10 @@ interface RenderItemResult {
   };
 }
 
-interface AnalysisResult {
-  category: string;
-  severity: number;
-}
+// interface AnalysisResult {
+//   category: string;
+//   severity: number;
+// }
 
 interface RequestBody {
   from: number;
