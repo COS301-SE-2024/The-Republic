@@ -3,11 +3,12 @@
 import React, { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { checkImageFileAndToast, cn } from "@/lib/utils";
 import { User } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { supabase } from "@/lib/globals";
+import { useToast } from "../ui/use-toast";
 
 interface EditProfileProps {
   user: User;
@@ -23,6 +24,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const [updatedUser, setUpdatedUser] = useState(user);
   const [file, setFile] = useState<File | null>(null);
   const { theme } = useTheme();
+  const { toast } = useToast();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -59,6 +61,10 @@ const EditProfile: React.FC<EditProfileProps> = ({
         formData.append("username", updatedUser.username);
         formData.append("bio", updatedUser.bio);
         if (file) {
+          if (!await checkImageFileAndToast(file, toast)) {
+            return;
+          }
+
           formData.append("profile_picture", file);
         }
 

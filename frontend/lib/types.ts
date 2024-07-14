@@ -150,6 +150,11 @@ interface RenderItemResult {
   };
 }
 
+interface AnalysisResult {
+  category: string;
+  severity: number;
+}
+
 export type {
   User,
   Category,
@@ -164,4 +169,5 @@ export type {
   RenderItemResult,
   Comment,
   LocationType,
+  AnalysisResult
 };
