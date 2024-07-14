@@ -188,10 +188,10 @@ interface RenderItemResult {
   };
 }
 
-// interface AnalysisResult {
-//   category: string;
-//   severity: number;
-// }
+interface AnalysisResult {
+  category: string;
+  severity: number;
+}
 
 interface RequestBody {
   from: number;
@@ -207,6 +207,7 @@ interface FeedProps {
 }
 
 export type {
+  AnalysisResult,
   FeedProps,
   RequestBody,
   UserAlt,

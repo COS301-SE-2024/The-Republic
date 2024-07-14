@@ -15,6 +15,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
+import { checkImageFileAndToast } from "@/lib/utils";
 
 const MAX_CHAR_COUNT = 500;
 
