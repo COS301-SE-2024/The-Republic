@@ -129,22 +129,6 @@ describe("UserService", () => {
       expect(userRepository.updateUserProfile).toHaveBeenCalledWith(mockUser.user_id, updateData);
     });
 
-    // it("should update user profile with file", async () => {
-    //   userRepository.getUserById.mockResolvedValue(mockUser);
-    //   userRepository.updateUserProfile.mockResolvedValue({ ...mockUser, ...updateData, image_url: "https://newimage.com/profile.png" });
-
-    //   (supabase.storage.from('user').upload as jest.Mock).mockResolvedValue({ error: null });
-    //   (supabase.storage.from('user').getPublicUrl as jest.Mock).mockReturnValue({ data: { publicUrl: "https://newimage.com/profile.png" } });
-
-    //   const response = await userService.updateUserProfile(mockUser.user_id || "", updateData, mockFile);
-
-    //   expect(response.data).toEqual({ ...mockUser, ...updateData, image_url: "https://newimage.com/profile.png" });
-    //   expect(userRepository.getUserById).toHaveBeenCalledWith(mockUser.user_id);
-    //   expect(userRepository.updateUserProfile).toHaveBeenCalledWith(mockUser.user_id, { ...updateData, image_url: "https://newimage.com/profile.png" });
-    //   expect(supabase.storage.from('user').upload).toHaveBeenCalled();
-    //   expect(supabase.storage.from('user').getPublicUrl).toHaveBeenCalled();
-    // });
-
     it("should throw an error when user is not found", async () => {
       userRepository.getUserById.mockResolvedValue(null);
 
