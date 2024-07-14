@@ -20,14 +20,14 @@ const Header = () => {
   // Listen for changes in theme and update logo accordingly
   useEffect(() => {
     const newLogoSrc =
-      theme === "dark" ? "/images/b-logo-full.png" : "/images/b-logo-full.png";
+      theme === "dark" ? "/images/b-logo-full.png" : "/images/b-logo-full-black.png";
     setLogoSrc(newLogoSrc);
   }, [theme]);
 
   return (
     <header className="flex items-center justify-between p-5 border-b bg-background">
       <div className={styles.republicHeader}>
-        <Image width={200} height={200} src={logoSrc} alt="logo" />
+        <Image priority width={250} height={250} src={logoSrc} alt="logo" />
       </div>
       <div className="flex items-center flex-grow mx-8">
         <div className="flex-grow mr-4">
