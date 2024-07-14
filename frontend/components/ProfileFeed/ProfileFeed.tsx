@@ -62,7 +62,7 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
 
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center h-24">
-      <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      <FaSpinner className="animate-spin text-4xl text-green-500" />
     </div>
   );
 
