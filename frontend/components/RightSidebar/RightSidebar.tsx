@@ -41,22 +41,26 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   setFilter,
 }) => {
   return (
-    <div className="w-[300px] border-l min-h-80vh p-4">
-      <div className="mb-4">
-        <Dropdown
-          options={sortOptions}
-          value={sortBy}
-          onChange={setSortBy}
-          placeholder="Sort by..."
-        />
+    <div className="w-[300px] border-l h-full overflow-y-auto">
+      <div className="sticky top-0 p-4">
+        <div className="mb-4">
+            <Dropdown
+              options={sortOptions}
+              value={sortBy}
+              onChange={setSortBy}
+              placeholder="Sort by..."
+            />
+        </div>
       </div>
-      <div>
-        <Dropdown
-          options={filterOptions}
-          value={filter}
-          onChange={setFilter}
-          placeholder="Filter by..."
-        />
+      <div className="sticky top-0 p-4">
+        <div className="mb-4">
+            <Dropdown
+              options={filterOptions}
+              value={filter}
+              onChange={setFilter}
+              placeholder="Filter by..."
+            />
+        </div>
       </div>
     </div>
   );
