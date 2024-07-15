@@ -9,11 +9,12 @@ We will implement a point-based scoring system where users earn or lose points b
 #### Point System individual users:
 - **Positive Actions:**
   - Resolving an issue:
-    - 100 points for first issue resolved then 50 points thereafter.
+    - +100 points for first issue resolved then +50 points thereafter.
   - Posting issues
-    - 50 points for first issue resolved then 20 points thereafter.
+    - +50 points for first issue resolved then +20 points thereafter.
   - Leaving a comment on an open issue: +10 points
   - Reacting to an issue: +5 points
+  - Signing up to the application for the first time: +100 points
 
 - **Negative Actions:**
   - Falsely resolving someone else's issue: -75 points
