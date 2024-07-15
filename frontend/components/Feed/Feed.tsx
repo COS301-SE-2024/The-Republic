@@ -5,6 +5,7 @@ import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import { Issue as IssueType } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { FaSpinner } from "react-icons/fa";
+import styles from './Feed.module.css';
 
 interface User {
   user_id: string;
@@ -135,8 +136,8 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   );
 
   return (
-    <div className="flex">
-      <div className="w-full px-6">
+    <div className="flex h-full">
+      <div className={`flex-1 overflow-y-auto px-6 ${styles['feed-scroll']}`}>
         {showInputBox && user && <IssueInputBox user={user} />}
         {loading ? (
           <LoadingIndicator />
