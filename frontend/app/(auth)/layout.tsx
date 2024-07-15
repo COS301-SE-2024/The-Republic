@@ -10,32 +10,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [logoSrc, setLogoSrc] = useState("/images/b-logo-full-black-vert.png"); 
+  const [logoSrc, setLogoSrc] = useState("/images/b-logo-full-black-vert.png");
   const { theme, systemTheme } = useTheme();
 
   useEffect(() => {
     const currentTheme = theme === "system" ? systemTheme : theme;
-    const newLogoSrc = currentTheme === "dark" 
-      ? "/images/b-logo-full-vert.png" 
-      : "/images/b-logo-full-black-vert.png";
+    const newLogoSrc =
+      currentTheme === "dark"
+        ? "/images/b-logo-full-vert.png"
+        : "/images/b-logo-full-black-vert.png";
     setLogoSrc(newLogoSrc);
   }, [theme, systemTheme]);
 
   return (
     <div className="flex flex-col w-dvw h-dvh items-center">
-      <div className="flex flex-col items-center mt-16 mb-2"> 
+      <div className="flex flex-col items-center mt-16 mb-2">
         <Image
           priority
-          width={200} 
-          height={200} 
+          width={200}
+          height={200}
           src={logoSrc}
           alt="The Republic logo"
-          className={styles.logo} 
+          className={styles.logo}
         />
       </div>
-      <div> 
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   );
 }

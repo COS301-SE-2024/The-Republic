@@ -1,11 +1,11 @@
-import IssueService from "../services/issueService";
-import IssueRepository from "../db/issueRepository";
-import { LocationRepository } from "../db/locationRepository";
-import { Issue } from "../models/issue";
-import { APIResponse } from "../types/response";
+import IssueService from "../../services/issueService";
+import IssueRepository from "../../db/issueRepository";
+import { LocationRepository } from "../../db/locationRepository";
+import { Issue } from "../../models/issue";
+import { APIResponse } from "../../types/response";
 
-jest.mock("../db/issueRepository");
-jest.mock("../db/locationRepository");
+jest.mock("../../db/issueRepository");
+jest.mock("../../db/locationRepository");
 
 describe("IssueService", () => {
   let issueService: IssueService;

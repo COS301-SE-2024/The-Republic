@@ -24,7 +24,6 @@ const TransitionOfParliament: React.FC = () => {
           },
         });
         const apiResponse = await response.json();
-        console.log("API Response:", apiResponse);
 
         if (apiResponse.success && apiResponse.data) {
           setData(apiResponse.data);
@@ -192,21 +191,21 @@ const TransitionOfParliament: React.FC = () => {
         } as echarts.EChartsOption;
       })();
 
+      let currentOption: echarts.EChartsOption = pieOption;
       const chartElement = document.getElementById("transitionOfParliament");
 
       if (chartElement) {
-        const myChart = echarts.init(chartElement, null, { width: 500 });
-        myChart.setOption(pieOption);
+        const myChart = echarts.init(chartElement);
+        myChart.setOption(currentOption);
 
-        chartElement.onmouseenter = () => {
-          myChart.setOption(parliamentOption);
-        };
-
-        chartElement.onmouseleave = () => {
-          myChart.setOption(pieOption);
-        };
+        const intervalId = setInterval(() => {
+          currentOption =
+            currentOption === pieOption ? parliamentOption : pieOption;
+          myChart.setOption(currentOption);
+        }, 2000);
 
         return () => {
+          clearInterval(intervalId);
           myChart.dispose();
         };
       }
@@ -219,8 +218,8 @@ const TransitionOfParliament: React.FC = () => {
         <div className="card-body">
           <div
             id="transitionOfParliament"
-            style={{ width: "max-content", height: "400px" }}
-            className="echart mx-auto"
+            style={{ width: "100%", height: "400px" }}
+            className="echart"
           ></div>
         </div>
       </div>

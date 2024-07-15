@@ -10,6 +10,41 @@ interface User {
   resolved_issues: number;
 }
 
+interface UserAlt {
+  user_id: string;
+  email_address: string;
+  username: string;
+  fullname: string;
+  image_url: string;
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
+}
+
+interface ProfileStatsProps {
+  userId: string;
+  totalIssues: number | null;
+  resolvedIssues: number | null;
+  selectedTab: "issues" | "resolved";
+  setSelectedTab: (tab: "issues" | "resolved") => void;
+}
+
+interface IssueInputBoxProps {
+  user: {
+    user_id: string;
+    email_address: string;
+    username: string;
+    fullname: string;
+    image_url: string;
+    bio: string;
+    is_owner: boolean;
+    total_issues: number;
+    resolved_issues: number;
+  } | null;
+}
+
 interface Category {
   name: string;
 }
@@ -53,6 +88,9 @@ interface Issue {
   is_owner: boolean;
   profile_user_id: string;
   user_reaction: string;
+}
+interface IssueProps {
+  issue: Issue;
 }
 
 interface Comment {
@@ -155,7 +193,27 @@ interface AnalysisResult {
   severity: number;
 }
 
+interface RequestBody {
+  from: number;
+  amount: number;
+  order_by: string;
+  ascending: boolean;
+  category?: string;
+}
+
+interface FeedProps {
+  userId?: string;
+  showInputBox?: boolean;
+}
+
 export type {
+  AnalysisResult,
+  FeedProps,
+  RequestBody,
+  UserAlt,
+  IssueProps,
+  IssueInputBoxProps,
+  ProfileStatsProps,
   User,
   Category,
   Reaction,
@@ -169,5 +227,4 @@ export type {
   RenderItemResult,
   Comment,
   LocationType,
-  AnalysisResult
 };

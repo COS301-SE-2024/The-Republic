@@ -30,6 +30,9 @@ const CreatePost: React.FC = () => {
           <Dialog.Title className="text-xl font-semibold mb-4">
             Create a Post
           </Dialog.Title>
+          <Dialog.Description style={{ display: "none" }}>
+            Fill in the details below to create a new post.
+          </Dialog.Description>
           <IssueInputBox user={user} />
           <Dialog.Close asChild>
             <Button variant="outline" className="mt-4">

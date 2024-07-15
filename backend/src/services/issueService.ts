@@ -166,7 +166,7 @@ export default class IssueService {
 
     delete issue.issue_id;
 
-    console.log(issue);
+    // console.log(issue);
 
     const createdIssue = await this.issueRepository.createIssue({
       ...issue,

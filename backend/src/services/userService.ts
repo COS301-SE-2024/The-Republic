@@ -2,18 +2,7 @@ import UserRepository from "../db/userRepository";
 import { User } from "../models/issue";
 import { APIResponse, APIError } from "../types/response";
 import supabase from "../services/supabaseClient";
-
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
+import { MulterFile } from "../types/users";
 
 export class UserService {
   private userRepository: UserRepository;

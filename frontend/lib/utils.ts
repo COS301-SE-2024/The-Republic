@@ -125,15 +125,17 @@ export async function fileToBase64(file: File): Promise<string> {
 
     reader.readAsDataURL(file);
 
-    reader.onload = () => resolve(
-      (reader.result as string).replace(/data:.+\/.+;base64,/, "")
-    );
+    reader.onload = () =>
+      resolve((reader.result as string).replace(/data:.+\/.+;base64,/, ""));
     reader.onerror = (error) => reject(error);
   });
 }
 
-export async function checkImageAppropriateness(base64Image: string): Promise<boolean> {
-  const apiKey = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_KEY as string;
+export async function checkImageAppropriateness(
+  base64Image: string,
+): Promise<boolean> {
+  const apiKey = process.env
+    .NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_KEY as string;
   const url = process.env.NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_URL as string;
 
   const response = await fetch(url, {
@@ -145,25 +147,26 @@ export async function checkImageAppropriateness(base64Image: string): Promise<bo
     body: JSON.stringify({
       image: {
         content: base64Image,
-      }
+      },
     }),
   });
 
   const result = await response.json();
 
-  return !(result.categoriesAnalysis as AnalysisResult[])
-    .some((analysisResult) => analysisResult.severity > 0);
+  return !(result.categoriesAnalysis as AnalysisResult[]).some(
+    (analysisResult) => analysisResult.severity > 0,
+  );
 }
 
 export async function checkImageFileAndToast(
   image: File,
-  toast: typeof shadToast
+  toast: typeof shadToast,
 ): Promise<boolean> {
   let base64Image;
   try {
     base64Image = await fileToBase64(image);
   } catch (error) {
-   if (error === "File too big") {
+    if (error === "File too big") {
       toast({
         variant: "destructive",
         description: "File exceeds limit of 1MB",

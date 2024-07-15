@@ -2,3 +2,4 @@
 Dockerfile
 .dockerignore
 docker-compose.yaml
+src/__tests__/

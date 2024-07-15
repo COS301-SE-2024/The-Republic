@@ -61,7 +61,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         formData.append("username", updatedUser.username);
         formData.append("bio", updatedUser.bio);
         if (file) {
-          if (!await checkImageFileAndToast(file, toast)) {
+          if (!(await checkImageFileAndToast(file, toast))) {
             return;
           }
 

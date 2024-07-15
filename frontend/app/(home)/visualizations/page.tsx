@@ -8,7 +8,7 @@ const EChartsComponent = dynamic(
   },
 );
 
-function page() {
+function Visualizations() {
   return (
     <section className="section align-center mb-5">
       <h3 className="mb-10 text-3xl font-extrabold leading-none tracking-tight text-gray-700 md:text-3xl lg:text-4xl dark:text-white text-center">
@@ -23,4 +23,4 @@ function page() {
   );
 }
 
-export default page;
+export default Visualizations;

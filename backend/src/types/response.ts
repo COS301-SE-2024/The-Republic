@@ -2,7 +2,7 @@ export interface APIResponse<T = never> {
   code: number;
   success: boolean;
   error?: string;
-  data?: T;
+  data?: T | [];
 }
 
 export function APIError(error: APIResponse) {

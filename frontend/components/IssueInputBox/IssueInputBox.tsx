@@ -13,26 +13,11 @@ import { supabase } from "@/lib/globals";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from "lucide-react";
-import { LocationType } from "@/lib/types";
+import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
-import { checkImageFileAndToast } from '@/lib/utils';
-
+import { checkImageFileAndToast } from "@/lib/utils";
 
 const MAX_CHAR_COUNT = 500;
-
-interface IssueInputBoxProps {
-  user: {
-    user_id: string;
-    email_address: string;
-    username: string;
-    fullname: string;
-    image_url: string;
-    bio: string;
-    is_owner: boolean;
-    total_issues: number;
-    resolved_issues: number;
-  } | null;
-}
 
 const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [content, setContent] = useState("");
@@ -86,7 +71,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
-    if (image && !await checkImageFileAndToast(image, toast)) {
+    if (image && !(await checkImageFileAndToast(image, toast))) {
       return;
     }
 

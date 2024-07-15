@@ -4,17 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
-import { Issue as IssueType } from "@/lib/types";
+import { IssueProps } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "../ui/use-toast";
 import Image from "next/image";
-
-interface IssueProps {
-  issue: IssueType;
-}
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
   const { user } = useUser();
@@ -158,6 +154,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
                   onClick={() =>
                     setShowSubscribeDropdown(!showSubscribeDropdown)
                   }
+                  title="Subscribe"
                 >
                   <Bell className="h-5 w-5" aria-hidden="true" />
                 </button>

@@ -8,7 +8,6 @@ export const serverMiddleare = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log("Middleware executed!");
   next();
 };
 
@@ -27,7 +26,6 @@ export const verifyAndGetUser = async (
   }
 
   const jwt = authHeader.split(" ")[1];
-  // console.log("Token: ", jwt);
 
   const { data, error } = await supabase.auth.getUser(jwt);
 
@@ -58,7 +56,5 @@ export const verifyAndGetUser = async (
   }
 
   req.body.user_id = data.user.id;
-  console.log(req.body);
-
   next();
 };

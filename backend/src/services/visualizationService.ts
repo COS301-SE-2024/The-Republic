@@ -7,8 +7,6 @@ export class VisualizationService {
   async getVizData() {
     const vizData = await this.visualizationRepository.getVizData();
 
-    console.log(vizData);
-
     return APIData({
       code: 200,
       success: true,

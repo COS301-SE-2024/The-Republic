@@ -1,10 +1,10 @@
-import { CommentService } from "../services/commentService";
-import { CommentRepository } from "../db/commentRepository";
-import { Comment } from "../models/comment";
-import { GetCommentsParams } from "../types/comment";
-import { APIError } from "../types/response";
+import { CommentService } from "../../services/commentService";
+import { CommentRepository } from "../../db/commentRepository";
+import { Comment } from "../../models/comment";
+import { GetCommentsParams } from "../../types/comment";
+import { APIError } from "../../types/response";
 
-jest.mock("../db/commentRepository");
+jest.mock("../../db/commentRepository");
 
 describe("CommentService", () => {
   let commentService: CommentService;

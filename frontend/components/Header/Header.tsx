@@ -20,7 +20,9 @@ const Header = () => {
   // Listen for changes in theme and update logo accordingly
   useEffect(() => {
     const newLogoSrc =
-      theme === "dark" ? "/images/b-logo-full.png" : "/images/b-logo-full-black.png";
+      theme === "dark"
+        ? "/images/b-logo-full.png"
+        : "/images/b-logo-full-black.png";
     setLogoSrc(newLogoSrc);
   }, [theme]);
 

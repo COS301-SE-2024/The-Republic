@@ -21,7 +21,8 @@
     "jest/globals": true,
     "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "plugins": ["react", "@next/next", "@typescript-eslint", "jest"],
   "rules": {

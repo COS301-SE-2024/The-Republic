@@ -20,12 +20,12 @@ function Page() {
         Issues.
       </h3>
       <div className="row">
-        <StackedLineChart />
         <TransitionOfParliament />
         <BarChart />
         <RadarChart />
         <LineChart />
         <DonutChart />
+        <StackedLineChart />
       </div>
     </section>
   );
