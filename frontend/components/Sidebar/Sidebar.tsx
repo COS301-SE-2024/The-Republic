@@ -88,8 +88,8 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
   }, [user]);
 
   return (
-    <div className="w-[300px] border-r min-h-80vh">
-      <div className={`${styles.sidebar} grow`}>
+    <div  className="w-[300px] border-r h-full overflow-y-auto">
+      <div className={`${styles.sidebar} sticky top-0`}>
         <ul className={styles.sidebarLinks}>
           <h4>
             <span>General</span>
