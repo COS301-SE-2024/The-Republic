@@ -4,59 +4,19 @@ import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import {
   Issue as IssueType,
-  UserAlt,
   RequestBody,
-  FeedProps,
 } from "@/lib/types";
-import { supabase } from "@/lib/globals";
 import styles from './Feed.module.css';
 import { Loader2 } from "lucide-react";
+import { useUser } from "@/lib/contexts/UserContext";
 
 const FETCH_SIZE = 2;
 
-const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
+const Feed: React.FC = () => {
+  const { user } = useUser();
   const [issues, setIssues] = useState<(IssueType | "Loading")[]>(["Loading"]);
-  const [user, setUser] = useState<UserAlt | null>(null);
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
-
-  useEffect(() => {
-    // TODO: Check this in user context
-    const fetchUser = async () => {
-      const { data: sessionData, error } = await supabase.auth.getSession();
-      if (!error && sessionData.session) {
-        const session = sessionData.session;
-        const userDetailsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${session.user.id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session.access_token}`,
-            },
-          },
-        );
-
-        if (userDetailsResponse.ok) {
-          const userDetails = await userDetailsResponse.json();
-          const user: UserAlt = {
-            user_id: session.user.id,
-            fullname: userDetails.data.fullname,
-            image_url: userDetails.data.image_url,
-            email_address: session.user.email as string,
-            username: userDetails.data.username,
-            bio: userDetails.data.bio,
-            is_owner: false,
-            total_issues: 0,
-            resolved_issues: 0,
-            access_token: session.access_token,
-          };
-          setUser(user);
-        }
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     if (issues[issues.length - 1] === "Loading") {
@@ -158,7 +118,7 @@ const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
         className={`flex-1 overflow-y-auto px-6 ${styles['feed-scroll']}`}
         id="issues_scroll"
       >
-        {showInputBox && user && <IssueInputBox user={user} />}
+        { user && <IssueInputBox user={user} />}
         { issues.length > 0
           ? issues.map((issue, index) => {
             const id = `issue_${index + 1}`;

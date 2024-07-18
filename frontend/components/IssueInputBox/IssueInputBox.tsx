@@ -9,7 +9,6 @@ import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import { categoryOptions, moodOptions } from "@/lib/constants";
-import { supabase } from "@/lib/globals";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from "lucide-react";
@@ -76,7 +75,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     const categoryID = parseInt(category);
-    const { data } = await supabase.auth.getSession();
 
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
@@ -99,7 +97,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
         method: "POST",
         body: requestBody,
         headers: {
-          Authorization: `Bearer ${data.session!.access_token}`,
+          Authorization: `Bearer ${user.access_token}`,
         },
       },
     );
