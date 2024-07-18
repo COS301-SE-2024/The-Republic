@@ -178,9 +178,15 @@ const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
       </div>
       <RightSidebar
         sortBy={sortBy}
-        setSortBy={setSortBy}
+        setSortBy={(_sortyBy) => {
+          setIssues(["Loading"]);
+          setSortBy(_sortyBy);
+        }}
         filter={filter}
-        setFilter={setFilter}
+        setFilter={(_filter) => {
+          setIssues(["Loading"]);
+          setFilter(_filter);
+        }}
       />
     </div>
   );
