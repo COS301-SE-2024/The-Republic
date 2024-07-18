@@ -89,7 +89,7 @@ describe("Header", () => {
     expect(queryByText("Sign Up")).toBeNull();
   });
 
-  it("navigates to /signup when Sign Up button is clicked", () => {
+  it("navigates to /login when Login button is clicked", () => {
     const pushMock = jest.fn();
     (NextRouter.useRouter as jest.Mock).mockImplementation(() => ({
       push: pushMock,
@@ -97,13 +97,13 @@ describe("Header", () => {
     (useUser as jest.Mock).mockReturnValue({ user: null });
     const { getByText } = render(<Header />);
     const signUpButton = getByText((content, element) =>
-      content === "Sign Up" &&
+      content === "Login" &&
       element &&
       element.tagName.toLowerCase() === "button"
         ? true
         : false,
     );
     fireEvent.click(signUpButton);
-    expect(pushMock).toHaveBeenCalledWith("/signup");
+    expect(pushMock).toHaveBeenCalledWith("/login");
   });
 });
