@@ -3,19 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/globals";
 import Cookies from "js-cookie";
-
-interface User {
-  user_id: string;
-  email_address: string;
-  username: string;
-  fullname: string;
-  image_url: string;
-  bio: string;
-  is_owner: boolean;
-  total_issues: number;
-  resolved_issues: number;
-  access_token: string;
-}
+import { User } from "../types";
 
 interface UserContextType {
   user: User | null;
@@ -86,8 +74,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         Cookies.set("Authorization", session?.access_token ?? "", {
           expires: new Date((session?.expires_at ?? 0) * 1000),
         });
+
+        if (user === null) {
+          fetchUser();
+        }
       } else if (event === "SIGNED_OUT") {
         Cookies.remove("Authorization");
+        setUser(null);
       }
     });
 

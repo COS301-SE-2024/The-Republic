@@ -5,9 +5,9 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
-  is_owner: boolean;
   total_issues: number;
   resolved_issues: number;
+  access_token: string;
 }
 
 interface UserAlt {
@@ -32,17 +32,7 @@ interface ProfileStatsProps {
 }
 
 interface IssueInputBoxProps {
-  user: {
-    user_id: string;
-    email_address: string;
-    username: string;
-    fullname: string;
-    image_url: string;
-    bio: string;
-    is_owner: boolean;
-    total_issues: number;
-    resolved_issues: number;
-  } | null;
+  user: User | null;
 }
 
 interface Category {
