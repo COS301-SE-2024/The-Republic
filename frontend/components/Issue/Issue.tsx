@@ -12,7 +12,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "../ui/use-toast";
 import Image from "next/image";
 
-const Issue: React.FC<IssueProps> = ({ issue }) => {
+const Issue: React.FC<IssueProps> = ({ issue, id }) => {
   const { user } = useUser();
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
@@ -119,7 +119,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
   }, [dropdownRef]);
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4" id={id}>
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">

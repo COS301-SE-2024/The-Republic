@@ -91,6 +91,7 @@ interface Issue {
 }
 interface IssueProps {
   issue: Issue;
+  id?: string;
 }
 
 interface Comment {

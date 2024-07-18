@@ -9,17 +9,19 @@ import {
   FeedProps,
 } from "@/lib/types";
 import { supabase } from "@/lib/globals";
-import { FaSpinner } from "react-icons/fa";
 import styles from './Feed.module.css';
+import { Loader2 } from "lucide-react";
 
-const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
-  const [issues, setIssues] = useState<IssueType[]>([]);
+const FETCH_SIZE = 2;
+
+const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
+  const [issues, setIssues] = useState<(IssueType | "Loading")[]>(["Loading"]);
   const [user, setUser] = useState<UserAlt | null>(null);
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // TODO: Check this in user context
     const fetchUser = async () => {
       const { data: sessionData, error } = await supabase.auth.getSession();
       if (!error && sessionData.session) {
@@ -57,9 +59,11 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   }, []);
 
   useEffect(() => {
-    const fetchIssues = async () => {
-      setLoading(true);
-      try {
+    if (issues[issues.length - 1] === "Loading") {
+      const loadFrom = issues.length - FETCH_SIZE;
+
+      let ignoreResult = false;
+      const fetchIssues = async () => {
         const headers: HeadersInit = {
           "Content-Type": "application/json",
         };
@@ -69,14 +73,17 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         }
 
         const requestBody: RequestBody = {
-          from: 0,
-          amount: 99,
-          order_by:
-            sortBy === "newest"
-              ? "created_at"
-              : sortBy === "oldest"
-                ? "created_at"
-                : "comment_count",
+          from: loadFrom <= 0 ? 0 : (loadFrom - 1) + FETCH_SIZE,
+          amount: FETCH_SIZE,
+          order_by: (() => {
+            switch (sortBy) {
+              case "newest":
+              case "oldest":
+                return "created_at";
+              default:
+                return "comment_count";
+            }
+          })(),
           ascending: sortBy === "oldest",
         };
 
@@ -93,38 +100,81 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
 
         const apiResponse = await response.json();
 
-        if (apiResponse.success && apiResponse.data) {
-          setIssues(apiResponse.data);
-        } else {
-          console.error("Error fetching issues:", apiResponse.error);
+        if (ignoreResult) return;
+
+        if (apiResponse.success) {
+          const apiIssues = apiResponse.data as IssueType[];
+
+          issues.pop();
+          if (apiIssues.length > 0) {
+            setIssues([...issues, ...apiIssues, "Loading"]);
+          } else {
+            setIssues([...issues]);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching issues:", error);
-      } finally {
-        setLoading(false);
+      };
+
+      let observer: IntersectionObserver | null = null;
+
+      if (loadFrom > 0) {
+        const handleIntersection = (
+          [entry]: IntersectionObserverEntry[],
+          observer: IntersectionObserver
+        )  => {
+          if (!entry.isIntersecting) return;
+
+          observer.unobserve(entry.target);
+          fetchIssues();
+        };
+
+        const loadFromElement = document.querySelector(`#issue_${loadFrom}`);
+        const rootElement = document.querySelector("#issues_scroll");
+
+        observer = new IntersectionObserver(handleIntersection, {
+          root: rootElement,
+        });
+
+        observer.observe(loadFromElement!);
+      } else {
+        fetchIssues();
       }
-    };
 
-    fetchIssues();
-  }, [user, userId, sortBy, filter]);
+      return () => {
+        ignoreResult = true;
+        observer?.disconnect();
+      };
+    }
+  });
 
-  const LoadingIndicator = () => (
-    <div className="flex justify-center items-center h-24">
-      <FaSpinner className="animate-spin text-4xl text-green-500" />
+  const LoadingIndicator = ({ id }: { id: string}) => (
+    <div className="flex justify-center items-center h-32" id={id}>
+      <Loader2 className="h-6 w-6 animate-spin text-green-400" />
     </div>
   );
 
   return (
     <div className="flex h-full">
-      <div className={`flex-1 overflow-y-auto px-6 ${styles['feed-scroll']}`}>
+      <div
+        className={`flex-1 overflow-y-auto px-6 ${styles['feed-scroll']}`}
+        id="issues_scroll"
+      >
         {showInputBox && user && <IssueInputBox user={user} />}
-        {loading ? (
-          <LoadingIndicator />
-        ) : issues.length > 0 ? (
-          issues.map((issue) => <Issue key={issue.issue_id} issue={issue} />)
-        ) : (
-          <p>No issues found.</p>
-        )}
+        { issues.length > 0
+          ? issues.map((issue, index) => {
+            const id = `issue_${index + 1}`;
+
+            if (issue === "Loading") {
+              return <LoadingIndicator id={id}/>;
+            } else {
+              return <Issue issue={issue} id={id}/>;
+            }
+          })
+          : (
+            <div className="flex justify-center items-center h-32">
+              <h3 className="text-lg">No issues</h3>
+            </div>
+          )
+        }
       </div>
       <RightSidebar
         sortBy={sortBy}
