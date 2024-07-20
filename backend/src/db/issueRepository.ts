@@ -78,9 +78,9 @@ export default class IssueRepository {
       `)
       .range(from!, from! + amount! - 1);
   
-    if (locationIds.length === 0) {
-      query = query.in('location_id', locationIds);
-    }
+      if (locationIds.length > 0) {
+        query = query.in('location_id', locationIds);
+      }
 
     if (category) {
       const categoryId = await categoryRepository.getCategoryId(category);
