@@ -27,7 +27,41 @@ describe("Middleware", () => {
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   });
 
-  // ... other tests remain the same ...
+  it("should call next() if no authorization header", async () => {
+    const response = await request(app).get("/test");
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("success");
+    expect(response.body.user_id).toBeUndefined();
+    expect(supabase.auth.getUser).not.toHaveBeenCalled();
+  });
+
+  it("should call next() if service role key is provided", async () => {
+    const response = await request(app)
+      .get("/test")
+      .set("x-service-role-key", "test-service-role-key");
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("success");
+    expect(supabase.auth.getUser).not.toHaveBeenCalled();
+  });
+
+  it("should call next() if token is valid", async () => {
+    const mockUser = { id: "123" };
+    (supabase.auth.getUser as jest.Mock).mockResolvedValue({
+      data: { user: mockUser },
+      error: null,
+    });
+
+    const response = await request(app)
+      .get("/test")
+      .set("Authorization", "Bearer validtoken");
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("success");
+    expect(response.body.user_id).toBe("123");
+    expect(supabase.auth.getUser).toHaveBeenCalledWith("validtoken");
+  });
 
   it("should send error response if token is invalid", async () => {
     (supabase.auth.getUser as jest.Mock).mockResolvedValue({
