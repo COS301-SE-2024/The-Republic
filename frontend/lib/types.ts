@@ -193,12 +193,21 @@ interface AnalysisResult {
   severity: number;
 }
 
+interface Location {
+  location_id: string;
+  province?: string;
+  city?: string;
+  suburb?: string;
+  district?: string;
+}
+
 interface RequestBody {
   from: number;
   amount: number;
   order_by: string;
   ascending: boolean;
   category?: string;
+  location? : Location;
 }
 
 interface FeedProps {
@@ -227,4 +236,5 @@ export type {
   RenderItemResult,
   Comment,
   LocationType,
+  Location
 };
