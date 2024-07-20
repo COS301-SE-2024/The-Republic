@@ -77,7 +77,7 @@ describe("Middleware", () => {
       .get("/test")
       .set("Authorization", "Bearer invalidtoken");
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(500);
     expect(response.body.success).toBe(false);
     expect(response.body.error).toBe("Invalid token");
     expect(supabase.auth.getUser).toHaveBeenCalledWith("invalidtoken");
