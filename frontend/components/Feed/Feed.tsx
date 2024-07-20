@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
@@ -7,6 +9,7 @@ import {
   UserAlt,
   RequestBody,
   FeedProps,
+  Location,
 } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 import { FaSpinner } from "react-icons/fa";
@@ -17,6 +20,7 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
   const [user, setUser] = useState<UserAlt | null>(null);
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
+  const [location, setLocation] = useState<Location | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,57 +60,73 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    const fetchIssues = async () => {
-      setLoading(true);
-      try {
-        const headers: HeadersInit = {
-          "Content-Type": "application/json",
-        };
+  const fetchIssues = async () => {
+    setLoading(true);
+    try {
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
 
-        if (user) {
-          headers.Authorization = `Bearer ${user.access_token}`;
-        }
-
-        const requestBody: RequestBody = {
-          from: 0,
-          amount: 99,
-          order_by:
-            sortBy === "newest"
-              ? "created_at"
-              : sortBy === "oldest"
-                ? "created_at"
-                : "comment_count",
-          ascending: sortBy === "oldest",
-        };
-
-        if (filter !== "All") {
-          requestBody.category = filter;
-        }
-
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
-        const response = await fetch(url, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(requestBody),
-        });
-
-        const apiResponse = await response.json();
-
-        if (apiResponse.success && apiResponse.data) {
-          setIssues(apiResponse.data);
-        } else {
-          console.error("Error fetching issues:", apiResponse.error);
-        }
-      } catch (error) {
-        console.error("Error fetching issues:", error);
-      } finally {
-        setLoading(false);
+      if (user) {
+        headers.Authorization = `Bearer ${user.access_token}`;
       }
-    };
 
-    fetchIssues();
-  }, [user, userId, sortBy, filter]);
+      const requestBody: RequestBody = {
+        from: 0,
+        amount: 99,
+        order_by:
+          sortBy === "newest"
+            ? "created_at"
+            : sortBy === "oldest"
+            ? "created_at"
+            : "comment_count",
+        ascending: sortBy === "oldest",
+      };
+
+      if (filter !== "All") {
+        requestBody.category = filter;
+      }
+
+      if (location) {
+        requestBody.location = location;
+      }
+
+      console.log(requestBody);
+
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+
+      const apiResponse = await response.json();
+
+      if (apiResponse.success && apiResponse.data) {
+        setIssues(apiResponse.data);
+      } else {
+        console.error("Error fetching issues:", apiResponse.error);
+      }
+    } catch (error) {
+      console.error("Error fetching issues:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch issues when component mounts and when user changes
+  useEffect(() => {
+    if (user) {
+      fetchIssues();
+    }
+  }, [user]);
+  
+  // Fetch issues when filters change
+  useEffect(() => {
+    if (user) {
+      fetchIssues();
+    }
+  }, [sortBy, filter, location]);
 
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center h-24">
@@ -131,6 +151,8 @@ const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
         setSortBy={setSortBy}
         filter={filter}
         setFilter={setFilter}
+        location={location}
+        setLocation={setLocation}
       />
     </div>
   );

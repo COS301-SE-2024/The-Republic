@@ -13,4 +13,5 @@ export interface GetIssuesParams {
     district?: string;
     place_id?: string;
   }
+  location_id?: number;
 }
