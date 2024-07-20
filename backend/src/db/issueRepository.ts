@@ -21,11 +21,43 @@ export default class IssueRepository {
     user_id,
     order_by = "created_at",
     ascending = false,
+    location
   }: Partial<GetIssuesParams>) {
+    let locationIds: number[] = [];
+
+    if (location) {
+      let locationQuery = supabase.from('location').select('location_id');
+      
+      if (location.province) {
+        locationQuery = locationQuery.ilike('province', `%${location.province}%`);
+      }
+      if (location.city) {
+        locationQuery = locationQuery.ilike('city', `%${location.city}%`);
+      }
+      if (location.suburb) {
+        locationQuery = locationQuery.ilike('suburb', `%${location.suburb}%`);
+      }
+      if (location.district) {
+        locationQuery = locationQuery.ilike('district', `%${location.district}%`);
+      }
+  
+      const { data: locationData, error: locationError } = await locationQuery;
+  
+      if (locationError) {
+        console.error("Error fetching locations:", locationError);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while fetching locations.",
+        });
+      }
+  
+      locationIds = locationData.map(loc => loc.location_id);
+    }
+  
     let query = supabase
       .from("issue")
-      .select(
-        `
+      .select(`
         *,
         user: user_id (
           user_id,
@@ -43,9 +75,12 @@ export default class IssueRepository {
           suburb,
           district
         )
-      `,
-      )
+      `)
       .range(from!, from! + amount! - 1);
+  
+    if (locationIds.length === 0) {
+      query = query.in('location_id', locationIds);
+    }
 
     if (category) {
       const categoryId = await categoryRepository.getCategoryId(category);
