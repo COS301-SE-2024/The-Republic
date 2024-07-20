@@ -30,35 +30,21 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleIssueSubmit = async () => {
-    if (!user) {
-      toast({
-        description: "You need to be logged in to post",
-      });
-      return;
-    }
-
-    if (!category) {
-      toast({
-        variant: "destructive",
-        description: "Please select a category.",
-      });
-      return;
-    }
-
-    if (!mood) {
-      toast({
-        variant: "destructive",
-        description: "Please select a mood.",
-      });
-      return;
-    }
-
-    if (!location) {
-      toast({
-        variant: "destructive",
-        description: "Please set a location.",
-      });
-      return;
+    const validationChecks = [
+      { check: !user, message: "You need to be logged in to post", variant: "destructive" },
+      { check: !category, message: "Please select a category.", variant: "destructive" },
+      { check: !mood, message: "Please select a mood.", variant: "destructive" },
+      { check: !location, message: "Please set a location.", variant: "destructive" },
+    ];
+    
+    for (const { check, message, variant = "default" } of validationChecks) {
+      if (check) {
+        toast({
+          variant: variant as "default" | "destructive" | "success" | "warning" | null | undefined,
+          description: message,
+        });
+        return;
+      }
     }
 
     const isContentAppropriate = await checkContentAppropriateness(content);
@@ -88,7 +74,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       JSON.stringify(location ? location.value : {}),
     );
     requestBody.append("created_at", new Date().toISOString());
-    requestBody.append("user_id", user.user_id);
+    requestBody.append("user_id", user?.user_id || "");
     if (image) {
       requestBody.append("image", image);
     }
