@@ -23,6 +23,10 @@ interface UserAlt {
   access_token: string;
 }
 
+interface UserContextType {
+  user: UserAlt | null;
+}
+
 interface ProfileStatsProps {
   userId: string;
   totalIssues: number | null;
@@ -206,6 +210,28 @@ interface FeedProps {
   showInputBox?: boolean;
 }
 
+interface AddCommentFormProps {
+  issueId: string;
+  parentCommentId?: string;
+  onCommentAdded: (comment: Comment) => void;
+}
+
+interface CommentListProps {
+  issueId: string;
+}
+
+interface EditProfileProps {
+  user: User;
+  onUpdate: (updatedUser: User) => void;
+  onCancel: () => void;
+}
+
+interface ProfileUpdate {
+  fullname: string;
+  username: string;
+  bio: string;
+}
+
 export type {
   AnalysisResult,
   FeedProps,
@@ -227,4 +253,9 @@ export type {
   RenderItemResult,
   Comment,
   LocationType,
+  AddCommentFormProps,
+  CommentListProps,
+  EditProfileProps,
+  ProfileUpdate,
+  UserContextType
 };
