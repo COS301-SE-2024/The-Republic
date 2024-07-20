@@ -63,7 +63,7 @@ describe("Middleware", () => {
     expect(supabase.auth.getUser).toHaveBeenCalledWith("validtoken");
   });
 
-  it("should send error response if token is invalid", async () => {
+  it("should send 403 error response if token is invalid", async () => {
     (supabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: null },
       error: new Error("Invalid token"),
@@ -77,7 +77,7 @@ describe("Middleware", () => {
       .get("/test")
       .set("Authorization", "Bearer invalidtoken");
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(403);
     expect(response.body.success).toBe(false);
     expect(response.body.error).toBe("Invalid token");
     expect(supabase.auth.getUser).toHaveBeenCalledWith("invalidtoken");

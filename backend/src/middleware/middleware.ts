@@ -19,14 +19,11 @@ export const verifyAndGetUser = async (
   const authHeader = req.headers.authorization;
   const serviceRoleKey = req.headers['x-service-role-key'];
 
-  // Check for service role key
   if (serviceRoleKey === process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    // If service role key is used, don't modify user_id
     next();
     return;
   }
 
-  // Reset user_id only if service role key is not used
   req.body.user_id = undefined;
 
   if (authHeader === undefined) {
@@ -39,11 +36,17 @@ export const verifyAndGetUser = async (
   try {
     const { data: { user }, error } = await supabase.auth.getUser(jwt);
 
-    if (error) throw error;
+    if (error) {
+      sendResponse(res, APIError({
+        code: 403,
+        success: false,
+        error: "Invalid token"
+      }));
+      return;
+    }
 
     if (user) {
       req.body.user_id = user.id;
-      console.log(req.body);
       next();
     } else {
       sendResponse(res, APIError({
@@ -57,7 +60,7 @@ export const verifyAndGetUser = async (
     sendResponse(res, APIError({
       code: 500,
       success: false,
-      error: "Invalid token"
+      error: "An unexpected error occurred. Please try again later."
     }));
   }
 };
