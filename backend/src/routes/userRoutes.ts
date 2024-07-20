@@ -6,7 +6,7 @@ import { verifyAndGetUser } from "../middleware/middleware";
 const router = express.Router();
 const upload = multer();
 
-router.get("/:id", verifyAndGetUser, getUserById);
+router.post("/:id", verifyAndGetUser, getUserById);
 router.put(
   "/:id",
   verifyAndGetUser,
