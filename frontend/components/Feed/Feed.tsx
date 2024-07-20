@@ -15,7 +15,7 @@ import { supabase } from "@/lib/globals";
 import { FaSpinner } from "react-icons/fa";
 import styles from './Feed.module.css';
 
-const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
+const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
   const [issues, setIssues] = useState<IssueType[]>([]);
   const [user, setUser] = useState<UserAlt | null>(null);
   const [sortBy, setSortBy] = useState("newest");

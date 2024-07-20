@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { LocationService } from "../services/locationService";
 import { sendResponse } from "../utils/response";
-import { APIError, APIResponse } from "../types/response";
+import { APIResponse } from "../types/response";
 
 const locationService = new LocationService();
 
