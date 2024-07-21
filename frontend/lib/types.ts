@@ -220,6 +220,12 @@ interface CommentListProps {
   issueId: string;
 }
 
+interface ReactionProps {
+  issueId: string;
+  initialReactions: { emoji: string; count: number }[];
+  userReaction: string | null;
+}
+
 interface EditProfileProps {
   user: User;
   onUpdate: (updatedUser: User) => void;
@@ -263,5 +269,6 @@ export type {
   EditProfileProps,
   ProfileUpdate,
   UserContextType,
-  ProfileFeedProps
+  ProfileFeedProps,
+  ReactionProps
 };
