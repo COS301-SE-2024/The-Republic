@@ -232,6 +232,11 @@ interface ProfileUpdate {
   bio: string;
 }
 
+interface ProfileFeedProps {
+  userId: string;
+  selectedTab: "issues" | "resolved";
+}
+
 export type {
   AnalysisResult,
   FeedProps,
@@ -257,5 +262,6 @@ export type {
   CommentListProps,
   EditProfileProps,
   ProfileUpdate,
-  UserContextType
+  UserContextType,
+  ProfileFeedProps
 };
