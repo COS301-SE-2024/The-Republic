@@ -49,7 +49,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const mutation = useMutation({
     mutationFn: async () => {
       if (user) {
-        return await await updateUserProfile(user, updatedUser, file);
+        return await updateUserProfile(user, updatedUser, file);
       } else {
         toast({
           description: "You need to be logged in to delete a comment",
