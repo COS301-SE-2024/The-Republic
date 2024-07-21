@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import * as echarts from "echarts";
 import * as d3 from "d3";
 import "d3-hierarchy";
@@ -15,39 +16,28 @@ import {
 import { colorFromCategory } from "@/lib/utils";
 import { LoadingSpinner } from "../Spinner/Spinner";
 
+import { dotVisualization } from "@/lib/api/dotVisualization";
+
 const EChartsComponent = () => {
   const chartRef = useRef(null);
-  const [vizData, setVizData] = useState({});
-  const [loading, setLoading] = useState(true);
+
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [`dot_visualization`],
+    queryFn: () => dotVisualization(url),
+    enabled: true,
+  });
 
   useEffect(() => {
-    async function fetchVizData() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`,
-        {
-          method: "POST",
-        },
-      );
-
-      if (!response.ok) {
-        console.error(response.status);
-        return;
-      }
-
-      setVizData((await response.json()).data);
-      setLoading(false);
+    if (isLoading || isError) {
+      return;
     }
-
-    fetchVizData();
-  }, []);
-
-  useEffect(() => {
-    if (loading) return;
+    
     const chartDom = chartRef.current;
     const myChart = echarts.init(chartDom);
 
     function run() {
-      const dataWrap = prepareData(vizData);
+      const dataWrap = prepareData(data);
       initChart(dataWrap.seriesData, dataWrap.maxDepth);
     }
 
@@ -260,21 +250,32 @@ const EChartsComponent = () => {
     return () => {
       myChart.dispose();
     };
-  }, [vizData]);
+  }, [data]);
 
-  return loading ? (
-    <div
-      className="pt-64 w-full flex flex-row justify-center"
-      data-testid="loading-spinner"
-    >
-      <LoadingSpinner />
-    </div>
-  ) : (
-    <div
-      ref={chartRef}
-      style={{ height: "100vh" }}
-      data-testid="echarts-container"
-    />
+  return (
+    <>
+      {(!isError)? (
+        <>
+          {isLoading? (
+            <div
+              className="pt-64 w-full flex flex-row justify-center"
+              data-testid="loading-spinner"
+            >
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div
+              ref={chartRef}
+              style={{ height: "100vh" }}
+              data-testid="echarts-container"
+            />
+          )}
+        </>
+      ) : (
+        <div>
+        </div>
+      )}
+    </>
   );
 };
 
