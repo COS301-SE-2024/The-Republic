@@ -5,6 +5,25 @@ import Issue from "@/components/Issue/Issue";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useRouter } from "next/navigation";
 
+jest.mock('@/lib/globals', () => ({
+  supabase: {
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockResolvedValue({ data: [], error: null }),
+      insert: jest.fn().mockResolvedValue({ data: [], error: null }),
+      update: jest.fn().mockResolvedValue({ data: [], error: null }),
+      delete: jest.fn().mockResolvedValue({ data: [], error: null }),
+    }),
+    auth: {
+      signIn: jest.fn(),
+      signOut: jest.fn(),
+      onAuthStateChange: jest.fn(),
+    },
+  },
+}));
+
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'your-anon-key';
+
 jest.mock("@/lib/contexts/UserContext");
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
