@@ -237,7 +237,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <span>{issue.comment_count}</span>
         </div>
         <Reaction
-          issueId={issue.issue_id}
+          issueId={String(issue.issue_id)}
           initialReactions={issue.reactions}
           userReaction={issue.user_reaction}
         />
