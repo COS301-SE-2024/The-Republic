@@ -80,10 +80,10 @@ To manage the resolution of issues within the app, namely self-resolution and ex
    - Provide options to accept or decline the external resolution.
 
 5. **Update Issue Status**:
-   - If the resolution is accepted by a majority, update the issue status to "Resolved."
-   - The user who then logged the resolution is awarded the necessary points.
-   - If declined or if no response is received within a defined time, revert the issue status to "Unresolved."
+   - If the resolution is accepted by a majority, update the issue status to "Resolved"
+   - If no response is received within a defined time, move the issue to "Resolved"
    - The user who logged the resolution is the penalized with the necessary points, and given a possible timed ban.
+   - The user who then logged the resolution is awarded the necessary points.
 
 
 ## Resolution Types
@@ -115,14 +115,10 @@ This is not the final schema for the table, just an idea of the type of informat
 | `id`                  | UUID / SERIAL       | Unique identifier for each resolution                |
 | `issue_id`            | UUID / INTEGER      | Foreign key referencing the `issues` table            |
 | `resolver_id`         | UUID / INTEGER      | ID of the user *or entity* resolving the issue        |
-| `self_resolution_type` | ENUM('fixed_by_user', 'fixed_by_others', 'fixed_unknown') | Type of self-resolution (optional based on context) |
-| `external_resolution_type` | ENUM('fixed_by_user', 'fixed_by_others', 'fixed_unknown') | Type of external resolution (optional based on context) |
 | `status`              | ENUM('pending', 'accepted', 'declined', 'reverted') | Resolution status                                  |
 | `proof`               | TEXT                | Proof or additional information (for external resolutions) |
 | `proof_image`         | TEXT                | URL                                                   |
 | `submitted_at`        | TIMESTAMP           | Timestamp when the resolution was submitted          |
-| `reviewed_at`         | TIMESTAMP           | Timestamp when the resolution was reviewed           |
-| `notes`               | TEXT                | Additional notes or comments on the resolution       |
 
 ### Reasons for storing issue_id instead of cluster_id:
 
@@ -132,12 +128,7 @@ This is not the final schema for the table, just an idea of the type of informat
 
 ## Edge cases to consider
  - What happens if both an external and self resolution are submitted?
-    - Which takes precedence?
-    - If the external resolution is accepted by a majority, will the self resolution be automatically accepted?
-    - If the external resolution is rejected by a majority, will the self resolution be automatically rejected or accepted, or discarded?
-    - If the self resolution is rejected by a majority, will the external resolution be automatically rejected?
-    - If the self resolution is accepted by a majority, will the external resolution be automatically accepted?
-
+    - If there is a pending resolution on an issue, do not accept any new resolutions. 
 
  - How to stop abuse of the system?
     - Limit the number of rejected external resolutions a user can make?
@@ -145,4 +136,4 @@ This is not the final schema for the table, just an idea of the type of informat
         - Permanent bans?
 
 ## Activity Diagram
-![alt text](Resolution.drawio.png)
+![alt text](<Resolution.drawio (2).png>)
