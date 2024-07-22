@@ -86,8 +86,6 @@ To manage the resolution of issues within the app, namely self-resolution and ex
    - The user who logged the resolution is the penalized with the necessary points, and given a possible timed ban.
 
 
----
-
 ## Resolution Types
 
 **1. Self-Resolution**
@@ -125,6 +123,12 @@ This is not the final schema for the table, just an idea of the type of informat
 | `submitted_at`        | TIMESTAMP           | Timestamp when the resolution was submitted          |
 | `reviewed_at`         | TIMESTAMP           | Timestamp when the resolution was reviewed           |
 | `notes`               | TEXT                | Additional notes or comments on the resolution       |
+
+### Reasons for storing issue_id instead of cluster_id:
+
+- Dynamic Clustering: Clusters can change over time as issues are added, resolved, or modified. Using issue_id allows you to handle changes in clusters without having to update historical data related to resolutions.
+- Cluster Changes: If clusters are updated or redefined, resolutions associated with specific issues do not need to be modified or re-assigned.
+
 
 ## Edge cases to consider
  - What happens if both an external and self resolution are submitted?
