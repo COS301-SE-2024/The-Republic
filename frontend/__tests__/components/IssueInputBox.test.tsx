@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { useToast } from "@/components/ui/use-toast";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/globals");
 jest.mock("@/components/ui/use-toast", () => ({
@@ -40,18 +41,6 @@ const renderWithClient = (ui: React.ReactNode) => {
 };
 
 const mockUseToast = useToast as jest.Mock;
-
-const mockUser = {
-  user_id: "1",
-  email_address: "test@example.com",
-  username: "testuser",
-  fullname: "Test User",
-  image_url: "https://via.placeholder.com/150",
-  bio: "",
-  is_owner: false,
-  total_issues: 0,
-  resolved_issues: 0,
-};
 
 describe("IssueInputBox Component", () => {
   beforeEach(() => {
