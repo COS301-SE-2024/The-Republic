@@ -11,7 +11,7 @@ const TransitionOfParliament: React.FC = () => {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
 
   const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
-    queryKey: [`transition_chart`],
+    queryKey: [`chart_data`],
     queryFn: () => reportCharts(url),
     enabled: true,
   });
