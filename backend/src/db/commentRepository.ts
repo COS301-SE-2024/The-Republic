@@ -32,8 +32,8 @@ export class CommentRepository {
     return count!;
   }
 
-  async getComments({ issue_id, user_id, from, amount }: GetCommentsParams) {
-    const { data, error } = await supabase
+  async getComments({ issue_id, user_id, from, amount, parent_id }: GetCommentsParams) {
+    let query = supabase
       .from("comment")
       .select(
         `
@@ -50,6 +50,12 @@ export class CommentRepository {
       .eq("issue_id", issue_id)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
+
+    query = !parent_id
+      ? query.is("parent_id", null)
+      : query.eq("parent_id", parent_id);
+
+    const { data, error } = await query;
 
     if (error) {
       console.error(error);

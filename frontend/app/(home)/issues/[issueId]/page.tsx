@@ -6,7 +6,6 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { Issue as IssueType } from "@/lib/types";
 import Issue from "@/components/Issue/Issue";
 import CommentList from "@/components/Comment/CommentList";
-import AddCommentForm from "@/components/Comment/AddCommentForm";
 
 const IssuePage = () => {
   const { issueId } = useParams();
@@ -70,10 +69,10 @@ const IssuePage = () => {
   return (
     <div className="container mx-auto p-2">
       <Issue issue={issue} />
-      {user && (
-        <AddCommentForm issueId={issueId as string} onCommentAdded={() => {}} />
-      )}
-      <CommentList issueId={issueId as string} />
+      <CommentList
+        issueId={Number.parseInt(issueId as string)}
+        parentCommentId={null}
+      />
     </div>
   );
 };

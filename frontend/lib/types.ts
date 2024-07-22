@@ -85,10 +85,10 @@ interface IssueProps {
 }
 
 interface Comment {
-  comment_id: string;
-  issue_id: string;
+  comment_id: number;
+  issue_id: number;
   user_id: string;
-  parent_id: string | null;
+  parent_id: number | null;
   content: string;
   created_at: string;
   user: User;

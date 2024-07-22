@@ -8,8 +8,8 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface AddCommentFormProps {
-  issueId: string;
-  parentCommentId?: string;
+  issueId: number;
+  parentCommentId: number | null;
   onCommentAdded: (comment: Comment) => void;
 }
 
