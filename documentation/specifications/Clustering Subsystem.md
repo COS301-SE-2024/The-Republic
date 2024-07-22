@@ -14,38 +14,18 @@ To implement a scalable and efficient method for clustering issues (posts) in ou
 
 This plan will not delve into the specific implementation of clustering algorithms, as this may evolve based on requirements and advancements.
 
-### 1. Initial Clustering
+### 1. Assigning Issues to Clusters
 
-1. **Retrieve Issues**: Fetch all existing issues from the database.
-2. **Group Issues**: Organize issues by suburb, category, and time of creation.
-3. **Pre-Process Data**: Clean and prepare data for clustering, including text normalization and feature extraction.
-4. **Apply Clustering Algorithm**: Use a clustering algorithm to group issues within each predefined group.
-5. **Update Database**: Store the cluster IDs in the database for each issue.
-
-### 2. Assigning Issues to Clusters
-
-1. **Feature Calculation**: When a new issue is created, compute its features based on content, location, and category.
+1. **Filtering**: For the fields issue category, location and time, we can simply filter that. And then we will use AI then
+to cluster based on issue content. Issue content is the last field we should cluster on.
 2. **Cluster Assignment**: Assign the new issue to the nearest cluster, if an appropriate cluster exists.
 
-### 3. Periodic Re-Clustering
-
-1. **Trigger Mechanism**: Set up a script to re-cluster issues. This script can be triggered based on:
-   - Number of new issues created.
-   - Scheduled intervals (e.g., daily, weekly, monthly).
-   - Both intervals and the number of new issues.
-2. **Re-Cluster Issues**: Re-evaluate and update clusters based on the latest data and any new issues.
-3. **Update Database**: Reflect changes in the database, ensuring cluster IDs are up-to-date.
 
 ## Algorithms and Tools
 
 ### Clustering Algorithms
 
-1. **K-Means Clustering**
-   - **Description**: Partitions data into K clusters by minimizing the variance within each cluster.
-   - **Pros**: Efficient for large datasets; easy to implement.
-   - **Cons**: Requires the number of clusters (K) to be specified; may not handle outliers well. Clusters must be spherical.
-
-2. **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**
+1. **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**
    - **Description**: Groups data based on density; identifies clusters of varying shapes and sizes.
    - **Pros**: No need to specify the number of clusters; can find arbitrarily shaped clusters.
    - **Cons**: Performance can degrade with very large datasets.
@@ -60,4 +40,4 @@ This plan will not delve into the specific implementation of clustering algorith
 
 - Introducing a `last_modified` field in the issues table in order to keep track of issues that have been clustered.
 - Introducing a `cluster_id` field in the issues table in order to associate an issue to a cluster easily.
-- Possibly creating a new clusters table in order to keep track of those cluster_id's and manage them.
+- Possibly creating a new clusters table in order to keep track of those cluster_id's and manage them. Number of issues in the cluster could be a field.
