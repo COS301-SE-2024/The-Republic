@@ -26,7 +26,7 @@ const IssuePage = () => {
     <div className="container mx-auto p-2">
       {isLoading ? (
         <LoadingIndicator />
-      ) : isError ? (
+      ) : isError || !issue ? (
         <p>Error loading This Issue.</p>
       ) : (
         <>
