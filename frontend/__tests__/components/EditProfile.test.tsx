@@ -4,6 +4,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import EditProfile from "@/components/EditProfile/EditProfile";
 import { useTheme } from "next-themes";
 import { supabase } from "@/lib/globals";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("next-themes", () => ({
   useTheme: jest.fn(),
@@ -30,6 +31,19 @@ const user = {
   access_token: "access_token_value",
 };
 
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+  );
+};
+
 describe("EditProfile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,7 +56,7 @@ describe("EditProfile", () => {
   });
 
   it("renders correctly with user data", () => {
-    const { getByDisplayValue } = render(
+    const { getByDisplayValue } = renderWithClient(
       <EditProfile user={user} onUpdate={() => {}} onCancel={() => {}} />,
     );
     expect(getByDisplayValue("User Fullname")).toBeInTheDocument();
@@ -55,7 +69,7 @@ describe("EditProfile", () => {
     (supabase.auth.getSession as jest.Mock).mockResolvedValue({
       data: { session: { user: {}, access_token: "test-token" } },
     });
-    const { getByText, getByLabelText } = render(
+    const { getByText, getByLabelText } = renderWithClient(
       <EditProfile user={user} onUpdate={onUpdate} onCancel={() => {}} />,
     );
 
@@ -69,7 +83,7 @@ describe("EditProfile", () => {
 
   it("calls onCancel when cancel button is clicked", () => {
     const onCancel = jest.fn();
-    const { getByText } = render(
+    const { getByText } = renderWithClient(
       <EditProfile user={user} onUpdate={() => {}} onCancel={onCancel} />,
     );
     fireEvent.click(getByText("Cancel"));

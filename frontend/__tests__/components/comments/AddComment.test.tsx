@@ -1,9 +1,10 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { render, fireEvent, screen, waitFor } from "@testing-library/react";
+import { render, fireEvent, screen } from "@testing-library/react";
 import AddCommentForm from "@/components/Comment/AddCommentForm";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: jest.fn(),
@@ -37,6 +38,19 @@ jest.mock("@supabase/supabase-js", () => ({
     })),
   }),
 }));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+  );
+};
 
 interface MockUser {
   user_id: string;
@@ -76,7 +90,7 @@ describe("AddCommentForm", () => {
   });
 
   it("renders the component", () => {
-    render(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
+    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
     expect(screen.getByPlaceholderText("Add Comment...")).toBeInTheDocument();
   });
 
@@ -90,13 +104,13 @@ describe("AddCommentForm", () => {
     });
     global.fetch = fetchMock;
 
-    render(<AddCommentForm issueId="1" onCommentAdded={onCommentAdded} />);
+    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={onCommentAdded} />);
     const button = screen.getByText("Send");
     fireEvent.click(button);
   });
 
   it("checks anonymous posting", () => {
-    render(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
+    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
 
     const checkbox = screen.getByLabelText("Post anonymously");
     expect(checkbox).not.toBeChecked();
