@@ -1,6 +1,6 @@
 # Plan for Clustering of Issues
 
-Clustering issues means to group issues that are related to each other. This key subsystem/microservice facilitates the process of resolving and archiving issues by grouping similar issues together.
+Clustering issues means to group issues that are related to each other. This key subsystem facilitates the process of resolving and archiving issues by grouping similar issues together.
 
 ## Objective
 
