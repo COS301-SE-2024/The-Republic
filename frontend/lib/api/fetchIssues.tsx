@@ -1,6 +1,6 @@
-import { UserAlt as User, RequestBody } from "@/lib/types";
+import { UserAlt as User, RequestBody, Location } from "@/lib/types";
 
-const fetchIssues = async (user: User, sortBy: string, filter: string) => {
+const fetchIssues = async (user: User, sortBy: string, filter: string, location: Location | null) => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -23,6 +23,10 @@ const fetchIssues = async (user: User, sortBy: string, filter: string) => {
 
   if (filter !== "All") {
     requestBody.category = filter;
+  }
+
+  if (location) {
+    requestBody.location = location;
   }
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
