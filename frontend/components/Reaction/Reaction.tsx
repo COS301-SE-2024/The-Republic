@@ -85,7 +85,7 @@ const Reaction: React.FC<ReactionProps> = ({
           className={`flex items-center space-x-1 p-2 rounded-full ${
             activeReaction === emoji
               ? "bg-green-200 text-green-600"
-              : "bg-gray-200 text-gray-600"
+              : "text-gray-600 dark:text-white"
           }`}
         >
           <span>{emoji}</span>

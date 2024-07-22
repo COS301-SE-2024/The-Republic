@@ -68,8 +68,10 @@
   padding: 15px 10px;
   text-decoration: none;
   transition: 0.2s ease;
-  background: hsl(var(--grey));
+  border-color: hsl(var(--grey));
+  border-width: 1.6px;
 }
+
 
 .sidebarLinks li a:hover {
   background: hsl(var(--grey-dark));
