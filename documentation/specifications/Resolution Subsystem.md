@@ -46,7 +46,7 @@ To manage the resolution of issues within the app, namely self-resolution and ex
 
 5. **User Response**:
    - Users receive notifications and respond with either confirmation or decline the resolution.
-   - Implement a mechanism for users to confirm or decline directly through the notification or app interface.
+   - Implement a mechanism for users to confirm or decline directly through the notification or interface.
 
 6. **Update Issue Status**:
    - If a majority of cluster members confirm, update the issue status to "Resolved."
@@ -143,3 +143,6 @@ This is not the final schema for the table, just an idea of the type of informat
     - Limit the number of rejected external resolutions a user can make?
         - What if the limit for rejections is 5 but the user has solved way more than that and they just happen to get some wrong?
         - Permanent bans?
+
+## Activity Diagram
+![alt text](Resolution.drawio.png)
