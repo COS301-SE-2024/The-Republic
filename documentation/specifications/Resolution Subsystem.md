@@ -115,10 +115,13 @@ This is not the final schema for the table, just an idea of the type of informat
 | `id`                  | UUID / SERIAL       | Unique identifier for each resolution                |
 | `issue_id`            | UUID / INTEGER      | Foreign key referencing the `issues` table            |
 | `resolver_id`         | UUID / INTEGER      | ID of the user *or entity* resolving the issue        |
-| `status`              | ENUM('pending', 'accepted', 'declined', 'reverted') | Resolution status                                  |
+| `status`              | ENUM('pending', 'accepted', 'declined') | Resolution status                                  |
 | `proof`               | TEXT                | Proof or additional information (for external resolutions) |
 | `proof_image`         | TEXT                | URL                                                   |
 | `submitted_at`        | TIMESTAMP           | Timestamp when the resolution was submitted          |
+| `num_cluster_members`  | INTEGER | Total cluster of cluster members |
+| `num_cluster_members_accepted` | INTEGER | Number of cluster members accepted |
+| `num_cluster_members_rejected`| INTEGER | Number of cluster members rejected |
 
 ### Reasons for storing issue_id instead of cluster_id:
 
