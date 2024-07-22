@@ -54,4 +54,10 @@ This plan will not delve into the specific implementation of clustering algorith
 
 1. **Scikit-Learn (Python)**
    - **Description**: A popular machine learning library that provides various clustering algorithms including K-Means, DBSCAN, and Hierarchical Clustering.
-   - **Pros**: Comprehensive, easy-to-use, and well-documented.
+   - **Pros**: Comprehensive, easy-to-use, and well-documented. Can easily create a python script and feed it data.
+
+## Proposed changes to the database schema:
+
+- Introducing a `last_modified` field in the issues table in order to keep track of issues that have been clustered.
+- Introducing a `cluster_id` field in the issues table in order to associate an issue to a cluster easily.
+- Possibly creating a new clusters table in order to keep track of those cluster_id's and manage them.
