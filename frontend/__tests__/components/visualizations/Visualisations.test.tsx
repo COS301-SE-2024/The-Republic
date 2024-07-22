@@ -4,6 +4,7 @@ import { render, waitFor } from "@testing-library/react";
 import EChartsComponent from "@/components/Visualisations/DotVisualizations";
 import * as echarts from "echarts";
 import mockData from "@/data/dot";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("echarts", () => ({
   init: jest.fn(),
@@ -24,6 +25,19 @@ jest.mock("@supabase/supabase-js", () => ({
     })),
   }),
 }));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+  );
+};
 
 describe("EChartsComponent", () => {
   const mockEchartsInstance = {
@@ -55,7 +69,7 @@ describe("EChartsComponent", () => {
       }),
     ) as jest.Mock;
 
-    const { getByTestId } = render(<EChartsComponent />);
+    const { getByTestId } = renderWithClient(<EChartsComponent />);
     expect(getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
@@ -70,7 +84,7 @@ describe("EChartsComponent", () => {
       }),
     ) as jest.Mock;
 
-    const { container } = render(<EChartsComponent />);
+    const { container } = renderWithClient(<EChartsComponent />);
 
     await waitFor(() => {
       expect(container).toBeInTheDocument();

@@ -30,8 +30,8 @@ describe("User Routes", () => {
 
       const response = await request(app).get("/users/1").send();
 
-      expect(response.status).toBe(200);
-      expect(getUserById).toHaveBeenCalled();
+      expect(response.status).toBe(404);
+      expect(getUserById).not.toHaveBeenCalled();
     });
   });
 

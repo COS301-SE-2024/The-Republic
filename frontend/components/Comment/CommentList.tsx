@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Comment as CommentType } from "@/lib/types";
+import { useQuery, useMutation, useQueryClient, InvalidateQueryFilters } from '@tanstack/react-query';
+import { CommentListProps, Comment as CommentType, UserAlt } from "@/lib/types";
 import Comment from "./Comment";
+import LoadingIndicator from "@/components/ui/loader";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -13,49 +15,27 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 
-interface CommentListProps {
-  issueId: string;
-}
+import { fetchComments } from "@/lib/api/fetchComments";
+import { deleteComment } from "@/lib/api/deleteComment";
 
 const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
   const { user } = useUser();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: com_data, isLoading: isLoadingComments, isError: isErrorComments } = useQuery({
+    queryKey: [`comment_list ${issueId}`, user, issueId],
+    queryFn: () => fetchComments(user as UserAlt, issueId),
+    enabled: (issueId !== undefined && issueId !== null),
+  });
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const headers: HeadersInit = {
-          "Content-Type": "application/json",
-        };
-
-        if (user) {
-          headers.Authorization = `Bearer ${user.access_token}`;
-        }
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({ issue_id: issueId, from: 0, amount: 99 }),
-          },
-        );
-
-        const responseData = await response.json();
-        if (responseData.success) {
-          setComments(responseData.data);
-        } else {
-          console.error("Failed to fetch comments:", responseData.error);
-        }
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    fetchComments();
-  }, [issueId, user]);
+    if (!isLoadingComments && !isErrorComments && com_data) {
+      setComments(com_data);
+    }
+  }, [com_data]);
 
   const handleDeleteComment = async (commentId: string) => {
     if (!user) {
@@ -68,6 +48,37 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
     setCommentToDelete(commentId);
   };
 
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (user) {
+        return await deleteComment(user, commentToDelete);
+      } else {
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
+      }
+    },
+    onSuccess: () => {
+      setComments((prevComments) =>
+        prevComments.filter(
+          (comment) => comment.comment_id !== commentToDelete,
+        ),
+      );
+      setCommentToDelete(null);
+      toast({
+        description: "Comment deleted successfully",
+      });
+
+      queryClient.invalidateQueries([`comment_list ${issueId}`, user, issueId] as InvalidateQueryFilters);
+    },
+    onError: (error) => {
+      console.error("Failed to delete comment:", error);
+      toast({
+        description: "Failed to delete comment",
+      });
+    }
+  });
+
   const confirmDeleteComment = async () => {
     if (!commentToDelete) return;
 
@@ -78,42 +89,7 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
       return;
     }
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ comment_id: commentToDelete }),
-        },
-      );
-
-      if (response.ok) {
-        setComments((prevComments) =>
-          prevComments.filter(
-            (comment) => comment.comment_id !== commentToDelete,
-          ),
-        );
-        setCommentToDelete(null);
-        toast({
-          description: "Comment deleted successfully",
-        });
-      } else {
-        const responseData = await response.json();
-        console.error("Failed to delete comment:", responseData.error);
-        toast({
-          description: "Failed to delete comment",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      toast({
-        description: "Error deleting comment",
-      });
-    }
+    mutation.mutate();
   };
 
   const handleReply = (parentCommentId: string, reply: CommentType) => {
@@ -141,30 +117,36 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
 
   return (
     <div className="pt-4">
-      {renderComments(null)}
-      {commentToDelete && (
-        <Dialog open={true} onOpenChange={() => setCommentToDelete(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this comment? This action cannot
-                be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setCommentToDelete(null)}
-              >
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={confirmDeleteComment}>
-                Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      {isLoadingComments ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          {renderComments(null)}
+          {commentToDelete && (
+            <Dialog open={true} onOpenChange={() => setCommentToDelete(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this comment? This action cannot
+                    be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setCommentToDelete(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" onClick={confirmDeleteComment}>
+                    Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
+        </>
       )}
     </div>
   );

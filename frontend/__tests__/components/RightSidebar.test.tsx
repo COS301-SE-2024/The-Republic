@@ -2,6 +2,7 @@ import React from "react";
 import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
+import mockLocation from "@/data/mockLocation";
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -20,15 +21,29 @@ jest.mock("@supabase/supabase-js", () => ({
 }));
 
 describe("RightSidebar", () => {
+  beforeEach(() => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    (console.error as jest.Mock).mockRestore();
+  });
+  
+  const setSortBy = jest.fn();
+  const setFilter = jest.fn();
+  const setLocation = jest.fn();
+
   it("renders without crashing", () => {
-    const setSortBy = jest.fn();
-    const setFilter = jest.fn();
+
     render(
       <RightSidebar
         sortBy="newest"
         setSortBy={setSortBy}
         filter="All"
         setFilter={setFilter}
+        location={mockLocation}
+        setLocation={setLocation}
       />,
     );
     expect(screen.getByText("All")).toBeInTheDocument();
@@ -43,6 +58,8 @@ describe("RightSidebar", () => {
         setSortBy={setSortBy}
         filter="All"
         setFilter={setFilter}
+        location={mockLocation}
+        setLocation={setLocation}
       />,
     );
   });
@@ -56,6 +73,8 @@ describe("RightSidebar", () => {
         setSortBy={setSortBy}
         filter="All"
         setFilter={setFilter}
+        location={mockLocation}
+        setLocation={setLocation}
       />,
     );
     expect(screen.getByText("All")).toBeInTheDocument();
