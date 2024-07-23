@@ -25,7 +25,7 @@ describe('Location Controller', () => {
 
   describe('getAllLocations', () => {
     it('should call sendResponse', async () => {
-      const mockAPIResponse: APIResponse<any[]> = { success: true, code: 200, data: [] };
+      const mockAPIResponse: APIResponse<string[]> = { success: true, code: 200, data: [] };
       mockLocationService.getAllLocations.mockResolvedValue(mockAPIResponse);
 
       await getAllLocations(mockRequest as Request, mockResponse as Response);
