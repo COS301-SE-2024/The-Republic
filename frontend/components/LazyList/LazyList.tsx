@@ -8,10 +8,13 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import equal from "fast-deep-equal";
 
+type Compare<D> = (one: D, two: D) => boolean;
+
 export interface LazyListRef<D> {
   reload: () => void;
   add: (data: D) => void;
-  remove: (data: D, compare?: (one: D, two: D) => boolean) => boolean;
+  remove: (data: D, compare?: Compare<D>) => boolean;
+  update: (data: D, newData: D, compare?: Compare<D>) => boolean;
 }
 
 interface LazyListProps<D> {
@@ -57,7 +60,24 @@ export function LazyList<D>({
       } else {
         return false;
       }
-    }
+    },
+
+    update: (data, newData, compare = equal) => {
+      const index = items.findIndex((item) =>
+        item !== "Loading" &&
+        item !== "Deleted" &&
+        compare(item, data)
+      );
+
+      if (index !== -1) {
+        items[index] = newData;
+        setItems([...items]);
+
+        return true;
+      } else {
+        return false;
+      }
+    },
   }), [items]);
 
   useEffect(() => {

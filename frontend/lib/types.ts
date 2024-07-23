@@ -32,7 +32,7 @@ interface ProfileStatsProps {
 }
 
 interface IssueInputBoxProps {
-  onAddIssue: (data: Issue) => void;
+  onAddIssue: (issue: Issue) => void;
 }
 
 interface Category {
@@ -82,6 +82,8 @@ interface Issue {
 interface IssueProps {
   issue: Issue;
   id?: string;
+  onDeleteIssue: (issue: Issue) => void;
+  onResolveIssue: (issue: Issue, resolvedIssue: Issue) => void;
 }
 
 interface Comment {

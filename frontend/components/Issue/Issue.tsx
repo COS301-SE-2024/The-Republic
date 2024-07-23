@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Bell } from "lucide-react";
+import { MessageCircle, Bell, Loader2 } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
 import { IssueProps } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
@@ -12,9 +12,15 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "../ui/use-toast";
 import Image from "next/image";
 
-const Issue: React.FC<IssueProps> = ({ issue, id }) => {
+const Issue: React.FC<IssueProps> = ({
+  issue,
+  id,
+  onDeleteIssue,
+  onResolveIssue,
+}) => {
   const { user } = useUser();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +40,8 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
       return;
     }
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
         {
@@ -47,10 +55,19 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
       );
 
       if (response.ok) {
-        window.location.reload();
+        toast({
+          description: "Succesfully deleted issue",
+        });
+
+        onDeleteIssue(issue);
       } else {
-        console.error("Failed to delete issue");
+        toast({
+          variant: "destructive",
+          description: "Failed to delete issue, please try again",
+        });
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error deleting issue:", error);
     }
@@ -65,6 +82,8 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
       return;
     }
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`,
         {
@@ -78,10 +97,21 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
       );
 
       if (response.ok) {
-        window.location.reload();
+        toast({
+          variant: "success",
+          description: "Resolution recieved",
+        });
+
+        const apiReponse = await response.json();
+        onResolveIssue(issue, apiReponse.data);
       } else {
-        console.error("Failed to resolve issue");
+        toast({
+          variant: "destructive",
+          description: "Failed to resolve issue, please try again",
+        });
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error resolving issue:", error);
     }
@@ -193,7 +223,7 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
                 </div>
               )}
             </div>
-            {isOwner && (
+            {isOwner && !isLoading && (
               <MoreMenu
                 menuItems={menuItems}
                 isOwner={isOwner}
@@ -202,6 +232,7 @@ const Issue: React.FC<IssueProps> = ({ issue, id }) => {
                 onSubscribe={handleSubscribe}
               />
             )}
+            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400"/>}
           </div>
         </div>
         <div className="flex space-x-2 pt-2">

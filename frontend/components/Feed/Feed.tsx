@@ -68,6 +68,14 @@ const Feed: React.FC = () => {
     lazyRef.current?.add(issue);
   };
 
+  const handleDeleteIssue = (issue: IssueType) => {
+    lazyRef.current?.remove(issue);
+  };
+
+  const handleResolveIssue = (issue: IssueType, resolvedIssue: IssueType) => {
+    lazyRef.current?.update(issue, resolvedIssue);
+  };
+
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center h-32">
       <Loader2 className="h-6 w-6 animate-spin text-green-400" />
@@ -92,7 +100,13 @@ const Feed: React.FC = () => {
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
-          Item={({ data }) => <Issue issue={data}/>}
+          Item={({ data }) => (
+            <Issue
+              issue={data}
+              onDeleteIssue={handleDeleteIssue}
+              onResolveIssue={handleResolveIssue}
+            />
+          )}
           Loading={LoadingIndicator}
           Empty={EmptyIndicator}
           parentId={scrollId}

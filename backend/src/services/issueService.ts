@@ -291,15 +291,14 @@ export default class IssueService {
       });
     }
 
-    const resolvedIssue = await this.issueRepository.resolveIssue(
+    await this.issueRepository.resolveIssue(
       issue_id,
       user_id,
     );
 
-    return APIData({
-      code: 200,
-      success: true,
-      data: resolvedIssue,
+    return await this.getIssueById({
+      issue_id,
+      user_id
     });
   }
 
