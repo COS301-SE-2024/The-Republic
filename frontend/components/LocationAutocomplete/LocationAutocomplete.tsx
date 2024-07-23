@@ -70,6 +70,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         }
       });
 
+      setLocationInputVisible(false);
       setLocation({
         label: loc.label,
         value: {

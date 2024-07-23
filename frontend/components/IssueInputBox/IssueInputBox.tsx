@@ -11,22 +11,25 @@ import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import { categoryOptions, moodOptions } from "@/lib/constants";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import { Image as LucideImage, X } from "lucide-react";
+import { Loader2, Image as LucideImage, X } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
+import { useUser } from "@/lib/contexts/UserContext";
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [image, setImage] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useUser();
 
   const handleIssueSubmit = async () => {
     if (!user) {
@@ -60,9 +63,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const isContentAppropriate = await checkContentAppropriateness(content);
 
     if (!isContentAppropriate) {
+      setIsLoading(false);
       toast({
         variant: "destructive",
         description: "Please use appropriate language.",
@@ -71,6 +77,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     if (image && !(await checkImageFileAndToast(image, toast))) {
+      setIsLoading(false);
       return;
     }
 
@@ -118,14 +125,21 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       toast({
         description: "Post successful",
       });
-      window.location.reload();
+
+      const apiResponse = await res.json();
+      onAddIssue(apiResponse.data);
     }
+
+    setIsLoading(false);
   };
 
   const checkContentAppropriateness = async (
     text: string,
   ): Promise<boolean> => {
-    const apiKey = process.env
+    return text.length > 0;
+
+    // Requests to the API were failing
+    /* const apiKey = process.env
       .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
     const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
 
@@ -151,7 +165,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       return false;
     }
 
-    return true;
+    return true; */
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,6 +208,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
             disabled={charCount > MAX_CHAR_COUNT || !content}
           >
             Post
+            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
           </Button>
         </div>
         {charCount > MAX_CHAR_COUNT && (

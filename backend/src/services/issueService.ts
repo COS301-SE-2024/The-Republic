@@ -173,10 +173,9 @@ export default class IssueService {
       image_url: imageUrl,
     });
 
-    return APIData({
-      code: 201,
-      success: true,
-      data: createdIssue,
+    return await this.getIssueById({
+      issue_id: createdIssue.issue_id,
+      user_id: issue.user_id
     });
   }
 

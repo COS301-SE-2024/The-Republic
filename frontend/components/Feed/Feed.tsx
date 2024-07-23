@@ -64,6 +64,10 @@ const Feed: React.FC = () => {
     }
   };
 
+  const handleAddIssue = (issue: IssueType) => {
+    lazyRef.current?.add(issue);
+  };
+
   const LoadingIndicator = () => (
     <div className="flex justify-center items-center h-32">
       <Loader2 className="h-6 w-6 animate-spin text-green-400" />
@@ -84,7 +88,7 @@ const Feed: React.FC = () => {
         className={`flex-1  px-6  overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        { user && <IssueInputBox user={user} />}
+        { user && <IssueInputBox onAddIssue={handleAddIssue}/>}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}

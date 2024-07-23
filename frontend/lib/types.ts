@@ -32,7 +32,7 @@ interface ProfileStatsProps {
 }
 
 interface IssueInputBoxProps {
-  user: User | null;
+  onAddIssue: (data: Issue) => void;
 }
 
 interface Category {
