@@ -247,8 +247,7 @@ export default class IssueService {
     );
 
     if (issueToDelete.image_url) {
-      const imageUrlParts = issueToDelete.image_url.split("/");
-      const imageName = imageUrlParts.slice(-2).join("/"); // Join the last two parts to get the full path
+      const imageName = issueToDelete.image_url.split("/").slice(-1)[0];
       const { error } = await supabase.storage
         .from("issues")
         .remove([imageName]);
