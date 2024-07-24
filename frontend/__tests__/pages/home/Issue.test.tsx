@@ -16,11 +16,18 @@ jest.mock("@/components/Issue/Issue", () =>
   jest.fn(() => <div>Mocked Issue</div>),
 );
 jest.mock("@/components/Comment/CommentList", () =>
-  jest.fn(() => <div>Mocked CommentList</div>),
-);
-jest.mock("@/components/Comment/AddCommentForm", () =>
-  jest.fn(() => <div>Mocked AddCommentForm</div>),
-);
+  jest.fn(() => (
+    <>
+      <div>Mocked AddCommentForm</div>
+      <div>Mocked CommentList</div>
+    </>
+  ),
+));
+
+jest.mock("lucide-react", () => ({
+  Loader2: () => <div>Loading...</div>,
+}));
+
 
 describe("Issue Page", () => {
   beforeEach(() => {

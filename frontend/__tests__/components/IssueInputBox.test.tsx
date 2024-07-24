@@ -27,17 +27,19 @@ jest.mock("@supabase/supabase-js", () => ({
 
 const mockUseToast = useToast as jest.Mock;
 
-const mockUser = {
-  user_id: "1",
-  email_address: "test@example.com",
-  username: "testuser",
-  fullname: "Test User",
-  image_url: "https://via.placeholder.com/150",
-  bio: "",
-  is_owner: false,
-  total_issues: 0,
-  resolved_issues: 0,
-};
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn().mockReturnValue({
+    user_id: "1",
+    email_address: "test@example.com",
+    username: "testuser",
+    fullname: "Test User",
+    image_url: "https://via.placeholder.com/150",
+    bio: "",
+    is_owner: false,
+    total_issues: 0,
+    resolved_issues: 0,
+  }),
+}));
 
 describe("IssueInputBox Component", () => {
   beforeEach(() => {
@@ -51,21 +53,21 @@ describe("IssueInputBox Component", () => {
   });
 
   test("renders IssueInputBox component", () => {
-    render(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox onAddIssue={() => {}}/>);
     expect(
       screen.getByPlaceholderText("What's going on!?"),
     ).toBeInTheDocument();
   });
 
   test("handles input change", () => {
-    render(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox onAddIssue={() => {}}/>);
     const textarea = screen.getByPlaceholderText("What's going on!?");
     fireEvent.change(textarea, { target: { value: "New Issue Content" } });
     expect(textarea).toHaveValue("New Issue Content");
   });
 
   test("handles category and mood selection", () => {
-    render(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox onAddIssue={() => {}}/>);
     fireEvent.change(screen.getByText("Select category..."), {
       target: { value: "1" },
     });
@@ -75,7 +77,7 @@ describe("IssueInputBox Component", () => {
   });
 
   test("handles issue submission", async () => {
-    render(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox onAddIssue={() => {}}/>);
     fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
       target: { value: "New Issue Content" },
     });
