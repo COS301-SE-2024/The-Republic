@@ -1,13 +1,16 @@
 import React, { useState } from "react";
+import { useMutation, useQueryClient, InvalidateQueryFilters } from '@tanstack/react-query';
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import { AddComment } from "@/lib/api/AddComment";
 
+// TODO: Update extracted type to match this and use it
 interface AddCommentFormProps {
   issueId: number;
   parentCommentId: number | null;
@@ -21,112 +24,56 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 }) => {
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
-
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!user) {
+        throw new Error("User");
+      }
+      
+      const isContentAppropriate = await checkContentAppropriateness(content);
+      if (!isContentAppropriate) {
+        throw new Error("Language");
+      }
+      
+      return await AddComment(user, issueId, content, isAnonymous, parentCommentId);
+    },
+    onSuccess: (responseData) => {
       toast({
-        description: "You need to be logged in to comment",
+        description: "Comment posted successfully",
       });
-      return;
-    }
-
-    setIsLoading(true);
-
-    const isContentAppropriate = await checkContentAppropriateness(content);
-    if (!isContentAppropriate) {
-      setIsLoading(false);
-      toast({
-        variant: "destructive",
-        description: "Please use appropriate language.",
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/add`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({
-            issue_id: issueId,
-            content,
-            is_anonymous: isAnonymous,
-            parent_id: parentCommentId,
-          }),
-        },
-      );
-
-      const responseData = await response.json();
-      if (responseData.success) {
-        setContent("");
+      
+      onCommentAdded(responseData);
+      setContent("");
+  
+      queryClient.invalidateQueries([`add_comment_${user?.user_id}_${issueId}`] as InvalidateQueryFilters);
+    },
+    onError: (error) => {
+      if (error.message === "Language") {
         toast({
-          description: "Comment posted successfully",
+          variant: "destructive",
+          description: "Please use appropriate language.",
         });
-
-        onCommentAdded(responseData.data);
+      } else if (error.message === "User") {
+        toast({
+          description: "You need to be logged in to comment",
+        });
       } else {
-        console.error("Failed to post comment:", responseData.error);
         toast({
           variant: "destructive",
           description: "Failed to post comment",
         });
+        
+        console.error("Failed to post comment:", error);
       }
-    } catch (error) {
-      console.error("Error posting comment:", error);
-      toast({
-        description: "Error posting comment",
-      });
     }
-
-    setIsLoading(false);
-  };
-
-  const checkContentAppropriateness = async (
-    text: string,
-  ): Promise<boolean> => {
-    return text.length > 0;
-
-    // Requests to the API were failing
-    /* const apiKey = process.env
-      .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
-    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
-
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
-
-    const result = await response.json();
-
-    if (
-      (result.Terms && result.Terms.length > 0) ||
-      result.Classification.Category1.Score > 0.5 ||
-      result.Classification.Category2.Score > 0.5 ||
-      result.Classification.Category3.Score > 0.5
-    ) {
-      return false;
-    }
-
-    return true; */
-  };
+  });
 
   return (
     <form
-      onSubmit={handleCommentSubmit}
+      onSubmit={mutation.mutate}
       className="flex flex-col space-y-4 mb-4 p-4 rounded shadow bg-card dark:bg-card"
     >
       <div className="flex items-center space-x-3">
@@ -158,7 +105,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
           disabled={!content.trim()}
         >
           Send
-          {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
+          {mutation.isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
         </Button>
       </div>
     </form>

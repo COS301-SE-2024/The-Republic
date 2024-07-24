@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
-import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import { categoryOptions, moodOptions } from "@/lib/constants";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
@@ -16,6 +15,7 @@ import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { useUser } from "@/lib/contexts/UserContext";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -30,37 +30,56 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
+  
+  // This should be intergrated as described in the comment for mutations in Issue.tsx
+  /* const mutation = useMutation({
+    mutationFn: async () => {
+      if (user) {
+        return await createIssue(user as UserAlt, ...otherParamaters);
+      } else {
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
+      }
+    },
+    onSuccess: (issue) => {
+      setContent("");
+      setCategory("");
+      setMood("");
+      setIsAnonymous(false);
+      setLocation(null);
+      setImage(null);
+
+      toast({
+        description: "Post successful",
+      });
+      
+      onAddIssue(issue);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, please try again",
+      });
+    },
+  }); */
 
   const handleIssueSubmit = async () => {
-    if (!user) {
-      toast({
-        description: "You need to be logged in to post",
-      });
-      return;
-    }
-
-    if (!category) {
-      toast({
-        variant: "destructive",
-        description: "Please select a category.",
-      });
-      return;
-    }
-
-    if (!mood) {
-      toast({
-        variant: "destructive",
-        description: "Please select a mood.",
-      });
-      return;
-    }
-
-    if (!location) {
-      toast({
-        variant: "destructive",
-        description: "Please set a location.",
-      });
-      return;
+    const validationChecks = [
+      { check: !user, message: "You need to be logged in to post", variant: "destructive" },
+      { check: !category, message: "Please select a category.", variant: "destructive" },
+      { check: !mood, message: "Please select a mood.", variant: "destructive" },
+      { check: !location, message: "Please set a location.", variant: "destructive" },
+    ];
+    
+    for (const { check, message, variant = "default" } of validationChecks) {
+      if (check) {
+        toast({
+          variant: variant as "default" | "destructive" | "success" | "warning" | null | undefined,
+          description: message,
+        });
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -82,7 +101,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
     }
 
     const categoryID = parseInt(category);
-
+    
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
@@ -93,11 +112,11 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       JSON.stringify(location ? location.value : {}),
     );
     requestBody.append("created_at", new Date().toISOString());
-    requestBody.append("user_id", user.user_id);
+    requestBody.append("user_id", user?.user_id || "");
     if (image) {
       requestBody.append("image", image);
     }
-
+    
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
       {
@@ -131,41 +150,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
     }
 
     setIsLoading(false);
-  };
-
-  const checkContentAppropriateness = async (
-    text: string,
-  ): Promise<boolean> => {
-    return text.length > 0;
-
-    // Requests to the API were failing
-    /* const apiKey = process.env
-      .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
-    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
-
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
-
-    const result = await response.json();
-
-    if (
-      (result.Terms && result.Terms.length > 0) ||
-      result.Classification.Category1.Score > 0.5 ||
-      result.Classification.Category2.Score > 0.5 ||
-      result.Classification.Category3.Score > 0.5
-    ) {
-      return false;
-    }
-
-    return true; */
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

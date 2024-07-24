@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2 } from "lucide-react";
@@ -9,7 +9,8 @@ import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
-import { toast } from "../ui/use-toast";
+import { useMutation } from '@tanstack/react-query';
+import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
 
 const Issue: React.FC<IssueProps> = ({
@@ -23,6 +24,46 @@ const Issue: React.FC<IssueProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // `deleteIssue` and `resolveIssue` should return the data they get from the
+  // backend. Then these can be uncommented, `isLoading` can be replaced with
+  // (deleteMutation.isPending || resolveMutation.isPending), and `handleDelete`
+  // and `handleResolve can replaced with mutate calls
+  /* const deleteMutation = useMutation({
+    mutationFn: async () => {
+      if (user && issue && isOwner) {
+        return await deleteIssue(user, issue.issue_id.toString());
+      } else {
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
+      }
+    },
+    onSuccess: (issue) => {
+      onDeleteIssue(issue);
+    },
+    onError: (error) => {
+      console.error(error);
+    }
+  });
+  
+  const resolveMutation = useMutation({
+    mutationFn: async () => {
+      if (user && issue) {
+        return await resolveIssue(user, issue.issue_id.toString());
+      } else {
+        toast({
+          description: "You need to be logged in to resolve a comment",
+        });
+      }
+    },
+    onSuccess: (issue) => {
+      onResolveIssue(issue);
+    },
+    onError: (error) => {
+      console.error(error);
+    }
+  }); */
 
   const menuItems = ["Delete"];
   if (!issue.resolved_at) {
@@ -115,11 +156,6 @@ const Issue: React.FC<IssueProps> = ({
     } catch (error) {
       console.error("Error resolving issue:", error);
     }
-  };
-
-  const handleSubscribe = (type: string) => {
-    setShowSubscribeDropdown(false);
-    console.log("Subscribed to:", type);
   };
 
   const handleCommentClick = () => {
@@ -277,7 +313,7 @@ const Issue: React.FC<IssueProps> = ({
           <span>{issue.comment_count}</span>
         </div>
         <Reaction
-          issueId={issue.issue_id}
+          issueId={String(issue.issue_id)}
           initialReactions={issue.reactions}
           userReaction={issue.user_reaction}
         />

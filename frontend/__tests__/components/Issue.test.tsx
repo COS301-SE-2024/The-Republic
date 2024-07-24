@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Issue from "@/components/Issue/Issue";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useRouter } from "next/navigation";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("@/lib/contexts/UserContext");
 
@@ -26,6 +27,19 @@ jest.mock("@supabase/supabase-js", () => ({
     })),
   }),
 }));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+  );
+};
 
 const mockUseUser = useUser as jest.Mock;
 const mockUseRouter = useRouter as jest.Mock;
@@ -71,7 +85,7 @@ describe("Issue Component", () => {
   });
 
   test("renders Issue component", () => {
-    render(<Issue issue={mockIssue} />);
+    renderWithClient(<Issue issue={mockIssue} />);
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("johndoe")).toBeInTheDocument();
     expect(screen.getByText("Suburb, City, Province")).toBeInTheDocument();
@@ -80,7 +94,7 @@ describe("Issue Component", () => {
   });
 
   test("handles avatar click", () => {
-    const { getByText } = render(<Issue issue={mockIssue} />);
+    const { getByText } = renderWithClient(<Issue issue={mockIssue} />);
     fireEvent.click(getByText("John Doe"));
   });
 });

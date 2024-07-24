@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useUser } from "@/lib/contexts/UserContext";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
@@ -17,6 +18,7 @@ const Feed: React.FC = () => {
   const { user } = useUser();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
+  const [, setLocation] = useState<Location | null>(null);
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
 
   const fetchIssues = async (from: number, amount: number) => {
@@ -124,6 +126,8 @@ const Feed: React.FC = () => {
           lazyRef.current?.reload();
           setFilter(_filter);
         }}
+        location={location}
+        setLocation={setLocation}
       />
     </div>
   );

@@ -9,6 +9,7 @@ import { useRef } from "react";
 
 const FETCH_SIZE = 3;
 
+// TODO: Update extracted type to match this and use it
 interface CommentListProps {
   issueId: number;
   parentCommentId: number | null;
@@ -25,6 +26,7 @@ const CommentList: React.FC<CommentListProps> = ({
   const { user } = useUser();
   const lazyRef = useRef<LazyListRef<CommentType>>(null);
 
+  // Move to @/lib/api/
   const fetchComments = async (from: number, amount: number) => {
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -51,11 +53,8 @@ const CommentList: React.FC<CommentListProps> = ({
     const responseData = await response.json();
 
     if (responseData.success) {
-      console.log(`fetched comments for ${parentCommentId}`);
-      console.log(responseData.data);
       return responseData.data as CommentType[];
     } else {
-      console.error("Failed to fetch comments:", responseData.error);
       return [];
     }
   };
