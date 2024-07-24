@@ -113,7 +113,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       JSON.stringify(location ? location.value : {}),
     );
     requestBody.append("created_at", new Date().toISOString());
-    requestBody.append("user_id", user?.user_id || "");
+    requestBody.append("user_id", user.user_id);
     if (image) {
       requestBody.append("image", image);
     }

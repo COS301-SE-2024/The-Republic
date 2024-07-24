@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";
 
-const FETCH_SIZE = 3;
+const FETCH_SIZE = 2;
 
 // TODO: Update extracted type to match this and use it
 interface CommentListProps {

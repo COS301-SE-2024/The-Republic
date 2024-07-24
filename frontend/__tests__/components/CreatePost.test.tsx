@@ -4,7 +4,6 @@ import { render, fireEvent } from "@testing-library/react";
 import CreatePost from "@/components/CreatePost/CreatePost";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useTheme } from "next-themes";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -30,23 +29,14 @@ jest.mock("next-themes", () => ({
   useTheme: jest.fn(),
 }));
 
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: true,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
-
 describe("CreatePost", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation((message) => {
+      if (!message.includes("specific error message to ignore")) {
+        // No action taken for the specific message
+      }
+    });
     (useUser as jest.Mock).mockReturnValue({
       user: {
         user_id: "user123",
@@ -69,12 +59,12 @@ describe("CreatePost", () => {
   });
 
   it("renders CreatePost button", () => {
-    const { getByText } = renderWithClient(<CreatePost />);
+    const { getByText } = render(<CreatePost />);
     expect(getByText("Create a post")).toBeInTheDocument();
   });
 
   it("opens the dialog on button click", () => {
-    const { getByText, getByRole } = renderWithClient(<CreatePost />);
+    const { getByText, getByRole } = render(<CreatePost />);
     fireEvent.click(getByText("Create a post"));
     expect(getByRole("dialog")).toBeInTheDocument();
   });

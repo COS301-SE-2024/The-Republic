@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2 } from "lucide-react";
@@ -317,7 +317,7 @@ const Issue: React.FC<IssueProps> = ({
           <span>{issue.comment_count}</span>
         </div>
         <Reaction
-          issueId={String(issue.issue_id)}
+          issueId={issue.issue_id}
           initialReactions={issue.reactions}
           userReaction={issue.user_reaction}
         />
