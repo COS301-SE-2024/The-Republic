@@ -5,11 +5,9 @@ import { SquarePen } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-import { useUser } from "@/lib/contexts/UserContext";
 import { useTheme } from "next-themes";
 
 const CreatePost: React.FC = () => {
-  const { user } = useUser();
   const { theme } = useTheme();
 
   return (
@@ -33,7 +31,7 @@ const CreatePost: React.FC = () => {
           <Dialog.Description style={{ display: "none" }}>
             Fill in the details below to create a new post.
           </Dialog.Description>
-          <IssueInputBox user={user} />
+          <IssueInputBox onAddIssue={() => {}}/>
           <Dialog.Close asChild>
             <Button variant="outline" className="mt-4">
               Close

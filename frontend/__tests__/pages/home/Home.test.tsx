@@ -8,9 +8,9 @@ jest.mock("@/components/Feed/Feed", () =>
 );
 
 describe("Home Page", () => {
-  it("renders the Feed component with showInputBox set to true", () => {
+  it("renders the Feed component", () => {
     render(<Home />);
-    expect(Feed).toHaveBeenCalledWith({ showInputBox: true }, {});
+    expect(Feed).toHaveBeenCalledWith({}, {});
     expect(screen.queryByText("Mocked Feed")).not.toBeNull();
   });
 });
