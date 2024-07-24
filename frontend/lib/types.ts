@@ -23,6 +23,23 @@ interface UserAlt {
   access_token: string;
 }
 
+interface MockUser {
+  user_id: string;
+  email_address: string;
+  username: string;
+  fullname: string;
+  image_url: string;
+  bio: string;
+  is_owner: boolean;
+  total_issues: number;
+  resolved_issues: number;
+  access_token: string;
+}
+
+interface UserContextType {
+  user: UserAlt | null;
+}
+
 interface ProfileStatsProps {
   userId: string;
   totalIssues: number | null;
@@ -215,6 +232,51 @@ interface FeedProps {
   showInputBox?: boolean;
 }
 
+interface AddCommentFormProps {
+  issueId: string;
+  parentCommentId?: string;
+  onCommentAdded: (comment: Comment) => void;
+}
+
+interface CommentListProps {
+  issueId: string;
+}
+
+interface ReactionProps {
+  issueId: string;
+  initialReactions: { emoji: string; count: number }[];
+  userReaction: string | null;
+}
+
+interface EditProfileProps {
+  user: User;
+  onUpdate: (updatedUser: User) => void;
+  onCancel: () => void;
+}
+
+interface ProfileUpdate {
+  fullname: string;
+  username: string;
+  bio: string;
+}
+
+interface ProfileFeedProps {
+  userId: string;
+  selectedTab: "issues" | "resolved";
+}
+
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
+
 export type {
   AnalysisResult,
   FeedProps,
@@ -236,5 +298,14 @@ export type {
   RenderItemResult,
   Comment,
   LocationType,
+  AddCommentFormProps,
+  CommentListProps,
+  EditProfileProps,
+  ProfileUpdate,
+  UserContextType,
+  ProfileFeedProps,
+  ReactionProps,
+  MockUser,
+  MulterFile,
   Location
 };

@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell } from "lucide-react";
-import MoreMenu from "../MoreMenu/MoreMenu";
+import MoreMenu from "@/components/MoreMenu/MoreMenu";
 import { IssueProps } from "@/lib/types";
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
-import { toast } from "../ui/use-toast";
+import { useMutation } from '@tanstack/react-query';
+import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
+
+import { deleteIssue } from "@/lib/api/deleteIssue";
+import { resolveIssue } from "@/lib/api/resolveIssue";
+
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
   const { user } = useUser();
@@ -25,66 +30,52 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
 
   const isOwner = user && user.user_id === issue.user_id;
 
-  const handleDelete = async () => {
-    if (!user) {
-      toast({
-        variant: "destructive",
-        description: "Please log in to delete issues.",
-      });
-      return;
-    }
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        },
-      );
-
-      if (response.ok) {
-        window.location.reload();
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      if (user && issue && isOwner) {
+        return await deleteIssue(user, issue.issue_id.toString());
       } else {
-        console.error("Failed to delete issue");
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
       }
-    } catch (error) {
-      console.error("Error deleting issue:", error);
+    },
+    onSuccess: () => {
+      window.location.reload();
+    },
+    onError: (error) => {
+      toast({
+        description: `Failed to delete comment: ${error}`,
+      });
     }
+  });
+
+  const resolveMutation = useMutation({
+    mutationFn: async () => {
+      if (user && issue) {
+        return await resolveIssue(user, issue.issue_id.toString());
+      } else {
+        toast({
+          description: "You need to be logged in to resolve a comment",
+        });
+      }
+    },
+    onSuccess: () => {
+      window.location.reload();
+    },
+    onError: (error) => {
+      toast({
+        description: `Failed to resolve issue: ${error}`,
+      });
+    }
+  });
+  
+  const handleDelete = async () => {
+    deleteMutation.mutate();
   };
 
   const handleResolve = async () => {
-    if (!user) {
-      toast({
-        variant: "destructive",
-        description: "Please log in to resolve issues.",
-      });
-      return;
-    }
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        },
-      );
-
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        console.error("Failed to resolve issue");
-      }
-    } catch (error) {
-      console.error("Error resolving issue:", error);
-    }
+    resolveMutation.mutate();
   };
 
   const handleSubscribe = (type: string) => {
@@ -246,7 +237,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
           <span>{issue.comment_count}</span>
         </div>
         <Reaction
-          issueId={issue.issue_id}
+          issueId={String(issue.issue_id)}
           initialReactions={issue.reactions}
           userReaction={issue.user_reaction}
         />
