@@ -1,7 +1,8 @@
 const checkContentAppropriateness = async (
     text: string,
   ): Promise<boolean> => {
-    const apiKey = process.env
+    // Requests were failing
+    /* const apiKey = process.env
       .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
     const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
 
@@ -25,9 +26,9 @@ const checkContentAppropriateness = async (
       result.Classification.Category3.Score > 0.5
     ) {
       return false;
-    }
+    } */
 
-    return true;
+    return text.length > 0;
 };
 
 export { checkContentAppropriateness };

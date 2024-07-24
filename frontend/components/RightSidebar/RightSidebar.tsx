@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import {Location} from "@/lib/types";
+import { Location } from "@/lib/types";
 
 
 const sortOptions = {

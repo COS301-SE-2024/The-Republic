@@ -7,10 +7,10 @@ import {
   Issue as IssueType,
   RequestBody,
 } from "@/lib/types";
-import styles from './Feed.module.css';
+import styles from '@/styles/Feed.module.css';
 import { Loader2 } from "lucide-react";
-import { useUser } from "@/lib/contexts/UserContext";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
+import { Location } from "@/lib/types";
 
 const FETCH_SIZE = 2;
 
@@ -18,7 +18,7 @@ const Feed: React.FC = () => {
   const { user } = useUser();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState("All");
-  const [, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<Location | null>(null);
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
 
   const fetchIssues = async (from: number, amount: number) => {

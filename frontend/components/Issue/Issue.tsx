@@ -9,7 +9,6 @@ import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
-import { useMutation } from '@tanstack/react-query';
 import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
 
@@ -24,7 +23,7 @@ const Issue: React.FC<IssueProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   // `deleteIssue` and `resolveIssue` should return the data they get from the
   // backend. Then these can be uncommented, `isLoading` can be replaced with
   // (deleteMutation.isPending || resolveMutation.isPending), and `handleDelete`
@@ -46,7 +45,7 @@ const Issue: React.FC<IssueProps> = ({
       console.error(error);
     }
   });
-  
+
   const resolveMutation = useMutation({
     mutationFn: async () => {
       if (user && issue) {
@@ -166,6 +165,11 @@ const Issue: React.FC<IssueProps> = ({
     if (!issue.is_anonymous) {
       router.push(`/profile/${issue.user.user_id}`);
     }
+  };
+
+  const handleSubscribe = (type: string) => {
+    setShowSubscribeDropdown(false);
+    console.log("Subscribed to:", type);
   };
 
   useEffect(() => {

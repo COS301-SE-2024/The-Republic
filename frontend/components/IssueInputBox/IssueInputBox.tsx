@@ -16,6 +16,7 @@ import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { useUser } from "@/lib/contexts/UserContext";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -30,7 +31,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
-  
+
   // This should be intergrated as described in the comment for mutations in Issue.tsx
   /* const mutation = useMutation({
     mutationFn: async () => {
@@ -53,7 +54,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       toast({
         description: "Post successful",
       });
-      
+
       onAddIssue(issue);
     },
     onError: () => {
@@ -71,7 +72,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       { check: !mood, message: "Please select a mood.", variant: "destructive" },
       { check: !location, message: "Please set a location.", variant: "destructive" },
     ];
-    
+
     for (const { check, message, variant = "default" } of validationChecks) {
       if (check) {
         toast({
@@ -101,7 +102,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
     }
 
     const categoryID = parseInt(category);
-    
+
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
@@ -116,14 +117,14 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
     if (image) {
       requestBody.append("image", image);
     }
-    
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
       {
         method: "POST",
         body: requestBody,
         headers: {
-          Authorization: `Bearer ${user.access_token}`,
+          Authorization: `Bearer ${user?.access_token}`,
         },
       },
     );
