@@ -3,22 +3,8 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import BarChart from "@/components/ReportCharts/BarChart/BarChart";
 import * as echarts from "echarts";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("echarts");
-
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
 
 describe("BarChart", () => {
   const mockEchartsInstance = {
@@ -37,10 +23,10 @@ describe("BarChart", () => {
   });
 
   it("renders the chart and sets options correctly", async () => {
-    renderWithClient(<BarChart />);
+    render(<BarChart />);
     await waitFor(() => {
-      expect(echarts.init).not.toHaveBeenCalled();
-      expect(mockEchartsInstance.setOption).not.toHaveBeenCalled();
+      expect(echarts.init).toHaveBeenCalled();
+      expect(mockEchartsInstance.setOption).toHaveBeenCalled();
     });
   });
 
@@ -58,7 +44,7 @@ describe("BarChart", () => {
       }),
     ) as jest.Mock;
 
-    renderWithClient(<BarChart />);
+    render(<BarChart />);
 
     await waitFor(() => {
       expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1); // Called once after data fetch

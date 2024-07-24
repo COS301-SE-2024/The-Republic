@@ -3,8 +3,6 @@ import { describe, expect } from "@jest/globals";
 import { render, screen, fireEvent } from "@testing-library/react";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { useToast } from "@/components/ui/use-toast";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/globals");
 jest.mock("@/components/ui/use-toast", () => ({
@@ -27,20 +25,19 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: true,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
-
 const mockUseToast = useToast as jest.Mock;
+
+const mockUser = {
+  user_id: "1",
+  email_address: "test@example.com",
+  username: "testuser",
+  fullname: "Test User",
+  image_url: "https://via.placeholder.com/150",
+  bio: "",
+  is_owner: false,
+  total_issues: 0,
+  resolved_issues: 0,
+};
 
 describe("IssueInputBox Component", () => {
   beforeEach(() => {
@@ -54,21 +51,21 @@ describe("IssueInputBox Component", () => {
   });
 
   test("renders IssueInputBox component", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox user={mockUser} />);
     expect(
       screen.getByPlaceholderText("What's going on!?"),
     ).toBeInTheDocument();
   });
 
   test("handles input change", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox user={mockUser} />);
     const textarea = screen.getByPlaceholderText("What's going on!?");
     fireEvent.change(textarea, { target: { value: "New Issue Content" } });
     expect(textarea).toHaveValue("New Issue Content");
   });
 
   test("handles category and mood selection", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox user={mockUser} />);
     fireEvent.change(screen.getByText("Select category..."), {
       target: { value: "1" },
     });
@@ -78,7 +75,7 @@ describe("IssueInputBox Component", () => {
   });
 
   test("handles issue submission", async () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    render(<IssueInputBox user={mockUser} />);
     fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
       target: { value: "New Issue Content" },
     });

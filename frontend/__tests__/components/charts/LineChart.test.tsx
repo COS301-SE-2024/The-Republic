@@ -3,7 +3,6 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import LineChart from "@/components/ReportCharts/LineChart/LineChart";
 import * as echarts from "echarts";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("echarts");
 
@@ -23,19 +22,6 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: true,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
-
 describe("LineChart", () => {
   const mockEchartsInstance = {
     setOption: jest.fn(),
@@ -53,10 +39,10 @@ describe("LineChart", () => {
   });
 
   it("renders the chart and sets options correctly", async () => {
-    renderWithClient(<LineChart />);
+    render(<LineChart />);
     await waitFor(() => {
-      expect(echarts.init).not.toHaveBeenCalled();
-      expect(mockEchartsInstance.setOption).not.toHaveBeenCalled();
+      expect(echarts.init).toHaveBeenCalled();
+      expect(mockEchartsInstance.setOption).toHaveBeenCalled();
     });
   });
 
@@ -75,7 +61,7 @@ describe("LineChart", () => {
       }),
     ) as jest.Mock;
 
-    renderWithClient(<LineChart />);
+    render(<LineChart />);
 
     await waitFor(() => {
       expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1); // Called once after data fetch

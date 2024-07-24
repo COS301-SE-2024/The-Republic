@@ -1,29 +1,50 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
+import mockData from "@/data/stacked";
 import { formatMoreDate } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { FaSpinner } from "react-icons/fa";
-
-import { reportCharts } from "@/lib/api/reportCharts";
 
 function StackedLineChart() {
   const chartRef = useRef(null);
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCategoryAndCreatedAt`;
-  const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
-    queryKey: [`stacked_chart`],
-    queryFn: () => reportCharts(url),
-    enabled: true,
-  });
+  const [data, setData] = useState<{
+    [key: string]: { [key: string]: number };
+  }>(mockData);
 
   useEffect(() => {
-    if (data && Object.keys(data).length !== 0 && (!isLoadingCharts &&!isErrorCharts)) {
+    const fetchIssues = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCategoryAndCreatedAt`;
+        const response = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({
+            from: 0,
+            amount: 99,
+          }),
+          headers: {
+            "content-type": "application/json",
+          },
+        });
+        const apiResponse = await response.json();
+
+        if (apiResponse.success && apiResponse.data) {
+          setData(apiResponse.data);
+        } else {
+          console.error("Error fetching issues:", apiResponse.error);
+        }
+      } catch (error) {
+        console.error("Error fetching issues:", error);
+      }
+    };
+
+    fetchIssues();
+  }, []);
+
+  useEffect(() => {
+    if (data && Object.keys(data).length !== 0) {
       if (chartRef.current) {
         const chart = echarts.init(chartRef.current);
 
         const dates = Array.from(
-          new Set(Object.values(data as {
-            [key: string]: { [key: string]: number };
-          }).flatMap(Object.keys)),
+          new Set(Object.values(data).flatMap(Object.keys)),
         ).sort();
         const seriesData = Object.keys(data).map((category) => ({
           name: category,
@@ -107,28 +128,14 @@ function StackedLineChart() {
   };
 
   return (
-    <>
-      {(!isErrorCharts)? (
-        <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
-              <FaSpinner className="animate-spin text-4xl text-green-500" />
-            </div>
-          ) : (
-            <div className="col-12 pb-5">
-              <div className="card">
-                <div className="card-body">
-                  <div ref={chartRef} style={{ width: "100%", height: "600px" }}></div>{" "}
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <div>
+    <div className="col-12 pb-5">
+      <div className="card">
+        <div className="card-body">
+          <div ref={chartRef} style={{ width: "100%", height: "600px" }}></div>{" "}
+          {/* Increased height */}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
 

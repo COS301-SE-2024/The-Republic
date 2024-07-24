@@ -1,96 +1,79 @@
-import React from "react";
-import { describe, expect } from "@jest/globals";
-import { render, fireEvent, screen } from "@testing-library/react";
-import AddCommentForm from "@/components/Comment/AddCommentForm";
-import { useUser } from "@/lib/contexts/UserContext";
-import { useToast } from "@/components/ui/use-toast";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import mockUser from "@/data/mockUser";
+import React from 'react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import AddCommentForm from '@/components/Comment/AddCommentForm';
 
-jest.mock("@/lib/contexts/UserContext", () => ({
-  useUser: jest.fn(),
-}));
-
-jest.mock("@/components/ui/use-toast", () => ({
-  useToast: jest.fn(),
-}));
-
-jest.mock("react-textarea-autosize", () => ({
-  __esModule: true,
-  default: jest.fn(
-    (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
-      <textarea {...props} />
-    ),
-  ),
-}));
-
-jest.mock("@supabase/supabase-js", () => ({
-  createClient: jest.fn().mockReturnValue({
+// Mock Supabase client
+jest.mock('@/lib/globals', () => ({
+  supabase: {
     auth: {
-      signIn: jest.fn().mockResolvedValue({
-        user: { id: "user-id" },
-        session: "session-token",
-        error: null,
-      }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
     },
-    from: jest.fn(() => ({
-      select: jest.fn().mockResolvedValue({ data: [], error: null }),
-      insert: jest.fn().mockResolvedValue({ data: [], error: null }),
-    })),
+  },
+}));
+
+// Mock dependencies
+jest.mock('@/lib/contexts/UserContext', () => ({
+  useUser: () => ({
+    user: { access_token: 'mock-token', image_url: 'mock-url', fullname: 'Mock User' },
   }),
 }));
 
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: true,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
-
-describe("AddCommentForm", () => {
-  const mockToast = {
+jest.mock('@/components/ui/use-toast', () => ({
+  useToast: () => ({
     toast: jest.fn(),
-  };
+  }),
+}));
+
+describe('AddCommentForm', () => {
+  const mockOnCommentAdded = jest.fn();
 
   beforeEach(() => {
-    (useUser as jest.Mock).mockReturnValue({ user: mockUser });
-    (useToast as jest.Mock).mockReturnValue(mockToast);
+    global.fetch = jest.fn()
+      .mockImplementationOnce(() => Promise.resolve({
+        json: () => Promise.resolve({
+          Classification: {
+            Category1: { Score: 0.1 },
+            Category2: { Score: 0.1 },
+            Category3: { Score: 0.1 },
+          },
+        }),
+      }))
+      .mockImplementationOnce(() => Promise.resolve({
+        json: () => Promise.resolve({ success: true, data: { content: 'Test comment' } }),
+      }));
+    
+    process.env.NEXT_PUBLIC_BACKEND_URL = 'http://mockbackend.com';
+    process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY = 'mock-key';
+    process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL = 'http://mockcontent.com';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://example.supabase.co';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'example-anon-key';
+  });
+
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("renders the component", () => {
-    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
-    expect(screen.getByPlaceholderText("Add Comment...")).toBeInTheDocument();
+  it('renders the form correctly', () => {
+    const { getByPlaceholderText, getByText } = render(
+      <AddCommentForm issueId="123" onCommentAdded={mockOnCommentAdded} />
+    );
+
+    expect(getByPlaceholderText('Add Comment...')).toBeInTheDocument();
+    expect(getByText('Post anonymously')).toBeInTheDocument();
+    expect(getByText('Send')).toBeInTheDocument();
   });
 
-  it("submits a comment", async () => {
-    const onCommentAdded = jest.fn();
-    const fetchMock = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue({
-        success: true,
-        data: { content: "This is a comment" },
-      }),
+  it('submits a comment successfully', async () => {
+    const { getByPlaceholderText, getByText } = render(
+      <AddCommentForm issueId="123" onCommentAdded={mockOnCommentAdded} />
+    );
+
+    fireEvent.change(getByPlaceholderText('Add Comment...'), { target: { value: 'Test comment' } });
+    fireEvent.click(getByText('Send'));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(mockOnCommentAdded).toHaveBeenCalledWith({ content: 'Test comment' });
     });
-    global.fetch = fetchMock;
-
-    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={onCommentAdded} />);
-    const button = screen.getByText("Send");
-    fireEvent.click(button);
-  });
-
-  it("checks anonymous posting", () => {
-    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={jest.fn()} />);
-
-    const checkbox = screen.getByLabelText("Post anonymously");
-    expect(checkbox).not.toBeChecked();
-
-    fireEvent.click(checkbox);
-    expect(checkbox).toBeChecked();
   });
 });

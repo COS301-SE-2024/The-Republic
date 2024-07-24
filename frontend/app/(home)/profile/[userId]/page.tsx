@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useState } from "react";
 import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
-import LoadingIndicator from "@/components/ui/loader";
+import { User } from "@/lib/types";
+import { supabase } from "@/lib/globals";
 import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
-
-import { fetchUserData } from "@/lib/api/fetchUserData";
+import { FaSpinner } from "react-icons/fa";
 
 const ProfilePage: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const params = useParams();
@@ -19,19 +19,39 @@ const ProfilePage: React.FC = () => {
     "issues",
   );
 
-  const { data: user, isLoading, isError } = useQuery({
-    queryKey: ['user_profile', userId],
-    queryFn: () => fetchUserData(),
-    enabled: (userId !== undefined && userId !== null),
-  });
-
   useEffect(() => {
-    if (user) {
-      setIsOwner(user.is_owner || false);
-    }
-  }, [user]);
+    const fetchUserData = async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData?.session;
 
-  const handleUpdate = () => {
+        if (session && session.user) {
+          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}`;
+          const response = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          });
+          const responseData = await response.json();
+          if (responseData.success) {
+            setUser(responseData.data);
+            setIsOwner(responseData.data.is_owner);
+          } else {
+            console.error("Failed to fetch user data:", responseData.error);
+          }
+        } else {
+          console.error("User ID not found in session");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
+
+  const handleUpdate = (updatedUser: User) => {
+    setUser(updatedUser);
     setIsEditing(false);
   };
 
@@ -39,42 +59,34 @@ const ProfilePage: React.FC = () => {
     setIsEditing(false);
   };
 
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-24">
+        <FaSpinner className="animate-spin text-4xl text-blue-500" />
+      </div>
+    );
+  }
+
   return (
-    <>
-      {isLoading ? (
-        <LoadingIndicator />
-      ) : isError ? (
-        <p>Error loading This Issue.</p>
-      ) : (
-        <>
-          {user ? (
-            <div>
-              <ProfileHeader
-                user={user}
-                isOwner={isOwner}
-                handleUpdate={handleUpdate}
-                handleCancel={handleCancel}
-                isEditing={isEditing}
-                setIsEditing={setIsEditing}
-              />
-              <ProfileStats
-                userId={user.user_id}
-                totalIssues={user.total_issues}
-                resolvedIssues={user.resolved_issues}
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-              />
-              <div className="mt-5"></div>
-              <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />
-            </div>
-          ) : (
-            <div>
-              User Details Not Found
-            </div>
-          )}
-        </>
-      )}
-    </>
+    <div>
+      <ProfileHeader
+        user={user}
+        isOwner={isOwner}
+        handleUpdate={handleUpdate}
+        handleCancel={handleCancel}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+      />
+      <ProfileStats
+        userId={user.user_id}
+        totalIssues={user.total_issues}
+        resolvedIssues={user.resolved_issues}
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+      />
+      <div className="mt-5"></div>
+      <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />
+    </div>
   );
 };
 

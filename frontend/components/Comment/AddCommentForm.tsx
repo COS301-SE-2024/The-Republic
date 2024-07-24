@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { useMutation, useQueryClient, InvalidateQueryFilters } from '@tanstack/react-query';
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { AddCommentFormProps } from "@/lib/types";
+import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
-import { AddComment } from "@/lib/api/AddComment";
+interface AddCommentFormProps {
+  issueId: string;
+  parentCommentId?: string;
+  onCommentAdded: (comment: Comment) => void;
+}
 
 const AddCommentForm: React.FC<AddCommentFormProps> = ({
   issueId,
@@ -20,31 +22,6 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await AddComment(user, issueId, content, isAnonymous, parentCommentId);
-      }
-      throw new Error("User not found");
-    },
-    onSuccess: (responseData) => {
-      onCommentAdded(responseData);
-      setContent("");
-      toast({
-        description: "Comment posted successfully",
-      });
-  
-      queryClient.invalidateQueries([`add_comment_${user?.user_id}_${issueId}`] as InvalidateQueryFilters);
-    },
-    onError: (error) => {
-      console.error("Failed to post comment:", error);
-      toast({
-        description: "Failed to post comment",
-      });
-    }
-  });
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +41,75 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       return;
     }
 
-    mutation.mutate();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({
+            issue_id: issueId,
+            content,
+            is_anonymous: isAnonymous,
+            parent_id: parentCommentId,
+          }),
+        },
+      );
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        onCommentAdded(responseData.data);
+        setContent("");
+        toast({
+          description: "Comment posted successfully",
+        });
+      } else {
+        console.error("Failed to post comment:", responseData.error);
+        toast({
+          description: "Failed to post comment",
+        });
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      toast({
+        description: "Error posting comment",
+      });
+    }
+  };
+
+  const checkContentAppropriateness = async (
+    text: string,
+  ): Promise<boolean> => {
+    const apiKey = process.env
+      .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
+    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
+
+    const headers = {
+      "Ocp-Apim-Subscription-Key": apiKey,
+      "Content-Type": "text/plain",
+    };
+
+    const response = await fetch(`${url}`, {
+      method: "POST",
+      headers,
+      body: text,
+    });
+
+    const result = await response.json();
+
+    if (
+      (result.Terms && result.Terms.length > 0) ||
+      result.Classification.Category1.Score > 0.5 ||
+      result.Classification.Category2.Score > 0.5 ||
+      result.Classification.Category3.Score > 0.5
+    ) {
+      return false;
+    }
+
+    return true;
   };
 
   return (

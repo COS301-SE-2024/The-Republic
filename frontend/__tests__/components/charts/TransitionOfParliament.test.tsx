@@ -3,22 +3,8 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import TransitionOfParliament from "@/components/ReportCharts/TransitionOfParliament/TransitionOfParliament";
 import * as echarts from "echarts";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("echarts");
-
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
 
 describe("TransitionOfParliament", () => {
   const mockEchartsInstance = {
@@ -37,7 +23,7 @@ describe("TransitionOfParliament", () => {
   });
 
   it("renders the chart and sets options correctly", async () => {
-    renderWithClient(<TransitionOfParliament />);
+    render(<TransitionOfParliament />);
   });
 
   it("updates the chart options on data change", async () => {
@@ -54,7 +40,7 @@ describe("TransitionOfParliament", () => {
       }),
     ) as jest.Mock;
 
-    renderWithClient(<TransitionOfParliament />);
+    render(<TransitionOfParliament />);
 
     await waitFor(() => {
       expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1);
