@@ -96,7 +96,16 @@ export class CommentRepository {
     const { data, error } = await supabase
       .from("comment")
       .insert(comment)
-      .select()
+      .select(`
+        *,
+        user: user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url
+        )
+      `)
       .single();
 
     if (error) {

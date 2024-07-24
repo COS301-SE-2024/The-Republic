@@ -59,7 +59,7 @@ const Issue: React.FC<IssueProps> = ({
           description: "Succesfully deleted issue",
         });
 
-        onDeleteIssue(issue);
+        onDeleteIssue!(issue);
       } else {
         toast({
           variant: "destructive",
@@ -103,7 +103,7 @@ const Issue: React.FC<IssueProps> = ({
         });
 
         const apiReponse = await response.json();
-        onResolveIssue(issue, apiReponse.data);
+        onResolveIssue!(issue, apiReponse.data);
       } else {
         toast({
           variant: "destructive",

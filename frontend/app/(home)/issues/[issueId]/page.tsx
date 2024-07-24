@@ -6,6 +6,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { Issue as IssueType } from "@/lib/types";
 import Issue from "@/components/Issue/Issue";
 import CommentList from "@/components/Comment/CommentList";
+import { Loader2 } from "lucide-react";
 
 const IssuePage = () => {
   const { issueId } = useParams();
@@ -59,11 +60,19 @@ const IssuePage = () => {
   }, [issueId, user]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+      </div>
+    );
   }
 
   if (!issue) {
-    return <div>Issue not found</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <h3 className="text-xlg">Issue not found</h3>
+      </div>
+    );
   }
 
   return (

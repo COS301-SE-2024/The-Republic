@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
 
 interface AddCommentFormProps {
   issueId: number;
@@ -20,6 +21,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 }) => {
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
 
@@ -32,8 +34,11 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       return;
     }
 
+    setIsLoading(true);
+
     const isContentAppropriate = await checkContentAppropriateness(content);
     if (!isContentAppropriate) {
+      setIsLoading(false);
       toast({
         variant: "destructive",
         description: "Please use appropriate language.",
@@ -61,14 +66,16 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 
       const responseData = await response.json();
       if (responseData.success) {
-        onCommentAdded(responseData.data);
         setContent("");
         toast({
           description: "Comment posted successfully",
         });
+
+        onCommentAdded(responseData.data);
       } else {
         console.error("Failed to post comment:", responseData.error);
         toast({
+          variant: "destructive",
           description: "Failed to post comment",
         });
       }
@@ -78,12 +85,17 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
         description: "Error posting comment",
       });
     }
+
+    setIsLoading(false);
   };
 
   const checkContentAppropriateness = async (
     text: string,
   ): Promise<boolean> => {
-    const apiKey = process.env
+    return text.length > 0;
+
+    // Requests to the API were failing
+    /* const apiKey = process.env
       .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
     const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
 
@@ -109,13 +121,13 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       return false;
     }
 
-    return true;
+    return true; */
   };
 
   return (
     <form
       onSubmit={handleCommentSubmit}
-      className="flex flex-col space-y-4 mt-4 p-4 rounded shadow bg-card dark:bg-card"
+      className="flex flex-col space-y-4 mb-4 p-4 rounded shadow bg-card dark:bg-card"
     >
       <div className="flex items-center space-x-3">
         {user && (
@@ -146,6 +158,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
           disabled={!content.trim()}
         >
           Send
+          {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
         </Button>
       </div>
     </form>

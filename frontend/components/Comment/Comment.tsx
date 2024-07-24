@@ -13,15 +13,18 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import CommentList from "./CommentList";
+import { Loader2 } from "lucide-react";
 
 interface CommentProps {
   comment: CommentType;
+  onCommentDeleted: (comment: CommentType) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ comment }) => {
+const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useUser();
 
@@ -34,6 +37,8 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
     }
 
     try {
+      setIsLoading(true);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`,
         {
@@ -50,13 +55,18 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
         toast({
           description: "Comment deleted successfully",
         });
+
+        onCommentDeleted(comment);
       } else {
         const responseData = await response.json();
         console.error("Failed to delete comment:", responseData.error);
         toast({
+          variant: "destructive",
           description: "Failed to delete comment",
         });
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast({
@@ -95,6 +105,18 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
                 {isReplying ? "Cancel" : "Reply"}
               </Button>
             )}
+            {!isReply && (
+              <Button
+                variant="ghost"
+                className="text-green-600 dark:text-green-400"
+                onClick={() => setShowReplies(!showReplies)}
+              >
+                {showReplies
+                  ? "Hide replies"
+                  : "Show replies" // TODO: Get reply count from comment
+                }
+              </Button>
+            )}
             {isOwner && (
               <Button
                 variant="ghost"
@@ -105,17 +127,7 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
                 Delete
               </Button>
             )}
-            {!isReply && (
-              <button
-                className="text-green-600 dark:text-green-400"
-                onClick={() => setShowReplies(!showReplies)}
-              >
-                {showReplies
-                  ? "Hide replies"
-                  : "Show replies" // TODO: Get reply count from comment
-                }
-              </button>
-            )}
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin text-green-500"/>}
           </div>
           {(isReplying || showReplies) && (
             <CommentList

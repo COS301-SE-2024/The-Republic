@@ -82,12 +82,10 @@ export function LazyList<D>({
 
   useEffect(() => {
     if (items[items.length - 1] === "Loading") {
-      const loadFrom = items.length - pageSize;
-
       let ignoreResult = false;
       const getItems = async () => {
         const fetchedItems = await fetcher(
-          loadFrom <= 0 ? 0 : (loadFrom - 1) + pageSize,
+          items.length - 1,
           pageSize,
         );
 
@@ -103,7 +101,7 @@ export function LazyList<D>({
 
       let observer: IntersectionObserver | null = null;
 
-      if (loadFrom > 0) {
+      if (items[0] !== "Loading") {
         const handleIntersection = (
           [entry]: IntersectionObserverEntry[],
           observer: IntersectionObserver
@@ -113,6 +111,9 @@ export function LazyList<D>({
           observer.unobserve(entry.target);
           getItems();
         };
+
+        let loadFrom = items.length - pageSize;
+        loadFrom = loadFrom > 0 ? loadFrom : 1;
 
         const loadFromElement = document.querySelector(
           `#item_${loadFrom}-${uniqueId}`

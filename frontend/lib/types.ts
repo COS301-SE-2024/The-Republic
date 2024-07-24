@@ -82,8 +82,8 @@ interface Issue {
 interface IssueProps {
   issue: Issue;
   id?: string;
-  onDeleteIssue: (issue: Issue) => void;
-  onResolveIssue: (issue: Issue, resolvedIssue: Issue) => void;
+  onDeleteIssue?: (issue: Issue) => void;
+  onResolveIssue?: (issue: Issue, resolvedIssue: Issue) => void;
 }
 
 interface Comment {
