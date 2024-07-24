@@ -32,7 +32,7 @@ jest.mock('@/lib/globals', () => ({
 
 jest.mock('@/lib/utils', () => ({
   checkImageFileAndToast: jest.fn().mockResolvedValue(true),
-  cn: (...args: any[]) => args.join(' '),
+  cn: (...args: string[]) => args.join(' '),
 }));
 
 describe('EditProfile', () => {
@@ -42,6 +42,10 @@ describe('EditProfile', () => {
     username: 'testuser',
     bio: 'Test bio',
     image_url: 'https://example.com/test.jpg',
+    email_address: 'test@example.com',
+    is_owner: false,
+    total_issues: 0,
+    resolved_issues: 0,
   };
 
   const mockOnUpdate = jest.fn();
@@ -51,7 +55,7 @@ describe('EditProfile', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: jest.fn().mockResolvedValue({ data: mockUser }),
-    });
+    }) as jest.Mock;
   });
 
   afterEach(() => {
@@ -91,7 +95,12 @@ describe('EditProfile', () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/users/test-user-id'),
-        expect.any(Object)
+        expect.objectContaining({
+          method: 'PUT',
+          headers: expect.objectContaining({
+            Authorization: 'Bearer test-access-token',
+          }),
+        })
       );
       expect(mockOnUpdate).toHaveBeenCalledWith(mockUser);
     });
