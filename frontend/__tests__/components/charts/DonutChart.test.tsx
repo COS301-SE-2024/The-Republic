@@ -3,22 +3,8 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import DonutChart from "@/components/ReportCharts/DonutChart/DonutChart";
 import * as echarts from "echarts";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock("echarts");
-
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-};
 
 describe("DonutChart", () => {
   const mockEchartsInstance = {
@@ -37,7 +23,7 @@ describe("DonutChart", () => {
   });
 
   it("renders the chart and sets options correctly", async () => {
-    renderWithClient(<DonutChart />);
+    render(<DonutChart />);
   });
 
   it("updates the chart options on data change", async () => {
@@ -54,7 +40,7 @@ describe("DonutChart", () => {
       }),
     ) as jest.Mock;
 
-    renderWithClient(<DonutChart />);
+    render(<DonutChart />);
 
     await waitFor(() => {
       expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1); // Called once after data fetch

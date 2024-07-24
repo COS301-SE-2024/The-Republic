@@ -1,16 +1,20 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import { useMutation } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { checkImageFileAndToast, cn } from "@/lib/utils";
-import { EditProfileProps } from "@/lib/types";
+import { User } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { supabase } from "@/lib/globals";
 import { useToast } from "../ui/use-toast";
 
-import { updateUserProfile } from "@/lib/api/updateProfile";
+interface EditProfileProps {
+  user: User;
+  onUpdate: (updatedUser: User) => void;
+  onCancel: () => void;
+}
 
 const EditProfile: React.FC<EditProfileProps> = ({
   user,
@@ -46,40 +50,46 @@ const EditProfile: React.FC<EditProfileProps> = ({
     }
   };
 
-  const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await updateUserProfile(user, updatedUser, file);
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
-      }
-    },
-    onSuccess: (data) => {
-      onUpdate(data.data);
-      toast({
-        description: "Profile updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Failed to update profile:", error);
-      toast({
-        description: error.message,
-      });
-    },
-  });
-
   const handleSave = async () => {
-    if (user && updatedUser) {
-      if (file) {
-        if (!(await checkImageFileAndToast(file, toast))) {
-          return;
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+
+      if (session && session.user) {
+        const formData = new FormData();
+        formData.append("fullname", updatedUser.fullname);
+        formData.append("username", updatedUser.username);
+        formData.append("bio", updatedUser.bio);
+        if (file) {
+          if (!(await checkImageFileAndToast(file, toast))) {
+            return;
+          }
+
+          formData.append("profile_picture", file);
         }
+
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${user.user_id}`;
+        const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+          onUpdate(responseData.data);
+        } else {
+          console.error("Failed to update profile:", responseData.error);
+        }
+      } else {
+        console.error("User ID not found in session");
       }
+    } catch (error) {
+      console.error("Error updating profile:", error);
     }
-    
-    mutation.mutate();
   };
 
   const handleCancel = () => {
@@ -90,7 +100,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     setFile(null);
     setUpdatedUser((prev) => ({
       ...prev,
-      image_url: user.image_url,
+      image_url: user.image_url, // Revert to original image URL
     }));
   };
 
