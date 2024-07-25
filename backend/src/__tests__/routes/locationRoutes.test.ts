@@ -20,7 +20,7 @@ describe("Location Routes", () => {
         res.status(200).json({}),
       );
 
-      const response = await request(app).get("/locations/");
+      const response = await request(app).post("/locations/");
 
       expect(response.status).toBe(200);
       expect(locationController.getAllLocations).toHaveBeenCalled();
