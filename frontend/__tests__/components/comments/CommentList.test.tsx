@@ -6,6 +6,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import mockClsx, { ClassValue } from "clsx";
 import { twMerge as mockTwMerge } from "tailwind-merge";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: jest.fn(),
@@ -31,6 +32,19 @@ interface MockUser {
   resolved_issues: number;
   access_token: string;
 }
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
 
 describe("CommentList", () => {
   const mockUser: MockUser = {
@@ -85,7 +99,7 @@ describe("CommentList", () => {
     });
     global.fetch = fetchMock;
 
-    render(<CommentList issueId={1} parentCommentId={null}/>);
+    renderWithClient(<CommentList issueId={1} parentCommentId={null}/>);
 
     await waitFor(() => {
       expect(screen.getByText("This is a comment")).toBeInTheDocument();
@@ -104,7 +118,7 @@ describe("CommentList", () => {
       });
     global.fetch = fetchMock;
 
-    render(<CommentList issueId={1} parentCommentId={null}/>);
+    renderWithClient(<CommentList issueId={1} parentCommentId={null}/>);
 
     await waitFor(() => { expect(screen.getByText("This is a comment")).toBeInTheDocument();
     });
@@ -158,7 +172,7 @@ describe("CommentList", () => {
       });
     global.fetch = fetchMock;
 
-    render(<CommentList issueId={1} parentCommentId={null}/>);
+    renderWithClient(<CommentList issueId={1} parentCommentId={null}/>);
 
     await waitFor(() => {
       expect(screen.getByText("This is a comment")).toBeInTheDocument();

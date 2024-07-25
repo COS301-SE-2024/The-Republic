@@ -1,19 +1,9 @@
 import { UserAlt as User } from "@/lib/types";
-import { toast } from "@/components/ui/use-toast";
 
 const deleteIssue = async (
   user: User,
-  issueId: string | null,
+  issueId: number | null,
 ): Promise<void> => {
-  if (!user) {
-    toast({
-      variant: "destructive",
-      description: "Please log in to delete issues.",
-    });
-
-    return;
-  }
-
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${user.access_token}`,
@@ -28,14 +18,9 @@ const deleteIssue = async (
 
   if (response.status === 204) {
     return;
-  }
-
-  const apiResponse = await response.json();
-
-  if (apiResponse.ok || apiResponse.success) {
-    return apiResponse.data;
   } else {
-    throw new Error(apiResponse.error || "Failed to delete issue");
+    const apiResponse = await response.json();
+    throw new Error(apiResponse.error);
   }
 };
 

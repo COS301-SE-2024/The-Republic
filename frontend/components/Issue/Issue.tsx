@@ -16,6 +16,9 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { deleteIssue } from "@/lib/api/deleteIssue";
+import { resolveIssue } from "@/lib/api/resolveIssue";
 
 const Issue: React.FC<IssueProps> = ({
   issue,
@@ -25,142 +28,55 @@ const Issue: React.FC<IssueProps> = ({
 }) => {
   const { user } = useUser();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // `deleteIssue` and `resolveIssue` should return the data they get from the
-  // backend. Then these can be uncommented, `isLoading` can be replaced with
-  // (deleteMutation.isPending || resolveMutation.isPending), and `handleDelete`
-  // and `handleResolve can replaced with mutate calls
-  /* const deleteMutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (user && issue && isOwner) {
-        return await deleteIssue(user, issue.issue_id.toString());
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
-      }
+      return await deleteIssue(user!, issue.issue_id);
     },
-    onSuccess: (issue) => {
-      onDeleteIssue(issue);
+    onSuccess: () => {
+      toast({
+        description: "Succesfully deleted issue",
+      });
+
+      onDeleteIssue!(issue);
     },
     onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: "Failed to delete issue",
+      });
+
       console.error(error);
     }
   });
-
   const resolveMutation = useMutation({
     mutationFn: async () => {
-      if (user && issue) {
-        return await resolveIssue(user, issue.issue_id.toString());
-      } else {
-        toast({
-          description: "You need to be logged in to resolve a comment",
-        });
-      }
+      return await resolveIssue(user!, issue.issue_id);
     },
-    onSuccess: (issue) => {
-      onResolveIssue(issue);
+    onSuccess: (resolvedIssue) => {
+      toast({
+        variant: "success",
+        description: "Resolution recieved",
+      });
+
+      onResolveIssue!(issue, resolvedIssue);
     },
     onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: "Failed to delete issue",
+      });
+
       console.error(error);
     }
-  }); */
+  });
 
   const menuItems = ["Delete"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
   }
-
-  const isOwner = user && user.user_id === issue.user_id;
-
-  const handleDelete = async () => {
-    if (!user) {
-      toast({
-        variant: "destructive",
-        description: "Please log in to delete issues.",
-      });
-      return;
-    }
-    try {
-      setIsLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        },
-      );
-
-      if (response.ok) {
-        toast({
-          description: "Succesfully deleted issue",
-        });
-
-        onDeleteIssue!(issue);
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Failed to delete issue, please try again",
-        });
-      }
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error deleting issue:", error);
-    }
-  };
-
-  const handleResolve = async () => {
-    if (!user) {
-      toast({
-        variant: "destructive",
-        description: "Please log in to resolve issues.",
-      });
-      return;
-    }
-    try {
-      setIsLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/resolve/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ issue_id: issue.issue_id }),
-        },
-      );
-
-      if (response.ok) {
-        toast({
-          variant: "success",
-          description: "Resolution recieved",
-        });
-
-        const apiReponse = await response.json();
-        onResolveIssue!(issue, apiReponse.data);
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Failed to resolve issue, please try again",
-        });
-      }
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error resolving issue:", error);
-    }
-  };
 
   const handleCommentClick = () => {
     router.push(`/issues/${issue.issue_id}`);
@@ -192,6 +108,9 @@ const Issue: React.FC<IssueProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
+
+  const isOwner = user && user.user_id === issue.user_id;
+  const isLoading = deleteMutation.isPending || resolveMutation.isPending;
 
   return (
     <Card className="mb-4" id={id}>
@@ -272,8 +191,8 @@ const Issue: React.FC<IssueProps> = ({
               <MoreMenu
                 menuItems={menuItems}
                 isOwner={isOwner}
-                onDelete={handleDelete}
-                onResolve={handleResolve}
+                onDelete={() => deleteMutation.mutate()}
+                onResolve={() => resolveMutation.mutate()}
                 onSubscribe={handleSubscribe}
               />
             )}
