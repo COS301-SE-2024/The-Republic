@@ -71,9 +71,7 @@ export default class IssueRepository {
           email_address,
           username,
           fullname,
-          image_url,
-          user_score,
-          suspendedUntil
+          image_url
         ),
         category: category_id (
           name
