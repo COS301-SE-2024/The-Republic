@@ -3,6 +3,8 @@ import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import mockLocation from "@/data/mockLocation";
+import { useUser } from "@/lib/contexts/UserContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -20,9 +22,42 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn(() => ({
+    user: {
+      user_id: "user123",
+      email_address: "user@example.com",
+      username: "user123",
+      fullname: "User Fullname",
+      image_url: "http://example.com/image.jpg",
+      bio: "User biography",
+      is_owner: true,
+      total_issues: 10,
+      resolved_issues: 5,
+      access_token: "access_token_value",
+    },
+  })),
+}));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe("RightSidebar", () => {
   beforeEach(() => {
     jest.spyOn(console, "error").mockImplementation(() => {});
+    (useUser as jest.Mock).mockReturnValue({
+      user: { access_token: "test-token" },
+    });
     jest.clearAllMocks();
   });
 
@@ -35,7 +70,7 @@ describe("RightSidebar", () => {
   const setLocation = jest.fn();
 
   it("renders without crashing", () => {
-    render(
+    renderWithClient(
       <RightSidebar
         sortBy="newest"
         setSortBy={setSortBy}
@@ -51,7 +86,7 @@ describe("RightSidebar", () => {
   it("handles sort selection", () => {
     const setSortBy = jest.fn();
     const setFilter = jest.fn();
-    render(
+    renderWithClient(
       <RightSidebar
         sortBy="newest"
         setSortBy={setSortBy}
@@ -66,7 +101,7 @@ describe("RightSidebar", () => {
   it("handles filter selection", () => {
     const setSortBy = jest.fn();
     const setFilter = jest.fn();
-    render(
+    renderWithClient(
       <RightSidebar
         sortBy="newest"
         setSortBy={setSortBy}
