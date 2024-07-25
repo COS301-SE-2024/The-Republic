@@ -3,6 +3,6 @@ import { getAllLocations } from "../controllers/locationController";
 
 const router = express.Router();
 
-router.get("/", getAllLocations);
+router.post("/", getAllLocations);
 
 export default router;
