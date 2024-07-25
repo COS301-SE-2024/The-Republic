@@ -128,6 +128,8 @@ type SubData<T = unknown> = {
 interface SeriesDataItem {
   id: string;
   value: number;
+  population: number;
+  issueRate: number;
   depth: number;
   index: number;
 }
