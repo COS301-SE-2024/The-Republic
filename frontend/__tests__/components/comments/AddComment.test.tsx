@@ -4,7 +4,7 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import AddCommentForm from "@/components/Comment/AddCommentForm";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
@@ -49,7 +49,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 
@@ -79,7 +79,9 @@ describe("AddCommentForm", () => {
     });
     global.fetch = fetchMock;
 
-    renderWithClient(<AddCommentForm issueId="1" onCommentAdded={onCommentAdded} />);
+    renderWithClient(
+      <AddCommentForm issueId="1" onCommentAdded={onCommentAdded} />,
+    );
     const button = screen.getByText("Send");
     fireEvent.click(button);
   });

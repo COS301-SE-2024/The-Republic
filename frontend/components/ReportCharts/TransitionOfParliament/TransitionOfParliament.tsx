@@ -10,7 +10,11 @@ const TransitionOfParliament: React.FC = () => {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
 
-  const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
+  const {
+    data,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
     queryKey: [`chart_data`],
     queryFn: () => reportCharts(url),
     enabled: true,
@@ -192,10 +196,13 @@ const TransitionOfParliament: React.FC = () => {
 
   return (
     <>
-      {(!isErrorCharts)? (
+      {!isErrorCharts ? (
         <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
+          {isLoadingCharts ? (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "200px" }}
+            >
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
@@ -213,8 +220,7 @@ const TransitionOfParliament: React.FC = () => {
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell } from "lucide-react";
@@ -9,13 +14,12 @@ import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import Image from "next/image";
 
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { resolveIssue } from "@/lib/api/resolveIssue";
-
 
 const Issue: React.FC<IssueProps> = ({ issue }) => {
   const { user } = useUser();
@@ -47,7 +51,7 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       toast({
         description: `Failed to delete comment: ${error}`,
       });
-    }
+    },
   });
 
   const resolveMutation = useMutation({
@@ -67,9 +71,9 @@ const Issue: React.FC<IssueProps> = ({ issue }) => {
       toast({
         description: `Failed to resolve issue: ${error}`,
       });
-    }
+    },
   });
-  
+
   const handleDelete = async () => {
     deleteMutation.mutate();
   };

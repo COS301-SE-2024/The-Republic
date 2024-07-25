@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/globals";
 import Cookies from "js-cookie";
 import { UserAlt, UserContextType } from "@/lib/types";
@@ -13,8 +13,12 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserAlt | null>(null);
 
-  const { data: userData, isLoading, isError } = useQuery({
-    queryKey: ['user_data'],
+  const {
+    data: userData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["user_data"],
     queryFn: fetchUserData,
   });
 

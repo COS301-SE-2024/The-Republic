@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
 import { UserAlt } from "@/lib/types";
@@ -16,10 +16,14 @@ const IssuePage = () => {
   const { issueId } = useParams();
   const { user } = useUser();
 
-  const { data: issue, isLoading, isError } = useQuery({
-    queryKey: ['single_issue', user, issueId],
+  const {
+    data: issue,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["single_issue", user, issueId],
     queryFn: () => fetchIssueDetails(user as UserAlt, issueId as string),
-    enabled: (issueId !== undefined && issueId !== null),
+    enabled: issueId !== undefined && issueId !== null,
   });
 
   return (
@@ -32,7 +36,10 @@ const IssuePage = () => {
         <>
           <Issue issue={issue} />
           {user && (
-            <AddCommentForm issueId={issueId as string} onCommentAdded={() => {}} />
+            <AddCommentForm
+              issueId={issueId as string}
+              onCommentAdded={() => {}}
+            />
           )}
           <CommentList issueId={issueId as string} />
         </>

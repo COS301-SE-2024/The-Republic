@@ -3,7 +3,7 @@ import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import Reaction from "@/components/Reaction/Reaction";
 import { useUser } from "@/lib/contexts/UserContext";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
@@ -35,7 +35,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 
@@ -51,7 +51,9 @@ describe("Reaction", () => {
   });
 
   it("renders reaction buttons correctly", () => {
-    renderWithClient(<Reaction issueId={1} initialReactions={[]} userReaction={null} />);
+    renderWithClient(
+      <Reaction issueId={1} initialReactions={[]} userReaction={null} />,
+    );
 
     ["😠", "😃", "😢", "😟"].forEach((emoji) => {
       expect(screen.getByText(emoji)).toBeInTheDocument();

@@ -4,7 +4,7 @@ import { render, waitFor } from "@testing-library/react";
 import EChartsComponent from "@/components/Visualisations/DotVisualizations";
 import * as echarts from "echarts";
 import mockData from "@/data/dot";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("echarts", () => ({
   init: jest.fn(),
@@ -35,7 +35,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

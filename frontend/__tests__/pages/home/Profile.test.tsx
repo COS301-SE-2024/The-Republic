@@ -4,7 +4,7 @@ import { describe, expect, beforeEach, it, jest } from "@jest/globals";
 import ProfilePage from "@/app/(home)/profile/[userId]/page";
 import { supabase } from "@/lib/globals";
 import { useParams } from "next/navigation";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("next/navigation", () => ({
   useParams: jest.fn(),
@@ -36,7 +36,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 
@@ -81,9 +81,7 @@ describe("Profile Page", () => {
 
     const { container } = renderWithClient(<ProfilePage />);
 
-    await waitFor(() =>
-      expect(container).not.toBeNull(),
-    );
+    await waitFor(() => expect(container).not.toBeNull());
   });
 
   it("renders the spinner when user data is not available", async () => {

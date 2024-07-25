@@ -1,6 +1,10 @@
 import { UserAlt as User, Issue as IssueType } from "@/lib/types";
 
-const profileFetchIssues = async (user: User | null, userId: string, url: string): Promise<IssueType[]> => {
+const profileFetchIssues = async (
+  user: User | null,
+  userId: string,
+  url: string,
+): Promise<IssueType[]> => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${user?.access_token}`,
@@ -19,7 +23,7 @@ const profileFetchIssues = async (user: User | null, userId: string, url: string
   if (apiResponse.success && apiResponse.data) {
     return apiResponse.data;
   } else {
-    throw new Error(apiResponse.error || 'Failed to fetch issue details');
+    throw new Error(apiResponse.error || "Failed to fetch issue details");
   }
 };
 

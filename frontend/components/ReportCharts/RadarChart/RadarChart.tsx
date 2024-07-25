@@ -12,14 +12,18 @@ function RadarChart() {
   const [indicators, setIndicators] = useState<DataItem2[]>([]);
   const [unresolvedData, setUnResolvedData] = useState<number[]>([]);
   const [resolvedData, setResolvedData] = useState<number[]>([]);
-  
+
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-  const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
+  const {
+    data,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
     queryKey: [`chart_data`],
     queryFn: () => reportCharts(url),
     enabled: true,
   });
-  
+
   useEffect(() => {
     if (data && "resolved" in data && "unresolved" in data) {
       const resolvedEntries = data.resolved;
@@ -60,9 +64,12 @@ function RadarChart() {
       indicators.length > 0 &&
       unresolvedData.length > 0 &&
       resolvedData.length > 0 &&
-      (!isLoadingCharts &&!isErrorCharts)
+      !isLoadingCharts &&
+      !isErrorCharts
     ) {
-      const radarChartElement = document.querySelector("#radarChart") as HTMLElement;
+      const radarChartElement = document.querySelector(
+        "#radarChart",
+      ) as HTMLElement;
       if (radarChartElement) {
         const radarChart = echarts.init(radarChartElement);
         radarChart.setOption({
@@ -108,10 +115,13 @@ function RadarChart() {
 
   return (
     <>
-      {(!isErrorCharts)? (
+      {!isErrorCharts ? (
         <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
+          {isLoadingCharts ? (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "200px" }}
+            >
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
@@ -129,8 +139,7 @@ function RadarChart() {
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

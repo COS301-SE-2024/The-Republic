@@ -4,7 +4,7 @@ import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import CommentList from "@/components/Comment/CommentList";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
@@ -40,7 +40,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

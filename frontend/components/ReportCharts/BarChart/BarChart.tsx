@@ -9,34 +9,40 @@ import { reportCharts } from "@/lib/api/reportCharts";
 
 function BarChart() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-  const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
+  const {
+    data,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
     queryKey: [`chart_data`],
     queryFn: () => reportCharts(url),
     enabled: true,
   });
 
   useEffect(() => {
-    if (!isLoadingCharts &&!isErrorCharts) {
+    if (!isLoadingCharts && !isErrorCharts) {
       let labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       let unresolvedData = [120, 200, 150, 80, 70, 110, 130];
       let resolverData = [60, 140, 180, 100, 60, 80, 70];
-  
+
       if (data && "resolved" in data && "unresolved" in data) {
         const resolvedEntries: { [key: string]: number } = data.resolved;
         const unresolvedEntries: { [key: string]: number } = data.unresolved;
-  
+
         const combinedCategories = new Set([
           ...Object.keys(resolvedEntries),
           ...Object.keys(unresolvedEntries),
         ]);
-  
+
         labels = Array.from(combinedCategories);
         unresolvedData = labels.map(
           (label) => Number(unresolvedEntries[label]) || 0,
         );
-        resolverData = labels.map((label) => Number(resolvedEntries[label]) || 0);
+        resolverData = labels.map(
+          (label) => Number(resolvedEntries[label]) || 0,
+        );
       }
-  
+
       const barChart = echarts.init(
         document.querySelector("#barChart") as HTMLElement,
       );
@@ -97,10 +103,13 @@ function BarChart() {
 
   return (
     <>
-      {(!isErrorCharts)? (
+      {!isErrorCharts ? (
         <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
+          {isLoadingCharts ? (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "200px" }}
+            >
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
@@ -118,8 +127,7 @@ function BarChart() {
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

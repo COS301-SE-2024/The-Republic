@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { useMutation, useQueryClient, InvalidateQueryFilters } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  InvalidateQueryFilters,
+} from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
 import { AddCommentFormProps } from "@/lib/types";
@@ -25,7 +29,13 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
   const mutation = useMutation({
     mutationFn: async () => {
       if (user) {
-        return await AddComment(user, issueId, content, isAnonymous, parentCommentId);
+        return await AddComment(
+          user,
+          issueId,
+          content,
+          isAnonymous,
+          parentCommentId,
+        );
       }
       throw new Error("User not found");
     },
@@ -35,15 +45,17 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       toast({
         description: "Comment posted successfully",
       });
-  
-      queryClient.invalidateQueries([`add_comment_${user?.user_id}_${issueId}`] as InvalidateQueryFilters);
+
+      queryClient.invalidateQueries([
+        `add_comment_${user?.user_id}_${issueId}`,
+      ] as InvalidateQueryFilters);
     },
     onError: (error) => {
       console.error("Failed to post comment:", error);
       toast({
         description: "Failed to post comment",
       });
-    }
+    },
   });
 
   const handleCommentSubmit = async (e: React.FormEvent) => {

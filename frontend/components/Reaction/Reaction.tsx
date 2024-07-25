@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ReactionProps } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 
 import { handleReaction } from "@/lib/api/handleReaction";
 
@@ -11,7 +11,9 @@ const Reaction: React.FC<ReactionProps> = ({
   userReaction,
 }) => {
   const { user } = useUser();
-  const [activeReaction, setActiveReaction] = useState<string | null>(userReaction);
+  const [activeReaction, setActiveReaction] = useState<string | null>(
+    userReaction,
+  );
   const [reactions, setReactions] = useState<{ [key: string]: number }>(() =>
     initialReactions.reduce(
       (acc, reaction) => {
@@ -37,18 +39,18 @@ const Reaction: React.FC<ReactionProps> = ({
           reactions[reactionsUpdate.added]++;
           setActiveReaction(String(reactionsUpdate.added));
         }
-    
+
         if (reactionsUpdate.removed) {
           reactions[reactionsUpdate.removed]--;
           setActiveReaction(null);
         }
       }
-  
+
       setReactions({ ...reactions });
     },
     onError: (error) => {
       console.error("Failed to update reaction: ", error);
-    }
+    },
   });
 
   const reactNow = async (emoji: string) => {

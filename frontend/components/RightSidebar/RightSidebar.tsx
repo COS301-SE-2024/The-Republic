@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import {Location} from "@/lib/types";
-
+import { Location } from "@/lib/types";
 
 const sortOptions = {
   group: "Sort",
@@ -29,7 +28,6 @@ const filterOptions = {
   ],
 };
 
-
 interface RightSidebarProps {
   sortBy: string;
   setSortBy: (value: string) => void;
@@ -52,7 +50,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/locations`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/locations`,
+        );
         const data = await response.json();
         if (data.success) {
           setLocations(data.data);
@@ -67,9 +67,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
 
   const locationOptions = {
     group: "Location",
-    items: locations.map(loc => ({
+    items: locations.map((loc) => ({
       value: loc.location_id.toString(),
-      label: loc.suburb ? `${loc.suburb}, ${loc.city}, ${loc.province}` : `${loc.city}, ${loc.province}`,
+      label: loc.suburb
+        ? `${loc.suburb}, ${loc.city}, ${loc.province}`
+        : `${loc.city}, ${loc.province}`,
     })),
   };
 
@@ -97,7 +99,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             options={locationOptions}
             value={location ? location.location_id.toString() : ""}
             onChange={(value) => {
-              const selectedLocation = locations.find(loc => loc.location_id.toString() === value);
+              const selectedLocation = locations.find(
+                (loc) => loc.location_id.toString() === value,
+              );
               setLocation(selectedLocation || null);
             }}
             placeholder="Select location..."

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useQuery, useMutation, useQueryClient, InvalidateQueryFilters } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  InvalidateQueryFilters,
+} from "@tanstack/react-query";
 import { CommentListProps, Comment as CommentType, UserAlt } from "@/lib/types";
 import Comment from "./Comment";
 import LoadingIndicator from "@/components/ui/loader";
@@ -25,10 +30,14 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: com_data, isLoading: isLoadingComments, isError: isErrorComments } = useQuery({
+  const {
+    data: com_data,
+    isLoading: isLoadingComments,
+    isError: isErrorComments,
+  } = useQuery({
     queryKey: [`comment_list ${issueId}`, user, issueId],
     queryFn: () => fetchComments(user as UserAlt, issueId),
-    enabled: (issueId !== undefined && issueId !== null),
+    enabled: issueId !== undefined && issueId !== null,
   });
 
   useEffect(() => {
@@ -69,14 +78,18 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
         description: "Comment deleted successfully",
       });
 
-      queryClient.invalidateQueries([`comment_list ${issueId}`, user, issueId] as InvalidateQueryFilters);
+      queryClient.invalidateQueries([
+        `comment_list ${issueId}`,
+        user,
+        issueId,
+      ] as InvalidateQueryFilters);
     },
     onError: (error) => {
       console.error("Failed to delete comment:", error);
       toast({
         description: "Failed to delete comment",
       });
-    }
+    },
   });
 
   const confirmDeleteComment = async () => {
@@ -128,8 +141,8 @@ const CommentList: React.FC<CommentListProps> = ({ issueId }) => {
                 <DialogHeader>
                   <DialogTitle>Confirm Deletion</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to delete this comment? This action cannot
-                    be undone.
+                    Are you sure you want to delete this comment? This action
+                    cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>

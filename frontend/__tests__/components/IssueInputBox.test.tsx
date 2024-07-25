@@ -3,7 +3,7 @@ import { describe, expect } from "@jest/globals";
 import { render, screen, fireEvent } from "@testing-library/react";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { useToast } from "@/components/ui/use-toast";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/globals");
@@ -36,7 +36,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

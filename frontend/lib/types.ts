@@ -224,7 +224,7 @@ interface RequestBody {
   order_by: string;
   ascending: boolean;
   category?: string;
-  location? : Location;
+  location?: Location;
 }
 
 interface FeedProps {
@@ -307,5 +307,5 @@ export type {
   ReactionProps,
   MockUser,
   MulterFile,
-  Location
+  Location,
 };

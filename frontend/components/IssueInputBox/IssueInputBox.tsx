@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,16 +35,38 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
 
   const handleIssueSubmit = async () => {
     const validationChecks = [
-      { check: !user, message: "You need to be logged in to post", variant: "destructive" },
-      { check: !category, message: "Please select a category.", variant: "destructive" },
-      { check: !mood, message: "Please select a mood.", variant: "destructive" },
-      { check: !location, message: "Please set a location.", variant: "destructive" },
+      {
+        check: !user,
+        message: "You need to be logged in to post",
+        variant: "destructive",
+      },
+      {
+        check: !category,
+        message: "Please select a category.",
+        variant: "destructive",
+      },
+      {
+        check: !mood,
+        message: "Please select a mood.",
+        variant: "destructive",
+      },
+      {
+        check: !location,
+        message: "Please set a location.",
+        variant: "destructive",
+      },
     ];
-    
+
     for (const { check, message, variant = "default" } of validationChecks) {
       if (check) {
         toast({
-          variant: variant as "default" | "destructive" | "success" | "warning" | null | undefined,
+          variant: variant as
+            | "default"
+            | "destructive"
+            | "success"
+            | "warning"
+            | null
+            | undefined,
           description: message,
         });
         return;
@@ -84,7 +106,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     setRequestBody(requestBody);
     mutation.mutate();
   };
-  
+
   const mutation = useMutation({
     mutationFn: async () => {
       if (user) {

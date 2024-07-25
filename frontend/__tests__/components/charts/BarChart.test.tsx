@@ -3,7 +3,7 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import BarChart from "@/components/ReportCharts/BarChart/BarChart";
 import * as echarts from "echarts";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("echarts");
 
@@ -16,7 +16,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

@@ -4,7 +4,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import EditProfile from "@/components/EditProfile/EditProfile";
 import { useTheme } from "next-themes";
 import { supabase } from "@/lib/globals";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("next-themes", () => ({
   useTheme: jest.fn(),
@@ -40,7 +40,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 
