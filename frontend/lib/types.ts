@@ -110,6 +110,7 @@ interface Comment {
   issue_id: number;
   user_id: string;
   parent_id: number | null;
+  is_anonymous: boolean;
   content: string;
   created_at: string;
   user: User;
