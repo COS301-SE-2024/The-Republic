@@ -5,8 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Location } from "@/lib/types";
-import LoadingIndicator from "@/components/ui/loader";
-
 import { dotVisualization } from "@/lib/api/dotVisualization";
 
 const sortOptions = {
@@ -67,9 +65,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     group: "Location",
     items: locations?.map((loc) => ({
       value: loc.location_id.toString(),
-      label: loc.suburb
-        ? `${loc.suburb}, ${loc.city}, ${loc.province}`
-        : `${loc.city}, ${loc.province}`,
+      label: `${loc.suburb && loc.suburb + ','} ${loc.city}, ${loc.province}`
     })) || [],
   };
 
@@ -93,23 +89,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           />
         </div>
         <div className="mb-4">
-          {isLoading ? (
-            <LoadingIndicator />
-          ) : isError ? (
-            <div></div>
-          ) : (
-            <Dropdown
-              options={locationOptions}
-              value={location ? location.location_id.toString() : ""}
-              onChange={(value) => {
-                const selectedLocation = locations?.find(
-                  (loc) => loc.location_id.toString() === value
-                );
-                setLocation(selectedLocation || null);
-              }}
-              placeholder="Select location..."
-            />
-          )}
+         {!isError && (
+           <Dropdown
+             options={locationOptions}
+             value={location ? location.location_id.toString() : ""}
+             onChange={(value) => {
+               const selectedLocation = locations?.find(
+                 (loc) => loc.location_id.toString() === value
+               );
+               setLocation(selectedLocation || null);
+             }}
+             disabled={isLoading}
+             placeholder="Select location..."
+           />
+         )}
         </div>
       </div>
     </div>

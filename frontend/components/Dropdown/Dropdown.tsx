@@ -25,6 +25,7 @@ interface DropdownProps {
   options: { group: string; items: Option[] };
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
   placeholder?: string;
 }
 
@@ -32,6 +33,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   value,
   onChange,
+  disabled = false,
   placeholder = "Select option...",
 }) => {
   const [open, setOpen] = useState(false);
@@ -44,10 +46,13 @@ const Dropdown: React.FC<DropdownProps> = ({
           role="combobox"
           aria-expanded={open}
           className="w-[200px] justify-between"
+          disabled={disabled}
         >
-          {value
-            ? options.items.find((option) => option.value === value)?.label
-            : placeholder}
+          <p className="overflow-ellipsis overflow-hidden">
+            {value
+              ? options.items.find((option) => option.value === value)?.label
+              : placeholder}
+          </p>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
