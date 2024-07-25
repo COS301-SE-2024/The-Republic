@@ -20,7 +20,7 @@ const Feed: React.FC<FeedProps> = ({ showInputBox = true }) => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["feed_issues", user, sortBy, filter],
+    queryKey: ["feed_issues", user, sortBy, filter, location],
     queryFn: () => fetchIssues(user as UserAlt, sortBy, filter, location),
     enabled: true,
   });
