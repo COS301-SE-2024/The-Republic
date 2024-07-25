@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,13 +10,15 @@ import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import { categoryOptions, moodOptions } from "@/lib/constants";
-import { supabase } from "@/lib/globals";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Image as LucideImage, X } from "lucide-react";
-import { LocationType, IssueInputBoxProps } from "@/lib/types";
+import { LocationType, IssueInputBoxProps, UserAlt } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
+
+import { createIssue } from "@/lib/api/createIssue";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -28,37 +31,46 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
   const [image, setImage] = useState<File | null>(null);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [requestBody, setRequestBody] = useState<FormData | null>(null);
 
   const handleIssueSubmit = async () => {
-    if (!user) {
-      toast({
-        description: "You need to be logged in to post",
-      });
-      return;
-    }
-
-    if (!category) {
-      toast({
+    const validationChecks = [
+      {
+        check: !user,
+        message: "You need to be logged in to post",
         variant: "destructive",
-        description: "Please select a category.",
-      });
-      return;
-    }
-
-    if (!mood) {
-      toast({
+      },
+      {
+        check: !category,
+        message: "Please select a category.",
         variant: "destructive",
-        description: "Please select a mood.",
-      });
-      return;
-    }
-
-    if (!location) {
-      toast({
+      },
+      {
+        check: !mood,
+        message: "Please select a mood.",
         variant: "destructive",
-        description: "Please set a location.",
-      });
-      return;
+      },
+      {
+        check: !location,
+        message: "Please set a location.",
+        variant: "destructive",
+      },
+    ];
+
+    for (const { check, message, variant = "default" } of validationChecks) {
+      if (check) {
+        toast({
+          variant: variant as
+            | "default"
+            | "destructive"
+            | "success"
+            | "warning"
+            | null
+            | undefined,
+          description: message,
+        });
+        return;
+      }
     }
 
     const isContentAppropriate = await checkContentAppropriateness(content);
@@ -76,8 +88,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     const categoryID = parseInt(category);
-    const { data } = await supabase.auth.getSession();
-
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
@@ -88,28 +98,26 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       JSON.stringify(location ? location.value : {}),
     );
     requestBody.append("created_at", new Date().toISOString());
-    requestBody.append("user_id", user.user_id);
+    requestBody.append("user_id", user?.user_id || "");
     if (image) {
       requestBody.append("image", image);
     }
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
-      {
-        method: "POST",
-        body: requestBody,
-        headers: {
-          Authorization: `Bearer ${data.session!.access_token}`,
-        },
-      },
-    );
+    setRequestBody(requestBody);
+    mutation.mutate();
+  };
 
-    if (!res.ok) {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    } else {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (user) {
+        return await createIssue(user as UserAlt, requestBody);
+      } else {
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
+      }
+    },
+    onSuccess: () => {
       setContent("");
       setCategory("");
       setMood("");
@@ -121,40 +129,14 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
         description: "Post successful",
       });
       window.location.reload();
-    }
-  };
-
-  const checkContentAppropriateness = async (
-    text: string,
-  ): Promise<boolean> => {
-    const apiKey = process.env
-      .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
-    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
-
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
-
-    const result = await response.json();
-
-    if (
-      (result.Terms && result.Terms.length > 0) ||
-      result.Classification.Category1.Score > 0.5 ||
-      result.Classification.Category2.Score > 0.5 ||
-      result.Classification.Category3.Score > 0.5
-    ) {
-      return false;
-    }
-
-    return true;
-  };
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, please try again",
+      });
+    },
+  });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

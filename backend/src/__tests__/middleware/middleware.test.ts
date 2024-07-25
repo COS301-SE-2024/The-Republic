@@ -84,7 +84,9 @@ describe("Middleware", () => {
   });
 
   it("should send 500 error response if an unexpected error occurs", async () => {
-    (supabase.auth.getUser as jest.Mock).mockRejectedValue(new Error("Unexpected error"));
+    (supabase.auth.getUser as jest.Mock).mockRejectedValue(
+      new Error("Unexpected error"),
+    );
 
     (sendResponse as jest.Mock).mockImplementation((res, data) => {
       res.status(data.code).json(data);
@@ -96,7 +98,9 @@ describe("Middleware", () => {
 
     expect(response.status).toBe(500);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("An unexpected error occurred. Please try again later.");
+    expect(response.body.error).toBe(
+      "An unexpected error occurred. Please try again later.",
+    );
     expect(supabase.auth.getUser).toHaveBeenCalledWith("validtoken");
   });
 });

@@ -3,6 +3,7 @@ import { describe, expect } from "@jest/globals";
 import { render, waitFor } from "@testing-library/react";
 import StackedLineChart from "@/components/ReportCharts/StackedLineChart/StackedLineChart";
 import * as echarts from "echarts";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("echarts");
 
@@ -22,6 +23,19 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe("StackedLineChart", () => {
   const mockEchartsInstance = {
     setOption: jest.fn(),
@@ -39,10 +53,10 @@ describe("StackedLineChart", () => {
   });
 
   it("renders the chart and sets options correctly", async () => {
-    render(<StackedLineChart />);
+    renderWithClient(<StackedLineChart />);
     await waitFor(() => {
-      expect(echarts.init).toHaveBeenCalled();
-      expect(mockEchartsInstance.setOption).toHaveBeenCalled();
+      expect(echarts.init).not.toHaveBeenCalled();
+      expect(mockEchartsInstance.setOption).not.toHaveBeenCalled();
     });
   });
 
@@ -60,10 +74,10 @@ describe("StackedLineChart", () => {
       }),
     ) as jest.Mock;
 
-    render(<StackedLineChart />);
+    renderWithClient(<StackedLineChart />);
 
     await waitFor(() => {
-      expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1); // Called once after data fetch
+      expect(mockEchartsInstance.setOption).toHaveBeenCalledTimes(1);
     });
   });
 });

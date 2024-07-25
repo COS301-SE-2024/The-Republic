@@ -3,6 +3,13 @@ import { describe, expect } from "@jest/globals";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
 import { IssueProps } from "@/lib/types";
+import { useUser } from "@/lib/contexts/UserContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import mockUser from "@/data/mockUser";
+
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn(),
+}));
 
 jest.mock("@/lib/globals", () => ({
   supabase: {
@@ -65,6 +72,19 @@ jest.mock("@/components/Issue/Issue", () => (props: IssueProps) => (
   <div>Issue: {props.issue.content}</div>
 ));
 
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 const mockFetch = (
   data: { issue_id: string; title: string }[],
   success = true,
@@ -79,8 +99,9 @@ const mockFetch = (
 
 describe("Feed", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (useUser as jest.Mock).mockReturnValue({ user: mockUser });
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -89,13 +110,13 @@ describe("Feed", () => {
 
   it("renders without crashing", () => {
     mockFetch([]);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     expect(screen.getByText("Spinner")).toBeInTheDocument();
   });
 
   it("shows loading indicator while fetching data", async () => {
     mockFetch([]);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     expect(screen.getByText("Spinner")).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
@@ -108,7 +129,7 @@ describe("Feed", () => {
       { issue_id: "2", title: "Issue Two 2" },
     ];
     mockFetch(issues);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
     );
@@ -121,7 +142,7 @@ describe("Feed", () => {
       { issue_id: "2", title: "Oldest Issue" },
     ];
     mockFetch(issues);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
     );

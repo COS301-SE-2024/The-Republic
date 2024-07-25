@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
-import { CommentService } from '../../services/commentService';
-import { sendResponse } from '../../utils/response';
-import * as commentController from '../../controllers/commentController';
+import { Request, Response } from "express";
+import { CommentService } from "../../services/commentService";
+import { sendResponse } from "../../utils/response";
+import * as commentController from "../../controllers/commentController";
 
-jest.mock('../../services/commentService');
-jest.mock('../../utils/response');
+jest.mock("../../services/commentService");
+jest.mock("../../utils/response");
 
-describe('Comment Controller', () => {
+describe("Comment Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockCommentService: jest.Mocked<CommentService>;
@@ -20,14 +20,16 @@ describe('Comment Controller', () => {
       addComment: jest.fn(),
       deleteComment: jest.fn(),
     } as unknown as jest.Mocked<CommentService>;
-    (CommentService as jest.MockedClass<typeof CommentService>).mockImplementation(() => mockCommentService);
+    (
+      CommentService as jest.MockedClass<typeof CommentService>
+    ).mockImplementation(() => mockCommentService);
   });
 
   const testCases = [
-    { name: 'getNumComments', method: commentController.getNumComments },
-    { name: 'getComments', method: commentController.getComments },
-    { name: 'addComment', method: commentController.addComment },
-    { name: 'deleteComment', method: commentController.deleteComment },
+    { name: "getNumComments", method: commentController.getNumComments },
+    { name: "getComments", method: commentController.getComments },
+    { name: "addComment", method: commentController.addComment },
+    { name: "deleteComment", method: commentController.deleteComment },
   ];
 
   testCases.forEach(({ name, method }) => {
