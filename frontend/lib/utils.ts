@@ -48,10 +48,6 @@ export async function signOutWithToast(toast: typeof shadToast) {
     toast({
       description: "Signed out succesfully",
     });
-
-    setTimeout(() => {
-      window.location.assign("/");
-    }, 2000);
   }
 }
 

@@ -5,9 +5,9 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
-  is_owner: boolean;
   total_issues: number;
   resolved_issues: number;
+  access_token: string;
 }
 
 interface UserAlt {
@@ -49,17 +49,7 @@ interface ProfileStatsProps {
 }
 
 interface IssueInputBoxProps {
-  user: {
-    user_id: string;
-    email_address: string;
-    username: string;
-    fullname: string;
-    image_url: string;
-    bio: string;
-    is_owner: boolean;
-    total_issues: number;
-    resolved_issues: number;
-  } | null;
+  onAddIssue: (issue: Issue) => void;
 }
 
 interface Category {
@@ -108,13 +98,16 @@ interface Issue {
 }
 interface IssueProps {
   issue: Issue;
+  id?: string;
+  onDeleteIssue?: (issue: Issue) => void;
+  onResolveIssue?: (issue: Issue, resolvedIssue: Issue) => void;
 }
 
 interface Comment {
-  comment_id: string;
-  issue_id: string;
+  comment_id: number;
+  issue_id: number;
   user_id: string;
-  parent_id: string | null;
+  parent_id: number | null;
   content: string;
   created_at: string;
   user: User;

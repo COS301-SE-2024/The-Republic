@@ -173,10 +173,9 @@ export default class IssueService {
       image_url: imageUrl,
     });
 
-    return APIData({
-      code: 201,
-      success: true,
-      data: createdIssue,
+    return await this.getIssueById({
+      issue_id: createdIssue.issue_id,
+      user_id: issue.user_id
     });
   }
 
@@ -248,8 +247,7 @@ export default class IssueService {
     );
 
     if (issueToDelete.image_url) {
-      const imageUrlParts = issueToDelete.image_url.split("/");
-      const imageName = imageUrlParts.slice(-2).join("/"); // Join the last two parts to get the full path
+      const imageName = issueToDelete.image_url.split("/").slice(-1)[0];
       const { error } = await supabase.storage
         .from("issues")
         .remove([imageName]);
@@ -292,15 +290,14 @@ export default class IssueService {
       });
     }
 
-    const resolvedIssue = await this.issueRepository.resolveIssue(
+    await this.issueRepository.resolveIssue(
       issue_id,
       user_id,
     );
 
-    return APIData({
-      code: 200,
-      success: true,
-      data: resolvedIssue,
+    return await this.getIssueById({
+      issue_id,
+      user_id
     });
   }
 

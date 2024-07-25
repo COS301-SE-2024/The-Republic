@@ -27,6 +27,22 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+const mockUseToast = useToast as jest.Mock;
+
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn().mockReturnValue({
+    user_id: "1",
+    email_address: "test@example.com",
+    username: "testuser",
+    fullname: "Test User",
+    image_url: "https://via.placeholder.com/150",
+    bio: "",
+    is_owner: false,
+    total_issues: 0,
+    resolved_issues: 0,
+  }),
+}));
+
 const renderWithClient = (ui: React.ReactNode) => {
   const testQueryClient = new QueryClient({
     defaultOptions: {
@@ -40,8 +56,6 @@ const renderWithClient = (ui: React.ReactNode) => {
   );
 };
 
-const mockUseToast = useToast as jest.Mock;
-
 describe("IssueInputBox Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -54,21 +68,24 @@ describe("IssueInputBox Component", () => {
   });
 
   test("renders IssueInputBox component", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+        
     expect(
       screen.getByPlaceholderText("What's going on!?"),
     ).toBeInTheDocument();
   });
 
   test("handles input change", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+        
     const textarea = screen.getByPlaceholderText("What's going on!?");
     fireEvent.change(textarea, { target: { value: "New Issue Content" } });
     expect(textarea).toHaveValue("New Issue Content");
   });
 
   test("handles category and mood selection", () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+        
     fireEvent.change(screen.getByText("Select category..."), {
       target: { value: "1" },
     });
@@ -78,7 +95,8 @@ describe("IssueInputBox Component", () => {
   });
 
   test("handles issue submission", async () => {
-    renderWithClient(<IssueInputBox user={mockUser} />);
+    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+        
     fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
       target: { value: "New Issue Content" },
     });

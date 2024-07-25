@@ -1,37 +1,69 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
-import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import { categoryOptions, moodOptions } from "@/lib/constants";
 import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import { Image as LucideImage, X } from "lucide-react";
-import { LocationType, IssueInputBoxProps, UserAlt } from "@/lib/types";
+import { Loader2, Image as LucideImage, X } from "lucide-react";
+import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
-
-import { createIssue } from "@/lib/api/createIssue";
+import { useUser } from "@/lib/contexts/UserContext";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [image, setImage] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [requestBody, setRequestBody] = useState<FormData | null>(null);
+  const { user } = useUser();
+
+  // This should be intergrated as described in the comment for mutations in Issue.tsx
+  /* const mutation = useMutation({
+    mutationFn: async () => {
+      if (user) {
+        return await createIssue(user as UserAlt, ...otherParamaters);
+      } else {
+        toast({
+          description: "You need to be logged in to delete a comment",
+        });
+      }
+    },
+    onSuccess: (issue) => {
+      setContent("");
+      setCategory("");
+      setMood("");
+      setIsAnonymous(false);
+      setLocation(null);
+      setImage(null);
+
+      toast({
+        description: "Post successful",
+      });
+
+      onAddIssue(issue);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, please try again",
+      });
+    },
+  }); */
 
   const handleIssueSubmit = async () => {
     const validationChecks = [
@@ -73,9 +105,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       }
     }
 
+    setIsLoading(true);
+
     const isContentAppropriate = await checkContentAppropriateness(content);
 
     if (!isContentAppropriate) {
+      setIsLoading(false);
       toast({
         variant: "destructive",
         description: "Please use appropriate language.",
@@ -84,10 +119,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
     }
 
     if (image && !(await checkImageFileAndToast(image, toast))) {
+      setIsLoading(false);
       return;
     }
 
     const categoryID = parseInt(category);
+
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
@@ -103,21 +140,23 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       requestBody.append("image", image);
     }
 
-    setRequestBody(requestBody);
-    mutation.mutate();
-  };
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
+      {
+        method: "POST",
+        body: requestBody,
+        headers: {
+          Authorization: `Bearer ${user?.access_token}`,
+        },
+      },
+    );
 
-  const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await createIssue(user as UserAlt, requestBody);
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
-      }
-    },
-    onSuccess: () => {
+    if (!res.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, please try again",
+      });
+    } else {
       setContent("");
       setCategory("");
       setMood("");
@@ -128,15 +167,13 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
       toast({
         description: "Post successful",
       });
-      window.location.reload();
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    },
-  });
+
+      const apiResponse = await res.json();
+      onAddIssue(apiResponse.data);
+    }
+
+    setIsLoading(false);
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -178,6 +215,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user }) => {
             disabled={charCount > MAX_CHAR_COUNT || !content}
           >
             Post
+            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
           </Button>
         </div>
         {charCount > MAX_CHAR_COUNT && (

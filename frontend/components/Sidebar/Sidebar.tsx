@@ -20,6 +20,7 @@ import styles from "@/styles/Custom.module.css";
 import { useUser } from "@/lib/contexts/UserContext";
 
 import Link from "next/link";
+import { signOutWithToast } from "@/lib/utils";
 
 const Sidebar: React.FC<HomeAvatarProps> = () => {
   const { user } = useUser();
@@ -136,7 +137,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/login">
+                <Link href="" onClick={() => signOutWithToast(toast)}>
                   <LogoutIcon />
                   Logout
                 </Link>

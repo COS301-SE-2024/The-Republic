@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import {
-  useMutation,
-  useQueryClient,
-  InvalidateQueryFilters,
-} from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { AddCommentFormProps } from "@/lib/types";
+import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { Loader2 } from "lucide-react";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
-import { AddComment } from "@/lib/api/AddComment";
+
+interface AddCommentFormProps {
+  issueId: number;
+  parentCommentId: number | null;
+  onCommentAdded: (comment: Comment) => void;
+}
 
 const AddCommentForm: React.FC<AddCommentFormProps> = ({
   issueId,
@@ -22,41 +22,64 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 }) => {
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  // This is how I think this would work before reading the docs,
+  // but it seems cause a full page reload.
+  /* const mutation = useMutation({
     mutationFn: async () => {
-      if (user) {
-        return await AddComment(
-          user,
-          issueId,
-          content,
-          isAnonymous,
-          parentCommentId,
-        );
+      const isContentAppropriate = await checkContentAppropriateness(content);
+      if (!isContentAppropriate) {
+        throw new Error("Content");
       }
-      throw new Error("User not found");
+
+      if (!user) {
+        throw new Error("User");
+      }
+
+      return await AddComment(
+        user,
+        issueId,
+        content,
+        isAnonymous,
+        parentCommentId,
+      );
     },
     onSuccess: (responseData) => {
-      onCommentAdded(responseData);
       setContent("");
+      setIsAnonymous(false);
+
       toast({
         description: "Comment posted successfully",
       });
+
+      onCommentAdded(responseData);
 
       queryClient.invalidateQueries([
         `add_comment_${user?.user_id}_${issueId}`,
       ] as InvalidateQueryFilters);
     },
     onError: (error) => {
-      console.error("Failed to post comment:", error);
-      toast({
-        description: "Failed to post comment",
-      });
+      if (error.message === "Content") {
+        toast({
+          variant: "destructive",
+          description: "Please use appropriate language.",
+        });
+      } else if (error.message === "User") {
+        toast({
+          description: "You need to be logged in to comment",
+        });
+      } else {
+        toast({
+          description: "Failed to post comment",
+        });
+
+        console.error("Failed to post comment:", error);
+      }
     },
-  });
+  }); */
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,8 +90,11 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       return;
     }
 
+    setIsLoading(true);
+
     const isContentAppropriate = await checkContentAppropriateness(content);
     if (!isContentAppropriate) {
+      setIsLoading(false);
       toast({
         variant: "destructive",
         description: "Please use appropriate language.",
@@ -76,13 +102,53 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       return;
     }
 
-    mutation.mutate();
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+          body: JSON.stringify({
+            issue_id: issueId,
+            content,
+            is_anonymous: isAnonymous,
+            parent_id: parentCommentId,
+          }),
+        },
+      );
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        setContent("");
+        toast({
+          description: "Comment posted successfully",
+        });
+
+        onCommentAdded(responseData.data);
+      } else {
+        console.error("Failed to post comment:", responseData.error);
+        toast({
+          variant: "destructive",
+          description: "Failed to post comment",
+        });
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      toast({
+        description: "Error posting comment",
+      });
+    }
+
+    setIsLoading(false);
   };
 
   return (
     <form
       onSubmit={handleCommentSubmit}
-      className="flex flex-col space-y-4 mt-4 p-4 rounded shadow bg-card dark:bg-card"
+      className="flex flex-col space-y-4 mb-4 p-4 rounded shadow bg-card dark:bg-card"
     >
       <div className="flex items-center space-x-3">
         {user && (
@@ -113,6 +179,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
           disabled={!content.trim()}
         >
           Send
+          {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
         </Button>
       </div>
     </form>

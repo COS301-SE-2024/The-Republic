@@ -43,10 +43,10 @@ const Header = () => {
         ) : (
           <Button
             onClick={() => {
-              router.push("/signup");
+              router.push("/login");
             }}
           >
-            Sign Up
+            Login
           </Button>
         )}
       </div>

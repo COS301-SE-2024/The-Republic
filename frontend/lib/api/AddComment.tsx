@@ -2,10 +2,10 @@ import { UserAlt as User } from "@/lib/types";
 
 const AddComment = async (
   user: User,
-  issueId: string,
+  issueId: number,
   content: string,
   isAnonymous: boolean,
-  parentCommentId: string | null,
+  parentCommentId: number | null,
 ) => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",

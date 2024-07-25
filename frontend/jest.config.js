@@ -45,6 +45,8 @@ module.exports = {
     "@next/font/(.*)": `<rootDir>/__mocks__/nextFontMock.js`,
     // Handle next/font
     "next/font/(.*)": `<rootDir>/__mocks__/nextFontMock.js`,
+    // Handle uuid
+    "uuid": `<rootDir>/__mocks__/uuid.ts`,
     // Disable server-only
     "server-only": `<rootDir>/__mocks__/empty.js`,
   },

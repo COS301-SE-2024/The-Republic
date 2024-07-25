@@ -2,7 +2,7 @@ import IssueService from "../../services/issueService";
 import IssueRepository from "../../db/issueRepository";
 import { LocationRepository } from "../../db/locationRepository";
 import { Issue } from "../../models/issue";
-import { APIResponse } from "../../types/response";
+import { APIData, APIResponse } from "../../types/response";
 
 jest.mock("../../db/issueRepository");
 jest.mock("../../db/locationRepository");
@@ -164,6 +164,11 @@ describe("IssueService", () => {
         profile_user_id: "0",
       };
       issueRepository.createIssue.mockResolvedValue(createdIssue);
+      jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({
+        success: true,
+        code: 200,
+        data: createdIssue
+      }));
 
       const response = await issueService.createIssue(newIssue);
 
@@ -379,6 +384,11 @@ describe("IssueService", () => {
     });
 
     issueRepository.createIssue.mockResolvedValue(createdIssue);
+    jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({
+      success: true,
+      code: 200,
+      data: createdIssue
+    }));
 
     const response = await issueService.createIssue(newIssue);
 
