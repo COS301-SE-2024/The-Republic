@@ -12,6 +12,6 @@ export interface GetIssuesParams {
     suburb?: string;
     district?: string;
     place_id?: string;
-  }
+  };
   location_id?: number;
 }

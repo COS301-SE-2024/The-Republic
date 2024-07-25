@@ -10,11 +10,14 @@ const upload = multer({ storage: multer.memoryStorage() });
 const handleError = (res: Response, err: unknown) => {
   console.error(err);
   if (err instanceof Error) {
-    sendResponse(res, APIError({
-      code: 500,
-      success: false,
-      error: err.message || "An unexpected error occurred"
-    }));
+    sendResponse(
+      res,
+      APIError({
+        code: 500,
+        success: false,
+        error: err.message || "An unexpected error occurred",
+      }),
+    );
   } else {
     sendResponse(res, err as APIResponse);
   }

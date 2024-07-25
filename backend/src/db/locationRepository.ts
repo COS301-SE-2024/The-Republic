@@ -11,7 +11,6 @@ export interface Location {
 }
 
 export class LocationRepository {
-  
   async getAllLocations() {
     const { data, error } = await supabase
       .from("location")
@@ -25,18 +24,27 @@ export class LocationRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching locations."
+        error: "An unexpected error occurred while fetching locations.",
       });
     }
 
-    const uniqueLocations = Array.from(new Set(data.map(loc => 
-      JSON.stringify({ province: loc.province, city: loc.city, suburb: loc.suburb })
-    ))).map(strLoc => {
+    const uniqueLocations = Array.from(
+      new Set(
+        data.map((loc) =>
+          JSON.stringify({
+            province: loc.province,
+            city: loc.city,
+            suburb: loc.suburb,
+          }),
+        ),
+      ),
+    ).map((strLoc) => {
       const parsedLoc = JSON.parse(strLoc);
-      return data.find(loc => 
-        loc.province === parsedLoc.province && 
-        loc.city === parsedLoc.city && 
-        loc.suburb === parsedLoc.suburb
+      return data.find(
+        (loc) =>
+          loc.province === parsedLoc.province &&
+          loc.city === parsedLoc.city &&
+          loc.suburb === parsedLoc.suburb,
       );
     });
 

@@ -17,7 +17,7 @@ export const verifyAndGetUser = async (
   next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
-  const serviceRoleKey = req.headers['x-service-role-key'];
+  const serviceRoleKey = req.headers["x-service-role-key"];
 
   if (serviceRoleKey === process.env.SUPABASE_SERVICE_ROLE_KEY) {
     next();
@@ -34,14 +34,20 @@ export const verifyAndGetUser = async (
   const jwt = authHeader.split(" ")[1];
 
   try {
-    const { data: { user }, error } = await supabase.auth.getUser(jwt);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(jwt);
 
     if (error) {
-      sendResponse(res, APIError({
-        code: 403,
-        success: false,
-        error: "Invalid token"
-      }));
+      sendResponse(
+        res,
+        APIError({
+          code: 403,
+          success: false,
+          error: "Invalid token",
+        }),
+      );
       return;
     }
 
@@ -49,18 +55,24 @@ export const verifyAndGetUser = async (
       req.body.user_id = user.id;
       next();
     } else {
-      sendResponse(res, APIError({
-        code: 403,
-        success: false,
-        error: "Invalid token"
-      }));
+      sendResponse(
+        res,
+        APIError({
+          code: 403,
+          success: false,
+          error: "Invalid token",
+        }),
+      );
     }
   } catch (error) {
     console.error(error);
-    sendResponse(res, APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred. Please try again later."
-    }));
+    sendResponse(
+      res,
+      APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later.",
+      }),
+    );
   }
 };
