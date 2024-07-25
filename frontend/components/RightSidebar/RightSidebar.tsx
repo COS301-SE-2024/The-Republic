@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/lib/contexts/UserContext";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Location } from "@/lib/types";
+import LoadingIndicator from "@/components/ui/loader";
+
+import { dotVisualization } from "@/lib/api/dotVisualization";
 
 const sortOptions = {
   group: "Sort",
@@ -45,34 +50,27 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   location,
   setLocation,
 }) => {
-  const [locations, setLocations] = useState<Location[]>([]);
+  const { user } = useUser();
+  const url: string = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/locations`;
 
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/locations`,
-        );
-        const data = await response.json();
-        if (data.success) {
-          setLocations(data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-      }
-    };
-
-    fetchLocations();
-  }, []);
+  const {
+    data: locations,
+    isLoading,
+    isError,
+  } = useQuery<Location[]>({
+    queryKey: ["right_location", user],
+    queryFn: () => dotVisualization(url),
+    enabled: url !== undefined,
+  });
 
   const locationOptions = {
     group: "Location",
-    items: locations.map((loc) => ({
+    items: locations?.map((loc) => ({
       value: loc.location_id.toString(),
       label: loc.suburb
         ? `${loc.suburb}, ${loc.city}, ${loc.province}`
         : `${loc.city}, ${loc.province}`,
-    })),
+    })) || [],
   };
 
   return (
@@ -95,17 +93,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           />
         </div>
         <div className="mb-4">
-          <Dropdown
-            options={locationOptions}
-            value={location ? location.location_id.toString() : ""}
-            onChange={(value) => {
-              const selectedLocation = locations.find(
-                (loc) => loc.location_id.toString() === value,
-              );
-              setLocation(selectedLocation || null);
-            }}
-            placeholder="Select location..."
-          />
+          {isLoading ? (
+            <LoadingIndicator />
+          ) : isError ? (
+            <div></div>
+          ) : (
+            <Dropdown
+              options={locationOptions}
+              value={location ? location.location_id.toString() : ""}
+              onChange={(value) => {
+                const selectedLocation = locations?.find(
+                  (loc) => loc.location_id.toString() === value
+                );
+                setLocation(selectedLocation || null);
+              }}
+              placeholder="Select location..."
+            />
+          )}
         </div>
       </div>
     </div>
