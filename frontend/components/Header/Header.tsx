@@ -13,7 +13,7 @@ const Header = () => {
   const { user } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
-  const [logoSrc, setLogoSrc] = useState("/images/b-logo-full.png"); 
+  const [logoSrc, setLogoSrc] = useState("/images/b-logo-full-black.png"); 
 
   
   useEffect(() => {

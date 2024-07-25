@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HomeIcon,
   ProfileIcon,
@@ -25,6 +25,8 @@ import { signOutWithToast } from "@/lib/utils";
 const Sidebar: React.FC<HomeAvatarProps> = () => {
   const { user } = useUser();
   const { toast } = useToast();
+  const [showLogout, setShowLogout] = useState(false);
+
   useEffect(() => {
     if (user) {
       const channelA = supabase
@@ -35,7 +37,6 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             event: "*",
             schema: "public",
             table: "comments",
-            // filter: `user_id=neq.${user.user_id}`,
           },
           (payload) => {
             toast({
@@ -44,7 +45,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             });
             const { new: notification } = payload;
             console.log("Comments Notification Data: ", notification);
-          },
+          }
         )
         .on(
           "postgres_changes",
@@ -60,7 +61,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             });
             const { new: notification } = payload;
             console.log("Reaction Notification Data Now: ", notification);
-          },
+          }
         )
         .on(
           "postgres_changes",
@@ -76,7 +77,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             });
             const { new: notification } = payload;
             console.log("Issue Notification Data: ", notification);
-          },
+          }
         )
         .subscribe((status) => {
           console.log("Subscription Result: ", status);
@@ -87,6 +88,10 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
       };
     }
   }, [user]);
+
+  const toggleLogout = () => {
+    setShowLogout((prev) => !prev);
+  };
 
   return (
     <div className="w-[300px] border-r h-full overflow-y-auto">
@@ -136,18 +141,24 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
                   Settings
                 </Link>
               </li>
-              <li>
-                <Link href="" onClick={() => signOutWithToast(toast)}>
-                  <LogoutIcon />
-                  Logout
-                </Link>
-              </li>
             </>
           )}
         </ul>
         {user && (
           <div className={styles.userAccount}>
-            <div className={styles.userProfile}>
+            {showLogout && (
+              <div className={styles.logoutOverlay}>
+                <ul className={styles.sidebarLinks}>
+                  <li>
+                    <Link href="" onClick={() => signOutWithToast(toast)}>
+                      <LogoutIcon />
+                      Logout
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
+            <div className={styles.userProfile} onClick={toggleLogout}>
               <Avatar>
                 <AvatarImage src={user.image_url} />
                 <AvatarFallback>{user.fullname[0]}</AvatarFallback>
