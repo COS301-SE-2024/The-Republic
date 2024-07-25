@@ -11,13 +11,15 @@
   transition: all 0.4s ease;
 }
 
+
+
 .republicHeader {
   display: flex;
   align-items: center;
 }
 
 .republicHeader img {
-  width: 180px;
+  width: 270px;
   border: none;
 }
 
@@ -71,7 +73,6 @@
   border-color: hsl(var(--grey));
   border-width: 1.6px;
 }
-
 
 .sidebarLinks li a:hover {
   background: hsl(var(--grey-dark));
