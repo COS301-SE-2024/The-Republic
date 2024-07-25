@@ -4,7 +4,7 @@ import { render, fireEvent } from "@testing-library/react";
 import CreatePost from "@/components/CreatePost/CreatePost";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useTheme } from "next-themes";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -39,7 +39,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

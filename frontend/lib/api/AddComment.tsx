@@ -1,8 +1,11 @@
 import { UserAlt as User } from "@/lib/types";
 
 const AddComment = async (
-  user: User, issueId: string, content: string,
-  isAnonymous: boolean, parentCommentId: string | null
+  user: User,
+  issueId: number,
+  content: string,
+  isAnonymous: boolean,
+  parentCommentId: number | null,
 ) => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -31,7 +34,7 @@ const AddComment = async (
   if (apiResponse.success && apiResponse.data) {
     return apiResponse.data;
   } else {
-    throw new Error(apiResponse.error || 'Request Failed');
+    throw new Error(apiResponse.error || "Request Failed");
   }
 };
 

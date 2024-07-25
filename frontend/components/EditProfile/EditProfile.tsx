@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { checkImageFileAndToast, cn } from "@/lib/utils";
@@ -78,7 +78,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         }
       }
     }
-    
+
     mutation.mutate();
   };
 

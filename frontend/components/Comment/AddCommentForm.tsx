@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
 interface AddCommentFormProps {
   issueId: number;
@@ -24,6 +25,61 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
+
+  // This is how I think this would work before reading the docs,
+  // but it seems cause a full page reload.
+  /* const mutation = useMutation({
+    mutationFn: async () => {
+      const isContentAppropriate = await checkContentAppropriateness(content);
+      if (!isContentAppropriate) {
+        throw new Error("Content");
+      }
+
+      if (!user) {
+        throw new Error("User");
+      }
+
+      return await AddComment(
+        user,
+        issueId,
+        content,
+        isAnonymous,
+        parentCommentId,
+      );
+    },
+    onSuccess: (responseData) => {
+      setContent("");
+      setIsAnonymous(false);
+
+      toast({
+        description: "Comment posted successfully",
+      });
+
+      onCommentAdded(responseData);
+
+      queryClient.invalidateQueries([
+        `add_comment_${user?.user_id}_${issueId}`,
+      ] as InvalidateQueryFilters);
+    },
+    onError: (error) => {
+      if (error.message === "Content") {
+        toast({
+          variant: "destructive",
+          description: "Please use appropriate language.",
+        });
+      } else if (error.message === "User") {
+        toast({
+          description: "You need to be logged in to comment",
+        });
+      } else {
+        toast({
+          description: "Failed to post comment",
+        });
+
+        console.error("Failed to post comment:", error);
+      }
+    },
+  }); */
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,41 +143,6 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
     }
 
     setIsLoading(false);
-  };
-
-  const checkContentAppropriateness = async (
-    text: string,
-  ): Promise<boolean> => {
-    return text.length > 0;
-
-    // Requests to the API were failing
-    /* const apiKey = process.env
-      .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
-    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
-
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
-
-    const result = await response.json();
-
-    if (
-      (result.Terms && result.Terms.length > 0) ||
-      result.Classification.Category1.Score > 0.5 ||
-      result.Classification.Category2.Score > 0.5 ||
-      result.Classification.Category3.Score > 0.5
-    ) {
-      return false;
-    }
-
-    return true; */
   };
 
   return (

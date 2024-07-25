@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Issue from "@/components/Issue/Issue";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useRouter } from "next/navigation";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("@/lib/contexts/UserContext");
 
@@ -37,7 +37,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

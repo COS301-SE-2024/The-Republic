@@ -85,7 +85,6 @@ describe("UserService", () => {
 
   describe("updateUserProfile", () => {
     const updateData: Partial<User> = { fullname: "Updated User" };
-    
 
     it("should update user profile without file", async () => {
       userRepository.getUserById.mockResolvedValue(mockUser);

@@ -1,6 +1,11 @@
 import { UserAlt as User, RequestBody, Location } from "@/lib/types";
 
-const fetchIssues = async (user: User, sortBy: string, filter: string, location: Location | null) => {
+const fetchIssues = async (
+  user: User,
+  sortBy: string,
+  filter: string,
+  location: Location | null,
+) => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -16,8 +21,8 @@ const fetchIssues = async (user: User, sortBy: string, filter: string, location:
       sortBy === "newest"
         ? "created_at"
         : sortBy === "oldest"
-        ? "created_at"
-        : "comment_count",
+          ? "created_at"
+          : "comment_count",
     ascending: sortBy === "oldest",
   };
 
@@ -41,7 +46,7 @@ const fetchIssues = async (user: User, sortBy: string, filter: string, location:
   if (apiResponse.success && apiResponse.data) {
     return apiResponse.data;
   } else {
-    throw new Error(apiResponse.error || 'Error fetching issues');
+    throw new Error(apiResponse.error || "Error fetching issues");
   }
 };
 

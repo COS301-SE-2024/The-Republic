@@ -32,7 +32,7 @@ const EChartsComponent = () => {
     if (isLoading || isError) {
       return;
     }
-    
+
     const chartDom = chartRef.current;
     const myChart = echarts.init(chartDom);
 
@@ -254,9 +254,9 @@ const EChartsComponent = () => {
 
   return (
     <>
-      {(!isError)? (
+      {!isError ? (
         <>
-          {isLoading? (
+          {isLoading ? (
             <div
               className="pt-64 w-full flex flex-row justify-center"
               data-testid="loading-spinner"
@@ -272,8 +272,7 @@ const EChartsComponent = () => {
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

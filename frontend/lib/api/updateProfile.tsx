@@ -1,9 +1,13 @@
 import { checkImageFileAndToast } from "@/lib/utils";
-import { toast } from '@/components/ui/use-toast';
+import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/globals";
 import { User, ProfileUpdate } from "@/lib/types";
 
-const updateUserProfile = async (user: User, updatedUser: ProfileUpdate, file: File | null) => {
+const updateUserProfile = async (
+  user: User,
+  updatedUser: ProfileUpdate,
+  file: File | null,
+) => {
   const { data: sessionData } = await supabase.auth.getSession();
   const session = sessionData?.session;
 

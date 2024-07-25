@@ -29,13 +29,12 @@ describe("RightSidebar", () => {
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
-  
+
   const setSortBy = jest.fn();
   const setFilter = jest.fn();
   const setLocation = jest.fn();
 
   it("renders without crashing", () => {
-
     render(
       <RightSidebar
         sortBy="newest"

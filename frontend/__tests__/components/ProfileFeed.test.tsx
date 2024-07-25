@@ -3,7 +3,7 @@ import { describe } from "@jest/globals";
 import { render } from "@testing-library/react";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
 import { useUser } from "@/lib/contexts/UserContext";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
@@ -45,7 +45,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

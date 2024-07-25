@@ -6,18 +6,18 @@ const checkContentAppropriateness = async (
       .NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
     const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
 
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
+  const headers = {
+    "Ocp-Apim-Subscription-Key": apiKey,
+    "Content-Type": "text/plain",
+  };
 
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
+  const response = await fetch(`${url}`, {
+    method: "POST",
+    headers,
+    body: text,
+  });
 
-    const result = await response.json();
+  const result = await response.json();
 
     if (
       (result.Terms && result.Terms.length > 0) ||

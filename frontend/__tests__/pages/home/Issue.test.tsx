@@ -3,7 +3,7 @@ import { describe, expect } from "@jest/globals";
 import IssuePage from "@/app/(home)/issues/[issueId]/page";
 import { useParams } from "next/navigation";
 import { useUser } from "@/lib/contexts/UserContext";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("next/navigation", () => ({
   useParams: jest.fn(),
@@ -39,7 +39,7 @@ const renderWithClient = (ui: React.ReactNode) => {
     },
   });
   return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
   );
 };
 

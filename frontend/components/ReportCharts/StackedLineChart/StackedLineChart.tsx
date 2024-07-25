@@ -9,21 +9,34 @@ import { reportCharts } from "@/lib/api/reportCharts";
 function StackedLineChart() {
   const chartRef = useRef(null);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCategoryAndCreatedAt`;
-  const { data, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
+  const {
+    data,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
     queryKey: [`stacked_chart`],
     queryFn: () => reportCharts(url),
     enabled: true,
   });
 
   useEffect(() => {
-    if (data && Object.keys(data).length !== 0 && (!isLoadingCharts &&!isErrorCharts)) {
+    if (
+      data &&
+      Object.keys(data).length !== 0 &&
+      !isLoadingCharts &&
+      !isErrorCharts
+    ) {
       if (chartRef.current) {
         const chart = echarts.init(chartRef.current);
 
         const dates = Array.from(
-          new Set(Object.values(data as {
-            [key: string]: { [key: string]: number };
-          }).flatMap(Object.keys)),
+          new Set(
+            Object.values(
+              data as {
+                [key: string]: { [key: string]: number };
+              },
+            ).flatMap(Object.keys),
+          ),
         ).sort();
         const seriesData = Object.keys(data).map((category) => ({
           name: category,
@@ -108,25 +121,30 @@ function StackedLineChart() {
 
   return (
     <>
-      {(!isErrorCharts)? (
+      {!isErrorCharts ? (
         <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
+          {isLoadingCharts ? (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "200px" }}
+            >
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
             <div className="col-12 pb-5">
               <div className="card">
                 <div className="card-body">
-                  <div ref={chartRef} style={{ width: "100%", height: "600px" }}></div>{" "}
+                  <div
+                    ref={chartRef}
+                    style={{ width: "100%", height: "600px" }}
+                  ></div>{" "}
                 </div>
               </div>
             </div>
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

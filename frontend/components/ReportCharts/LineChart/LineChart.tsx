@@ -13,7 +13,11 @@ function LineChart() {
   const [data, setData] = useState<number[]>([]);
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCreatedAt`;
-  const { data: returndedData, isLoading: isLoadingCharts, isError: isErrorCharts } = useQuery({
+  const {
+    data: returndedData,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
     queryKey: [`line_chart`],
     queryFn: () => reportCharts(url),
     enabled: true,
@@ -41,7 +45,12 @@ function LineChart() {
   }, [returndedData]);
 
   useEffect(() => {
-    if ((dates.length > 0 && data.length > 0) && (!isLoadingCharts &&!isErrorCharts)) {
+    if (
+      dates.length > 0 &&
+      data.length > 0 &&
+      !isLoadingCharts &&
+      !isErrorCharts
+    ) {
       const lineChart = echarts.init(
         document.querySelector("#lineChart") as HTMLElement,
       );
@@ -85,10 +94,13 @@ function LineChart() {
 
   return (
     <>
-      {(!isErrorCharts)? (
+      {!isErrorCharts ? (
         <>
-          {isLoadingCharts? (
-            <div className="flex justify-center items-center" style={{ height: '200px' }}>
+          {isLoadingCharts ? (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "200px" }}
+            >
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
@@ -106,8 +118,7 @@ function LineChart() {
           )}
         </>
       ) : (
-        <div>
-        </div>
+        <div></div>
       )}
     </>
   );

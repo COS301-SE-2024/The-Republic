@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import LoadingIndicator from "@/components/ui/loader";
@@ -19,10 +19,14 @@ const ProfilePage: React.FC = () => {
     "issues",
   );
 
-  const { data: user, isLoading, isError } = useQuery({
-    queryKey: ['user_profile', userId],
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["user_profile", userId],
     queryFn: () => fetchUserData(),
-    enabled: (userId !== undefined && userId !== null),
+    enabled: userId !== undefined && userId !== null,
   });
 
   useEffect(() => {
@@ -68,9 +72,7 @@ const ProfilePage: React.FC = () => {
               <ProfileFeed userId={user.user_id} selectedTab={selectedTab} />
             </div>
           ) : (
-            <div>
-              User Details Not Found
-            </div>
+            <div>User Details Not Found</div>
           )}
         </>
       )}
