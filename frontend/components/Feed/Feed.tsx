@@ -49,6 +49,10 @@ const Feed: React.FC = () => {
       requestBody.category = filter;
     }
 
+    if (location) {
+      requestBody.location = location;
+    }
+
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
     const response = await fetch(url, {
       method: "POST",
@@ -127,7 +131,10 @@ const Feed: React.FC = () => {
           setFilter(_filter);
         }}
         location={location}
-        setLocation={setLocation}
+        setLocation={(newLocation) => {
+          setLocation(newLocation);
+          lazyRef.current?.reload();
+        }}
       />
     </div>
   );

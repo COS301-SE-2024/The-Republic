@@ -5,6 +5,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { Comment as CommentType, User } from "@/lib/types";
 import mockClsx, { ClassValue } from "clsx";
 import { twMerge as mockTwMerge } from "tailwind-merge";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: jest.fn(),
@@ -72,6 +73,19 @@ const fetchMock = jest
 
 global.fetch = fetchMock;
 
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe("Comment component", () => {
   beforeEach(() => {
     (useUser as jest.Mock).mockReturnValue({
@@ -84,19 +98,19 @@ describe("Comment component", () => {
   });
 
   it("renders the comment with user details", () => {
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={() => {}}
       />,
     );
 
-    expect(screen.getByText(/Fullname/i)).toBeInTheDocument();
+    expect(screen.getByText(/fullname/i)).toBeInTheDocument();
     expect(screen.getByText(/reply/i)).toBeInTheDocument();
   });
 
   it("shows reply button and toggles reply form", () => {
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={() => {}}
@@ -114,7 +128,7 @@ describe("Comment component", () => {
   });
 
   it("shows delete button for owner", async () => {
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={() => {}}
@@ -129,7 +143,7 @@ describe("Comment component", () => {
 
   it("hides reply and delete buttons if user is not logged in", () => {
     (useUser as jest.Mock).mockReturnValue({ user: null });
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={() => {}}
@@ -141,7 +155,7 @@ describe("Comment component", () => {
   });
 
   it("shows and hides replies", async () => {
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={() => {}}
@@ -167,7 +181,7 @@ describe("Comment component", () => {
   // This need debugging
   /* it("calls onDelete when delete button is clicked", async () => {
     const mockOnDelete = jest.fn();
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onCommentDeleted={mockOnDelete}
@@ -194,7 +208,7 @@ describe("Comment component", () => {
   // This should be moved to OnAddComment now
   /* it("calls onReply when a reply is submitted", () => {
     const mockOnReply = jest.fn();
-    render(
+    renderWithClient(
       <Comment
         comment={mockComment}
         onDelete={jest.fn()}
