@@ -69,7 +69,7 @@ describe("IssueInputBox Component", () => {
 
   test("renders IssueInputBox component", () => {
     renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
-        
+
     expect(
       screen.getByPlaceholderText("What's going on!?"),
     ).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe("IssueInputBox Component", () => {
 
   test("handles input change", () => {
     renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
-        
+
     const textarea = screen.getByPlaceholderText("What's going on!?");
     fireEvent.change(textarea, { target: { value: "New Issue Content" } });
     expect(textarea).toHaveValue("New Issue Content");
@@ -85,25 +85,27 @@ describe("IssueInputBox Component", () => {
 
   test("handles category and mood selection", () => {
     renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
-        
-    fireEvent.change(screen.getByText("Select category..."), {
+
+    fireEvent.change(screen.getByText("Select category...").closest("button")!, {
       target: { value: "1" },
     });
-    fireEvent.change(screen.getByText("Mood"), { target: { value: "Happy" } });
-    expect(screen.getByText("Select category...")).toHaveValue("1");
-    expect(screen.getByText("Mood")).toHaveValue("Happy");
+    fireEvent.change(screen.getByText("Mood").closest("button")!, {
+      target: { value: "Happy" }
+    });
+    expect(screen.getByText("Select category...").closest("button")!).toHaveValue("1");
+    expect(screen.getByText("Mood").closest("button")!).toHaveValue("Happy");
   });
 
   test("handles issue submission", async () => {
     renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
-        
+
     fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
       target: { value: "New Issue Content" },
     });
-    fireEvent.change(screen.getByText("Select category..."), {
+    fireEvent.change(screen.getByText("Select category...").closest("button")!, {
       target: { value: "1" },
     });
-    fireEvent.change(screen.getByText("Mood"), { target: { value: "Happy" } });
+    fireEvent.change(screen.getByText("Mood").closest("button")!, { target: { value: "Happy" } });
 
     fireEvent.click(screen.getByText("Post"));
     await new Promise((r) => setTimeout(r, 1000));
