@@ -60,7 +60,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               {options.items.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={option.value}
+                  value={option.label}
                   onSelect={() => {
                     onChange(option.value);
                     setOpen(false);
