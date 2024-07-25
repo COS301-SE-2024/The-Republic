@@ -73,7 +73,7 @@ const EChartsComponent = () => {
         }
         maxDepth = Math.max(depth, maxDepth);
         
-        let count = source.$count || 0;
+        const count = source.$count || 0;
         let population = 0;
         let issueRate = 0;
         
