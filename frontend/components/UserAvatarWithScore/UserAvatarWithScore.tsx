@@ -7,13 +7,15 @@ interface UserAvatarWithScoreProps {
   username: string;
   score: number;
   className?: string;
+  isAnonymous?: boolean;
 }
 
 const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({ 
   imageUrl, 
   username, 
   score,
-  className
+  className,
+  isAnonymous = false
 }) => {
   
   const getBackgroundColor = (score: number) => {
@@ -31,19 +33,30 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   };
 
   const backgroundColor = getBackgroundColor(score);
+  const scoreLength = Math.abs(score).toString().length;
+  const bubbleSize = Math.max(40, 30 + scoreLength * 5); // Increase size based on digit count
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative inline-block", className)}>
       <Avatar className="w-full h-full">
         <AvatarImage src={imageUrl} alt={username} />
         <AvatarFallback>{username[0]}</AvatarFallback>
       </Avatar>
-      <div 
-        className="absolute -top-1 -right-1 text-black rounded-full w-8 h-7 flex items-center justify-center text-s font-bold border border-gray-300"
-        style={{ backgroundColor }}
-      >
-        {score}
-      </div>
+      {!isAnonymous && (
+        <div 
+          className="absolute -top-1 -right-1 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm"
+          style={{
+            backgroundColor,
+            width: `${bubbleSize}%`,
+            height: `${bubbleSize}%`,
+            minWidth: '20px',
+            minHeight: '20px',
+            fontSize: `calc(${8 + scoreLength}px + 0.1vw)`
+          }}
+        >
+          {score}
+        </div>
+      )}
     </div>
   );
 };

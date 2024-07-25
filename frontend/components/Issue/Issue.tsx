@@ -5,7 +5,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2 } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
@@ -122,10 +123,13 @@ const Issue: React.FC<IssueProps> = ({
               onClick={handleAvatarClick}
               style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
             >
-              <Avatar>
-                <AvatarImage src={issue.user.image_url} />
-                <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
-              </Avatar>
+              <UserAvatarWithScore
+  imageUrl={issue.user.image_url}
+  username={issue.user.fullname}
+  score={issue.user.user_score}
+  className="w-12 h-12"
+  isAnonymous={issue.is_anonymous}
+/>
             </div>
             <div>
               <div className="flex items-center">
