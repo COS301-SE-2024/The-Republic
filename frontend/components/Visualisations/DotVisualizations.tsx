@@ -28,6 +28,18 @@ const EChartsComponent = () => {
     enabled: true,
   });
 
+  const provincesPopulation: { [key: string]: number } = {
+    "Eastern Cape": 6676590,
+    "Free State": 2745590,
+    "Gauteng": 15810388,
+    "KwaZulu-Natal": 11513575,
+    "Limpopo": 5926724,
+    "Mpumalanga": 4743584,
+    "North West": 4108816,
+    "Northern Cape": 1303047,
+    "Western Cape": 7113776
+  };
+
   useEffect(() => {
     if (isLoading || isError) {
       return;
@@ -38,62 +50,105 @@ const EChartsComponent = () => {
 
     function run() {
       const dataWrap = prepareData(data);
-      initChart(dataWrap.seriesData, dataWrap.maxDepth);
+      initChart(dataWrap.seriesData, dataWrap.maxDepth, dataWrap.maxIssueRate);
     }
 
     function prepareData(rawData: SubData) {
       const seriesData: SeriesDataItem[] = [];
       let maxDepth = 0;
+      let maxIssueRate = 0;
 
+      seriesData.push({
+        id: "South Africa",
+        value: rawData.$count || 0,
+        population: 0,
+        issueRate: 0,
+        depth: 0,
+        index: 0,
+      });
+    
       function convert(source: SubData, basePath: string, depth: number) {
-        if (source == null) {
-          return;
-        }
-        if (maxDepth > 5) {
+        if (source == null || maxDepth > 5) {
           return;
         }
         maxDepth = Math.max(depth, maxDepth);
-        seriesData.push({
-          id: basePath,
-          value: source.$count!,
-          depth: depth,
-          index: seriesData.length,
-        });
-
+        
+        const count = source.$count || 0;
+        let population = 0;
+        let issueRate = 0;
+        
+        if (depth === 1) {
+          const provinceName = basePath.split(", ")[1];
+          if (provincesPopulation[provinceName]) {
+            population = provincesPopulation[provinceName];
+            issueRate = Math.log(count + 1) / Math.log(population) * 10000;
+            
+            maxIssueRate = Math.max(maxIssueRate, issueRate);
+            seriesData.push({
+              id: basePath,
+              value: count,
+              population: population,
+              issueRate: issueRate,
+              depth: depth,
+              index: seriesData.length,
+            });
+          }
+        } else if (depth > 1) {
+          seriesData.push({
+            id: basePath,
+            value: count,
+            population: population,
+            issueRate: issueRate,
+            depth: depth,
+            index: seriesData.length,
+          });
+        }
+      
         for (const key in source) {
-          if (
-            Object.prototype.hasOwnProperty.call(source, key) &&
-            !key.match(/^\$/)
-          ) {
+          if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
             const path = basePath + ", " + key;
             convert(source[key] as SubData<unknown>, path, depth + 1);
           }
         }
       }
+      
       convert(rawData, "South Africa", 0);
+      
       return {
         seriesData: seriesData,
         maxDepth: maxDepth,
+        maxIssueRate: maxIssueRate
       };
     }
 
-    function initChart(seriesData: SeriesDataItem[], maxDepth: number) {
+    function initChart(seriesData: SeriesDataItem[], maxDepth: number, maxIssueRate: number) {
       let displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
 
       function stratify() {
         return d3
           .stratify<SeriesDataItem>()
           .parentId((d: SeriesDataItem): string => {
+            if (d.id === "South Africa") return "";
             return d.id.substring(0, d.id.lastIndexOf(", "));
           })(seriesData)
           .sum((d: SeriesDataItem): number => {
-            return d.value || 0;
+            if (d.depth === 0) return 0;
+            if (d.depth === 1) {
+              const minSize = 1000;
+              const maxSize = 100000;
+              const size = Math.sqrt(minSize + (d.issueRate / maxIssueRate) * (maxSize - minSize)) * 50;
+              // console.log(`Province: ${d.id}, Count: ${d.value}, Population: ${d.population}, Issue Rate: ${d.issueRate.toFixed(8)}, Calculated Size: ${size.toFixed(2)}`);
+              return size;
+            }
+            return 1;
           })
           .sort(
             (
               a: d3.HierarchyNode<SeriesDataItem>,
               b: d3.HierarchyNode<SeriesDataItem>,
             ): number => {
+              if (a.depth === 0) return -1;
+              if (b.depth === 0) return 1;
               return (b.value || 0) - (a.value || 0);
             },
           );
