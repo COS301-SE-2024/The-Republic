@@ -1,5 +1,5 @@
-import ReportsService from "../../services/reportsService";
-import ReportsRepository from "../../db/reportsRepository";
+import ReportsService from "@/modules/reports/services/reportsService";
+import ReportsRepository from "@/modules/reports/repositories/reportsRepository";
 import {
   CatCounts,
   GroupedIssuesResponse,
@@ -7,10 +7,10 @@ import {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
-} from "../../models/reports";
-import { GetIssuesParams } from "../../types/issue";
+} from "@/modules/shared/models/reports";
+import { GetIssuesParams } from "@/types/issue";
 
-jest.mock("../../db/reportsRepository");
+jest.mock("@/modules/reports/repositories/reportsRepository");
 
 describe("ReportsService", () => {
   let reportsService: ReportsService;

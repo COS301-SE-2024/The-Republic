@@ -1,11 +1,11 @@
 import request from "supertest";
 import express from "express";
-import reactionRouter from "../../routes/reactionRoutes";
-import reactionController from "../../controllers/reactionController";
-import { verifyAndGetUser } from "../../middleware/middleware";
+import reactionRouter from "@/modules/reactions/routes/reactionRoutes";
+import reactionController from "@/modules/reactions/controllers/reactionController";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
-jest.mock("../../middleware/middleware");
-jest.mock("../../controllers/reactionController");
+jest.mock("@/middleware/middleware");
+jest.mock("@/modules/reactions/controllers/reactionController");
 
 const app = express();
 app.use(express.json());
