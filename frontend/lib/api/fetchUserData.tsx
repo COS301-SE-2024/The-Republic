@@ -1,7 +1,7 @@
 import { UserAlt } from "@/lib/types";
 import { supabase } from "@/lib/globals";
 
-const fetchUserData = async (): Promise<UserAlt | null> => {
+const fetchUserData = async (userId?: string): Promise<UserAlt | null> => {
   const {
     data: { session },
     error: sessionError,
@@ -26,7 +26,7 @@ const fetchUserData = async (): Promise<UserAlt | null> => {
     if (authUser) {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId ?? authUser.id}`,
           {
             method: "POST",
             headers: {
