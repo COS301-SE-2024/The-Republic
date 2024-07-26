@@ -1,4 +1,4 @@
-import { User } from "@/modules/issues/models/issue";
+import { User } from "@/modules/shared/models/issue";
 
 export interface Comment {
   comment_id: number;

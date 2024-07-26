@@ -1,5 +1,5 @@
-import { Comment } from "@/modules/comments/models/comment";
-import supabase from "@/utils/supabaseClient";
+import { Comment } from "@/modules/shared/models/comment";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
 

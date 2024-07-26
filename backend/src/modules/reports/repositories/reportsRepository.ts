@@ -1,8 +1,8 @@
-import { Issue } from "@/modules/issues/models/issue";
-import supabase from "@/utils/supabaseClient";
+import { Issue } from "@/modules/shared/models/issue";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { GetIssuesParams } from "@/types/issue";
 import { APIError } from "@/types/response";
-import { Counts, CategoryCounts } from "@/modules/reports/models/reports";
+import { Counts, CategoryCounts } from "@/modules/shared/models/reports";
 
 export default class ReportsRepository {
   async getAllIssuesGroupedByResolutionStatus({

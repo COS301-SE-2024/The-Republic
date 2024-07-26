@@ -1,5 +1,5 @@
 import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
-import { Reaction } from "@/modules/reactions/models/reaction";
+import { Reaction } from "@/modules/shared/models/reaction";
 import { APIData, APIError } from "@/types/response";
 
 export default class ReactionService {

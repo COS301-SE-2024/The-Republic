@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import supabase from "@/utils/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { sendResponse } from "@/utils/response";
 import { APIError } from "@/types/response";
 

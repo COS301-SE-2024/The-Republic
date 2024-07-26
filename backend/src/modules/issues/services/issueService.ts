@@ -1,9 +1,9 @@
 import IssueRepository from "@/modules/issues/repositories/issueRepository";
-import { Issue } from "@/modules/issues/models/issue";
+import { Issue } from "@/modules/shared/models/issue";
 import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
-import supabase from "@/utils/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 
 interface MulterFile {
   fieldname: string;

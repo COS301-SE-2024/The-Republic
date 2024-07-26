@@ -1,5 +1,5 @@
 import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
-import { Comment } from "@/modules/comments/models/comment";
+import { Comment } from "@/modules/shared/models/comment";
 import { GetCommentsParams } from "@/types/comment";
 import { APIData, APIError } from "@/types/response";
 

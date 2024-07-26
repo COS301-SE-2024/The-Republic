@@ -1,7 +1,7 @@
 import UserRepository from "../repositories/userRepository";
-import { User } from "@/modules/issues/models/issue";
+import { User } from "@/modules/shared/models/issue";
 import { APIResponse, APIError } from "@/types/response";
-import supabase from "@/utils/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { MulterFile } from "@/types/users";
 
 export class UserService {

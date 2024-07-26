@@ -7,7 +7,7 @@ import {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
-} from "../models/reports";
+} from "../../shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
 
 export default class ReportsService {

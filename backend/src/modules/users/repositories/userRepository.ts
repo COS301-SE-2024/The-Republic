@@ -1,5 +1,5 @@
-import supabase from "@/utils/supabaseClient";
-import { User } from "@/modules/issues/models/issue";
+import supabase from "@/modules/shared/services/supabaseClient";
+import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
 
 export default class UserRepository {

@@ -1,5 +1,5 @@
-import { Issue } from "../models/issue";
-import supabase from "@/utils/supabaseClient";
+import { Issue } from "../../shared/models/issue";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { DateTime } from "luxon";
 import { APIError } from "@/types/response";
 import { GetIssuesParams } from "@/types/issue";

@@ -1,5 +1,5 @@
-import { Reaction } from "@/modules/reactions/models/reaction";
-import supabase from "@/utils/supabaseClient";
+import { Reaction } from "@/modules/shared/models/reaction";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
 export default class ReactionRepository {

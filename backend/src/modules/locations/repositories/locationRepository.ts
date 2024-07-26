@@ -1,4 +1,4 @@
-import supabase from "@/utils/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
 export interface Location {
