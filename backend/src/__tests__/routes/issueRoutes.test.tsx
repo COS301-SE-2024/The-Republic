@@ -2,9 +2,9 @@ import request from "supertest";
 import express from "express";
 import issuesRouter from "@/modules/issues/routes/issueRoutes";
 import * as issueController from "@/modules/issues/controllers/issueController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
-jest.mock("@/middleware/middleware");
+jest.mock("@/infrastructure/middleware/middleware");
 jest.mock("@/modules/issues/controllers/issueController");
 
 const app = express();

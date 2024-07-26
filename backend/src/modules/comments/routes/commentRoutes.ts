@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as commentController from "@/modules/comments/controllers/commentController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
 const router = Router();
 

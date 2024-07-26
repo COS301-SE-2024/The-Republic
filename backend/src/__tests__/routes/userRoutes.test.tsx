@@ -5,9 +5,9 @@ import {
   getUserById,
   updateUserProfile,
 } from "@/modules/users/controllers/userController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
-jest.mock("@/middleware/middleware");
+jest.mock("@/infrastructure/middleware/middleware");
 jest.mock("@/modules/users/controllers/userController");
 
 const app = express();

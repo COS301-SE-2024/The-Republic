@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { CommentService } from "@/modules/comments/services/commentService";
-import { sendResponse } from "@/modules/infrastructure/utilities/response";
+import { sendResponse } from "@/infrastructure/utilities/response";
 import * as commentController from "@/modules/comments/controllers/commentController";
 
 jest.mock("@/modules/comments/services/commentService");
-jest.mock("@/modules/infrastructure/utilities/response");
+jest.mock("@/infrastructure/utilities/response");
 
 describe("Comment Controller", () => {
   let mockRequest: Partial<Request>;

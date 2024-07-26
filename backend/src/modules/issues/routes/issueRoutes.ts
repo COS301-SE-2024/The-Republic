@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as issueController from "@/modules/issues/controllers/issueController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
 const router = Router();
 

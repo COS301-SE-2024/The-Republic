@@ -2,9 +2,9 @@ import request from "supertest";
 import express from "express";
 import commentsRouter from "@/modules/comments/routes/commentRoutes";
 import * as commentController from "@/modules/comments/controllers/commentController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
-jest.mock("@/middleware/middleware");
+jest.mock("@/infrastructure/middleware/middleware");
 jest.mock("@/modules/comments/controllers/commentController");
 
 const app = express();

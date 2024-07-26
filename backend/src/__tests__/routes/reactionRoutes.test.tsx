@@ -2,9 +2,9 @@ import request from "supertest";
 import express from "express";
 import reactionRouter from "@/modules/reactions/routes/reactionRoutes";
 import reactionController from "@/modules/reactions/controllers/reactionController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
-jest.mock("@/middleware/middleware");
+jest.mock("@/infrastructure/middleware/middleware");
 jest.mock("@/modules/reactions/controllers/reactionController");
 
 const app = express();

@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { getUserById, updateUserProfile } from "@/modules/users/controllers/userController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
 const router = express.Router();
 const upload = multer();

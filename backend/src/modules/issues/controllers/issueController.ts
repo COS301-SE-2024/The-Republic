@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import IssueService from "@/modules/issues/services/issueService";
 import { APIResponse, APIError } from "@/types/response";
-import { sendResponse } from "@/modules/infrastructure/utilities/response";
+import { sendResponse } from "@/infrastructure/utilities/response";
 import multer from "multer";
 
 const issueService = new IssueService();

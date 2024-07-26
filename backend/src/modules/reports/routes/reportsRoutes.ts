@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as reportsController from "@/modules/reports/controllers/reportsController";
-import { verifyAndGetUser } from "@/middleware/middleware";
+import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
 
 const router = Router();
 
