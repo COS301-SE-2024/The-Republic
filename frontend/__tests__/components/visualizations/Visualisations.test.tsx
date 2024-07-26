@@ -10,6 +10,12 @@ jest.mock("echarts", () => ({
   init: jest.fn(),
 }));
 
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn().mockReturnValue({
+    push: jest.fn(),
+  }),
+}));
+
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
     auth: {

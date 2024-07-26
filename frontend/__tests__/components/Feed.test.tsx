@@ -4,6 +4,12 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
 import { IssueProps } from "@/lib/types";
 
+jest.mock("next/navigation", () => ({
+  useSearchParams: jest.fn().mockReturnValue({
+    get: jest.fn().mockReturnValue(null),
+  }),
+}));
+
 jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: () => ({ user: null }),
 }));
