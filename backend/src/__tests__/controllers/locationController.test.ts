@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { LocationService } from "../../services/locationService";
-import { sendResponse } from "../../utils/response";
-import { APIResponse } from "../../types/response";
-import { getAllLocations } from "../../controllers/locationController";
+import { LocationService } from "@/modules/locations/services/locationService";
+import { sendResponse } from "@/utils/response";
+import { APIResponse } from "@/types/response";
+import { getAllLocations } from "@/modules/locations/controllers/locationController";
 
-jest.mock("../../services/locationService");
-jest.mock("../../utils/response");
+jest.mock("@/modules/locations/services/locationService");
+jest.mock("@/utils/response");
 
 describe("Location Controller", () => {
   let mockRequest: Partial<Request>;

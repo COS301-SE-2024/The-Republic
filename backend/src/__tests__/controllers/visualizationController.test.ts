@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { VisualizationService } from "../../services/visualizationService";
-import { sendResponse } from "../../utils/response";
-import * as visualizationController from "../../controllers/visualizationController";
+import { VisualizationService } from "@/modules/visualizations/services/visualizationService";
+import { sendResponse } from "@/utils/response";
+import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
 
-jest.mock("../../services/visualizationService");
-jest.mock("../../utils/response");
+jest.mock("@/modules/visualizations/services/visualizationService");
+jest.mock("@/utils/response");
 
 describe("Visualization Controller", () => {
   let mockRequest: Partial<Request>;
@@ -21,7 +21,6 @@ describe("Visualization Controller", () => {
       VisualizationService as jest.MockedClass<typeof VisualizationService>
     ).mockImplementation(() => mockVisualizationService);
 
-    // Mock the VisualizationService constructor to return our mock instance
     jest
       .spyOn(VisualizationService.prototype, "getVizData")
       .mockImplementation(mockVisualizationService.getVizData);

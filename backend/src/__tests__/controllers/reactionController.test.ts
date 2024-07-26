@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import reactionController from "../../controllers/reactionController";
-import ReactionService from "../../services/reactionService";
-import { sendResponse } from "../../utils/response";
+import reactionController from "@/modules/reactions/controllers/reactionController";
+import ReactionService from "@/modules/reactions/services/reactionService";
+import { sendResponse } from "@/utils/response";
 
-jest.mock("../../services/reactionService");
-jest.mock("../../utils/response");
+jest.mock("@/modules/reactions/services/reactionService");
+jest.mock("@/utils/response");
 
 describe("Reaction Controller", () => {
   let mockRequest: Partial<Request>;
