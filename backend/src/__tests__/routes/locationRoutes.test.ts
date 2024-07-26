@@ -1,9 +1,9 @@
 import request from "supertest";
 import express from "express";
-import locationRouter from "../../routes/locationRoutes";
-import * as locationController from "../../controllers/locationController";
+import locationRouter from "@/modules/locations/routes/locationRoutes";
+import * as locationController from "@/modules/locations/controllers/locationController";
 
-jest.mock("../../controllers/locationController");
+jest.mock("@/modules/locations/controllers/locationController");
 
 const app = express();
 app.use(express.json());
@@ -14,7 +14,7 @@ describe("Location Routes", () => {
     jest.clearAllMocks();
   });
 
-  describe("GET /locations/", () => {
+  describe("POST /locations/", () => {
     it("should call getAllLocations controller", async () => {
       (locationController.getAllLocations as jest.Mock).mockImplementation((req, res) =>
         res.status(200).json({}),

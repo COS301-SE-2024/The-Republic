@@ -1,9 +1,9 @@
 import request from "supertest";
 import express from "express";
-import visualizationRouter from "../../routes/visualizationRoutes";
-import * as visualizationController from "../../controllers/visualizationController";
+import visualizationRouter from "@/modules/visualizations/routes/visualizationRoutes";
+import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
 
-jest.mock("../../controllers/visualizationController");
+jest.mock("@/modules/visualizations/controllers/visualizationController");
 
 const app = express();
 app.use(express.json());
