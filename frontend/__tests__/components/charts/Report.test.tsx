@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect } from "@jest/globals";
-import Page from "@/app/(home)/reports/page";
+import Page from "@/components/ReportCharts/Reports";
 
 jest.mock("@/components/ReportCharts", () => ({
   BarChart: jest.fn(() => <div>Mocked BarChart</div>),
