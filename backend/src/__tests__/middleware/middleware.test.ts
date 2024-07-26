@@ -1,11 +1,11 @@
 import request from "supertest";
 import express from "express";
-import supabase from "../../services/supabaseClient";
-import { serverMiddleare, verifyAndGetUser } from "../../middleware/middleware";
-import { sendResponse } from "../../utils/response";
+import supabase from "@/utils/supabaseClient";
+import { serverMiddleare, verifyAndGetUser } from "@/middleware/middleware";
+import { sendResponse } from "@/utils/response";
 
-jest.mock("../../services/supabaseClient");
-jest.mock("../../utils/response");
+jest.mock("@/utils/supabaseClient");
+jest.mock("@/utils/response");
 
 const app = express();
 app.use(express.json());
