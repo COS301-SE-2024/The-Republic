@@ -5,7 +5,7 @@ import supabase from "../../services/supabaseClient";
 import mockUser from "../../data/mockUser";
 import mockFile from "../../data/mockFile";
 
-jest.mock("../../db/userRepository");
+jest.mock("../../repositories/userRepository");
 
 jest.mock("../../services/supabaseClient", () => ({
   storage: {

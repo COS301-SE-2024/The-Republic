@@ -11,7 +11,7 @@ module.exports = {
     "!src/**/index.ts",
     "!src/app.ts",
     "!src/server.ts",
-    "!src/db/*.{ts,tsx}"
+    "!src/repositories/*.{ts,tsx}"
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov"],

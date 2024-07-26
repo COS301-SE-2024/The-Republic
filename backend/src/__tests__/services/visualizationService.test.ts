@@ -2,7 +2,7 @@ import { VisualizationService } from "../../services/visualizationService";
 import { VisualizationRepository } from "../../repositories/visualizationRepository";
 import { APIData } from "../../types/response";
 import { VizData } from "../../types/visualization";
-jest.mock("../../db/visualizationRepository");
+jest.mock("../../repositories/visualizationRepository");
 
 describe("VisualizationService", () => {
   let visualizationService: VisualizationService;

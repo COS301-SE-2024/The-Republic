@@ -4,7 +4,7 @@ import { Comment } from "../../models/comment";
 import { GetCommentsParams } from "../../types/comment";
 import { APIError } from "../../types/response";
 
-jest.mock("../../db/commentRepository");
+jest.mock("../../repositories/commentRepository");
 
 describe("CommentService", () => {
   let commentService: CommentService;

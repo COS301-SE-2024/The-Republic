@@ -3,7 +3,7 @@ import ReactionRepository from "../../repositories/reactionRepository";
 import { Reaction } from "../../models/reaction";
 import { APIResponse } from "../../types/response";
 
-jest.mock("../../db/reactionRepository");
+jest.mock("../../repositories/reactionRepository");
 
 describe("ReactionService", () => {
   let reactionService: ReactionService;

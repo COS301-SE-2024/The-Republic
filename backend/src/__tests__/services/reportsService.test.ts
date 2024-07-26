@@ -10,7 +10,7 @@ import {
 } from "../../models/reports";
 import { GetIssuesParams } from "../../types/issue";
 
-jest.mock("../../db/reportsRepository");
+jest.mock("../../repositories/reportsRepository");
 
 describe("ReportsService", () => {
   let reportsService: ReportsService;

@@ -4,8 +4,8 @@ import { LocationRepository } from "../../repositories/locationRepository";
 import { Issue } from "../../models/issue";
 import { APIData, APIResponse } from "../../types/response";
 
-jest.mock("../../db/issueRepository");
-jest.mock("../../db/locationRepository");
+jest.mock("../../repositories/issueRepository");
+jest.mock("../../repositories/locationRepository");
 
 describe("IssueService", () => {
   let issueService: IssueService;
