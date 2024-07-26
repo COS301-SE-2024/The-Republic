@@ -6,7 +6,7 @@ import commentRoutes from "@/modules/comments/routes/commentRoutes";
 import visualizationRoutes from "@/modules/visualizations/routes/visualizationRoutes";
 import reportsRoutes from "@/modules/reports/routes/reportsRoutes";
 import locationRoutes from "@/modules/locations/routes/locationRoutes";
-import { serverMiddleare } from "@/infrastructure/middleware/middleware";
+import { serverMiddleare } from "@/middleware/middleware";
 
 const app = express();
 

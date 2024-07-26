@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { sendResponse } from "@/infrastructure/utilities/response";
+import { sendResponse } from "@/utilities/response";
 import { UserService } from "@/modules/users/services/userService";
 import { APIResponse } from "@/types/response";
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { VisualizationService } from "@/modules/visualizations/services/visualizationService";
 import { APIResponse } from "@/types/response";
-import { sendResponse } from "@/infrastructure/utilities/response";
+import { sendResponse } from "@/utilities/response";
 
 const visualizationService = new VisualizationService();
 

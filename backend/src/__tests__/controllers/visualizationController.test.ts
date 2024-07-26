@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { VisualizationService } from "@/modules/visualizations/services/visualizationService";
-import { sendResponse } from "@/infrastructure/utilities/response";
+import { sendResponse } from "@/utilities/response";
 import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
 
 jest.mock("@/modules/visualizations/services/visualizationService");
-jest.mock("@/infrastructure/utilities/response");
+jest.mock("@/utilities/response");
 
 describe("Visualization Controller", () => {
   let mockRequest: Partial<Request>;

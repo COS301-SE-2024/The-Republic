@@ -1,6 +1,6 @@
 import { Router } from "express";
 import reactionController from "@/modules/reactions/controllers/reactionController";
-import { verifyAndGetUser } from "@/infrastructure/middleware/middleware";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
 const router = Router();
 
