@@ -19,7 +19,7 @@ const sortOptions = {
 const filterOptions = {
   group: "Filter",
   items: [
-    { value: "All", label: "All" },
+    { value: "All", label: "All Categories" },
     { value: "Healthcare Services", label: "Healthcare Services" },
     { value: "Public Safety", label: "Public Safety" },
     { value: "Water", label: "Water" },
@@ -61,13 +61,31 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     enabled: url !== undefined,
   });
 
+  const labelFromLocation = (loc: Location) => (
+    `${loc.suburb ?? loc.suburb + ","} ${loc.city}, ${loc.province}`
+  );
+
+  const locationItems = locations?.map((loc) => ({
+    value: loc.location_id.toString(),
+    label: labelFromLocation(loc),
+  })) || [];
+
   const locationOptions = {
     group: "Location",
-    items: locations?.map((loc) => ({
-      value: loc.location_id.toString(),
-      label: `${loc.suburb && loc.suburb + ','} ${loc.city}, ${loc.province}`
-    })) || [],
+    items: [{
+        value: "All",
+        label: "All Locations"
+      },
+      ...locationItems
+    ]
   };
+
+  if (location) {
+    const locationLabel = labelFromLocation(location);
+
+    const matchingLocation = locationOptions.items.find((loc) => loc.label === locationLabel);
+    location.location_id = matchingLocation?.value ?? '';
+  }
 
   return (
     <div className="w-[300px] border-l h-full overflow-y-auto">
@@ -92,7 +110,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
          {!isError && (
            <Dropdown
              options={locationOptions}
-             value={location ? location.location_id.toString() : ""}
+             value={location ? location.location_id.toString() : "All"}
              onChange={(value) => {
                const selectedLocation = locations?.find(
                  (loc) => loc.location_id.toString() === value
