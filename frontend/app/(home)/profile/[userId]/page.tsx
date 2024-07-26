@@ -13,8 +13,7 @@ import { fetchUserData } from "@/lib/api/fetchUserData";
 const ProfilePage: React.FC = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const params = useParams();
-  const userId = params.userId as string;
+  const { userId } = useParams() satisfies { userId: string };
   const [selectedTab, setSelectedTab] = useState<"issues" | "resolved">(
     "issues",
   );
@@ -25,7 +24,7 @@ const ProfilePage: React.FC = () => {
     isError,
   } = useQuery({
     queryKey: ["user_profile", userId],
-    queryFn: () => fetchUserData(),
+    queryFn: () => fetchUserData(userId),
     enabled: userId !== undefined && userId !== null,
   });
 
