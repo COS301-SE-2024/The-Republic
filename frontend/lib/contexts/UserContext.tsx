@@ -14,7 +14,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { data: userData, isLoading, isError, refetch } = useQuery({
     queryKey: ['user_data'],
-    queryFn: fetchUserData,
+    queryFn: () => fetchUserData(),
   });
 
   useEffect(() => {

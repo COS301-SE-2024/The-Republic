@@ -11,15 +11,43 @@ import styles from '@/styles/Feed.module.css';
 import { Loader2 } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Location } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
 
 const FETCH_SIZE = 2;
 
 const Feed: React.FC = () => {
   const { user } = useUser();
-  const [sortBy, setSortBy] = useState("newest");
-  const [filter, setFilter] = useState("All");
-  const [location, setLocation] = useState<Location | null>(null);
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
+  const searchParams = useSearchParams();
+  const [sortBy, setSortBy] = useState("newest");
+  const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
+  const [location, setLocation] = useState<Location | null>(() => {
+    const locationString = searchParams.get("location");
+
+    if (!locationString) {
+      return null;
+    }
+
+    const locationParts = locationString?.split(", ").slice(1);
+
+    const locationObject: Location = {
+      location_id: "",
+      province: locationParts[0],
+      city: "",
+      suburb: "",
+      district: locationParts.slice(-1)[0],
+    };
+
+    if (locationParts.length >= 3) {
+      locationObject.city = locationParts[1];
+    }
+
+    if (locationParts.length === 4) {
+      locationObject.suburb = locationParts[2];
+    }
+
+    return locationObject;
+  });
 
   const fetchIssues = async (from: number, amount: number) => {
     const headers: HeadersInit = {

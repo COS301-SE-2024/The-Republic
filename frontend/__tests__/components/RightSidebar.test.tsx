@@ -80,7 +80,7 @@ describe("RightSidebar", () => {
         setLocation={setLocation}
       />,
     );
-    expect(screen.getByText("All")).toBeInTheDocument();
+    expect(screen.getByText("All Categories")).toBeInTheDocument();
   });
 
   it("handles sort selection", () => {
@@ -111,6 +111,6 @@ describe("RightSidebar", () => {
         setLocation={setLocation}
       />,
     );
-    expect(screen.getByText("All")).toBeInTheDocument();
+    expect(screen.getByText("All Categories")).toBeInTheDocument();
   });
 });
