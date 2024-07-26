@@ -17,9 +17,11 @@ import { colorFromCategory } from "@/lib/utils";
 import { LoadingSpinner } from "../Spinner/Spinner";
 
 import { dotVisualization } from "@/lib/api/dotVisualization";
+import { useRouter } from "next/navigation";
 
 const EChartsComponent = () => {
   const chartRef = useRef(null);
+  const router = useRouter();
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`;
   const { data, isLoading, isError } = useQuery({
@@ -66,23 +68,23 @@ const EChartsComponent = () => {
         depth: 0,
         index: 0,
       });
-    
+
       function convert(source: SubData, basePath: string, depth: number) {
         if (source == null || maxDepth > 5) {
           return;
         }
         maxDepth = Math.max(depth, maxDepth);
-        
+
         const count = source.$count || 0;
         let population = 0;
         let issueRate = 0;
-        
+
         if (depth === 1) {
           const provinceName = basePath.split(", ")[1];
           if (provincesPopulation[provinceName]) {
             population = provincesPopulation[provinceName];
             issueRate = Math.log(count + 1) / Math.log(population) * 10000;
-            
+
             maxIssueRate = Math.max(maxIssueRate, issueRate);
             seriesData.push({
               id: basePath,
@@ -103,7 +105,7 @@ const EChartsComponent = () => {
             index: seriesData.length,
           });
         }
-      
+
         for (const key in source) {
           if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
             const path = basePath + ", " + key;
@@ -111,9 +113,9 @@ const EChartsComponent = () => {
           }
         }
       }
-      
+
       convert(rawData, "South Africa", 0);
-      
+
       return {
         seriesData: seriesData,
         maxDepth: maxDepth,
@@ -274,7 +276,27 @@ const EChartsComponent = () => {
           typeof params.data === "object" &&
           "id" in params.data
         ) {
-          drillDown((params.data as { id: string }).id);
+          const categories = [
+            "Healthcare Services",
+            "Public Safety",
+            "Water",
+            "Transportation",
+            "Electricity",
+            "Sanitation",
+            "Social Services",
+            "Administrative Services",
+          ];
+
+          const idParts = (params.data.id as string).split(", ");
+          const category = idParts.splice(-1)[0];
+
+          if (categories.includes(category)) {
+            const locationParam = `location=${encodeURIComponent(idParts.join(", "))}`;
+            const categoryParam = `category=${encodeURIComponent(category)}`;
+            router.push(`/?${locationParam}&${categoryParam}`);
+          } else {
+            drillDown((params.data as { id: string }).id);
+          }
         }
       });
 
