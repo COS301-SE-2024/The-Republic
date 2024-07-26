@@ -2,8 +2,8 @@ import { UserService } from "../../services/userService";
 import UserRepository from "../../db/userRepository";
 import { User } from "../../models/issue";
 import supabase from "../../services/supabaseClient";
-import mockUser from "../../types/data/mockUser";
-import mockFile from "../../types/data/mockFile";
+import mockUser from "../../data/mockUser";
+import mockFile from "../../data/mockFile";
 
 jest.mock("../../db/userRepository");
 
