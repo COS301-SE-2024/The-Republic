@@ -19,13 +19,13 @@ const Header = () => {
   useEffect(() => {
     const newLogoSrc =
       theme === "dark"
-        ? "/images/b-logo-full-black.png"
+        ? "/images/b-logo-full.png"
         : "/images/b-logo-full-black.png";
     setLogoSrc(newLogoSrc);
   }, [theme]);
 
   return (
-    <header className="flex items-center justify-between p-5 border-b bg-green-200 dark:bg-green-600">
+    <header className="flex items-center justify-between p-5 border-b ">
       <div className={styles.republicHeader}>
         <Image priority width={500} height={500} src={logoSrc} alt="logo" />
       </div>

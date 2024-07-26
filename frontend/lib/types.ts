@@ -23,6 +23,8 @@ interface UserAlt {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
+  user_score: number;
+  suspended_until?: string | null;
 }
 
 interface MockUser {

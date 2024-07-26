@@ -21,7 +21,7 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   const getBackgroundColor = (score: number) => {
     if (score === 0) return 'rgba(255, 255, 255, 1)'; 
 
-    const baseColor = score > 0 ? [0, 255, 0] : [255, 0, 0]; // Green or Red
+    const baseColor = score > 0 ? [0, 255, 0] : [255, 0, 0];
     const maxIntensity = 0.5; 
     const intensity = Math.min(Math.abs(score) / 100, maxIntensity); 
 
@@ -34,7 +34,12 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
 
   const backgroundColor = getBackgroundColor(score);
   const scoreLength = Math.abs(score).toString().length;
-  const bubbleSize = Math.max(40, 30 + scoreLength * 5); // Increase size based on digit count
+  
+  // Fixed bubble size relative to avatar
+  const bubbleSize = 40; // Percentage of avatar size
+  
+  // Adjust font size based on score length, but with a lower bound
+  const fontSize = Math.max(8, 12 - scoreLength); // In pixels
 
   return (
     <div className={cn("relative inline-block", className)}>
@@ -44,14 +49,14 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
       </Avatar>
       {!isAnonymous && (
         <div 
-          className="absolute -top-1 -right-1 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm"
+          className="absolute top-0 right-0 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm overflow-hidden"
           style={{
             backgroundColor,
             width: `${bubbleSize}%`,
             height: `${bubbleSize}%`,
-            minWidth: '20px',
-            minHeight: '20px',
-            fontSize: `calc(${8 + scoreLength}px + 0.1vw)`
+            fontSize: `${fontSize}px`,
+            lineHeight: '1',
+            transform: 'translate(25%, -25%)'
           }}
         >
           {score}
