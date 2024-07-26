@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import ReactionService from "@/modules/reactions/services/reactionService";
-import { sendResponse } from "@/utils/response";
+import { sendResponse } from "@/modules/infrastructure/utilities/response";
 import { APIResponse } from "@/types/response";
 
 const reactionService = new ReactionService();

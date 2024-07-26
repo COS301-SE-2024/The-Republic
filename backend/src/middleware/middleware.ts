@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import supabase from "@/modules/shared/services/supabaseClient";
-import { sendResponse } from "@/utils/response";
+import { sendResponse } from "@/modules/infrastructure/utilities/response";
 import { APIError } from "@/types/response";
 
 export const serverMiddleare = (

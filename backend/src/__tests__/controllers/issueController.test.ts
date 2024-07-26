@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import * as issueController from "@/modules/issues/controllers/issueController";
 import IssueService from "@/modules/issues/services/issueService";
-import { sendResponse } from "@/utils/response";
+import { sendResponse } from "@/modules/infrastructure/utilities/response";
 
 jest.mock("@/modules/issues/services/issueService");
-jest.mock("@/utils/response");
+jest.mock("@/modules/infrastructure/utilities/response");
 
 describe("Issue Controller", () => {
   let mockRequest: Partial<Request>;

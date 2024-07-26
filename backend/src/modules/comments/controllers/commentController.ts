@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CommentService } from "@/modules/comments/services/commentService";
-import { sendResponse } from "@/utils/response";
+import { sendResponse } from "@/modules/infrastructure/utilities/response";
 import { APIResponse } from "@/types/response";
 
 const commentService = new CommentService();
