@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import {
   HomeIcon,
   ProfileIcon,
-  VisualizationsIcon,
   LogoutIcon,
   ReportsIcon,
   NotificationsIcon,
@@ -102,15 +101,9 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             </Link>
           </li>
           <li>
-            <Link href="/visualizations">
-              <VisualizationsIcon />
-              Visualizations
-            </Link>
-          </li>
-          <li>
-            <Link href="/reports">
+            <Link href="/analytics">
               <ReportsIcon />
-              Reports
+              Analytics
             </Link>
           </li>
           {user && (

@@ -91,6 +91,7 @@ describe("Comment component", () => {
     (useUser as jest.Mock).mockReturnValue({
       user: mockCurrentUser,
     });
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
