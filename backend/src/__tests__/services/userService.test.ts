@@ -1,13 +1,13 @@
-import { UserService } from "../../services/userService";
-import UserRepository from "../../repositories/userRepository";
-import { User } from "../../models/issue";
-import supabase from "../../services/supabaseClient";
-import mockUser from "../../data/mockUser";
-import mockFile from "../../data/mockFile";
+import { UserService } from "@/modules/users/services/userService";
+import UserRepository from "@/modules/users/repositories/userRepository";
+import { User } from "@/modules/issues/models/issue";
+import supabase from "@/utils/supabaseClient";
+import mockUser from "@/data/mockUser";
+import mockFile from "@/data/mockFile";
 
-jest.mock("../../repositories/userRepository");
+jest.mock("@/modules/users/repositories/userRepository");
 
-jest.mock("../../services/supabaseClient", () => ({
+jest.mock("@/utils/supabaseClient", () => ({
   storage: {
     from: jest.fn(() => ({
       upload: jest.fn(),
