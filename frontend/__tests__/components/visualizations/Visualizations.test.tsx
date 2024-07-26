@@ -1,7 +1,12 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect } from "@jest/globals";
-import Visualizations from "@/components/Visualisations/DotVisualizations";
+import { describe, expect, it, beforeEach, afterEach } from "@jest/globals";
+import Visualizations from "@/components/Visualisations/Visualizations"; // Make sure the path is correct
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRouter } from "next/router";
+
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(),
+}));
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -51,7 +56,22 @@ describe("Visualizations Page", () => {
   });
 
   it("renders the EChartsComponent component", () => {
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { issueId: "1" },
+      pathname: "/",
+      route: "/",
+      asPath: "/",
+      push: jest.fn(),
+      replace: jest.fn(),
+      reload: jest.fn(),
+      back: jest.fn(),
+      prefetch: jest.fn(),
+      beforePopState: jest.fn(),
+      isFallback: false,
+    });
+
     const { container } = renderWithClient(<Visualizations />);
     expect(container).toBeInTheDocument();
+    expect(screen.getByText("Mocked EChartsComponent")).toBeInTheDocument();
   });
 });
