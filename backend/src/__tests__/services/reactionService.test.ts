@@ -1,6 +1,6 @@
 import ReactionService from "@/modules/reactions/services/reactionService";
 import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
-import { Reaction } from "@/modules/reactions/models/reaction";
+import { Reaction } from "@/modules/shared/models/reaction";
 import { APIResponse } from "@/types/response";
 
 jest.mock("@/modules/reactions/repositories/reactionRepository");

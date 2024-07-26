@@ -1,6 +1,6 @@
 import { CommentService } from "@/modules/comments/services/commentService";
 import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
-import { Comment } from "@/modules/comments/models/comment";
+import { Comment } from "@/modules/shared/models/comment";
 import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
 

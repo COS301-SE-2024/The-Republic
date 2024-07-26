@@ -7,7 +7,7 @@ import {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
-} from "@/modules/reports/models/reports";
+} from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
 
 jest.mock("@/modules/reports/repositories/reportsRepository");

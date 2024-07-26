@@ -1,10 +1,10 @@
 import request from "supertest";
 import express from "express";
-import supabase from "@/utils/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { serverMiddleare, verifyAndGetUser } from "@/middleware/middleware";
 import { sendResponse } from "@/utils/response";
 
-jest.mock("@/utils/supabaseClient");
+jest.mock("@/modules/shared/services/supabaseClient");
 jest.mock("@/utils/response");
 
 const app = express();

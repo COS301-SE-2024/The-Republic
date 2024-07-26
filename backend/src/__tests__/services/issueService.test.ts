@@ -1,7 +1,7 @@
 import IssueService from "@/modules/issues/services/issueService";
 import IssueRepository from "@/modules/issues/repositories/issueRepository";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
-import { Issue } from "@/modules/issues/models/issue";
+import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 
 jest.mock("@/modules/issues/repositories/issueRepository");
