@@ -1,4 +1,4 @@
-import { LocationRepository } from "../db/locationRepository";
+import { LocationRepository } from "../repositories/locationRepository";
 import { APIData } from "../types/response";
 
 export class LocationService {

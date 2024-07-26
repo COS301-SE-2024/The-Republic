@@ -1,4 +1,4 @@
-import ReactionRepository from "../db/reactionRepository";
+import ReactionRepository from "../repositories/reactionRepository";
 import { Reaction } from "../models/reaction";
 import { APIData, APIError } from "../types/response";
 

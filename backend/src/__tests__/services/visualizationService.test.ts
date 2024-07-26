@@ -1,5 +1,5 @@
 import { VisualizationService } from "../../services/visualizationService";
-import { VisualizationRepository } from "../../db/visualizationRepository";
+import { VisualizationRepository } from "../../repositories/visualizationRepository";
 import { APIData } from "../../types/response";
 import { VizData } from "../../types/visualization";
 jest.mock("../../db/visualizationRepository");

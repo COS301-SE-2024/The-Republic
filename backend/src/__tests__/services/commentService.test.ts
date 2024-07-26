@@ -1,5 +1,5 @@
 import { CommentService } from "../../services/commentService";
-import { CommentRepository } from "../../db/commentRepository";
+import { CommentRepository } from "../../repositories/commentRepository";
 import { Comment } from "../../models/comment";
 import { GetCommentsParams } from "../../types/comment";
 import { APIError } from "../../types/response";

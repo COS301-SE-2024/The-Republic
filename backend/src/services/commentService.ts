@@ -1,4 +1,4 @@
-import { CommentRepository } from "../db/commentRepository";
+import { CommentRepository } from "../repositories/commentRepository";
 import { Comment } from "../models/comment";
 import { GetCommentsParams } from "../types/comment";
 import { APIData, APIError } from "../types/response";

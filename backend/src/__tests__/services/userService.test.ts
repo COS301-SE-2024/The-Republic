@@ -1,5 +1,5 @@
 import { UserService } from "../../services/userService";
-import UserRepository from "../../db/userRepository";
+import UserRepository from "../../repositories/userRepository";
 import { User } from "../../models/issue";
 import supabase from "../../services/supabaseClient";
 import mockUser from "../../data/mockUser";

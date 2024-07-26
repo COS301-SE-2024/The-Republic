@@ -1,4 +1,4 @@
-import ReportsRepository from "../db/reportsRepository";
+import ReportsRepository from "../repositories/reportsRepository";
 import { APIResponse, APIError } from "../types/response";
 import {
   CatCounts,

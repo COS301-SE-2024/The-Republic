@@ -1,5 +1,5 @@
 import ReportsService from "../../services/reportsService";
-import ReportsRepository from "../../db/reportsRepository";
+import ReportsRepository from "../../repositories/reportsRepository";
 import {
   CatCounts,
   GroupedIssuesResponse,

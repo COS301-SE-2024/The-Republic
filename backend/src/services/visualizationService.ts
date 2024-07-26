@@ -1,4 +1,4 @@
-import { VisualizationRepository } from "../db/visualizationRepository";
+import { VisualizationRepository } from "../repositories/visualizationRepository";
 import { APIData } from "../types/response";
 
 export class VisualizationService {

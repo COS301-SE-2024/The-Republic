@@ -1,6 +1,6 @@
 import IssueService from "../../services/issueService";
-import IssueRepository from "../../db/issueRepository";
-import { LocationRepository } from "../../db/locationRepository";
+import IssueRepository from "../../repositories/issueRepository";
+import { LocationRepository } from "../../repositories/locationRepository";
 import { Issue } from "../../models/issue";
 import { APIData, APIResponse } from "../../types/response";
 
