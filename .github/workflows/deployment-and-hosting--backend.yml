@@ -1,4 +1,4 @@
-name: Creating And Deploying Backend and Proxy Docker Images
+name: Backend Deployment and Hosting
 
 on:
   push:

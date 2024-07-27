@@ -1,4 +1,4 @@
-name: Creating And Deploying Frontend Docker Images
+name: Frontend Deployment and Hosting
 
 on:
   push:
