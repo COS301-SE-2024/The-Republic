@@ -4,7 +4,7 @@
   "description": "Here are the steps to create a new Node.js Express backend with TypeScript:",
   "main": "index.js",
   "scripts": {
-    "start": "node public/server.js",
+    "start": "ts-node -r tsconfig-paths/register src/server.ts",
     "dev": "nodemon --watch src --exec ts-node -r tsconfig-paths/register src/server.ts",
     "lint": "eslint src --ext .ts,.tsx",
     "build": "tsc",

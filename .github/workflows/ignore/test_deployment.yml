@@ -1,13 +1,15 @@
-name: Deploy Backend to Heroku
-run-name: "Heroku: Server Deployment And Hosting"
+name: Deploy Frontend to Heroku
 
 on:
-  push:
-    branches:
-      - master
+    push:
+      branches:
+        - feature/fix_hosting
+    pull_request:
+      branches:
+        - feature/fix_hosting
 
 jobs:
-  deploy-backend:
+  deploy-frontend:
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -34,9 +36,9 @@ jobs:
           echo "machine api.heroku.com login ${{ secrets.HEROKU_EMAIL }} password ${{ secrets.HEROKU_API_KEY }}" > ~/.netrc
           echo "machine git.heroku.com login ${{ secrets.HEROKU_EMAIL }} password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
 
-      - name: Pushing Backend Directory to Heroku
+      - name: Pushing Frontend Directory to Heroku
         run: |
           git clone https://github.com/COS301-SE-2024/The-Republic.git
           cd The-Republic
-          heroku git:remote -a "${{ secrets.HEROKU_BACKEND }}"
-          git subtree push --prefix backend heroku master
+          heroku git:remote -a "${{ secrets.HEROKU_FRONTEND }}"
+          git subtree push --prefix frontend heroku master
