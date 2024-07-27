@@ -66,7 +66,6 @@ describe("Sidebar", () => {
     render(<Sidebar />);
     expect(screen.getByText("General")).toBeInTheDocument();
     expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("Visualizations")).toBeInTheDocument();
-    expect(screen.getByText("Reports")).toBeInTheDocument();
+    expect(screen.getByText("Analytics")).toBeInTheDocument();
   });
 });

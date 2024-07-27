@@ -1,14 +1,14 @@
 import request from "supertest";
 import express from "express";
-import userRouter from "../../routes/userRoutes";
+import userRouter from "@/modules/users/routes/userRoutes";
 import {
   getUserById,
   updateUserProfile,
-} from "../../controllers/userController";
-import { verifyAndGetUser } from "../../middleware/middleware";
+} from "@/modules/users/controllers/userController";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
-jest.mock("../../middleware/middleware");
-jest.mock("../../controllers/userController");
+jest.mock("@/middleware/middleware");
+jest.mock("@/modules/users/controllers/userController");
 
 const app = express();
 app.use(express.json());

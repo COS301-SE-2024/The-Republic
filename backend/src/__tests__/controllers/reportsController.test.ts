@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import * as reportsController from "../../controllers/reportsController";
-import ReportsService from "../../services/reportsService";
-import { sendResponse } from "../../utils/response";
+import * as reportsController from "@/modules/reports/controllers/reportsController";
+import ReportsService from "@/modules/reports/services/reportsService";
+import { sendResponse } from "@/utilities/response";
 
-jest.mock("../../services/reportsService");
-jest.mock("../../utils/response");
+jest.mock("@/modules/reports/services/reportsService");
+jest.mock("@/utilities/response");
 
 describe("Reports Controller", () => {
   let mockRequest: Partial<Request>;

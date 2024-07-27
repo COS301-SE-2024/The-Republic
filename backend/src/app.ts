@@ -1,12 +1,12 @@
 import express from "express";
-import issueRoutes from "./routes/issueRoutes";
-import reactionRoutes from "./routes/reactionRoutes";
-import userRoutes from "./routes/userRoutes";
-import commentRoutes from "./routes/commentRoutes";
-import visualizationRoutes from "./routes/visualizationRoutes";
-import reportsRoutes from "./routes/reportsRoutes";
-import locationRoutes from "./routes/locationRoutes";
-import { serverMiddleare } from "./middleware/middleware";
+import issueRoutes from "@/modules/issues/routes/issueRoutes";
+import reactionRoutes from "@/modules/reactions/routes/reactionRoutes";
+import userRoutes from "@/modules/users/routes/userRoutes";
+import commentRoutes from "@/modules/comments/routes/commentRoutes";
+import visualizationRoutes from "@/modules/visualizations/routes/visualizationRoutes";
+import reportsRoutes from "@/modules/reports/routes/reportsRoutes";
+import locationRoutes from "@/modules/locations/routes/locationRoutes";
+import { serverMiddleare } from "@/middleware/middleware";
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
     id: Math.floor(Math.random() * 500) + 1,
-    data: "Welcome to InfiniteLoopers Node-Express App",
+    data: "Welcome to The-Republic Node-Express App",
   });
 });
 

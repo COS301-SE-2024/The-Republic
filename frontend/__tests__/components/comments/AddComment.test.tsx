@@ -59,9 +59,10 @@ describe("AddCommentForm", () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
     (useUser as jest.Mock).mockReturnValue({ user: mockUser });
     (useToast as jest.Mock).mockReturnValue(mockToast);
-    jest.clearAllMocks();
   });
 
   it("renders the component", () => {

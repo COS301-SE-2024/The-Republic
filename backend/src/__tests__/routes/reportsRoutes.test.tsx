@@ -1,11 +1,11 @@
 import request from "supertest";
 import express from "express";
-import reportsRouter from "../../routes/reportsRoutes";
-import * as reportsController from "../../controllers/reportsController";
-import { verifyAndGetUser } from "../../middleware/middleware";
+import reportsRouter from "@/modules/reports/routes/reportsRoutes";
+import * as reportsController from "@/modules/reports/controllers/reportsController";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
-jest.mock("../../middleware/middleware");
-jest.mock("../../controllers/reportsController");
+jest.mock("@/middleware/middleware");
+jest.mock("@/modules/reports/controllers/reportsController");
 
 const app = express();
 app.use(express.json());

@@ -1,11 +1,11 @@
 import request from "supertest";
 import express from "express";
-import commentsRouter from "../../routes/commentRoutes";
-import * as commentController from "../../controllers/commentController";
-import { verifyAndGetUser } from "../../middleware/middleware";
+import commentsRouter from "@/modules/comments/routes/commentRoutes";
+import * as commentController from "@/modules/comments/controllers/commentController";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
-jest.mock("../../middleware/middleware");
-jest.mock("../../controllers/commentController");
+jest.mock("@/middleware/middleware");
+jest.mock("@/modules/comments/controllers/commentController");
 
 const app = express();
 app.use(express.json());
