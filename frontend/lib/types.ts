@@ -9,7 +9,7 @@ interface User {
   resolved_issues: number;
   access_token: string;
   user_score: number;
-  suspended_until: string | null;
+  suspended_until?: string | null;
 }
 
 interface UserAlt {
