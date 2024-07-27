@@ -118,6 +118,12 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
               Reports
             </Link>
           </li>
+          <li>
+            <Link href="/leaderboard">
+              <ReportsIcon />
+              Leaderboard
+            </Link>
+          </li>
           {user && (
             <>
               <li>
