@@ -10,7 +10,7 @@ interface UserData {
   suburbRanking: number;
   city: string;
   suburb: string;
-  points: number; // Add points to the UserData interface
+  points: number; 
 }
 
 interface LeaderboardEntry {
@@ -38,7 +38,7 @@ const Leaderboard: React.FC = () => {
     suburbRanking: 3,
     city: "Cape Town",
     suburb: "Green Point",
-    points: 1234 // Example points value
+    points: 1234 
   };
 
   // Generate mock data
@@ -92,7 +92,7 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className="p-4 bg-white text-gray-800 max-w-8xl max-h-8xl mx-auto w-full">
-      {/* Header */}
+     
       <div className="flex flex-col items-center mb-6">
         <div className="w-32 h-32 bg-gray-300 rounded-full mb-4"></div>
         <div className="text-center">
@@ -107,7 +107,6 @@ const Leaderboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Ranking type selector */}
       <div className="mb-4">
         <select 
           className="border rounded p-2"
@@ -120,7 +119,6 @@ const Leaderboard: React.FC = () => {
         </select>
       </div>
 
-      {/* Leaderboard table with scrollbar */}
       <div className="h-96 overflow-y-auto border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
         <table className="w-full table-auto">
           <thead className="sticky top-0 bg-white">
