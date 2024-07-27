@@ -11,7 +11,7 @@ import {
 } from "@/components/ReportCharts";
 import { Eye, EyeOff, Filter } from 'lucide-react';
 
-type ChartComponentType = FC<{}> | (() => JSX.Element);
+type ChartComponentType = FC<Record<string, never>> | (() => JSX.Element);
 
 const chartComponents: Record<string, ChartComponentType> = {
   TransitionOfParliament,
