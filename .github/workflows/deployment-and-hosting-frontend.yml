@@ -47,6 +47,8 @@ jobs:
   deploy-frontend:
     runs-on: ubuntu-latest
     needs: build-and-push-frontend
+    name: "Heroku: Frontend App Hosting"
+
     environment:
       name: production
     steps:

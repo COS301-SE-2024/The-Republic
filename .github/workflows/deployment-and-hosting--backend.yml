@@ -54,6 +54,8 @@ jobs:
   deploy-backend:
     runs-on: ubuntu-latest
     needs: build-and-push-backend
+    name: "Heroku: Backend Server Hosting"
+
     environment:
       name: production
     steps:
