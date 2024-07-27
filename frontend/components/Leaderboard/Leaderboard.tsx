@@ -91,7 +91,7 @@ const Leaderboard: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white text-gray-800 max-w-8xl max-h-8xl mx-auto w-full">
+    <div className="p-4 bg-white text-gray-800 max-w-7xl max-h-8xl mx-auto w-full">
      
       <div className="flex flex-col items-center mb-6">
         <div className="w-32 h-32 bg-gray-300 rounded-full mb-4"></div>
