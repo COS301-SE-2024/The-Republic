@@ -1,0 +1,41 @@
+name: Deploy Frontend to Heroku
+
+on:
+    push:
+      branches:
+        - feature/fix_hosting
+    pull_request:
+      branches:
+        - feature/fix_hosting
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Heroku CLI
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+      
+      - name: Set Git User Info
+        run: |
+          git config --global user.name "${{ secrets.GIT_USER }}"
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+    
+      - name: Authenticate with Heroku
+        run: |
+          echo "machine api.heroku.com login ${{ secrets.HEROKU_EMAIL }} password ${{ secrets.HEROKU_API_KEY }}" > ~/.netrc
+
+      - name: Pushing Frontend Directory to Heroku
+        run: |
+          git clone https://github.com/COS301-SE-2024/The-Republic.git
+          cd The-Republic
+          heroku git:remote -a 'infiniteloopers-frontend-app'
+          git subtree push --prefix frontend heroku develop:master
+
