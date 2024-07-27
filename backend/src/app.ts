@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
     id: Math.floor(Math.random() * 500) + 1,
-    data: "Welcome to InfiniteLoopers Node-Express App",
+    data: "Welcome to The-Republic Node-Express App",
   });
 });
 
