@@ -10,6 +10,7 @@ interface UserData {
   suburbRanking: number;
   city: string;
   suburb: string;
+  points: number; // Add points to the UserData interface
 }
 
 interface LeaderboardEntry {
@@ -36,7 +37,8 @@ const Leaderboard: React.FC = () => {
     cityRanking: 15,
     suburbRanking: 3,
     city: "Cape Town",
-    suburb: "Green Point"
+    suburb: "Green Point",
+    points: 1234 // Example points value
   };
 
   // Generate mock data
@@ -89,13 +91,13 @@ const Leaderboard: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white text-gray-800 max-w-4xl mx-auto">
-
+    <div className="p-4 bg-white text-gray-800 max-w-8xl max-h-8xl mx-auto w-full">
+      {/* Header */}
       <div className="flex flex-col items-center mb-6">
-        <div className="w-24 h-24 bg-gray-300 rounded-full mb-4"></div>
+        <div className="w-32 h-32 bg-gray-300 rounded-full mb-4"></div>
         <div className="text-center">
-          <h2 className="text-2xl font-bold">{userData.name}</h2>
-          <p className="text-gray-600">{userData.id}</p>
+          <h2 className="text-4xl font-bold">{userData.name}</h2>
+          <p className="text-xl">Points: {userData.points}</p> 
         </div>
         <div className="mt-4">
           <p className="text-sm">Your {rankingType.charAt(0).toUpperCase() + rankingType.slice(1)} Ranking</p>
@@ -105,6 +107,7 @@ const Leaderboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Ranking type selector */}
       <div className="mb-4">
         <select 
           className="border rounded p-2"
@@ -117,40 +120,35 @@ const Leaderboard: React.FC = () => {
         </select>
       </div>
 
-      <div className="h-96 overflow-y-auto border rounded">
-        <table className="w-full">
+      {/* Leaderboard table with scrollbar */}
+      <div className="h-96 overflow-y-auto border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+        <table className="w-full table-auto">
           <thead className="sticky top-0 bg-white">
             <tr className="text-left bg-gray-100">
-              <th className="py-2 px-4">#</th>
-              <th className="py-2 px-4">Username</th>
-              <th className="py-2 px-4">User ID</th>
-              <th className="py-2 px-4">Country</th>
-              <th className="py-2 px-4">City</th>
-              <th className="py-2 px-4">Suburb</th>
-              <th className="py-2 px-4">Ranking</th>
+              <th className="py-2 px-6">Ranking</th>
+              <th className="py-2 px-6">Username</th>
+              <th className="py-2 px-6">Country</th>
+              <th className="py-2 px-6">City</th>
+              <th className="py-2 px-6">Suburb</th>
             </tr>
           </thead>
           <tbody>
             {filteredData.map((user, index) => (
               <tr 
                 key={user.userId} 
-                className={`border-b ${user.userId === userData.id ? 'bg-yellow-100' : ''}`}
+                className={`border-b ${user.userId === userData.id ? 'bg-green-100' : ''}`}
                 ref={user.userId === userData.id ? userRowRef : null}
               >
-                <td className="py-2 px-4">{index + 1}</td>
-                <td className="py-2 px-4">{user.username}</td>
-                <td className="py-2 px-4">{user.userId}</td>
-                <td className="py-2 px-4">{user.country}</td>
-                <td className="py-2 px-4">{user.city}</td>
-                <td className="py-2 px-4">{user.suburb}</td>
-                <td className="py-2 px-4">{getRankingValue(user)}</td>
+                <td className="py-2 px-6">{getRankingValue(user)}</td>
+                <td className="py-2 px-6">{user.username}</td>
+                <td className="py-2 px-6">{user.country}</td>
+                <td className="py-2 px-6">{user.city}</td>
+                <td className="py-2 px-6">{user.suburb}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-     
     </div>
   );
 };
