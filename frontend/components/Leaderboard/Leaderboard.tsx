@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 
 type RankingType = 'country' | 'city' | 'suburb';
 
@@ -26,6 +26,7 @@ interface LeaderboardEntry {
 
 const Leaderboard: React.FC = () => {
   const [rankingType, setRankingType] = useState<RankingType>('country');
+  const userRowRef = useRef<HTMLTableRowElement>(null);
 
   // Mock data for current user
   const userData: UserData = {
@@ -38,31 +39,50 @@ const Leaderboard: React.FC = () => {
     suburb: "Green Point"
   };
 
-  // Generate 50 mock users
+  // Generate mock data
   const generateMockData = (): LeaderboardEntry[] => {
-    return Array.from({ length: 50 }, (_, i) => ({
-      rank: i + 1,
-      username: `user${i + 1}`,
-      userId: i === 24 ? userData.id : `id${i + 1}`, // Make the 25th user the current user
-      country: "South Africa",
-      city: i % 5 === 0 ? userData.city : `City${i % 10 + 1}`,
-      suburb: i % 10 === 0 ? userData.suburb : `Suburb${i % 20 + 1}`,
-      countryRanking: i + 1,
-      cityRanking: i % 10 + 1,
-      suburbRanking: i % 20 + 1
-    }));
+    const data: LeaderboardEntry[] = [];
+    for (let i = 1; i <= 300; i++) {
+      const entry: LeaderboardEntry = {
+        rank: i,
+        username: i === userData.countryRanking ? userData.name : `user${i}`,
+        userId: i === userData.countryRanking ? userData.id : `id${i}`,
+        country: "South Africa",
+        city: i % 20 === 0 ? userData.city : `City${i % 10 + 1}`,
+        suburb: i % 50 === 0 ? userData.suburb : `Suburb${i % 20 + 1}`,
+        countryRanking: i,
+        cityRanking: i % 20 === 0 ? (i / 20) : Math.floor(Math.random() * 50) + 1,
+        suburbRanking: i % 50 === 0 ? (i / 50) : Math.floor(Math.random() * 20) + 1
+      };
+      if (i === userData.countryRanking) {
+        entry.city = userData.city;
+        entry.suburb = userData.suburb;
+        entry.cityRanking = userData.cityRanking;
+        entry.suburbRanking = userData.suburbRanking;
+      }
+      data.push(entry);
+    }
+    return data;
   };
 
   const leaderboardData = useMemo(() => generateMockData(), []);
 
   const filteredData = useMemo(() => {
-    return leaderboardData.filter(user => {
-      if (rankingType === 'country') return true;
-      if (rankingType === 'city') return user.city === userData.city;
-      if (rankingType === 'suburb') return user.suburb === userData.suburb;
-      return true;
-    }).sort((a, b) => a[`${rankingType}Ranking`] - b[`${rankingType}Ranking`]);
+    return leaderboardData
+      .filter(user => {
+        if (rankingType === 'country') return true;
+        if (rankingType === 'city') return user.city === userData.city;
+        if (rankingType === 'suburb') return user.suburb === userData.suburb;
+        return true;
+      })
+      .sort((a, b) => a[`${rankingType}Ranking`] - b[`${rankingType}Ranking`]);
   }, [leaderboardData, rankingType, userData.city, userData.suburb]);
+
+  useEffect(() => {
+    if (userRowRef.current) {
+      userRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [rankingType]);
 
   const getRankingValue = (user: LeaderboardEntry): number => {
     return user[`${rankingType}Ranking`];
@@ -70,7 +90,7 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className="p-4 bg-white text-gray-800 max-w-4xl mx-auto">
-     
+
       <div className="flex flex-col items-center mb-6">
         <div className="w-24 h-24 bg-gray-300 rounded-full mb-4"></div>
         <div className="text-center">
@@ -85,7 +105,6 @@ const Leaderboard: React.FC = () => {
         </div>
       </div>
 
-      
       <div className="mb-4">
         <select 
           className="border rounded p-2"
@@ -98,7 +117,6 @@ const Leaderboard: React.FC = () => {
         </select>
       </div>
 
-      
       <div className="h-96 overflow-y-auto border rounded">
         <table className="w-full">
           <thead className="sticky top-0 bg-white">
@@ -117,6 +135,7 @@ const Leaderboard: React.FC = () => {
               <tr 
                 key={user.userId} 
                 className={`border-b ${user.userId === userData.id ? 'bg-yellow-100' : ''}`}
+                ref={user.userId === userData.id ? userRowRef : null}
               >
                 <td className="py-2 px-4">{index + 1}</td>
                 <td className="py-2 px-4">{user.username}</td>
@@ -131,7 +150,7 @@ const Leaderboard: React.FC = () => {
         </table>
       </div>
 
-      
+     
     </div>
   );
 };
