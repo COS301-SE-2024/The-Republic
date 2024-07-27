@@ -52,14 +52,14 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
       <div className="mb-6 flex justify-end relative">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className="flex items-center px-4 py-2 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition-colors duration-300"
+          className="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-300"
         >
           <Filter className="h-5 w-5 mr-2" />
           Filter Charts
         </button>
         
         {isFilterOpen && (
-          <div className="absolute top-full right-0 mt-2 p-3 bg-white rounded-lg shadow-md z-10">
+          <div className="absolute top-full right-0 mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md z-10">
             <div className="flex flex-col gap-2">
               {Object.keys(chartComponents).map((chartName) => (
                 <button
@@ -67,8 +67,8 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
                   onClick={() => toggleChart(chartName)}
                   className={`px-3 py-1 rounded-full text-sm transition-all duration-300 flex items-center justify-between ${
                     selectedCharts.includes(chartName)
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   }`}
                 >
                   <span>{chartName.replace(/([A-Z])/g, " $1").trim()}</span>
@@ -96,9 +96,9 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
               <div className="absolute top-2 right-2 z-10">
                 <button
                   onClick={() => toggleChart(chartName)}
-                  className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300"
+                  className="p-2 bg-white dark:bg-gray-700 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300"
                 >
-                  <Eye className="h-5 w-5 text-gray-600" />
+                  <Eye className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                 </button>
               </div>
               <ChartComponent />
