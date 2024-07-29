@@ -2,9 +2,11 @@ import { CommentRepository } from "@/modules/comments/repositories/commentReposi
 import { Comment } from "@/modules/shared/models/comment";
 import { GetCommentsParams } from "@/types/comment";
 import { APIData, APIError } from "@/types/response";
+import { PointsService } from "@/modules/points/services/pointsService";
 
 export class CommentService {
   private commentRepository = new CommentRepository();
+  private pointsService = new PointsService();
 
   setCommentRepository(commentRepository: CommentRepository): void {
     this.commentRepository = commentRepository;
@@ -98,6 +100,11 @@ export class CommentService {
     delete comment.comment_id;
 
     const addedComment = await this.commentRepository.addComment(comment);
+
+    // Award points for adding a comment, but only if it's a top-level comment
+    if (!comment.parent_id) {
+      await this.pointsService.awardPoints(comment.user_id, 10, "Left a comment on an open issue");
+    }
 
     return APIData({
       code: 201,
