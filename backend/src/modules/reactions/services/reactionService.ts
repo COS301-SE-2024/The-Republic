@@ -1,12 +1,15 @@
 import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
 import { Reaction } from "@/modules/shared/models/reaction";
 import { APIData, APIError } from "@/types/response";
+import { PointsService } from "@/modules/points/services/pointsService";
 
 export default class ReactionService {
   private reactionRepository: ReactionRepository;
+  private pointsService: PointsService;
 
   constructor() {
     this.reactionRepository = new ReactionRepository();
+    this.pointsService = new PointsService();
   }
 
   setReactionRepository(reactionRepository: ReactionRepository): void {
@@ -33,7 +36,6 @@ export default class ReactionService {
     let added: string | undefined;
     let removed: string | undefined;
 
-    // Check if the user already has a reaction for this issue
     const existingReaction =
       await this.reactionRepository.getReactionByUserAndIssue(
         reaction.issue_id,
@@ -52,6 +54,8 @@ export default class ReactionService {
     if (reaction.emoji !== removed) {
       const addedReaction = await this.reactionRepository.addReaction(reaction);
       added = addedReaction.emoji;
+
+      await this.pointsService.awardPoints(reaction.user_id, 5, "Reacted to an issue");
     }
 
     return APIData({
