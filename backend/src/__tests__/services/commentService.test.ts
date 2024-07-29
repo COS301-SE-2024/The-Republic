@@ -3,18 +3,26 @@ import { CommentRepository } from "@/modules/comments/repositories/commentReposi
 import { Comment } from "@/modules/shared/models/comment";
 import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
+import { PointsService } from "@/modules/points/services/pointsService";
+
 
 jest.mock("@/modules/comments/repositories/commentRepository");
+jest.mock("@/modules/points/services/pointsService");
 
 describe("CommentService", () => {
   let commentService: CommentService;
   let commentRepository: jest.Mocked<CommentRepository>;
+  let mockPointsService: jest.Mocked<PointsService>;
 
   beforeEach(() => {
-    commentRepository =
-      new CommentRepository() as jest.Mocked<CommentRepository>;
+    commentRepository = new CommentRepository() as jest.Mocked<CommentRepository>;
+    mockPointsService = {
+      awardPoints: jest.fn().mockResolvedValue(100),
+    } as unknown as jest.Mocked<PointsService>;
+
     commentService = new CommentService();
     commentService.setCommentRepository(commentRepository);
+    commentService.setPointsService(mockPointsService);
   });
 
   describe("getNumComments", () => {
@@ -136,6 +144,7 @@ describe("CommentService", () => {
 
       const response = await commentService.addComment(newComment as Comment);
 
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 10, "Left a comment on an open issue");
       expect(response.data).toEqual(addedComment);
       expect(commentRepository.addComment).toHaveBeenCalledWith(newComment);
       expect(commentRepository.addComment).toHaveBeenCalledTimes(1);

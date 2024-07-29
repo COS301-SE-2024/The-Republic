@@ -37,6 +37,10 @@ export default class IssueService {
     this.locationRepository = locationRepository;
   }
 
+  setPointsService(pointsService: PointsService): void {
+    this.pointsService = pointsService;
+  }
+
   async getIssues(params: Partial<GetIssuesParams>) {
     if (params.from === undefined || !params.amount) {
       throw APIError({

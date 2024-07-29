@@ -16,6 +16,10 @@ export default class ReactionService {
     this.reactionRepository = reactionRepository;
   }
 
+  setPointsService(pointsService: PointsService): void {
+    this.pointsService = pointsService;
+  }
+
   async addOrRemoveReaction(reaction: Partial<Reaction>) {
     if (!reaction.user_id) {
       throw APIError({

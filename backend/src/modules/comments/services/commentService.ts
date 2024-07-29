@@ -12,6 +12,10 @@ export class CommentService {
     this.commentRepository = commentRepository;
   }
 
+  setPointsService(pointsService: PointsService): void {
+    this.pointsService = pointsService;
+  }
+
   async getNumComments({ issue_id, parent_id }: Partial<GetCommentsParams>) {
     if (!issue_id) {
       throw APIError({
