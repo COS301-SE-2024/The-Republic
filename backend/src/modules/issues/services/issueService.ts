@@ -4,6 +4,7 @@ import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
+import { PointsService } from "@/modules/points/services/pointsService";
 
 interface MulterFile {
   fieldname: string;
@@ -20,10 +21,12 @@ interface MulterFile {
 export default class IssueService {
   private issueRepository: IssueRepository;
   private locationRepository: LocationRepository;
+  private pointsService: PointsService;
 
   constructor() {
     this.issueRepository = new IssueRepository();
     this.locationRepository = new LocationRepository();
+    this.pointsService = new PointsService();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
@@ -173,6 +176,10 @@ export default class IssueService {
       image_url: imageUrl,
     });
 
+    const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "Created first issue");
+    const points = isFirstIssue ? 50 : 20;
+    await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "Created first issue" : "Created an issue");
+
     return await this.getIssueById({
       issue_id: createdIssue.issue_id,
       user_id: issue.user_id
@@ -290,10 +297,18 @@ export default class IssueService {
       });
     }
 
-    await this.issueRepository.resolveIssue(
+    const resolvedIssue = await this.issueRepository.resolveIssue(
       issue_id,
       user_id,
     );
+
+    if (resolvedIssue.user_id === user_id) {
+      const isFirstResolution = await this.pointsService.getFirstTimeAction(user_id, "Resolved first issue");
+      const points = isFirstResolution ? 100 : 50;
+      await this.pointsService.awardPoints(user_id, points, isFirstResolution ? "Resolved first issue" : "Resolved an issue");
+    }
+
+    //TODO: False resolution penalty
 
     return await this.getIssueById({
       issue_id,
