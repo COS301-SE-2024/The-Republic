@@ -81,9 +81,12 @@ export default class IssueRepository {
           city,
           suburb,
           district
-        )
+        ),
+        comment_count
       `,
       )
+      .order(order_by, { ascending })
+      .order("created_at", { ascending })
       .range(from!, from! + amount! - 1);
 
     if (locationIds.length > 0) {
@@ -99,106 +102,47 @@ export default class IssueRepository {
       query = query.eq("sentiment", mood);
     }
 
-    if (order_by === "comment_count") {
-      const { data, error } = await query;
+    const { data, error } = await query;
 
-      if (error) {
-        console.error(error);
-        throw APIError({
-          code: 500,
-          success: false,
-          error: "An unexpected error occurred. Please try again later.",
-        });
-      }
-
-      const issues = await Promise.all(
-        data.map(async (issue: Issue) => {
-          const reactions = await reactionRepository.getReactionCountsByIssueId(
-            issue.issue_id,
-          );
-          const userReaction = user_id
-            ? await reactionRepository.getReactionByUserAndIssue(
-                issue.issue_id,
-                user_id,
-              )
-            : null;
-          const commentCount = await commentRepository.getNumComments(
-            issue.issue_id,
-          );
-          return {
-            ...issue,
-            reactions,
-            user_reaction: userReaction?.emoji || null,
-            comment_count: commentCount,
-            is_owner: issue.user_id === user_id,
-            user: issue.is_anonymous
-              ? {
-                  user_id: null,
-                  email_address: null,
-                  username: "Anonymous",
-                  fullname: "Anonymous",
-                  image_url: null,
-                }
-              : issue.user,
-          };
-        }),
-      );
-
-      issues.sort((a, b) =>
-        ascending
-          ? a.comment_count - b.comment_count
-          : b.comment_count - a.comment_count,
-      );
-
-      return issues as Issue[];
-    } else {
-      query = query.order(order_by, { ascending });
-      const { data, error } = await query;
-
-      if (error) {
-        console.error(error);
-        throw APIError({
-          code: 500,
-          success: false,
-          error: "An unexpected error occurred. Please try again later.",
-        });
-      }
-
-      const issues = await Promise.all(
-        data.map(async (issue: Issue) => {
-          const reactions = await reactionRepository.getReactionCountsByIssueId(
-            issue.issue_id,
-          );
-          const userReaction = user_id
-            ? await reactionRepository.getReactionByUserAndIssue(
-                issue.issue_id,
-                user_id,
-              )
-            : null;
-          const commentCount = await commentRepository.getNumComments(
-            issue.issue_id,
-          );
-          return {
-            ...issue,
-            reactions,
-            user_reaction: userReaction?.emoji || null,
-            comment_count: commentCount,
-            is_owner: issue.user_id === user_id,
-            user: issue.is_anonymous
-              ? {
-                  user_id: null,
-                  email_address: null,
-                  username: "Anonymous",
-                  fullname: "Anonymous",
-                  image_url: null,
-                }
-              : issue.user,
-          };
-        }),
-      );
-
-      return issues as Issue[];
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later.",
+      });
     }
+
+    const issues = await Promise.all(
+      data.map(async (issue: Issue) => {
+        const reactions = await reactionRepository.getReactionCountsByIssueId(
+          issue.issue_id,
+        );
+        const userReaction = user_id
+          ? await reactionRepository.getReactionByUserAndIssue(
+              issue.issue_id,
+              user_id,
+            )
+          : null;
+        return {
+          ...issue,
+          reactions,
+          user_reaction: userReaction?.emoji || null,
+          is_owner: issue.user_id === user_id,
+          user: issue.is_anonymous
+            ? {
+                user_id: null,
+                email_address: null,
+                username: "Anonymous",
+                fullname: "Anonymous",
+                image_url: null,
+              }
+            : issue.user,
+        };
+      }),
+    );
+
+    return issues as Issue[];
   }
 
   async getIssueById(issueId: number, user_id?: string) {
