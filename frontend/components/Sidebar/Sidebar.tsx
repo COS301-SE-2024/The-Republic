@@ -6,6 +6,7 @@ import {
   ProfileIcon,
   LogoutIcon,
   ReportsIcon,
+  TrophyIcon,
   NotificationsIcon,
   SettingsIcon,
 } from "../icons";
@@ -113,7 +114,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
           </li>
           <li>
             <Link href="/leaderboard">
-              <ReportsIcon />
+              <TrophyIcon />
               Leaderboard
             </Link>
           </li>
