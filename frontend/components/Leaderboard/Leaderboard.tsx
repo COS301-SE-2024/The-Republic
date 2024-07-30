@@ -91,6 +91,8 @@ const Leaderboard: React.FC = () => {
       }))
       .slice(0, 10); 
   }, [leaderboardData, rankingType, userData.city, userData.suburb]);
+  
+  
 
   useEffect(() => {
     if (userRowRef.current) {
@@ -159,22 +161,23 @@ const Leaderboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((user, index) => (
-              <tr 
-                key={user.userId} 
-                className={`border-b ${user.userId === userData.id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
-                ref={user.userId === userData.id ? userRowRef : null}
-              >
-                <td className="py-2 px-6">{user.rank}</td>
-                <td className="py-2 px-6">{user.username}</td>
-                <td className="py-2 px-6">{user.points}</td>
-                {rankingType === 'country' && <td className="py-2 px-6">{user.city}</td>}
-                {rankingType === 'country' && <td className="py-2 px-6">{user.suburb}</td>}
-                {rankingType === 'city' && <td className="py-2 px-6">{user.city}</td>}
-                {rankingType === 'suburb' && <td className="py-2 px-6">{user.suburb}</td>}
-              </tr>
-            ))}
-          </tbody>
+  {filteredData.map(user => (
+    <tr 
+      key={user.userId} 
+      className={`border-b ${user.userId === userData.id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
+      ref={user.userId === userData.id ? userRowRef : null}
+    >
+      <td className="py-2 px-6">{user.rank}</td>
+      <td className="py-2 px-6">{user.username}</td>
+      <td className="py-2 px-6">{user.points}</td>
+      {rankingType === 'country' && <td className="py-2 px-6">{user.city}</td>}
+      {rankingType === 'country' && <td className="py-2 px-6">{user.suburb}</td>}
+      {rankingType === 'city' && <td className="py-2 px-6">{user.city}</td>}
+      {rankingType === 'suburb' && <td className="py-2 px-6">{user.suburb}</td>}
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
     </div>
