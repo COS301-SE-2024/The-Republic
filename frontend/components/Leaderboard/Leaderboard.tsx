@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
 
 type RankingType = 'country' | 'city' | 'suburb';
 
@@ -20,6 +21,7 @@ interface LeaderboardEntry {
   country: string;
   city: string;
   suburb: string;
+  points: number;
   countryRanking: number;
   cityRanking: number;
   suburbRanking: number;
@@ -27,6 +29,7 @@ interface LeaderboardEntry {
 
 const Leaderboard: React.FC = () => {
   const [rankingType, setRankingType] = useState<RankingType>('country');
+  const [showDropdown, setShowDropdown] = useState(false);
   const userRowRef = useRef<HTMLTableRowElement>(null);
 
   // Mock data for current user
@@ -52,6 +55,7 @@ const Leaderboard: React.FC = () => {
         country: "South Africa",
         city: i % 20 === 0 ? userData.city : `City${i % 10 + 1}`,
         suburb: i % 50 === 0 ? userData.suburb : `Suburb${i % 20 + 1}`,
+        points: Math.floor(Math.random() * 2000),
         countryRanking: i,
         cityRanking: i % 20 === 0 ? (i / 20) : Math.floor(Math.random() * 50) + 1,
         suburbRanking: i % 50 === 0 ? (i / 50) : Math.floor(Math.random() * 20) + 1
@@ -61,6 +65,7 @@ const Leaderboard: React.FC = () => {
         entry.suburb = userData.suburb;
         entry.cityRanking = userData.cityRanking;
         entry.suburbRanking = userData.suburbRanking;
+        entry.points = userData.points;
       }
       data.push(entry);
     }
@@ -77,7 +82,7 @@ const Leaderboard: React.FC = () => {
         if (rankingType === 'suburb') return user.suburb === userData.suburb;
         return true;
       })
-      .sort((a, b) => a[`${rankingType}Ranking`] - b[`${rankingType}Ranking`]);
+      .sort((a, b) => b.points - a.points);
   }, [leaderboardData, rankingType, userData.city, userData.suburb]);
 
   useEffect(() => {
@@ -85,10 +90,6 @@ const Leaderboard: React.FC = () => {
       userRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [rankingType]);
-
-  const getRankingValue = (user: LeaderboardEntry): number => {
-    return user[`${rankingType}Ranking`];
-  };
 
   return (
     <div className="p-4 bg-white text-gray-800 max-w-7xl max-h-8xl mx-auto w-full">
@@ -107,16 +108,35 @@ const Leaderboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="mb-4">
-        <select 
-          className="border rounded p-2"
-          value={rankingType}
-          onChange={(e) => setRankingType(e.target.value as RankingType)}
+      <div className="mb-4 relative">
+        <button 
+          className="border rounded p-2 flex items-center"
+          onClick={() => setShowDropdown(!showDropdown)}
         >
-          <option value="country">Country Ranking</option>
-          <option value="city">City Ranking</option>
-          <option value="suburb">Suburb Ranking</option>
-        </select>
+          <SlidersHorizontal className="mr-2" /> Filter
+        </button>
+        {showDropdown && (
+          <div className="absolute mt-2 border rounded bg-white shadow-lg">
+            <button 
+              className="block px-4 py-2 hover:bg-gray-200"
+              onClick={() => { setRankingType('country'); setShowDropdown(false); }}
+            >
+              Country Ranking
+            </button>
+            <button 
+              className="block px-4 py-2 hover:bg-gray-200"
+              onClick={() => { setRankingType('city'); setShowDropdown(false); }}
+            >
+              City Ranking
+            </button>
+            <button 
+              className="block px-4 py-2 hover:bg-gray-200"
+              onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
+            >
+              Suburb Ranking
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="h-96 overflow-y-auto border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
@@ -125,9 +145,9 @@ const Leaderboard: React.FC = () => {
             <tr className="text-left bg-gray-100">
               <th className="py-2 px-6">Ranking</th>
               <th className="py-2 px-6">Username</th>
-              <th className="py-2 px-6">Country</th>
-              <th className="py-2 px-6">City</th>
-              <th className="py-2 px-6">Suburb</th>
+              <th className="py-2 px-6">Points</th>
+              {rankingType === 'city' && <th className="py-2 px-6">City</th>}
+              {(rankingType === 'suburb' || rankingType === 'country') && <th className="py-2 px-6">Suburb</th>}
             </tr>
           </thead>
           <tbody>
@@ -137,11 +157,11 @@ const Leaderboard: React.FC = () => {
                 className={`border-b ${user.userId === userData.id ? 'bg-green-100' : ''}`}
                 ref={user.userId === userData.id ? userRowRef : null}
               >
-                <td className="py-2 px-6">{getRankingValue(user)}</td>
+                <td className="py-2 px-6">{user.rank}</td>
                 <td className="py-2 px-6">{user.username}</td>
-                <td className="py-2 px-6">{user.country}</td>
-                <td className="py-2 px-6">{user.city}</td>
-                <td className="py-2 px-6">{user.suburb}</td>
+                <td className="py-2 px-6">{user.points}</td>
+                {rankingType === 'city' && <td className="py-2 px-6">{user.city}</td>}
+                {(rankingType === 'suburb' || rankingType === 'country') && <td className="py-2 px-6">{user.suburb}</td>}
               </tr>
             ))}
           </tbody>
