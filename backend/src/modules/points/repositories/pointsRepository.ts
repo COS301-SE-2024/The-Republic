@@ -168,12 +168,11 @@ export class PointsRepository {
       location: userData.location ? userData.location[0] : null,
     };
   
-    // Convert DatabaseUser to User
     const user: User = {
       ...databaseUser,
-      is_owner: false, // Set a default value
-      total_issues: 0, // Set a default value
-      resolved_issues: 0, // Set a default value
+      is_owner: true,
+      total_issues: 0,
+      resolved_issues: 0,
       location_id: userData.location_id || null,
       location: databaseUser.location || null
     };
@@ -193,7 +192,6 @@ export class PointsRepository {
       if (locationFilter.province) locationParts.push(locationFilter.province);
       locationMessage = `in ${locationParts.join(", ")}`;
   
-      // Check if user matches the location filter
       if (!this.userMatchesLocationFilter(user, locationFilter)) {
         return {
           ...user,
