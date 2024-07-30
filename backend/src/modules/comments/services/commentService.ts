@@ -61,6 +61,9 @@ export class CommentService {
           is_owner: isOwner,
           total_issues: null,
           resolved_issues: null,
+          user_score: 0, 
+          location_id: null,
+          location: null
         };
       } else {
         comment.user.is_owner = isOwner;

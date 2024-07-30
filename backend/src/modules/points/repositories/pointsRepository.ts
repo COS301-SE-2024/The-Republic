@@ -1,3 +1,4 @@
+import { DatabaseUser, User } from "@/modules/shared/models/issue";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
@@ -132,14 +133,16 @@ export class PointsRepository {
   }
 
   async getUserPosition(userId: string, locationFilter: { province?: string, city?: string, suburb?: string }) {
-    const { data: user, error: userError } = await supabase
+    const { data: userData, error: userError } = await supabase
       .from('user')
       .select(`
         user_id,
         username,
         fullname,
+        email_address,
         image_url,
         user_score,
+        location_id,
         location:location_id (
           location_id,
           province,
@@ -150,8 +153,8 @@ export class PointsRepository {
       `)
       .eq('user_id', userId)
       .single();
-
-    if (userError || !user) {
+  
+    if (userError || !userData) {
       console.error("Error fetching user:", userError);
       throw APIError({
         code: 404,
@@ -159,6 +162,21 @@ export class PointsRepository {
         error: "User not found.",
       });
     }
+  
+    const databaseUser: DatabaseUser = {
+      ...userData,
+      location: userData.location ? userData.location[0] : null,
+    };
+  
+    // Convert DatabaseUser to User
+    const user: User = {
+      ...databaseUser,
+      is_owner: false, // Set a default value
+      total_issues: 0, // Set a default value
+      resolved_issues: 0, // Set a default value
+      location_id: userData.location_id || null,
+      location: databaseUser.location || null
+    };
 
     let query = supabase
       .from('user')
@@ -169,7 +187,7 @@ export class PointsRepository {
 
     if (locationFilter.province || locationFilter.city || locationFilter.suburb) {
       query = query.not('location_id', 'is', null);
-      let locationParts = [];
+      const locationParts = [];
       if (locationFilter.suburb) locationParts.push(locationFilter.suburb);
       if (locationFilter.city) locationParts.push(locationFilter.city);
       if (locationFilter.province) locationParts.push(locationFilter.province);
@@ -207,7 +225,7 @@ export class PointsRepository {
     };
   }
 
-  private userMatchesLocationFilter(user: any, locationFilter: { province?: string, city?: string, suburb?: string }): boolean {
+  private userMatchesLocationFilter(user: DatabaseUser, locationFilter: { province?: string, city?: string, suburb?: string }): boolean {
     if (!user.location) return false;
     if (locationFilter.province && user.location.province !== locationFilter.province) return false;
     if (locationFilter.city && user.location.city !== locationFilter.city) return false;

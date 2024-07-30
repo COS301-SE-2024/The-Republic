@@ -53,6 +53,9 @@ describe("IssueService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
+          user_score: 0, 
+          location_id: null,
+          location: null
         },
         category: {
           name: "Category 1",
@@ -95,6 +98,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
+        user_score: 0, 
+          location_id: null,
+          location: null
       },
       category: {
         name: "Category 1",
@@ -161,6 +167,9 @@ describe("IssueService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
+          user_score: 0, 
+          location_id: null,
+          location: null
         },
         category: {
           name: "Category 1",
@@ -259,6 +268,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
+        user_score: 0, 
+          location_id: null,
+          location: null
       },
       category: {
         name: "Category 1",
@@ -309,6 +321,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
+        user_score: 0, 
+          location_id: null,
+          location: null
       },
       category: {
         name: "Category 1",
@@ -371,6 +386,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
+        user_score: 0, 
+          location_id: null,
+          location: null
       },
       category: {
         name: "Category 1",

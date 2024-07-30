@@ -7,6 +7,31 @@ interface User {
   is_owner: boolean | null;
   total_issues: number | null;
   resolved_issues: number | null;
+  user_score: number;
+  location_id: number | null;
+  location: {
+    location_id: number;
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+  } | null;
+}
+
+interface DatabaseUser {
+  user_id: string | null;
+  username: string;
+  fullname: string;
+  email_address: string | null;
+  image_url: string | null;
+  user_score: number;
+  location?: {
+    location_id: number;
+    province: string;
+    city: string;
+    suburb: string;
+    district: string;
+  } | null;
 }
 
 interface Category {
@@ -53,4 +78,4 @@ interface Issue {
   profile_user_id: string;
 }
 
-export { User, Category, ReactionCount, Issue };
+export { User, Category, ReactionCount, Issue, DatabaseUser };

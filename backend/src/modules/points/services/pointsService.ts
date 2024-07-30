@@ -50,7 +50,7 @@ export class PointsService {
     return data.length === 0;
   }
 
-  async getLeaderboard(locationFilter: { province?: string, city?: string, suburb?: string }, limit: number = 10) {
+  async getLeaderboard(locationFilter: { province?: string, city?: string, suburb?: string }) {
     return this.pointsRepository.getLeaderboard(locationFilter);
   }
 

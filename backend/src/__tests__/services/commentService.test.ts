@@ -81,6 +81,9 @@ describe("CommentService", () => {
             is_owner: false,
             total_issues: 10,
             resolved_issues: 5,
+            user_score: 0, // Add this
+            location_id: null, // Add this
+            location: null, // Add this
           },
           is_owner: false,
         },
@@ -137,6 +140,9 @@ describe("CommentService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
+          user_score: 0, 
+          location_id: null,
+          location: null
         },
         is_owner: true,
       };

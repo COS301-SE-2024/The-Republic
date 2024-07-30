@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PointsService } from "../services/pointsService";
 import { LocationService } from "../../locations/services/locationService";
 import { sendResponse } from "@/utilities/response";
-import { APIResponse, APIData, APIError } from "@/types/response";
+import { APIResponse, APIError } from "@/types/response";
 
 export class PointsController {
   private pointsService: PointsService;
@@ -15,7 +15,7 @@ export class PointsController {
 
   getLeaderboard = async (req: Request, res: Response) => {
     try {
-      const { userId, province, city, suburb, limit } = req.body;
+      const { userId, province, city, suburb } = req.body;
 
       if (!userId) {
         throw APIError({
@@ -25,7 +25,7 @@ export class PointsController {
         });
       }
 
-      const leaderboard = await this.pointsService.getLeaderboard({ province, city, suburb }, limit);
+      const leaderboard = await this.pointsService.getLeaderboard({ province, city, suburb });
       const userPosition = await this.pointsService.getUserPosition(userId, { province, city, suburb });
 
       const response = {

@@ -65,6 +65,9 @@ export default class IssueService {
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
+          user_score: 0, 
+          location_id: null,
+          location: null
         };
       }
 
@@ -108,6 +111,9 @@ export default class IssueService {
         is_owner: false,
         total_issues: null,
         resolved_issues: null,
+        user_score: 0, 
+          location_id: null,
+          location: null
       };
     }
 
@@ -345,6 +351,9 @@ export default class IssueService {
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
+          user_score: 0, 
+          location_id: null,
+          location: null
         };
       }
 
@@ -387,6 +396,9 @@ export default class IssueService {
           is_owner: false,
           total_issues: null,
           resolved_issues: null,
+          user_score: 0, 
+          location_id: null,
+          location: null
         };
       }
 
