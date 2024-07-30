@@ -88,4 +88,31 @@ export class LocationRepository {
 
     return data as Location;
   }
+
+  async getLocationIds(filter: { province?: string; city?: string; suburb?: string }) {
+    let query = supabase.from("location").select("location_id");
+
+    if (filter.province) {
+      query = query.eq("province", filter.province);
+    }
+    if (filter.city) {
+      query = query.eq("city", filter.city);
+    }
+    if (filter.suburb) {
+      query = query.eq("suburb", filter.suburb);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching location IDs:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching location IDs.",
+      });
+    }
+
+    return data.map(loc => loc.location_id);
+  }
 }
