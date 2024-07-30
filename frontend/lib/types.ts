@@ -8,15 +8,6 @@ interface User {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
-  user_score: number;
-  location_id: number;
-  location: {
-    location_id: number;
-    province: string;
-    city: string;
-    suburb: string;
-    district: string;
-  } | null;
 }
 
 interface UserAlt {
