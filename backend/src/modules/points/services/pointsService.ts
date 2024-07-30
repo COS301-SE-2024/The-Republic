@@ -49,4 +49,12 @@ export class PointsService {
 
     return data.length === 0;
   }
+
+  async getLeaderboard(locationFilter: { province?: string, city?: string, suburb?: string }, limit: number = 10) {
+    return this.pointsRepository.getLeaderboard(locationFilter);
+  }
+
+  async getUserPosition(userId: string, locationFilter: { province?: string, city?: string, suburb?: string }) {
+    return this.pointsRepository.getUserPosition(userId, locationFilter);
+  }
 }
