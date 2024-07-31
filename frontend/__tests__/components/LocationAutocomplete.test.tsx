@@ -29,4 +29,11 @@ describe("LocationAutocomplete", () => {
     const setLocation = jest.fn();
     render(<LocationAutocomplete location={null} setLocation={setLocation} />);
   });
+
+  it("renders with a location prop", () => {
+    const setLocation = jest.fn();
+    const location = { label: "Test Location", value: { place_id: "123" } };
+    render(<LocationAutocomplete location={location} setLocation={setLocation} />);
+  });
+
 });
