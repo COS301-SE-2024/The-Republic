@@ -36,4 +36,16 @@ describe("LocationAutocomplete", () => {
     render(<LocationAutocomplete location={location} setLocation={setLocation} />);
   });
 
+  it("renders with different prop values", () => {
+    const setLocation = jest.fn();
+    const location = { label: "Another Location", value: { place_id: "456" } };
+    render(<LocationAutocomplete location={location} setLocation={setLocation} />);
+  });
+
+  it("handles null location prop", () => {
+    const setLocation = jest.fn();
+    render(<LocationAutocomplete location={null} setLocation={setLocation} />);
+  });
+
+
 });
