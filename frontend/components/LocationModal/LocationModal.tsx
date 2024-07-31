@@ -100,7 +100,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
         district: "",
       };
 
-      addressComponents.forEach((component: any) => {
+      addressComponents.forEach((component: google.maps.GeocoderAddressComponent) => {
         if (component.types.includes("administrative_area_level_1")) {
           detailedLocation.province = component.long_name;
         } else if (component.types.includes("locality")) {

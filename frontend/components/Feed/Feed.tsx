@@ -23,7 +23,6 @@ const Feed: React.FC = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const loadLocation = async () => {
@@ -55,7 +54,6 @@ const Feed: React.FC = () => {
           setLocation({ ...userLocation.value, location_id: "" });
         }
       }
-      setIsInitialLoad(false);
     };
 
     loadLocation();
