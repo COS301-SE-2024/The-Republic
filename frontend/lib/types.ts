@@ -8,8 +8,8 @@ interface User {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
-  user_score: number;
-  suspended_until?: string | null;
+  location?: LocationType | null;
+  location_id?: number | null;
 }
 
 interface UserAlt {
@@ -23,8 +23,8 @@ interface UserAlt {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
-  user_score: number;
-  suspended_until?: string | null;
+  location?: LocationType | null;
+  location_id?: number | null;
 }
 
 interface MockUser {
@@ -73,6 +73,8 @@ interface LocationType {
     city: string;
     suburb: string;
     district: string;
+    lat: number;
+    lng: number;
   };
 }
 
@@ -112,7 +114,6 @@ interface Comment {
   issue_id: number;
   user_id: string;
   parent_id: number | null;
-  is_anonymous: boolean;
   content: string;
   created_at: string;
   user: User;
@@ -258,6 +259,7 @@ interface ProfileUpdate {
   fullname: string;
   username: string;
   bio: string;
+  location?: LocationType | null | undefined;
 }
 
 interface ProfileFeedProps {

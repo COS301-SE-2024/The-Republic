@@ -1,14 +1,16 @@
 "use client";
 
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { checkImageFileAndToast, cn } from "@/lib/utils";
-import { EditProfileProps } from "@/lib/types";
+import { EditProfileProps, LocationType } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useToast } from "../ui/use-toast";
+import LocationModal from "@/components/LocationModal/LocationModal";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 
 import { updateUserProfile } from "@/lib/api/updateProfile";
 
@@ -21,6 +23,30 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const { theme } = useTheme();
   const { toast } = useToast();
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState<LocationType | null>(null);
+
+  useEffect(() => {
+    const loadUserLocation = async () => {
+      if (user.location_id) {
+        const location = await fetchUserLocation(user.location_id);
+        if (location) {
+          setUserLocation(location);
+        }
+      }
+    };
+
+    loadUserLocation();
+  }, [user.location_id]);
+
+  const handleLocationSet = (location: LocationType) => {
+    setUserLocation(location);
+    setUpdatedUser((prev) => ({
+      ...prev,
+      location_id: null,
+    }));
+    setIsLocationModalOpen(false);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -183,7 +209,19 @@ const EditProfile: React.FC<EditProfileProps> = ({
             )}
           />
         </div>
+        <div>
+          <label htmlFor="location" className="block text-sm font-medium">
+            Location
+          </label>
+          <Button type="button" onClick={() => setIsLocationModalOpen(true)} className="mt-1">
+            {userLocation ? 'Update Location' : 'Set Location'}
+          </Button>
+          {userLocation && (
+            <p className="mt-1 text-sm">{userLocation.label}</p>
+          )}
       </div>
+      </div>
+      
       <div className="mt-6 flex justify-end space-x-2">
         <Button
           type="button"
@@ -210,6 +248,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
           Save
         </Button>
       </div>
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSet={handleLocationSet}
+        defaultLocation={userLocation}
+      />
     </form>
   );
 };
