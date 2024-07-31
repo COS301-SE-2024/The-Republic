@@ -1,75 +1,80 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useParams } from 'next/navigation';
-import {fetchLeaderboard} from "@/lib/api/fetchLeaderboard";
+import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation"; // Import the location fetching function
 import LoadingIndicator from '@/components/ui/loader';
+import { UserAlt, LeaderboardEntry, LocationType } from "@/lib/types";
+import { useUser } from "@/lib/contexts/UserContext";
 
 type RankingType = 'country' | 'city' | 'suburb';
 
-interface UserData {
-  name: string;
-  id: string;
-  countryRanking: number;
-  cityRanking: number;
-  suburbRanking: number;
-  city: string;
-  suburb: string;
-  points: number;
-}
-
-interface LeaderboardEntry {
-  rank: number;
-  username: string;
-  userId: string;
-  country: string;
-  city: string;
-  suburb: string;
-  points: number;
-  countryRanking: number;
-  cityRanking: number;
-  suburbRanking: number;
-}
-
 const Leaderboard: React.FC = () => {
-  const { userId } = useParams() satisfies { userId: string };
+  const { user } = useUser();
   const [rankingType, setRankingType] = useState<RankingType>('country');
   const [showDropdown, setShowDropdown] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] = useState<UserAlt | null>(null);
+  const [userLocation, setUserLocation] = useState<LocationType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) {
+        setError('No user data available');
+        setIsLoading(false);
+        return;
+      }
+  
       try {
-        if (!userId) return;
-        const data = await fetchLeaderboard(userId, rankingType);
+        setIsLoading(true);
+        setError(null);
+  
+        const locationData = user.location_id ? await fetchUserLocation(user.location_id) : null;
+  
+        console.log('Sending request with data:', {
+          userId: user.user_id,
+          ...locationData ? locationData.value : {},
+        });
+  
+        const data = await fetchLeaderboard(user.user_id, rankingType, locationData ? locationData.value : {});
+  
+        console.log('Fetched leaderboard data:', data);
+  
         setLeaderboardData(data.leaderboard);
         setUserData(data.user);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
+        setError('Failed to load leaderboard data');
+        setIsLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [userId, rankingType]);
+  }, [user, rankingType]);
+  
 
   const filteredData = useMemo(() => {
+    if (!userData || !userLocation) return [];
+
     return leaderboardData
-      .filter(user => {
+      .filter(entry => {
         if (rankingType === 'country') return true;
-        if (rankingType === 'city') return user.city === userData?.city;
-        if (rankingType === 'suburb') return user.suburb === userData?.suburb;
+        if (rankingType === 'city') return entry.city === userLocation.value.city;
+        if (rankingType === 'suburb') return entry.suburb === userLocation.value.suburb;
         return true;
       })
       .sort((a, b) => b.points - a.points)
-      .map((user, index) => ({
-        ...user,
+      .map((entry, index) => ({
+        ...entry,
         rank: index + 1
       }))
       .slice(0, 10);
-  }, [leaderboardData, rankingType, userData?.city, userData?.suburb]);
+  }, [leaderboardData, rankingType, userLocation]);
 
   useEffect(() => {
     if (userRowRef.current) {
@@ -77,26 +82,36 @@ const Leaderboard: React.FC = () => {
     }
   }, [rankingType, filteredData]);
 
-  if (!userData) {
+  if (isLoading) {
     return <LoadingIndicator />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!userData) {
+    return <div>No user data available</div>;
   }
 
   return (
     <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
+      {/* User Data Display */}
       <div className="flex flex-col items-center mb-6">
         <div className={`w-32 h-32 ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-gray-300'} rounded-full mb-4`}></div>
         <div className="text-center">
-          <h2 className="text-4xl font-bold">{userData.name}</h2>
-          <p className="text-xl">Points: {userData.points}</p>
+          <h2 className="text-4xl font-bold">{userData.fullname}</h2>
+          <p className="text-xl">Points: {userData.total_issues}</p>
         </div>
         <div className="mt-4">
           <p className="text-sm">Your {rankingType.charAt(0).toUpperCase() + rankingType.slice(1)} Ranking</p>
           <p className="text-3xl font-bold text-center">
-            {userData[`${rankingType}Ranking` as keyof UserData]}
+            {userLocation ? userLocation.label || 'N/A' : 'N/A'}
           </p>
         </div>
       </div>
 
+      {/* Filter Dropdown */}
       <div className="mb-4 relative z-10">
         <button 
           className={`border rounded p-2 flex items-center ${theme === 'dark' ? 'bg-[#262626] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}
@@ -128,6 +143,7 @@ const Leaderboard: React.FC = () => {
         )}
       </div>
 
+      {/* Leaderboard Table */}
       <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
         <table className="w-full table-auto">
           <thead className={theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}>
@@ -142,19 +158,19 @@ const Leaderboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map(user => (
+            {filteredData.map(entry => (
               <tr 
-                key={user.userId} 
-                className={`border-b ${user.userId === userData.id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
-                ref={user.userId === userData.id ? userRowRef : null}
+                key={entry.userId} 
+                className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
+                ref={entry.userId === userData.user_id ? userRowRef : null}
               >
-                <td className="py-2 px-6">{user.rank}</td>
-                <td className="py-2 px-6">{user.username}</td>
-                <td className="py-2 px-6">{user.points}</td>
-                {rankingType === 'country' && <td className="py-2 px-6">{user.city}</td>}
-                {rankingType === 'country' && <td className="py-2 px-6">{user.suburb}</td>}
-                {rankingType === 'city' && <td className="py-2 px-6">{user.city}</td>}
-                {rankingType === 'suburb' && <td className="py-2 px-6">{user.suburb}</td>}
+                <td className="py-2 px-6">{entry.rank}</td>
+                <td className="py-2 px-6">{entry.username}</td>
+                <td className="py-2 px-6">{entry.points}</td>
+                {rankingType === 'country' && <td className="py-2 px-6">{entry.city}</td>}
+                {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb}</td>}
+                {rankingType === 'city' && <td className="py-2 px-6">{entry.city}</td>}
+                {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb}</td>}
               </tr>
             ))}
           </tbody>

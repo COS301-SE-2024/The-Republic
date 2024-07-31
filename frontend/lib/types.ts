@@ -23,6 +23,19 @@ interface UserData {
   points: number;
 }
 
+interface LeaderboardEntry {
+  rank: number;
+  username: string;
+  userId: string;
+  country: string;
+  city: string;
+  suburb: string;
+  points: number;
+  countryRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+}
+
 interface UserAlt {
   user_id: string;
   email_address: string;
@@ -295,6 +308,8 @@ export type {
   FeedProps,
   RequestBody,
   UserAlt,
+  UserData,
+  LeaderboardEntry,
   IssueProps,
   IssueInputBoxProps,
   ProfileStatsProps,
