@@ -47,5 +47,14 @@ describe("LocationAutocomplete", () => {
     render(<LocationAutocomplete location={null} setLocation={setLocation} />);
   });
 
+  it("handles undefined location prop", () => {
+    const setLocation = jest.fn();
+    render(<LocationAutocomplete location={undefined} setLocation={setLocation} />);
+  });
 
+  it("handles empty object location prop", () => {
+    const setLocation = jest.fn();
+    const location = { label: "", value: { place_id: "" } };
+    render(<LocationAutocomplete location={location} setLocation={setLocation} />);
+  });
 });
