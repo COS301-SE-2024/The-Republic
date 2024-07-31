@@ -12,6 +12,17 @@ interface User {
   location_id?: number | null;
 }
 
+interface UserData {
+  name: string;
+  id: string;
+  countryRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+  city: string;
+  suburb: string;
+  points: number;
+}
+
 interface UserAlt {
   user_id: string;
   email_address: string;
