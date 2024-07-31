@@ -57,4 +57,25 @@ describe("LocationAutocomplete", () => {
     const location = { label: "", value: { place_id: "" } };
     render(<LocationAutocomplete location={location} setLocation={setLocation} />);
   });
+
+  it("renders the location label when location prop is provided", () => {
+    const setLocation = jest.fn();
+    const location = { label: "Test Location", value: { place_id: "123" } };
+    const { getByText } = render(<LocationAutocomplete location={location} setLocation={setLocation} />);
+    expect(getByText("Test Location")).toBeTruthy();
+  });
+
+  it("renders the MapPin button when location is null", () => {
+    const setLocation = jest.fn();
+    const { container } = render(<LocationAutocomplete location={null} setLocation={setLocation} />);
+    expect(container.querySelector('button svg')).toBeTruthy();
+  });
+
+  // it("calls setLocation with null when X button is clicked", () => {
+  //   const setLocation = jest.fn();
+  //   const location = { label: "Test Location", value: { place_id: "123" } };
+  //   const { getByText } = render(<LocationAutocomplete location={location} setLocation={setLocation} />);
+  //   fireEvent.click(getByText("X"));
+  //   expect(setLocation).toHaveBeenCalledWith(null);
+  // });
 });
