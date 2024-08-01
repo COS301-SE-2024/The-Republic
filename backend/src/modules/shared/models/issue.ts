@@ -1,3 +1,4 @@
+import { Cluster } from './cluster';
 interface User {
   user_id: string | null;
   email_address: string | null;
@@ -76,6 +77,9 @@ interface Issue {
   comment_count: number;
   is_owner: boolean;
   profile_user_id: string;
+  content_embedding?: number[] | string | null;
+  cluster_id?: string;
+  cluster?: Cluster;
 }
 
 export { User, Category, ReactionCount, Issue, DatabaseUser };

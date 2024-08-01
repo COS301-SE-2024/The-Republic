@@ -4,6 +4,8 @@ import { LocationRepository } from "@/modules/locations/repositories/locationRep
 import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
+import { ClusterService } from '@/modules/clusters/services/clusterService';
+import { OpenAIService } from '@/modules/shared/services/openAIService';
 
 jest.mock("@/modules/issues/repositories/issueRepository");
 jest.mock("@/modules/locations/repositories/locationRepository");
@@ -14,6 +16,8 @@ describe("IssueService", () => {
   let issueRepository: jest.Mocked<IssueRepository>;
   let locationRepository: jest.Mocked<LocationRepository>;
   let mockPointsService: jest.Mocked<PointsService>;
+  let mockClusterService: jest.Mocked<ClusterService>;
+  let mockOpenAIService: jest.Mocked<OpenAIService>;
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
@@ -27,6 +31,11 @@ describe("IssueService", () => {
       getFirstTimeAction: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<PointsService>;
     issueService.setPointsService(mockPointsService);
+    issueService.processIssueAsync = jest.fn().mockResolvedValue(undefined);
+    issueService.setClusterService(mockClusterService);
+    mockOpenAIService = new OpenAIService() as jest.Mocked<OpenAIService>;
+    issueService.setOpenAIService(mockOpenAIService);
+    mockOpenAIService.getEmbedding = jest.fn().mockResolvedValue([0.1, 0.2, 0.3]);
   });
 
   it("should get all issues", async () => {
@@ -188,6 +197,16 @@ describe("IssueService", () => {
       }));
 
       const response = await issueService.createIssue(newIssue);
+
+      expect(response.data).toEqual(createdIssue);
+      expect(issueRepository.createIssue).toHaveBeenCalledWith(expect.objectContaining(newIssue));
+      expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
+
+      // Check that processIssueAsync was called
+      expect(issueService.processIssueAsync).toHaveBeenCalledWith(createdIssue.issue_id);
+
+      // Wait for any pending promises to resolve
+      await new Promise(process.nextTick);
 
       expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "Created first issue");
       expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "Created first issue");
