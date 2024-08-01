@@ -17,7 +17,7 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   className,
   isAnonymous = false
 }) => {
-  
+
   const getBackgroundColor = (score: number) => {
     if (score === 0) return 'rgba(255, 255, 255, 1)'; 
 
@@ -47,7 +47,7 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
         <AvatarImage src={imageUrl} alt={username} />
         <AvatarFallback>{username[0]}</AvatarFallback>
       </Avatar>
-      {!isAnonymous && (
+      {!isAnonymous && score !== 0 && (
         <div 
           className="absolute top-0 right-0 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm overflow-hidden"
           style={{
