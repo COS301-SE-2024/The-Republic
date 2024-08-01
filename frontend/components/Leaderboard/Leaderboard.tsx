@@ -138,6 +138,7 @@ const Leaderboard: React.FC = () => {
               <th className="py-2 px-6">Ranking</th>
               <th className="py-2 px-6">Username</th>
               <th className="py-2 px-6">Points</th>
+              {rankingType === 'country' && <th className="py-2 px-6">Province</th>}
               {rankingType === 'country' && <th className="py-2 px-6">City</th>}
               {rankingType === 'country' && <th className="py-2 px-6">Suburb</th>}
               {rankingType === 'city' && <th className="py-2 px-6">City</th>}
@@ -154,10 +155,11 @@ const Leaderboard: React.FC = () => {
                 <td className="py-2 px-6">{entry.rank}</td>
                 <td className="py-2 px-6">{entry.username}</td>
                 <td className="py-2 px-6">{entry.points}</td>
-                {rankingType === 'country' && <td className="py-2 px-6">{entry.city}</td>}
-                {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb}</td>}
-                {rankingType === 'city' && <td className="py-2 px-6">{entry.city}</td>}
-                {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb}</td>}
+                {rankingType === 'country' && <td className="py-2 px-6">{entry.province || 'N/A'}</td>}
+                {rankingType === 'country' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
+                {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
+                {rankingType === 'city' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
+                {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
               </tr>
             ))}
           </tbody>
