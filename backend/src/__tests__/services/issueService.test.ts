@@ -33,6 +33,7 @@ describe("IssueService", () => {
     issueService.setPointsService(mockPointsService);
     issueService.processIssueAsync = jest.fn().mockResolvedValue(undefined);
     issueService.setClusterService(mockClusterService);
+    mockOpenAIService = new OpenAIService() as jest.Mocked<OpenAIService>;
     issueService.setOpenAIService(mockOpenAIService);
     mockOpenAIService.getEmbedding = jest.fn().mockResolvedValue([0.1, 0.2, 0.3]);
   });
