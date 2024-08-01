@@ -4,6 +4,8 @@ import { LocationRepository } from "@/modules/locations/repositories/locationRep
 import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
+import { ClusterService } from '@/modules/clusters/services/clusterService';
+import { OpenAIService } from '@/modules/shared/services/openAIService';
 
 jest.mock("@/modules/issues/repositories/issueRepository");
 jest.mock("@/modules/locations/repositories/locationRepository");
@@ -14,6 +16,8 @@ describe("IssueService", () => {
   let issueRepository: jest.Mocked<IssueRepository>;
   let locationRepository: jest.Mocked<LocationRepository>;
   let mockPointsService: jest.Mocked<PointsService>;
+  let mockClusterService: jest.Mocked<ClusterService>;
+  let mockOpenAIService: jest.Mocked<OpenAIService>;
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
@@ -28,6 +32,9 @@ describe("IssueService", () => {
     } as unknown as jest.Mocked<PointsService>;
     issueService.setPointsService(mockPointsService);
     issueService.processIssueAsync = jest.fn().mockResolvedValue(undefined);
+    issueService.setClusterService(mockClusterService);
+    issueService.setOpenAIService(mockOpenAIService);
+    mockOpenAIService.getEmbedding = jest.fn().mockResolvedValue([0.1, 0.2, 0.3]);
   });
 
   it("should get all issues", async () => {
