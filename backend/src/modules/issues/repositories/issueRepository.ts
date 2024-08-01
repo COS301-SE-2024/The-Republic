@@ -165,7 +165,8 @@ export default class IssueRepository {
           suburb,
           city,
           province
-        )
+        ),
+        cluster_id
       `,
       )
       .eq("issue_id", issueId)
@@ -219,91 +220,143 @@ export default class IssueRepository {
 
   async createIssue(issue: Partial<Issue>) {
     issue.created_at = new Date().toISOString();
-
+  
     let locationId: number | null = null;
-
+  
     if (issue.location_data) {
-      // console.log("Raw location data:", issue.location_data);
-
+      //console.log("Raw location data:", issue.location_data);
+  
       let locationDataObj;
       try {
         locationDataObj =
           typeof issue.location_data === "string"
             ? JSON.parse(issue.location_data)
             : issue.location_data;
-
-        // console.log("Parsed location data:", locationDataObj);
-
-        const locationRepository = new LocationRepository();
-        const existingLocation = await locationRepository.getLocationByPlacesId(
-          locationDataObj.place_id,
-        );
-
-        if (existingLocation) {
-          locationId = existingLocation.location_id;
+  
+        //console.log("Parsed location data:", locationDataObj);
+  
+        if (locationDataObj.location_id) {
+          locationId = locationDataObj.location_id;
         } else {
-          const newLocation = await locationRepository.createLocation({
-            place_id: locationDataObj.place_id,
-            province: locationDataObj.province,
-            city: locationDataObj.city,
-            suburb: locationDataObj.suburb,
-            district: locationDataObj.district,
-          });
-          locationId = newLocation.location_id;
+          const locationRepository = new LocationRepository();
+          const existingLocation = await locationRepository.getLocationByPlacesId(
+            locationDataObj.place_id
+          );
+  
+          if (existingLocation) {
+            locationId = existingLocation.location_id;
+          } else {
+            const newLocation = await locationRepository.createLocation({
+              place_id: locationDataObj.place_id,
+              province: locationDataObj.province,
+              city: locationDataObj.city,
+              suburb: locationDataObj.suburb,
+              district: locationDataObj.district,
+            });
+            locationId = newLocation.location_id;
+          }
         }
+        // console.log("Final locationId:", locationId);
       } catch (error) {
         console.error("Error processing location data:", error);
         throw APIError({
           code: 500,
           success: false,
-          error: "An error occurred while processing location data.",
+          error: `An error occurred while processing location data: ${error}`,
         });
       }
     }
-
-    const { data, error } = await supabase
-      .from("issue")
-      .insert({
-        user_id: issue.user_id,
-        category_id: issue.category_id,
-        content: issue.content,
-        sentiment: issue.sentiment,
-        is_anonymous: issue.is_anonymous,
-        location_id: locationId,
-        created_at: issue.created_at,
-        image_url: issue.image_url || null,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error(error);
-
+  
+    try {
+      const { data, error } = await supabase
+        .from("issue")
+        .insert({
+          user_id: issue.user_id,
+          category_id: issue.category_id,
+          content: issue.content,
+          sentiment: issue.sentiment,
+          is_anonymous: issue.is_anonymous,
+          location_id: locationId,
+          created_at: issue.created_at,
+          image_url: issue.image_url || null,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+  
+      if (error) {
+        console.error("Error inserting issue:", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: `An error occurred while inserting the issue: ${error.message}`,
+        });
+      }
+  
+      const reactions = await reactionRepository.getReactionCountsByIssueId(
+        data.issue_id
+      );
+  
+      return {
+        ...data,
+        reactions,
+        is_owner: true,
+        user: data.is_anonymous
+          ? {
+              user_id: null,
+              email_address: null,
+              username: "Anonymous",
+              fullname: "Anonymous",
+              image_url: null,
+            }
+          : data.user,
+      } as Issue;
+    } catch (error) {
+      console.error("Unexpected error in createIssue:", error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later.",
+        error: `An unexpected error occurred: ${error}`,
       });
     }
+  }
 
-    const reactions = await reactionRepository.getReactionCountsByIssueId(
-      data.issue_id,
-    );
+  async updateIssueCluster(issueId: number, clusterId: string): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ 
+        cluster_id: clusterId,
+        updated_at: new Date().toISOString()
+      })
+      .eq('issue_id', issueId);
 
-    return {
-      ...data,
-      reactions,
-      is_owner: true,
-      user: data.is_anonymous
-        ? {
-            user_id: null,
-            email_address: null,
-            username: "Anonymous",
-            fullname: "Anonymous",
-            image_url: null,
-          }
-        : data.user,
-    } as Issue;
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating issue cluster.",
+      });
+    }
+  }
+
+  async updateIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ 
+        content_embedding: embedding,
+        updated_at: new Date().toISOString()
+      })
+      .eq('issue_id', issueId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating issue embedding.",
+      });
+    }
   }
 
   async updateIssue(issueId: number, issue: Partial<Issue>, user_id: string) {
