@@ -27,6 +27,7 @@ describe("IssueService", () => {
       getFirstTimeAction: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<PointsService>;
     issueService.setPointsService(mockPointsService);
+    issueService.processIssueAsync = jest.fn().mockResolvedValue(undefined);
   });
 
   it("should get all issues", async () => {
@@ -188,6 +189,16 @@ describe("IssueService", () => {
       }));
 
       const response = await issueService.createIssue(newIssue);
+
+      expect(response.data).toEqual(createdIssue);
+      expect(issueRepository.createIssue).toHaveBeenCalledWith(expect.objectContaining(newIssue));
+      expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
+
+      // Check that processIssueAsync was called
+      expect(issueService.processIssueAsync).toHaveBeenCalledWith(createdIssue.issue_id);
+
+      // Wait for any pending promises to resolve
+      await new Promise(process.nextTick);
 
       expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "Created first issue");
       expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "Created first issue");
