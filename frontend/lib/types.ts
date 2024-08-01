@@ -17,7 +17,7 @@ interface User {
 interface UserData {
   name: string;
   id: string;
-  countryRanking: number;
+  provinceRanking: number;
   cityRanking: number;
   suburbRanking: number;
   city: string;
@@ -31,7 +31,6 @@ interface LeaderboardEntry {
   province: string;
   city: string;
   suburb: string;
-  district: string;
   points: number;
   provinceRanking: number;
   cityRanking: number;
@@ -51,7 +50,7 @@ interface UserAlt {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
-  location: any | null;
+  location: LocationType | null;
   location_id: number | null;
   ranking?: number | null;
   provinceRanking: number | null;
@@ -242,6 +241,7 @@ interface AnalysisResult {
   category: string;
   severity: number;
 }
+
 
 interface Location {
   location_id: string;
