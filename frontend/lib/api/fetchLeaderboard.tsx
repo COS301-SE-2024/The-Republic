@@ -129,6 +129,7 @@ const fetchLeaderboard = async (
     fullname: userPosition.fullname,
     image_url: userPosition.image_url,
     bio: userPosition.position || '',
+    user_score:userPosition.user_score,
     is_owner: userPosition.is_owner,
     total_issues: userPosition.total_issues,
     resolved_issues: userPosition.resolved_issues,

@@ -1,13 +1,20 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { Loader2 } from "lucide-react";
 import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
-import { fetchUserLocation } from "@/lib/api/fetchUserLocation"; // Import the location fetching function
-import LoadingIndicator from '@/components/ui/loader';
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation"; 
 import { UserAlt, LeaderboardEntry, LocationType } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; 
 
 type RankingType = 'country' | 'city' | 'suburb';
+
+const LoadingIndicator = () => (
+  <div className="flex justify-center items-center h-32">
+    <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+  </div>
+);
 
 const Leaderboard: React.FC = () => {
   const { user } = useUser();
@@ -45,8 +52,8 @@ const Leaderboard: React.FC = () => {
         console.log('Fetched leaderboard data:', data);
   
         setLeaderboardData(data.leaderboard);
-        setUserData(data.user);
-        setIsLoading(false);
+      setUserData(data.user);
+      setIsLoading(false);
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
         setError('Failed to load leaderboard data');
@@ -58,29 +65,13 @@ const Leaderboard: React.FC = () => {
   }, [user, rankingType]);
   
 
-  const filteredData = useMemo(() => {
-    if (!userData || !userLocation) return [];
 
-    return leaderboardData
-      .filter(entry => {
-        if (rankingType === 'country') return true;
-        if (rankingType === 'city') return entry.city === userLocation.value.city;
-        if (rankingType === 'suburb') return entry.suburb === userLocation.value.suburb;
-        return true;
-      })
-      .sort((a, b) => b.points - a.points)
-      .map((entry, index) => ({
-        ...entry,
-        rank: index + 1
-      }))
-      .slice(0, 10);
-  }, [leaderboardData, rankingType, userLocation]);
 
   useEffect(() => {
     if (userRowRef.current) {
       userRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, [rankingType, filteredData]);
+  }, [rankingType]);
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -95,23 +86,26 @@ const Leaderboard: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
-      {/* User Data Display */}
+    <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0d0d0d] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
+     
       <div className="flex flex-col items-center mb-6">
-        <div className={`w-32 h-32 ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-gray-300'} rounded-full mb-4`}></div>
+      <Avatar className="w-32 h-32 mb-4">
+          <AvatarImage src={userData.image_url} alt={userData.fullname} />
+          <AvatarFallback>{userData.fullname.charAt(0)}</AvatarFallback>
+        </Avatar>
         <div className="text-center">
           <h2 className="text-4xl font-bold">{userData.fullname}</h2>
-          <p className="text-xl">Points: {userData.total_issues}</p>
+          <p className="text-xl">Points: {userData.user_score}</p>
         </div>
         <div className="mt-4">
           <p className="text-sm">Your {rankingType.charAt(0).toUpperCase() + rankingType.slice(1)} Ranking</p>
           <p className="text-3xl font-bold text-center">
-            {userLocation ? userLocation.label || 'N/A' : 'N/A'}
+          {userData.ranking !== null ? `${userData.ranking}` : 'N/A'}
           </p>
         </div>
       </div>
 
-      {/* Filter Dropdown */}
+     
       <div className="mb-4 relative z-10">
         <button 
           className={`border rounded p-2 flex items-center ${theme === 'dark' ? 'bg-[#262626] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}
@@ -143,7 +137,7 @@ const Leaderboard: React.FC = () => {
         )}
       </div>
 
-      {/* Leaderboard Table */}
+      
       <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
         <table className="w-full table-auto">
           <thead className={theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}>
@@ -158,7 +152,7 @@ const Leaderboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map(entry => (
+          {leaderboardData.map(entry => (
               <tr 
                 key={entry.userId} 
                 className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}

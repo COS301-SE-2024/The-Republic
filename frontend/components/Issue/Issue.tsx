@@ -113,6 +113,9 @@ const Issue: React.FC<IssueProps> = ({
   const isOwner = user && user.user_id === issue.user_id;
   const isLoading = deleteMutation.isPending || resolveMutation.isPending;
 
+
+  
+
   return (
     <Card className="mb-4" id={id}>
       <CardHeader className="place-content-stretch">
