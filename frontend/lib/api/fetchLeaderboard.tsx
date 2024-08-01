@@ -12,7 +12,7 @@ interface ApiResponse {
       image_url: string;
       user_score: number;
       location_id: number | null;
-      location: any; // Use a more specific type if available
+      location: any; 
       is_owner: boolean;
       total_issues: number;
       resolved_issues: number;
@@ -25,7 +25,7 @@ interface ApiResponse {
       fullname: string;
       image_url: string;
       user_score: number;
-      location: any; // Use a more specific type if available
+      location: any; 
     }>;
   };
 }
@@ -61,36 +61,89 @@ const fetchLeaderboard = async (
 
     const userPosition = responseData.data.userPosition;
     const leaderboard = responseData.data.leaderboard;
+   
 
-    const user: UserAlt = {
-      user_id: userPosition.user_id,
-      email_address: userPosition.email_address,
-      username: userPosition.username,
-      fullname: userPosition.fullname,
-      image_url: userPosition.image_url,
-      bio: userPosition.position || '',
-      is_owner: userPosition.is_owner,
-      total_issues: userPosition.total_issues,
-      resolved_issues: userPosition.resolved_issues,
-      access_token: '', // Set appropriate token if available
-      location: null,
-      location_id: userPosition.location_id || null,
-    };
+   
 
     const leaderboardEntries: LeaderboardEntry[] = leaderboard.map(entry => ({
-      rank: 0, // Adjust if needed
       username: entry.username,
       userId: entry.user_id,
-      country: '', // Adjust if country is available
-      city: '', // Adjust if city is available
-      suburb: '', // Adjust if suburb is available
+      country: entry.location?.country || '',
+      city: entry.location?.city || '',
+      suburb: entry.location?.suburb || '',
       points: entry.user_score,
-      countryRanking: 0, // Adjust if country ranking is available
-      cityRanking: 0, // Adjust if city ranking is available
-      suburbRanking: 0, // Adjust if suburb ranking is available
+      countryRanking: 0,
+      cityRanking: 0,
+      suburbRanking: 0,
+      rank: 0, 
     }));
+  
+    
+    leaderboardEntries.sort((a, b) => b.points - a.points);
 
-    return { leaderboard: leaderboardEntries, user };
+   
+  let countryRank = 0;
+  let cityRank = 0;
+  let suburbRank = 0;
+  let lastCountry = '';
+  let lastCity = '';
+  let lastSuburb = '';
+  let lastPoints = -1;
+
+  leaderboardEntries.forEach((entry, index) => {
+    // Country ranking
+    if (entry.country !== lastCountry || entry.points !== lastPoints) {
+      countryRank = index + 1;
+      lastCountry = entry.country;
+    }
+    entry.countryRanking = countryRank;
+
+    // City ranking
+    if (entry.city !== lastCity || entry.points !== lastPoints) {
+      cityRank = index + 1;
+      lastCity = entry.city;
+    }
+    entry.cityRanking = cityRank;
+
+    // Suburb ranking
+    if (entry.suburb !== lastSuburb || entry.points !== lastPoints) {
+      suburbRank = index + 1;
+      lastSuburb = entry.suburb;
+    }
+    entry.suburbRanking = suburbRank;
+
+    lastPoints = entry.points;
+  });
+
+  //overall rank
+  leaderboardEntries.forEach((entry, index) => {
+    entry.rank = index + 1;
+  });
+
+  const userEntry = leaderboardEntries.find(entry => entry.userId === userId);
+
+  const user: UserAlt = {
+    user_id: userPosition.user_id,
+    email_address: userPosition.email_address,
+    username: userPosition.username,
+    fullname: userPosition.fullname,
+    image_url: userPosition.image_url,
+    bio: userPosition.position || '',
+    is_owner: userPosition.is_owner,
+    total_issues: userPosition.total_issues,
+    resolved_issues: userPosition.resolved_issues,
+    access_token: '', 
+    location: null,
+    location_id: userPosition.location_id || null,
+    ranking: userEntry ? userEntry.rank : null,
+  countryRanking: userEntry ? userEntry.countryRanking : null,
+  cityRanking: userEntry ? userEntry.cityRanking : null,
+  suburbRanking: userEntry ? userEntry.suburbRanking : null,
+  };
+
+  const topTen = leaderboardEntries.slice(0, 10);
+
+  return { leaderboard: topTen, user };
   } catch (error) {
     console.error("Failed to fetch leaderboard data:", error);
     throw error;
