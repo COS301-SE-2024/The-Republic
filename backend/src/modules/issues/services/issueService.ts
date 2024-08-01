@@ -5,6 +5,8 @@ import { APIData, APIError } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { PointsService } from "@/modules/points/services/pointsService";
+import { ClusterService } from '@/modules/clusters/services/clusterService';
+import { OpenAIService } from '@/modules/shared/services/openAIService';
 
 interface MulterFile {
   fieldname: string;
@@ -22,11 +24,15 @@ export default class IssueService {
   private issueRepository: IssueRepository;
   private locationRepository: LocationRepository;
   private pointsService: PointsService;
+  private clusterService: ClusterService;
+  private openAIService: OpenAIService;
 
   constructor() {
     this.issueRepository = new IssueRepository();
     this.locationRepository = new LocationRepository();
     this.pointsService = new PointsService();
+    this.clusterService = new ClusterService();
+    this.openAIService = new OpenAIService();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
@@ -39,6 +45,14 @@ export default class IssueService {
 
   setPointsService(pointsService: PointsService): void {
     this.pointsService = pointsService;
+  }
+
+  setClusterService(clusterService: ClusterService): void {
+    this.clusterService = clusterService;
+  }
+
+  setOpenAIService(openAIService: OpenAIService): void {
+    this.openAIService = openAIService;
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {
@@ -100,6 +114,11 @@ export default class IssueService {
     );
 
     const isOwner = resIssue.user_id === issue.user_id;
+    
+    if (resIssue.cluster_id) {
+      const clusterInfo = await this.clusterService.getClusterById(resIssue.cluster_id);
+      resIssue.cluster = clusterInfo;
+    }
 
     if (resIssue.is_anonymous) {
       resIssue.user = {
@@ -179,12 +198,12 @@ export default class IssueService {
 
     delete issue.issue_id;
 
-    // console.log(issue);
-
     const createdIssue = await this.issueRepository.createIssue({
       ...issue,
       image_url: imageUrl,
     });
+
+    this.processIssueAsync(createdIssue.issue_id);
 
     const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "Created first issue");
     const points = isFirstIssue ? 50 : 20;
@@ -194,6 +213,38 @@ export default class IssueService {
       issue_id: createdIssue.issue_id,
       user_id: issue.user_id
     });
+  }
+
+  public async processIssueAsync(issueId: number) {
+    try {
+      console.log(`Starting to process issue ${issueId}`);
+      const issue = await this.issueRepository.getIssueById(issueId);
+      console.log(`Retrieved issue:`, issue);
+  
+      if (!issue) {
+        console.error(`Issue ${issueId} not found`);
+        return;
+      }
+  
+      if (!issue.content) {
+        console.error(`Issue ${issueId} has no content`);
+        return;
+      }
+  
+      const embedding = await this.openAIService.getEmbedding(issue.content);
+      console.log(`Generated embedding for issue ${issueId}`);
+  
+      await this.issueRepository.updateIssueEmbedding(issueId, embedding);
+      console.log(`Updated embedding for issue ${issueId}`);
+  
+      const clusterId = await this.clusterService.assignClusterToIssue(issueId);
+      console.log(`Assigned cluster ${clusterId} to issue ${issueId}`);
+  
+      await this.issueRepository.updateIssueCluster(issueId, clusterId);
+      console.log(`Updated cluster for issue ${issueId}`);
+    } catch (error) {
+      console.error(`Error processing issue ${issueId}:`, error);
+    }
   }
 
   async updateIssue(issue: Partial<Issue>) {
@@ -278,6 +329,10 @@ export default class IssueService {
             "An error occurred while deleting the image. Please try again.",
         });
       }
+    }
+
+    if (issueToDelete.cluster_id) {
+      await this.clusterService.removeIssueFromCluster(issue_id, issueToDelete.cluster_id);
     }
 
     await this.issueRepository.deleteIssue(issue_id, user_id);
