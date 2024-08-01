@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Loader2 } from "lucide-react";
 import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
-import { fetchUserLocation } from "@/lib/api/fetchUserLocation"; 
-import { UserAlt, LeaderboardEntry, LocationType } from "@/lib/types";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { UserAlt, LeaderboardEntry } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; 
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 type RankingType = 'country' | 'city' | 'suburb';
 
@@ -22,7 +22,6 @@ const Leaderboard: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [userData, setUserData] = useState<UserAlt | null>(null);
-  const [userLocation, setUserLocation] = useState<LocationType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const userRowRef = useRef<HTMLTableRowElement>(null);
@@ -35,37 +34,34 @@ const Leaderboard: React.FC = () => {
         setIsLoading(false);
         return;
       }
-  
+
       try {
         setIsLoading(true);
         setError(null);
-  
+
         const locationData = user.location_id ? await fetchUserLocation(user.location_id) : null;
-  
+
         console.log('Sending request with data:', {
           userId: user.user_id,
           ...locationData ? locationData.value : {},
         });
-  
+
         const data = await fetchLeaderboard(user.user_id, rankingType, locationData ? locationData.value : {});
-  
+
         console.log('Fetched leaderboard data:', data);
-  
+
         setLeaderboardData(data.leaderboard);
-      setUserData(data.user);
-      setIsLoading(false);
+        setUserData(data.user);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
         setError('Failed to load leaderboard data');
         setIsLoading(false);
       }
     };
-  
+
     fetchData();
   }, [user, rankingType]);
-  
-
-
 
   useEffect(() => {
     if (userRowRef.current) {
@@ -87,9 +83,8 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0d0d0d] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
-     
       <div className="flex flex-col items-center mb-6">
-      <Avatar className="w-32 h-32 mb-4">
+        <Avatar className="w-32 h-32 mb-4">
           <AvatarImage src={userData.image_url} alt={userData.fullname} />
           <AvatarFallback>{userData.fullname.charAt(0)}</AvatarFallback>
         </Avatar>
@@ -100,14 +95,13 @@ const Leaderboard: React.FC = () => {
         <div className="mt-4">
           <p className="text-sm">Your {rankingType.charAt(0).toUpperCase() + rankingType.slice(1)} Ranking</p>
           <p className="text-3xl font-bold text-center">
-          {userData.ranking !== null ? `${userData.ranking}` : 'N/A'}
+            {userData.ranking !== null ? `${userData.ranking}` : 'N/A'}
           </p>
         </div>
       </div>
 
-     
       <div className="mb-4 relative z-10">
-        <button 
+        <button
           className={`border rounded p-2 flex items-center ${theme === 'dark' ? 'bg-[#262626] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}
           onClick={() => setShowDropdown(!showDropdown)}
         >
@@ -115,19 +109,19 @@ const Leaderboard: React.FC = () => {
         </button>
         {showDropdown && (
           <div className={`absolute mt-2 border rounded shadow-lg z-20 ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
-            <button 
+            <button
               className="block px-4 py-2 hover:bg-gray-200 text"
               onClick={() => { setRankingType('country'); setShowDropdown(false); }}
             >
               Country Ranking
             </button>
-            <button 
+            <button
               className="block px-4 py-2 hover:bg-gray-200"
               onClick={() => { setRankingType('city'); setShowDropdown(false); }}
             >
               City Ranking
             </button>
-            <button 
+            <button
               className="block px-4 py-2 hover:bg-gray-200"
               onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
             >
@@ -137,7 +131,6 @@ const Leaderboard: React.FC = () => {
         )}
       </div>
 
-      
       <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
         <table className="w-full table-auto">
           <thead className={theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}>
@@ -152,9 +145,9 @@ const Leaderboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-          {leaderboardData.map(entry => (
-              <tr 
-                key={entry.userId} 
+            {leaderboardData.map(entry => (
+              <tr
+                key={entry.userId}
                 className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
                 ref={entry.userId === userData.user_id ? userRowRef : null}
               >

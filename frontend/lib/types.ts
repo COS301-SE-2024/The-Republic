@@ -28,11 +28,12 @@ interface UserData {
 interface LeaderboardEntry {
   username: string;
   userId: string;
-  country: string;
+  province: string;
   city: string;
   suburb: string;
+  district: string;
   points: number;
-  countryRanking: number;
+  provinceRanking: number;
   cityRanking: number;
   suburbRanking: number;
   rank: number;
@@ -53,7 +54,7 @@ interface UserAlt {
   location: any | null;
   location_id: number | null;
   ranking?: number | null;
-  countryRanking?: number | null;
+  provinceRanking: number | null;
   cityRanking?: number | null;
   suburbRanking?: number | null;
 }

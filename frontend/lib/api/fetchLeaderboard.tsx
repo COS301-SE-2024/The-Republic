@@ -1,5 +1,11 @@
 import { UserAlt, LeaderboardEntry } from "@/lib/types";
 
+interface LocationDetails {
+  province?: string;
+  city?: string;
+  suburb?: string;
+}
+
 
 interface ApiResponse {
   success: boolean;
@@ -12,7 +18,7 @@ interface ApiResponse {
       image_url: string;
       user_score: number;
       location_id: number | null;
-      location: any; 
+      location: LocationDetails | null; 
       is_owner: boolean;
       total_issues: number;
       resolved_issues: number;
@@ -25,7 +31,7 @@ interface ApiResponse {
       fullname: string;
       image_url: string;
       user_score: number;
-      location: any; 
+      location: LocationDetails | null;    
     }>;
   };
 }
@@ -66,37 +72,37 @@ const fetchLeaderboard = async (
    
 
     const leaderboardEntries: LeaderboardEntry[] = leaderboard.map(entry => ({
-      username: entry.username,
-      userId: entry.user_id,
-      country: entry.location?.country || '',
-      city: entry.location?.city || '',
-      suburb: entry.location?.suburb || '',
-      points: entry.user_score,
-      countryRanking: 0,
-      cityRanking: 0,
-      suburbRanking: 0,
-      rank: 0, 
-    }));
+  username: entry.username,
+  userId: entry.user_id,
+  province: entry.location?.province ?? '',
+  city: entry.location?.city ?? '',
+  suburb: entry.location?.suburb ?? '',
+  points: entry.user_score,
+  provinceRanking: 0,
+  cityRanking: 0,
+  suburbRanking: 0,
+  rank: 0, 
+}));
   
     
     leaderboardEntries.sort((a, b) => b.points - a.points);
 
    
-  let countryRank = 0;
+  let provinceRank = 0;
   let cityRank = 0;
   let suburbRank = 0;
-  let lastCountry = '';
+  let lastProvince = '';
   let lastCity = '';
   let lastSuburb = '';
   let lastPoints = -1;
 
   leaderboardEntries.forEach((entry, index) => {
     // Country ranking
-    if (entry.country !== lastCountry || entry.points !== lastPoints) {
-      countryRank = index + 1;
-      lastCountry = entry.country;
+    if (entry.province !== lastProvince || entry.points !== lastPoints) {
+      provinceRank = index + 1;
+      lastProvince = entry.province;
     }
-    entry.countryRanking = countryRank;
+    entry.provinceRanking = provinceRank;
 
     // City ranking
     if (entry.city !== lastCity || entry.points !== lastPoints) {
@@ -137,7 +143,7 @@ const fetchLeaderboard = async (
     location: null,
     location_id: userPosition.location_id || null,
     ranking: userEntry ? userEntry.rank : null,
-  countryRanking: userEntry ? userEntry.countryRanking : null,
+    provinceRanking: userEntry ? userEntry.provinceRanking : null,
   cityRanking: userEntry ? userEntry.cityRanking : null,
   suburbRanking: userEntry ? userEntry.suburbRanking : null,
   };

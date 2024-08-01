@@ -23,6 +23,7 @@ const Feed: React.FC = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
+  const [issues, setIssues] = useState<IssueType[]>([]);
 
   useEffect(() => {
     const loadLocation = async () => {
