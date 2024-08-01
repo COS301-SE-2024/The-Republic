@@ -6,6 +6,8 @@ import commentRoutes from "@/modules/comments/routes/commentRoutes";
 import visualizationRoutes from "@/modules/visualizations/routes/visualizationRoutes";
 import reportsRoutes from "@/modules/reports/routes/reportsRoutes";
 import locationRoutes from "@/modules/locations/routes/locationRoutes";
+import pointsRoutes from "@/modules/points/routes/pointsRoutes";
+import clusterRoutes from "@/modules/clusters/routes/clusterRoutes";
 import { serverMiddleare } from "@/middleware/middleware";
 
 const app = express();
@@ -30,12 +32,14 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/visualization", visualizationRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/locations", locationRoutes);
+app.use("/api/points", pointsRoutes);
+app.use('/api/clusters', clusterRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
     id: Math.floor(Math.random() * 500) + 1,
-    data: "Welcome to InfiniteLoopers Node-Express App",
+    data: "Welcome to The-Republic Node-Express App",
   });
 });
 

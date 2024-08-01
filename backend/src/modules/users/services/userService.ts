@@ -104,6 +104,34 @@ export class UserService {
       updateData.image_url = urlData.publicUrl;
     }
 
+    if (updateData.location) {
+      const locationData = JSON.parse(updateData.location as unknown as string);
+      const { data: locationRecord, error: locationError } = await supabase
+        .from('location')
+        .upsert({
+          province: locationData.value.province,
+          city: locationData.value.city,
+          suburb: locationData.value.suburb,
+          district: locationData.value.district,
+          place_id: locationData.value.place_id,
+          latitude: locationData.value.lat,
+          longitude: locationData.value.lng,
+        })
+        .select()
+        .single();
+  
+      if (locationError) {
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "Failed to update location",
+        });
+      }
+  
+      updateData.location_id = locationRecord.location_id;
+      delete updateData.location; // Remove the location object from updateData
+    }
+
     const updatedUser = await this.userRepository.updateUserProfile(
       userId,
       updateData,
@@ -120,6 +148,40 @@ export class UserService {
       code: 200,
       success: true,
       data: updatedUser,
+    };
+  }
+
+  async updateUserLocation(userId: string, locationId: number): Promise<APIResponse<User>> {
+    const updatedUser = await this.userRepository.updateUserLocation(userId, locationId);
+    if (!updatedUser) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    return {
+      code: 200,
+      success: true,
+      data: updatedUser,
+    };
+  }
+
+  async getUserWithLocation(userId: string): Promise<APIResponse<User>> {
+    const user = await this.userRepository.getUserWithLocation(userId);
+    if (!user) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    return {
+      code: 200,
+      success: true,
+      data: user,
     };
   }
 }

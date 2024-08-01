@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,15 +8,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { categoryOptions, moodOptions } from "@/lib/constants";
-import LocationAutocomplete from "@/components/LocationAutocomplete/LocationAutocomplete";
 import Dropdown from "@/components/Dropdown/Dropdown";
-import { Loader2, Image as LucideImage, X } from "lucide-react";
+import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { useUser } from "@/lib/contexts/UserContext";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 import CircularProgress from "../CircularProgressBar/CircularProgressBar";
+import LocationModal from "@/components/LocationModal/LocationModal";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -31,6 +32,8 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  
 
   // This should be intergrated as described in the comment for mutations in Issue.tsx
   /* const mutation = useMutation({
@@ -64,6 +67,24 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       });
     },
   }); */
+
+  useEffect(() => {
+    const loadUserLocation = async () => {
+      if (user && user.location_id) {
+        const userLocation = await fetchUserLocation(user.location_id);
+        if (userLocation) {
+          setLocation(userLocation);
+        }
+      }
+    };
+
+    loadUserLocation();
+  }, [user]);
+
+  const handleLocationSet = (newLocation: LocationType) => {
+    setLocation(newLocation);
+    setIsLocationModalOpen(false);
+  };
 
   const handleIssueSubmit = async () => {
     const validationChecks = [
@@ -237,7 +258,28 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
           onChange={setMood}
           placeholder="Mood"
         />
-        <LocationAutocomplete location={location} setLocation={setLocation} />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mx-2 flex items-center"
+          onClick={() => setIsLocationModalOpen(true)}
+        >
+          <MapPin className="mr-2" />
+          {location ? 'Change Location' : 'Set Location'}
+        </Button>
+        {location && (
+          <div className="flex items-center mx-2">
+            <span className="text-sm">{location.label}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => setLocation(null)}
+            >
+              <X size={16} />
+            </Button>
+          </div>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -288,6 +330,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
           <CircularProgress charCount={charCount} />
         </div>
       </CardFooter>
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSet={handleLocationSet}
+        defaultLocation={location}
+      />
     </Card>
   );
 };

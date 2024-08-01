@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Location } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 
 const FETCH_SIZE = 2;
 
@@ -21,33 +22,42 @@ const Feed: React.FC = () => {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(() => {
-    const locationString = searchParams.get("location");
+  const [location, setLocation] = useState<Location | null>(null);
 
-    if (!locationString) {
-      return null;
-    }
+  useEffect(() => {
+    const loadLocation = async () => {
+      // First, check if there's a location in the search params
+      const locationString = searchParams.get("location");
+      if (locationString) {
+        const locationParts = locationString.split(", ").slice(1);
+        const locationObject: Location = {
+          location_id: "",
+          province: locationParts[0],
+          city: "",
+          suburb: "",
+          district: locationParts.slice(-1)[0],
+        };
 
-    const locationParts = locationString?.split(", ").slice(1);
+        if (locationParts.length >= 3) {
+          locationObject.city = locationParts[1];
+        }
 
-    const locationObject: Location = {
-      location_id: "",
-      province: locationParts[0],
-      city: "",
-      suburb: "",
-      district: locationParts.slice(-1)[0],
+        if (locationParts.length === 4) {
+          locationObject.suburb = locationParts[2];
+        }
+
+        setLocation(locationObject);
+      } else if (user && user.location_id) {
+        // If no search param location, use user's default location
+        const userLocation = await fetchUserLocation(user.location_id);
+        if (userLocation) {
+          setLocation({ ...userLocation.value, location_id: "" });
+        }
+      }
     };
 
-    if (locationParts.length >= 3) {
-      locationObject.city = locationParts[1];
-    }
-
-    if (locationParts.length === 4) {
-      locationObject.suburb = locationParts[2];
-    }
-
-    return locationObject;
-  });
+    loadLocation();
+  }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
     const headers: HeadersInit = {

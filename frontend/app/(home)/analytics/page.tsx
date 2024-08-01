@@ -5,6 +5,7 @@ import Reports from '@/components/ReportCharts/Reports';
 
 function Tabs() {
   const [activeTab, setActiveTab] = useState('Reports');
+  const [selectedCharts, setSelectedCharts] = useState<string[]>([]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -36,7 +37,7 @@ function Tabs() {
         </ul>
       </div>
       <div className='p-5'>
-        {activeTab === 'Reports' && <Reports />}
+        {activeTab === 'Reports' && <Reports selectedCharts={selectedCharts} setSelectedCharts={setSelectedCharts} />}
         {activeTab === 'Visualizations' && <Visualizations />}
       </div>
     </div>

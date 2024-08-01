@@ -2,12 +2,18 @@ import { CommentRepository } from "@/modules/comments/repositories/commentReposi
 import { Comment } from "@/modules/shared/models/comment";
 import { GetCommentsParams } from "@/types/comment";
 import { APIData, APIError } from "@/types/response";
+import { PointsService } from "@/modules/points/services/pointsService";
 
 export class CommentService {
   private commentRepository = new CommentRepository();
+  private pointsService = new PointsService();
 
   setCommentRepository(commentRepository: CommentRepository): void {
     this.commentRepository = commentRepository;
+  }
+
+  setPointsService(pointsService: PointsService): void {
+    this.pointsService = pointsService;
   }
 
   async getNumComments({ issue_id, parent_id }: Partial<GetCommentsParams>) {
@@ -55,6 +61,9 @@ export class CommentService {
           is_owner: isOwner,
           total_issues: null,
           resolved_issues: null,
+          user_score: 0, 
+          location_id: null,
+          location: null
         };
       } else {
         comment.user.is_owner = isOwner;
@@ -98,6 +107,11 @@ export class CommentService {
     delete comment.comment_id;
 
     const addedComment = await this.commentRepository.addComment(comment);
+
+    // Award points for adding a comment, but only if it's a top-level comment
+    if (!comment.parent_id) {
+      await this.pointsService.awardPoints(comment.user_id, 10, "Left a comment on an open issue");
+    }
 
     return APIData({
       code: 201,

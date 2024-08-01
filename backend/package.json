@@ -4,7 +4,7 @@
   "description": "Here are the steps to create a new Node.js Express backend with TypeScript:",
   "main": "index.js",
   "scripts": {
-    "start": "node public/server.js",
+    "start": "ts-node -r tsconfig-paths/register src/server.ts",
     "dev": "nodemon --watch src --exec ts-node -r tsconfig-paths/register src/server.ts",
     "lint": "eslint src --ext .ts,.tsx",
     "build": "tsc",
@@ -23,6 +23,7 @@
     "@types/jest": "^29.5.12",
     "@types/luxon": "^3.4.2",
     "@types/mocha": "^10.0.6",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.13.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
@@ -34,15 +35,15 @@
     "luxon": "^3.4.4",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.1",
+    "openai": "^4.53.2",
     "ts-jest": "^29.1.4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.11.0"
   },
   "devDependencies": {
-    "@types/multer": "^1.4.11",
     "@types/supertest": "^6.0.2",
-    "supertest": "^7.0.0",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0"
+    "supertest": "^7.0.0"
   }
 }

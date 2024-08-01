@@ -8,6 +8,8 @@ interface User {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
+  location?: LocationType | null;
+  location_id?: number | null;
 }
 
 interface UserAlt {
@@ -21,6 +23,8 @@ interface UserAlt {
   total_issues: number;
   resolved_issues: number;
   access_token: string;
+  location?: LocationType | null;
+  location_id?: number | null;
 }
 
 interface MockUser {
@@ -69,6 +73,8 @@ interface LocationType {
     city: string;
     suburb: string;
     district: string;
+    lat: number;
+    lng: number;
   };
 }
 
@@ -253,6 +259,7 @@ interface ProfileUpdate {
   fullname: string;
   username: string;
   bio: string;
+  location?: LocationType | null | undefined;
 }
 
 interface ProfileFeedProps {
