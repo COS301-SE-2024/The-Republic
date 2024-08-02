@@ -61,18 +61,17 @@ const handleSubmit = async (e: React.FormEvent) => {
               <label htmlFor="resolutionType" className="block text-sm font-medium text-gray-700">
                 Resolution Type
               </label>
-<select
-  id="resolutionType"
-  value={resolutionType}
-  onChange={(e) => setResolutionType(e.target.value)}
-  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
->
-  <option value="Self-Resolution">Self-Resolution: I have personally resolved the issue</option>
-  <option value="Unknown-Resolution">Unknown Resolution: The issue is resolved, but the resolver is unknown</option>
-  <option value="Third-Party-Resolution">Third-Party Resolution: The issue was resolved by another party</option>
-  <option value="External-Resolution">External Resolution: An external entity has resolved the issue</option>
-  <option value="Unspecified-Resolution">Unspecified Resolution: The issue is resolved, details unspecified</option>
-</select>            </div>
+              <select
+                id="resolutionType"
+                value={resolutionType}
+                onChange={(e) => setResolutionType(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              >
+                <option>I fixed the problem</option>
+                <option>I don't know who fixed it</option>
+                <option>It was fixed by someone else</option>
+              </select>
+           </div>
             <div>
               <label htmlFor="details" className="block text-sm font-medium text-gray-700">
                 Additional Details
@@ -85,7 +84,26 @@ const handleSubmit = async (e: React.FormEvent) => {
                 className="mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
                 placeholder="Provide more information about the resolution..."
               ></textarea>
-            </div>
+                      </div>
+                      
+                      <div>
+  <label htmlFor="proofImage" className="block text-sm font-medium text-gray-700">
+    Proof Image (optional)
+  </label>
+  <input
+    type="file"
+    id="proofImage"
+    ref={fileInputRef}
+    onChange={handleFileChange}
+    accept="image/*"
+    className="mt-1 block w-full text-sm text-gray-500
+    file:mr-4 file:py-2 file:px-4
+    file:rounded-full file:border-0
+    file:text-sm file:font-semibold
+    file:bg-violet-50 file:text-violet-700
+    hover:file:bg-violet-100"
+  />
+</div>
             {error && (
               <div className="text-red-500 text-sm mt-2">
                 {error}
