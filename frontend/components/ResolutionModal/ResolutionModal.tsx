@@ -37,7 +37,13 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
     } finally {
       setIsSubmitting(false);
     }
-  };
+    };
+    
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+       setProofImage(e.target.files[0]);
+    }
+    };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
