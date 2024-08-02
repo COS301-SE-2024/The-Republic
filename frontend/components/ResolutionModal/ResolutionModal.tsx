@@ -25,19 +25,23 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
   const [proofImage, setProofImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-    try {
-      await onSubmit({ type: resolutionType, details: resolutionDetails });
-      onClose();
-    } catch (err) {
-      setError('Failed to submit resolution. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-    };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError(null);
+  try {
+    await onSubmit({ 
+      type: resolutionType, 
+      details: resolutionDetails,
+      proofImage: proofImage || undefined
+    });
+    onClose();
+  } catch (err) {
+    setError('Failed to submit resolution. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
     
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
