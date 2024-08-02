@@ -88,7 +88,7 @@ const Leaderboard: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0d0d0d] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
+    <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
       <div className="flex flex-col items-center mb-6">
         <Avatar className="w-32 h-32 mb-4">
           <AvatarImage src={userData.image_url} alt={userData.fullname} />
@@ -137,7 +137,7 @@ const Leaderboard: React.FC = () => {
         )}
       </div>
 
-      <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+      <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0C0A09]' : 'bg-white'}`}>
         <table className="w-full table-auto">
           <thead className={theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}>
             <tr className={`text-left ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
