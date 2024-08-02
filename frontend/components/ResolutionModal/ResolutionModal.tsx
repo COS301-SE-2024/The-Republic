@@ -56,6 +56,24 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
                 <option>It was fixed by someone else</option>
               </select>
             </div>
+            <div>
+              <label htmlFor="details" className="block text-sm font-medium text-gray-700">
+                Additional Details
+              </label>
+              <textarea
+                id="details"
+                value={resolutionDetails}
+                onChange={(e) => setResolutionDetails(e.target.value)}
+                rows={3}
+                className="mt-1 block w-full sm:text-sm border-gray-300 rounded-md"
+                placeholder="Provide more information about the resolution..."
+              ></textarea>
+            </div>
+            {error && (
+              <div className="text-red-500 text-sm mt-2">
+                {error}
+              </div>
+            )}
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Submit Resolution'}
             </Button>
