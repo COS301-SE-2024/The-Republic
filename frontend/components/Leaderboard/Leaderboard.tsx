@@ -8,8 +8,9 @@ import { UserAlt, LeaderboardEntry } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
-type RankingType = 'country' | 'city' | 'suburb';
+type RankingType = 'country' | 'province' |'city' | 'suburb';
 
 const LoadingIndicator = () => (
   <div className="flex justify-center items-center h-32">
@@ -28,6 +29,7 @@ const Leaderboard: React.FC = () => {
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const { theme } = useTheme();
   const router = useRouter();
+  const [userHasLocation, setUserHasLocation] = useState(false);
 
   const handleUsernameClick = (userId: string) => {
     router.push(`/profile/${userId}`);
@@ -35,27 +37,34 @@ const Leaderboard: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
+
       if (!user) {
         setError('No user data available');
         setIsLoading(false);
         return;
       }
-
+  
       try {
         setIsLoading(true);
         setError(null);
-
+  
         const locationData = user.location_id ? await fetchUserLocation(user.location_id) : null;
-
-        console.log('Sending request with data:', {
-          userId: user.user_id,
-          ...locationData ? locationData.value : {},
-        });
-
-        const data = await fetchLeaderboard(user.user_id, rankingType, locationData ? locationData.value : {});
-
+        setUserHasLocation(!!locationData);
+  
+        let filterData = {};
+        if (locationData && locationData.value) {
+          filterData = {
+            province: locationData.value.province,
+            city: locationData.value.city,
+            suburb: locationData.value.suburb,
+          };
+        }
+  
+        const data = await fetchLeaderboard(user.user_id, rankingType, filterData);
+  
         console.log('Fetched leaderboard data:', data);
-
+  
         setLeaderboardData(data.leaderboard);
         setUserData(data.user);
         setIsLoading(false);
@@ -63,9 +72,11 @@ const Leaderboard: React.FC = () => {
         console.error('Error fetching leaderboard data:', error);
         setError('Failed to load leaderboard data');
         setIsLoading(false);
+      } finally {
+        setIsLoading(false); 
       }
     };
-
+  
     fetchData();
   }, [user, rankingType]);
 
@@ -115,27 +126,49 @@ const Leaderboard: React.FC = () => {
         </button>
         {showDropdown && (
           <div className={`absolute mt-2 border rounded shadow-lg z-20 ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
-            <button
-              className="block px-4 py-2 hover:bg-gray-200 text"
-              onClick={() => { setRankingType('country'); setShowDropdown(false); }}
-            >
-              Country Ranking
-            </button>
-            <button
-              className="block px-4 py-2 hover:bg-gray-200"
-              onClick={() => { setRankingType('city'); setShowDropdown(false); }}
-            >
-              City Ranking
-            </button>
-            <button
-              className="block px-4 py-2 hover:bg-gray-200"
-              onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
-            >
-              Suburb Ranking
-            </button>
-          </div>
-        )}
-      </div>
+          <button
+            className="block px-4 py-2 hover:bg-gray-200 text"
+            onClick={() => { setRankingType('country'); setShowDropdown(false); }}
+          >
+            Country Ranking
+          </button>
+          {userHasLocation && (
+            <>
+              <button
+                className="block px-4 py-2 hover:bg-gray-200"
+                onClick={() => { setRankingType('province'); setShowDropdown(false); }}
+              >
+                Province Ranking
+              </button>
+              <button
+                className="block px-4 py-2 hover:bg-gray-200"
+                onClick={() => { setRankingType('city'); setShowDropdown(false); }}
+              >
+                City Ranking
+              </button>
+              <button
+                className="block px-4 py-2 hover:bg-gray-200"
+                onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
+              >
+                Suburb Ranking
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+
+    {!userHasLocation && rankingType !== 'country' && (
+        <div className="mb-4 p-4 bg-yellow-100 text-yellow-800 rounded">
+          Set your location to see more detailed ranking information.
+          <Button
+            onClick={() => router.push('/profile')}
+            className="ml-4 bg-yellow-500 text-white"
+          >
+            Set Location
+          </Button>
+        </div>
+      )}
 
       <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0C0A09]' : 'bg-white'}`}>
         <table className="w-full table-auto">
