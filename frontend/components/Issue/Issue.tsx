@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { resolveIssue } from "@/lib/api/resolveIssue";
+import ResolutionModal from '@/components/ResolutionModal/ResolutionModal';
 
 const Issue: React.FC<IssueProps> = ({
   issue,
