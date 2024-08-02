@@ -110,16 +110,16 @@ export class PointsRepository {
       `)
       .order('user_score', { ascending: false })
       .limit(10);
-
+  
     if (locationFilter.province || locationFilter.city || locationFilter.suburb) {
       query = query.not('location_id', 'is', null);
       if (locationFilter.province) query = query.eq('location.province', locationFilter.province);
       if (locationFilter.city) query = query.eq('location.city', locationFilter.city);
       if (locationFilter.suburb) query = query.eq('location.suburb', locationFilter.suburb);
     }
-
+  
     const { data, error } = await query;
-
+  
     if (error) {
       console.error("Error fetching leaderboard:", error);
       throw APIError({
@@ -128,8 +128,12 @@ export class PointsRepository {
         error: "An unexpected error occurred while fetching the leaderboard.",
       });
     }
-
-    return data;
+  
+    const filteredData = locationFilter.province || locationFilter.city || locationFilter.suburb
+      ? data.filter(user => user.location !== null)
+      : data;
+  
+    return filteredData;
   }
 
   async getUserPosition(userId: string, locationFilter: { province?: string, city?: string, suburb?: string }) {
