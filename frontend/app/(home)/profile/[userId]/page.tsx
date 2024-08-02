@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ProfileHeader from "@/components/ProfileHeader/ProfileHeader";
 import ProfileStats from "@/components/ProfileStats/ProfileStats";
-import LoadingIndicator from "@/components/ui/loader";
 import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
+import { Loader2 } from "lucide-react";
 
 import { fetchUserData } from "@/lib/api/fetchUserData";
 
@@ -41,6 +41,12 @@ const ProfilePage: React.FC = () => {
   const handleCancel = () => {
     setIsEditing(false);
   };
+
+  const LoadingIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+    </div>
+  );
 
   return (
     <>

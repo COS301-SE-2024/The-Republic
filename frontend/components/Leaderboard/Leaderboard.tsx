@@ -7,6 +7,7 @@ import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { UserAlt, LeaderboardEntry } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 type RankingType = 'country' | 'city' | 'suburb';
 
@@ -26,6 +27,11 @@ const Leaderboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const { theme } = useTheme();
+  const router = useRouter();
+
+  const handleUsernameClick = (userId: string) => {
+    router.push(`/profile/${userId}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,24 +151,30 @@ const Leaderboard: React.FC = () => {
               {rankingType === 'suburb' && <th className="py-2 px-6">Suburb</th>}
             </tr>
           </thead>
-          <tbody>
-            {leaderboardData.map(entry => (
-              <tr
-                key={entry.userId}
-                className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
-                ref={entry.userId === userData.user_id ? userRowRef : null}
-              >
-                <td className="py-2 px-6">{entry.rank}</td>
-                <td className="py-2 px-6">{entry.username}</td>
-                <td className="py-2 px-6">{entry.points}</td>
-                {rankingType === 'country' && <td className="py-2 px-6">{entry.province || 'N/A'}</td>}
-                {rankingType === 'country' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
-                {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
-                {rankingType === 'city' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
-                {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
-              </tr>
-            ))}
-          </tbody>
+           <tbody>
+        {leaderboardData.map(entry => (
+          <tr
+            key={entry.userId}
+            className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
+            ref={entry.userId === userData.user_id ? userRowRef : null}
+          >
+            <td className="py-2 px-6">{entry.rank}</td>
+            <td 
+              className="py-2 px-6"
+              onClick={() => handleUsernameClick(entry.userId)}
+              style={{ cursor: "pointer" }}
+            >
+              {entry.username}
+            </td>
+            <td className="py-2 px-6">{entry.points}</td>
+            {rankingType === 'country' && <td className="py-2 px-6">{entry.province || 'N/A'}</td>}
+            {rankingType === 'country' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
+            {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
+            {rankingType === 'city' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
+            {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
+          </tr>
+        ))}
+      </tbody>
         </table>
       </div>
     </div>

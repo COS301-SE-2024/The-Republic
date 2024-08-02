@@ -10,6 +10,7 @@ import EditProfile from "@/components/EditProfile/EditProfile";
 import { useTheme } from "next-themes";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 
+
 interface ProfileHeaderProps {
   user: User;
   isOwner: boolean;
