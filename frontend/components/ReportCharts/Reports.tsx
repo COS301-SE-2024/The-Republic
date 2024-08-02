@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FC } from "react";
+import React, { useState, FC, useEffect } from "react";
 import {
   BarChart,
   DonutChart,
@@ -29,6 +29,12 @@ interface ReportsProps {
 
 function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useEffect(() => {
+    if (selectedCharts.length === 0) {
+      setSelectedCharts(Object.keys(chartComponents));
+    }
+  }, []);
 
   const toggleChart = (chartName: string) => {
     setSelectedCharts((prev: string[]) =>
