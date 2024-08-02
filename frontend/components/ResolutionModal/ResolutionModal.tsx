@@ -33,7 +33,37 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
     }
   };
 
-
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Resolve Issue</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="resolutionType" className="block text-sm font-medium text-gray-700">
+                Resolution Type
+              </label>
+              <select
+                id="resolutionType"
+                value={resolutionType}
+                onChange={(e) => setResolutionType(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              >
+                <option>I fixed the problem</option>
+                <option>I don't know who fixed it</option>
+                <option>It was fixed by someone else</option>
+              </select>
+            </div>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Resolution'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default ResolutionModal;
