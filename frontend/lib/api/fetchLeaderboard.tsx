@@ -38,10 +38,19 @@ interface ApiResponse {
 
 const fetchLeaderboard = async (
   userId: string,
-  rankingType: 'country' | 'city' | 'suburb',
+  rankingType: 'country' | 'province' | 'city' | 'suburb',
   locationData?: { province?: string; city?: string; suburb?: string }
 ): Promise<{ leaderboard: LeaderboardEntry[]; user: UserAlt }> => {
   try {
+    let filterData = {};
+    if (rankingType !== 'country' && locationData) {
+      filterData = {
+        province: rankingType === 'province' ? locationData.province : undefined,
+        city: ['city', 'suburb'].includes(rankingType) ? locationData.city : undefined,
+        suburb: rankingType === 'suburb' ? locationData.suburb : undefined,
+      };
+    }
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/points/leaderboard`, {
       method: 'POST',
       headers: {
@@ -49,7 +58,7 @@ const fetchLeaderboard = async (
       },
       body: JSON.stringify({
         userId,
-        ...locationData,
+        ...filterData,
       }),
     });
 
@@ -72,17 +81,18 @@ const fetchLeaderboard = async (
    
 
     const leaderboardEntries: LeaderboardEntry[] = leaderboard.map(entry => ({
-  username: entry.username,
-  userId: entry.user_id,
-  province: entry.location?.province ?? '',
-  city: entry.location?.city ?? '',
-  suburb: entry.location?.suburb ?? '',
-  points: entry.user_score,
-  provinceRanking: 0,
-  cityRanking: 0,
-  suburbRanking: 0,
-  rank: 0, 
-}));
+      username: entry.username,
+      userId: entry.user_id,
+      province: entry.location?.province ?? '',
+      city: entry.location?.city ?? '',
+      suburb: entry.location?.suburb ?? '',
+      points: entry.user_score,
+      countryRanking: 0,
+      provinceRanking: 0,
+      cityRanking: 0,
+      suburbRanking: 0,
+      rank: 0, 
+    }));
   
     
     leaderboardEntries.sort((a, b) => b.points - a.points);
@@ -110,6 +120,13 @@ const fetchLeaderboard = async (
       lastCity = entry.city;
     }
     entry.cityRanking = cityRank;
+
+    // province
+    if (entry.province !== lastProvince || entry.points !== lastPoints) {
+      provinceRank = index + 1;
+      lastProvince = entry.province;
+    }
+    entry.provinceRanking = provinceRank;
 
     // Suburb ranking
     if (entry.suburb !== lastSuburb || entry.points !== lastPoints) {
@@ -142,10 +159,17 @@ const fetchLeaderboard = async (
     access_token: '', 
     location: null,
     location_id: userPosition.location_id || null,
-    ranking: userEntry ? userEntry.rank : null,
+    ranking: userEntry ? (
+      rankingType === 'country' ? userEntry.countryRanking :
+      rankingType === 'province' ? userEntry.provinceRanking :
+      rankingType === 'city' ? userEntry.cityRanking :
+      rankingType === 'suburb' ? userEntry.suburbRanking :
+      null
+    ) : null,
+    countryRanking: userEntry ? userEntry.countryRanking : null,
     provinceRanking: userEntry ? userEntry.provinceRanking : null,
-  cityRanking: userEntry ? userEntry.cityRanking : null,
-  suburbRanking: userEntry ? userEntry.suburbRanking : null,
+    cityRanking: userEntry ? userEntry.cityRanking : null,
+    suburbRanking: userEntry ? userEntry.suburbRanking : null,
   };
 
   const topTen = leaderboardEntries.slice(0, 10);
