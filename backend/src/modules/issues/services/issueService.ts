@@ -2,7 +2,7 @@ import IssueRepository from "@/modules/issues/repositories/issueRepository";
 import { Issue } from "@/modules/shared/models/issue";
 import { Resolution } from "@/modules/shared/models/resolution"
 import { GetIssuesParams } from "@/types/issue";
-import { APIData, APIError } from "@/types/response";
+import { APIData, APIError, APIResponse } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { PointsService } from "@/modules/points/services/pointsService";
@@ -351,10 +351,10 @@ export default class IssueService {
     });
   }
 
-  async resolveIssue(issue: Partial<Issue>) {
+  async resolveIssue(issue: Partial<Issue>): Promise<APIResponse<Resolution>> {
     const user_id = issue.user_id;
     const issue_id = issue.issue_id;
-
+  
     if (!user_id || !issue_id) {
       throw APIError({
         code: 400,
@@ -362,47 +362,64 @@ export default class IssueService {
         error: "Missing required fields for resolving an issue",
       });
     }
-
+  
     return this.createSelfResolution(issue_id, user_id, "Issue resolved by owner");
   }
 
-  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: string): Promise<Resolution> {
-    const issue = await this.issueRepository.getIssueById(issueId);
+  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: string): Promise<APIResponse<Resolution>> {
+    try {
+      const issue = await this.issueRepository.getIssueById(issueId);
+      
+      if (issue.resolved_at) {
+        throw APIError({
+          code: 400,
+          success: false,
+          error: "This issue has already been resolved.",
+        });
+      }
     
-    if (issue.resolved_at) {
+      if (issue.user_id !== userId) {
+        throw APIError({
+          code: 403,
+          success: false,
+          error: "You can only create a self-resolution for your own issues.",
+        });
+      }
+    
+      let numClusterMembers = 1;
+    
+      if (issue.cluster_id) {
+        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
+        numClusterMembers = cluster.issue_count;
+      }
+    
+      const resolution = await this.resolutionService.createResolution({
+        issue_id: issueId,
+        resolver_id: userId,
+        resolution_text: resolutionText,
+        proof_image: proofImage || null,
+        resolution_source: 'self',
+        num_cluster_members: numClusterMembers,
+        political_association: null,
+        state_entity_association: null,
+        resolved_by: null
+      });
+  
+      return APIData({
+        code: 200,
+        success: true,
+        data: resolution,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
       throw APIError({
-        code: 400,
+        code: 500,
         success: false,
-        error: "This issue has already been resolved.",
+        error: "An unexpected error occurred while creating a self-resolution.",
       });
     }
-  
-    if (issue.user_id !== userId) {
-      throw APIError({
-        code: 403,
-        success: false,
-        error: "You can only create a self-resolution for your own issues.",
-      });
-    }
-  
-    let numClusterMembers = 1;
-  
-    if (issue.cluster_id) {
-      const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-      numClusterMembers = cluster.issue_count;
-    }
-  
-    return this.resolutionService.createResolution({
-      issue_id: issueId,
-      resolver_id: userId,
-      resolution_text: resolutionText,
-      proof_image: proofImage || null,
-      resolution_source: 'self',
-      num_cluster_members: numClusterMembers,
-      political_association: null,
-      state_entity_association: null,
-      resolved_by: null
-    });
   }
   
   async createExternalResolution(
@@ -413,39 +430,72 @@ export default class IssueService {
     politicalAssociation?: string,
     stateEntityAssociation?: string,
     resolvedBy?: string
-  ): Promise<Resolution> {
-    const issue = await this.issueRepository.getIssueById(issueId);
+  ): Promise<APIResponse<Resolution>> {
+    try {
+      const issue = await this.issueRepository.getIssueById(issueId);
+      
+      if (issue.resolved_at) {
+        throw APIError({
+          code: 400,
+          success: false,
+          error: "This issue has already been resolved.",
+        });
+      }
     
-    if (issue.resolved_at) {
+      let numClusterMembers = 1;
+    
+      if (issue.cluster_id) {
+        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
+        numClusterMembers = cluster.issue_count;
+      }
+    
+      const resolution = await this.resolutionService.createResolution({
+        issue_id: issueId,
+        resolver_id: userId,
+        resolution_text: resolutionText,
+        proof_image: proofImage || null,
+        resolution_source: resolvedBy ? 'other' : 'unknown',
+        num_cluster_members: numClusterMembers,
+        political_association: politicalAssociation || null,
+        state_entity_association: stateEntityAssociation || null,
+        resolved_by: resolvedBy || null
+      });
+  
+      return APIData({
+        code: 200,
+        success: true,
+        data: resolution,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
       throw APIError({
-        code: 400,
+        code: 500,
         success: false,
-        error: "This issue has already been resolved.",
+        error: "An unexpected error occurred while creating an external resolution.",
       });
     }
-  
-    let numClusterMembers = 1;
-  
-    if (issue.cluster_id) {
-      const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-      numClusterMembers = cluster.issue_count;
-    }
-  
-    return this.resolutionService.createResolution({
-      issue_id: issueId,
-      resolver_id: userId,
-      resolution_text: resolutionText,
-      proof_image: proofImage || null,
-      resolution_source: resolvedBy ? 'other' : 'unknown',
-      num_cluster_members: numClusterMembers,
-      political_association: politicalAssociation || null,
-      state_entity_association: stateEntityAssociation || null,
-      resolved_by: resolvedBy || null
-    });
   }
 
-  async respondToResolution(resolutionId: string, userId: string, accept: boolean): Promise<Resolution> {
-    return this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId);
+  async respondToResolution(resolutionId: string, userId: string, accept: boolean): Promise<APIResponse<Resolution>> {
+    try {
+      const resolution = await this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: resolution,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while responding to the resolution.",
+      });
+    }
   }
 
   async getUserIssues(issue: Partial<Issue>) {

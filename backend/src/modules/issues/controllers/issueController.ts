@@ -74,7 +74,8 @@ export const deleteIssue = async (req: Request, res: Response) => {
 
 export const resolveIssue = async (req: Request, res: Response) => {
   try {
-    const response = await issueService.resolveIssue(req.body);
+    const { issueId, userId } = req.body;
+    const response = await issueService.createSelfResolution(issueId, userId, "Issue resolved by owner");
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
@@ -93,6 +94,52 @@ export const getUserIssues = async (req: Request, res: Response) => {
 export const getUserResolvedIssues = async (req: Request, res: Response) => {
   try {
     const response = await issueService.getUserResolvedIssues(req.body);
+    sendResponse(res, response);
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+export const createSelfResolution = [
+  upload.single("proofImage"),
+  async (req: Request, res: Response) => {
+    try {
+      const { issueId, userId, resolutionText } = req.body;
+      const proofImage = req.file ? req.file.buffer.toString('base64') : undefined;
+      const response = await issueService.createSelfResolution(issueId, userId, resolutionText, proofImage);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  },
+];
+
+export const createExternalResolution = [
+  upload.single("proofImage"),
+  async (req: Request, res: Response) => {
+    try {
+      const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy } = req.body;
+      const proofImage = req.file ? req.file.buffer.toString('base64') : undefined;
+      const response = await issueService.createExternalResolution(
+        issueId, 
+        userId, 
+        resolutionText, 
+        proofImage,
+        politicalAssociation,
+        stateEntityAssociation,
+        resolvedBy
+      );
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  },
+];
+
+export const respondToResolution = async (req: Request, res: Response) => {
+  try {
+    const { resolutionId, userId, accept } = req.body;
+    const response = await issueService.respondToResolution(resolutionId, userId, accept);
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
