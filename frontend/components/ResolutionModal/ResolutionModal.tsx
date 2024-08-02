@@ -21,6 +21,9 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
   const [resolutionDetails, setResolutionDetails] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+    
+  const [proofImage, setProofImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
