@@ -172,4 +172,38 @@ export class ClusterRepository {
   
     return data;
   }
+
+  async updateIssueCluster(issueId: number, newClusterId: string): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ cluster_id: newClusterId })
+      .eq('issue_id', issueId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating the issue's cluster.",
+      });
+    }
+  }
+
+  async getClusterSize(clusterId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('issue')
+      .select('issue_id', { count: 'exact' })
+      .eq('cluster_id', clusterId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while getting the cluster size.",
+      });
+    }
+
+    return count || 0;
+  }
 }
