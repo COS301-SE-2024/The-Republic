@@ -10,8 +10,12 @@ router.post("/single", issueController.getIssueById);
 router.post("/create", issueController.createIssue);
 router.put("/", issueController.updateIssue);
 router.delete("/", issueController.deleteIssue);
-router.put("/resolve/", issueController.resolveIssue);
+router.post("/resolve/", issueController.resolveIssue);
 router.post("/user", issueController.getUserIssues);
 router.post("/user/resolved", issueController.getUserResolvedIssues);
+router.post("/self-resolution", issueController.createSelfResolution);
+router.post("/external-resolution", issueController.createExternalResolution);
+router.post("/respond-resolution", issueController.respondToResolution);
+
 
 export default router;
