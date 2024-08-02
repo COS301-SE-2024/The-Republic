@@ -8,6 +8,7 @@ interface UserAvatarWithScoreProps {
   score: number;
   className?: string;
   isAnonymous?: boolean;
+  scoreFontSize?: number;
 }
 
 const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({ 
@@ -15,7 +16,8 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   username, 
   score,
   className,
-  isAnonymous = false
+  isAnonymous = false,
+  scoreFontSize = 12,
 }) => {
 
   const getBackgroundColor = (score: number) => {
@@ -35,11 +37,21 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   const backgroundColor = getBackgroundColor(score);
   const scoreLength = Math.abs(score).toString().length;
   
-  // Fixed bubble size relative to avatar
-  const bubbleSize = 40; // Percentage of avatar size
+  // Adjust bubble size based on scoreFontSize and score length
+  const bubbleSize = Math.min(50, Math.max(50, 50 + (scoreLength - 1) * 5));
   
-  // Adjust font size based on score length, but with a lower bound
-  const fontSize = Math.max(8, 12 - scoreLength); // In pixels
+  // Use scoreFontSize prop and adjust based on score length
+  const fontSize = Math.max(scoreFontSize * 0.75, scoreFontSize - (scoreLength - 1) * 2);
+
+  // Format score for display
+  const displayScore = (score: number) => {
+    if (Math.abs(score) >= 1000000) {
+      return (score / 1000000).toFixed(1) + 'M';
+    } else if (Math.abs(score) >= 1000) {
+      return (score / 1000).toFixed(1) + 'K';
+    }
+    return score;
+  };
 
   return (
     <div className={cn("relative inline-block", className)}>
@@ -56,10 +68,11 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
             height: `${bubbleSize}%`,
             fontSize: `${fontSize}px`,
             lineHeight: '1',
-            transform: 'translate(25%, -25%)'
+            transform: 'translate(25%, -25%)',
+            padding: '2px'
           }}
         >
-          {score}
+          {displayScore(score)}
         </div>
       )}
     </div>
