@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { resolveIssue } from "@/lib/api/resolveIssue";
+import ResolutionModal from '@/components/ResolutionModal/ResolutionModal';
 
 const Issue: React.FC<IssueProps> = ({
   issue,
@@ -30,6 +31,7 @@ const Issue: React.FC<IssueProps> = ({
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isResolutionModalOpen, setIsResolutionModalOpen] = useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -113,7 +115,7 @@ const Issue: React.FC<IssueProps> = ({
   const isLoading = deleteMutation.isPending || resolveMutation.isPending;
 
   return (
-    <Card className="mb-4" id={id}>
+    <><Card className="mb-4" id={id}>
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
@@ -145,9 +147,7 @@ const Issue: React.FC<IssueProps> = ({
                   type="button"
                   className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
                   id="subscribe-menu"
-                  onClick={() =>
-                    setShowSubscribeDropdown(!showSubscribeDropdown)
-                  }
+                  onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
                   title="Subscribe"
                 >
                   <Bell className="h-5 w-5" aria-hidden="true" />
@@ -192,11 +192,10 @@ const Issue: React.FC<IssueProps> = ({
                 menuItems={menuItems}
                 isOwner={isOwner}
                 onDelete={() => deleteMutation.mutate()}
-                onResolve={() => resolveMutation.mutate()}
-                onSubscribe={handleSubscribe}
-              />
+                onResolve={() => setIsResolutionModalOpen(true)}
+                onSubscribe={handleSubscribe} />
             )}
-            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400"/>}
+            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
           </div>
         </div>
         <div className="flex space-x-2 pt-2">
@@ -225,8 +224,7 @@ const Issue: React.FC<IssueProps> = ({
               layout="responsive"
               width={100}
               height={100}
-              className="rounded-lg"
-            />
+              className="rounded-lg" />
           </div>
         )}
         {issue.resolved_at && (
@@ -243,10 +241,20 @@ const Issue: React.FC<IssueProps> = ({
         <Reaction
           issueId={String(issue.issue_id)}
           initialReactions={issue.reactions}
-          userReaction={issue.user_reaction}
-        />
+          userReaction={issue.user_reaction} />
       </CardFooter>
     </Card>
+      
+      <ResolutionModal
+        isOpen={isResolutionModalOpen}
+        onClose={() => setIsResolutionModalOpen(false)}
+        onSubmit={async (resolutionData) => {
+          // Here you would call your API to submit the resolution
+          console.log('Resolution submitted:', resolutionData);
+          // After successful submission, you might want to update the issue state
+          // For now, we'll just close the modal
+          setIsResolutionModalOpen(false);
+        } } /></>
   );
 };
 
