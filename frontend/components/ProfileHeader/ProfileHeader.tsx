@@ -36,11 +36,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className="px-4 pb-4">
         <div className="-mt-16 flex justify-between items-end">
         <UserAvatarWithScore
-  imageUrl={user.image_url}
-  username={user.fullname}
-  score={user.user_score}
-  className="w-24 h-24"
-/>
+          imageUrl={user.image_url}
+          username={user.fullname}
+          score={user.user_score}
+          className="w-24 h-24"
+          scoreFontSize={20} 
+        />
           {isOwner && (
             <Dialog.Root open={isEditing} onOpenChange={setIsEditing}>
               <Dialog.Trigger asChild>
