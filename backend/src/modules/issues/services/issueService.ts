@@ -1,6 +1,6 @@
 import IssueRepository from "@/modules/issues/repositories/issueRepository";
 import { Issue } from "@/modules/shared/models/issue";
-import { Resolution } from "@/modules/shared/models/resolution"
+import { Resolution } from "@/modules/shared/models/resolution";
 import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError, APIResponse } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
