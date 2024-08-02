@@ -249,6 +249,18 @@ const Issue: React.FC<IssueProps> = ({
         />
       </CardFooter>
     </Card>
+
+    <ResolutionModal
+  isOpen={isResolutionModalOpen}
+  onClose={() => setIsResolutionModalOpen(false)}
+  onSubmit={async (resolutionData) => {
+    // Here you would call your API to submit the resolution
+    console.log('Resolution submitted:', resolutionData);
+    // After successful submission, you might want to update the issue state
+    // For now, we'll just close the modal
+    setIsResolutionModalOpen(false);
+  }}
+/>
   );
 };
 
