@@ -194,7 +194,7 @@ const Issue: React.FC<IssueProps> = ({
                 menuItems={menuItems}
                 isOwner={isOwner}
                 onDelete={() => deleteMutation.mutate()}
-                onResolve={() => resolveMutation.mutate()}
+                onResolve={() => setIsResolutionModalOpen(true)}
                 onSubscribe={handleSubscribe}
               />
             )}
