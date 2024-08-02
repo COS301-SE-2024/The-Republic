@@ -1,4 +1,5 @@
 import { Issue } from "../../shared/models/issue";
+import { Resolution } from "@/modules/shared/models/resolution";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { DateTime } from "luxon";
 import { APIError } from "@/types/response";
@@ -602,5 +603,63 @@ export default class IssueRepository {
     );
 
     return issues as Issue[];
+  }
+
+  async updateIssueResolutionStatus(issueId: number, resolved: boolean): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ 
+        resolved_at: resolved ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('issue_id', issueId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating the issue resolution status.",
+      });
+    }
+  }
+
+  async isIssueResolved(issueId: number): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('issue')
+      .select('resolved_at')
+      .eq('issue_id', issueId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking the issue resolution status.",
+      });
+    }
+
+    return data.resolved_at !== null;
+  }
+
+  async getPendingResolutionForIssue(issueId: number): Promise<Resolution | null> {
+    const { data, error } = await supabase
+      .from('resolution')
+      .select('*')
+      .eq('issue_id', issueId)
+      .eq('status', 'pending')
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is the error code for no rows returned
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking for pending resolutions.",
+      });
+    }
+
+    return data || null;
   }
 }
