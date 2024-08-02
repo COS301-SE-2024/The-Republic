@@ -88,12 +88,12 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
       <div className="flex items-start space-x-4 space-y-4 mb-4">
         <div className="relative space-y-6">
         <UserAvatarWithScore
-  imageUrl={userAvatar}
-  username={userFullname}
-  score={userScore}
-  className="w-12 h-12"
-  isAnonymous={isAnonymous}
-/>
+          imageUrl={userAvatar}
+          username={userFullname}
+          score={userScore}
+          className="w-12 h-12"
+          isAnonymous={isAnonymous}
+        />
         </div>
         <div className="flex-1">
           <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
