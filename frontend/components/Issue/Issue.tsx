@@ -31,6 +31,7 @@ const Issue: React.FC<IssueProps> = ({
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isResolutionModalOpen, setIsResolutionModalOpen] = useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
