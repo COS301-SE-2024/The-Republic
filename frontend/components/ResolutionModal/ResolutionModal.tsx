@@ -78,11 +78,9 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSu
                   : "bg-white text-gray-800 border-gray-300"
               )}
             >
-              <option value="Self-Resolution">Self-Resolution: I have personally resolved the issue</option>
-              <option value="Unknown-Resolution">Unknown Resolution: The issue is resolved, but the resolver is unknown</option>
-              <option value="Third-Party-Resolution">Third-Party Resolution: The issue was resolved by another party</option>
-              <option value="External-Resolution">External Resolution: An external entity has resolved the issue</option>
-              <option value="Unspecified-Resolution">Unspecified Resolution: The issue is resolved, details unspecified</option>
+                <option>I fixed the problem</option>
+                <option>I don't know who fixed it</option>
+                <option>It was fixed by someone else</option>
             </select>
           </div>
           <div>
