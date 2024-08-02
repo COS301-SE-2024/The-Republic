@@ -10,9 +10,12 @@ import {
 interface ResolutionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (resolutionData: { type: string; details: string }) => void;
+  onSubmit: (resolutionData: { 
+    type: string; 
+    details: string; 
+    proofImage?: File;
+  }) => void;
 }
-
 const ResolutionModal: React.FC<ResolutionModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [resolutionType, setResolutionType] = useState('I fixed the problem');
   const [resolutionDetails, setResolutionDetails] = useState('');
