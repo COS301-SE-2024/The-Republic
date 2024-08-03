@@ -27,7 +27,7 @@ interface ResolutionModalProps {
     resolvedBy?: string;
     politicalAssociation?: string;
     stateEntityAssociation?: string;
-  }) => Promise<void>;
+  }) => void;
 }
 
 const ResolutionModal: React.FC<ResolutionModalProps> = ({
@@ -48,15 +48,9 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme } = useTheme();
 
-  const isProofImageRequired = !isSelfResolution && resolutionSource === 'self';
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isProofImageRequired && !proofImage) {
-      alert("Proof image is required when you claim to have fixed the issue.");
-      return;
-    }
-    await onSubmit({
+    onSubmit({
       resolutionText,
       proofImage,
       resolutionSource,
@@ -174,9 +168,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
           )}
 
           <div>
-            <Label htmlFor="proofImage">
-              Proof Image {isProofImageRequired ? "(required)" : "(optional)"}
-            </Label>
+            <Label htmlFor="proofImage">Proof Image (optional)</Label>
             <div className="mt-1 flex items-center">
               <Button
                 type="button"
