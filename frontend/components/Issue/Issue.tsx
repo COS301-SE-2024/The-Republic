@@ -33,6 +33,8 @@ const Issue: React.FC<IssueProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isResolutionModalOpen, setIsResolutionModalOpen] = useState(false);
 
+  
+
   const deleteMutation = useMutation({
     mutationFn: async () => {
       return await deleteIssue(user!, issue.issue_id);
@@ -75,11 +77,6 @@ const Issue: React.FC<IssueProps> = ({
     }
   });
 
-  const menuItems = ["Delete"];
-  if (!issue.resolved_at) {
-    menuItems.push("Resolve Issue");
-  }
-
   const handleCommentClick = () => {
     router.push(`/issues/${issue.issue_id}`);
   };
@@ -111,8 +108,40 @@ const Issue: React.FC<IssueProps> = ({
     };
   }, [dropdownRef]);
 
-  const isOwner = user && user.user_id === issue.user_id;
+  const isOwner = user ? user.user_id === issue.user_id : false;
   const isLoading = deleteMutation.isPending || resolveMutation.isPending;
+
+  const menuItems = isOwner ? ["Delete", "Resolve Issue"] : ["Resolve Issue"];
+
+  const handleMenuAction = (action: string) => {
+    switch (action) {
+      case "Delete":
+        if (isOwner) {
+          deleteMutation.mutate();
+        }
+        break;
+      case "Resolve Issue":
+        setIsResolutionModalOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleResolutionSubmit = async (resolutionData: {
+    resolutionText: string;
+    proofImage: File | null;
+    resolutionSource: 'self' | 'unknown' | 'other';
+    resolvedBy?: string;
+    politicalAssociation?: string;
+    stateEntityAssociation?: string;
+  }) => {
+    console.log('Resolution submitted:', resolutionData);
+    // Here you would call your API to submit the resolution
+
+    setIsResolutionModalOpen(false);
+  };
+
 
   return (
     <><Card className="mb-4" id={id}>
@@ -187,13 +216,13 @@ const Issue: React.FC<IssueProps> = ({
                 </div>
               )}
             </div>
-            {isOwner && !isLoading && (
+            {!isLoading && (
               <MoreMenu
                 menuItems={menuItems}
                 isOwner={isOwner}
-                onDelete={() => deleteMutation.mutate()}
-                onResolve={() => setIsResolutionModalOpen(true)}
-                onSubscribe={handleSubscribe} />
+                onAction={handleMenuAction}
+                onSubscribe={handleSubscribe}
+              />
             )}
             {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
           </div>
@@ -245,16 +274,13 @@ const Issue: React.FC<IssueProps> = ({
       </CardFooter>
     </Card>
       
-      <ResolutionModal
+    <ResolutionModal
         isOpen={isResolutionModalOpen}
         onClose={() => setIsResolutionModalOpen(false)}
-        onSubmit={async (resolutionData) => {
-          // Here you would call your API to submit the resolution
-          console.log('Resolution submitted:', resolutionData);
-          // After successful submission, you might want to update the issue state
-          // For now, we'll just close the modal
-          setIsResolutionModalOpen(false);
-        } } /></>
+        isSelfResolution={isOwner}
+        onSubmit={handleResolutionSubmit}
+      />
+      </>
   );
 };
 
