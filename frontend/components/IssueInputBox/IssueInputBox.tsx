@@ -33,7 +33,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  
 
   // This should be intergrated as described in the comment for mutations in Issue.tsx
   /* const mutation = useMutation({
@@ -71,9 +70,13 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   useEffect(() => {
     const loadUserLocation = async () => {
       if (user && user.location_id) {
-        const userLocation = await fetchUserLocation(user.location_id);
-        if (userLocation) {
-          setLocation(userLocation);
+        try {
+          const userLocation = await fetchUserLocation(user.location_id);
+          if (userLocation) {
+            setLocation(userLocation);
+          }
+        } catch (error) {
+          console.error("Failed to fetch user location:", error);
         }
       }
     };
@@ -214,7 +217,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   return (
     <Card className="mb-4 w-full bg-background border-primary rounded-lg">
       <CardContent className="p-4">
-        <div className="flex items-center">
+        <div className="flex items-start">
           {user && (
             <div className="pr-2">
               <Avatar>
@@ -223,113 +226,99 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
               </Avatar>
             </div>
           )}
-          <TextareaAutosize
-            placeholder="What's going on!?"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="flex-grow mr-4 p-2 border rounded resize-none"
-            maxRows={10}
-            style={{ width: "100%" }}
+          <div className="flex-grow">
+            <TextareaAutosize
+              placeholder="What's going on!?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full p-2 border rounded resize-none"
+              maxRows={10}
+            />
+            {image && (
+              <div className="relative w-full h-48 mt-2">
+                <Image
+                  src={URL.createObjectURL(image)}
+                  alt="Uploaded"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 right-2 bg-white bg-opacity-70"
+                  onClick={removeImage}
+                >
+                  <X />
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex flex-wrap items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Dropdown
+            options={categoryOptions}
+            value={category}
+            onChange={setCategory}
+            placeholder="Select category..."
+            className="w-40"
           />
+          <Dropdown
+            options={moodOptions}
+            value={mood}
+            onChange={setMood}
+            placeholder="😟"
+            className="w-36"
+            showSearch={false}
+            compact={true}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center"
+            onClick={() => setIsLocationModalOpen(true)}
+          >
+            <MapPin className="w-4 h-4 mr-1" />
+            {location ? location.value.suburb : 'Set Location'}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <LucideImage className="w-4 h-4" />
+          </Button>
+          <div className="flex items-center">
+            <Checkbox
+              id="anon"
+              checked={isAnonymous}
+              onCheckedChange={(state) => setIsAnonymous(state as boolean)}
+            />
+            <label htmlFor="anon" className="text-sm ml-2">
+              Anonymous
+            </label>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          <CircularProgress charCount={charCount} />
           <Button
             onClick={handleIssueSubmit}
             disabled={charCount > MAX_CHAR_COUNT || !content}
           >
             Post
-            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
+            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           </Button>
         </div>
-        {charCount > MAX_CHAR_COUNT && (
-          <div className="text-red-500 mt-2">
-            You are over the limit by {charCount - MAX_CHAR_COUNT} characters.
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="relative">
-        <Dropdown
-          options={categoryOptions}
-          value={category}
-          onChange={setCategory}
-          placeholder="Select category..."
-        />
-        <Dropdown
-          options={moodOptions}
-          value={mood}
-          onChange={setMood}
-          placeholder="Mood"
-        />
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mx-2 flex items-center"
-          onClick={() => setIsLocationModalOpen(true)}
-        >
-          <MapPin className="mr-2" />
-          {location ? 'Change Location' : 'Set Location'}
-        </Button>
-        {location && (
-          <div className="flex items-center mx-2">
-            <span className="text-sm">{location.label}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-2"
-              onClick={() => setLocation(null)}
-            >
-              <X size={16} />
-            </Button>
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mx-2"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <LucideImage />
-        </Button>
-        {image && (
-          <div className="relative w-32 h-32">
-            <Image
-              src={URL.createObjectURL(image)}
-              alt="Uploaded"
-              fill
-              objectFit="cover"
-              className="rounded-lg"
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute top-0 right-0"
-              onClick={removeImage}
-            >
-              <X />
-            </Button>
-          </div>
-        )}
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          onChange={handleImageUpload}
-          style={{ display: "none" }}
-        />
-        <div className="mx-2 flex items-center">
-          <Checkbox
-            checked={isAnonymous}
-            onCheckedChange={(state) => setIsAnonymous(state as boolean)}
-          />
-          <label
-            htmlFor="anon"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 p-2"
-          >
-            Anonymous
-          </label>
-        </div>
-        <div className="absolute bottom-2 right-0 m-4">
-          <CircularProgress charCount={charCount} />
-        </div>
       </CardFooter>
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: "none" }}
+      />
       <LocationModal
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
