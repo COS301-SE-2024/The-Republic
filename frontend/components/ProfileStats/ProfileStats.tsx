@@ -6,15 +6,17 @@ import { ProfileStatsProps } from "@/lib/types";
 const ProfileStats: React.FC<ProfileStatsProps> = ({
   totalIssues,
   resolvedIssues,
+  totalResolutions,
   selectedTab,
   setSelectedTab,
 }) => {
-  const handleTabClick = (tab: "issues" | "resolved") => {
+  const handleTabClick = (tab: "issues" | "resolved" | "resolutions") => {
     setSelectedTab(tab);
   };
 
   const displayResolvedIssues = resolvedIssues ?? 0;
   const displayTotalIssues = totalIssues ?? 0;
+  const displayTotalResolutions = totalResolutions ?? 0;
 
   return (
     <div className="flex space-x-4 px-4 py-1 border-b">
@@ -46,7 +48,20 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
           )}
         </div>
       </div>
-      {/* ... */}
+      <div className="py-3">
+        <div
+          className={`relative inline-block cursor-pointer ${
+            selectedTab === "resolutions" ? "text-green-500" : ""
+          }`}
+          onClick={() => handleTabClick("resolutions")}
+        >
+          <span className="font-bold">{displayTotalResolutions}</span>{" "}
+          <span className="text-gray-600">Resolutions</span>
+          {selectedTab === "resolutions" && (
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-green-500"></div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
