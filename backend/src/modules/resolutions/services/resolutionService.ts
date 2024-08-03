@@ -101,6 +101,8 @@ export class ResolutionService {
       await this.pointsService.awardPoints(resolution.resolver_id, 100, "External resolution accepted");
     }
 
+    await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
+
     const acceptedUsers = await this.getAcceptedUsers(resolution.resolution_id);
 
     // Move cluster members who ACCEPTED to a NEW CLUSTER
