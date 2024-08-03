@@ -105,8 +105,12 @@ export const createSelfResolution = [
   async (req: Request, res: Response) => {
     try {
       const { issueId, userId, resolutionText } = req.body;
-      const proofImage = req.file ? req.file.buffer.toString('base64') : undefined;
-      const response = await issueService.createSelfResolution(issueId, userId, resolutionText, proofImage);
+      const response = await issueService.createSelfResolution(
+        parseInt(issueId), 
+        userId, 
+        resolutionText, 
+        req.file
+      );
       sendResponse(res, response);
     } catch (err) {
       handleError(res, err);
@@ -119,12 +123,11 @@ export const createExternalResolution = [
   async (req: Request, res: Response) => {
     try {
       const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy } = req.body;
-      const proofImage = req.file ? req.file.buffer.toString('base64') : undefined;
       const response = await issueService.createExternalResolution(
-        issueId, 
+        parseInt(issueId),
         userId, 
         resolutionText, 
-        proofImage,
+        req.file,
         politicalAssociation,
         stateEntityAssociation,
         resolvedBy
@@ -143,5 +146,46 @@ export const respondToResolution = async (req: Request, res: Response) => {
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
+  }
+};
+
+export const getResolutionsForIssue = async (req: Request, res: Response) => {
+  try {
+    const { issueId } = req.body;
+    const response = await issueService.getResolutionsForIssue(parseInt(issueId));
+    sendResponse(res, response);
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+export const hasUserIssuesInCluster = async (req: Request, res: Response) => {
+  try {
+    const { userId, clusterId } = req.body;
+    const response = await issueService.hasUserIssuesInCluster(userId, clusterId);
+    sendResponse(res, response);
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+export const getUserIssueInCluster = async (req: Request, res: Response) => {
+  try {
+    const { clusterId, user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const issue = await issueService.getUserIssueInCluster(user_id, clusterId);
+
+    if (issue) {
+      return res.json({ issue });
+    } else {
+      return res.status(404).json({ error: "User issue not found in the cluster" });
+    }
+  } catch (error) {
+    console.error("Error fetching user's issue in cluster:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
