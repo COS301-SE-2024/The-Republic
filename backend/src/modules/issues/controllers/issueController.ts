@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import IssueService from "@/modules/issues/services/issueService";
-import { APIResponse, APIError } from "@/types/response";
+import { APIResponse, APIError, APIData } from "@/types/response";
 import { sendResponse } from "@/utilities/response";
 import multer from "multer";
 
@@ -187,5 +187,32 @@ export const getUserIssueInCluster = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching user's issue in cluster:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getUserResolutions = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+    const resolutions = await issueService.getUserResolutions(userId);
+    sendResponse(res, APIData({
+      code: 200,
+      success: true,
+      data: resolutions,
+    }));
+  } catch (err) {
+    handleError(res, err);
+  }
+};
+
+export const deleteResolution = async (req: Request, res: Response) => {
+  try {
+    const { resolutionId, userId } = req.body;
+    await issueService.deleteResolution(resolutionId, userId);
+    sendResponse(res, APIData({
+      code: 200,
+      success: true
+    }));
+  } catch (err) {
+    handleError(res, err);
   }
 };

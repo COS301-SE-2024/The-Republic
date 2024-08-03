@@ -686,4 +686,12 @@ export default class IssueService {
       const issue = await this.issueRepository.getUserIssueInCluster(user_id, clusterId);
       return issue;
   }
+
+  async getUserResolutions(userId: string): Promise<Resolution[]> {
+    return this.resolutionService.getUserResolutions(userId);
+  }
+  
+  async deleteResolution(resolutionId: string, userId: string): Promise<void> {
+    await this.resolutionService.deleteResolution(resolutionId, userId);
+  }
 }
