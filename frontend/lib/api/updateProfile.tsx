@@ -38,7 +38,7 @@ const updateUserProfile = async (
     body: formData,
   });
 
-  console.log(response);
+  //console.log(response);
 
   if (!response.ok) {
     const responseData = await response.json();
