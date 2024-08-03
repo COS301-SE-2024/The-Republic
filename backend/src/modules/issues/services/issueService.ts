@@ -225,9 +225,9 @@ export default class IssueService {
 
   public async processIssueAsync(issueId: number) {
     try {
-      console.log(`Starting to process issue ${issueId}`);
+      //console.log(`Starting to process issue ${issueId}`);
       const issue = await this.issueRepository.getIssueById(issueId);
-      console.log(`Retrieved issue:`, issue);
+      //console.log(`Retrieved issue:`, issue);
   
       if (!issue) {
         console.error(`Issue ${issueId} not found`);
@@ -240,16 +240,16 @@ export default class IssueService {
       }
   
       const embedding = await this.openAIService.getEmbedding(issue.content);
-      console.log(`Generated embedding for issue ${issueId}`);
+      //console.log(`Generated embedding for issue ${issueId}`);
   
       await this.issueRepository.updateIssueEmbedding(issueId, embedding);
-      console.log(`Updated embedding for issue ${issueId}`);
+      //console.log(`Updated embedding for issue ${issueId}`);
   
       const clusterId = await this.clusterService.assignClusterToIssue(issueId);
-      console.log(`Assigned cluster ${clusterId} to issue ${issueId}`);
+      //console.log(`Assigned cluster ${clusterId} to issue ${issueId}`);
   
       await this.issueRepository.updateIssueCluster(issueId, clusterId);
-      console.log(`Updated cluster for issue ${issueId}`);
+      //console.log(`Updated cluster for issue ${issueId}`);
     } catch (error) {
       console.error(`Error processing issue ${issueId}:`, error);
     }
@@ -366,8 +366,10 @@ export default class IssueService {
     return this.createSelfResolution(issue_id, user_id, "Issue resolved by owner");
   }
 
-  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: string): Promise<APIResponse<Resolution>> {
+  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: MulterFile): Promise<APIResponse<Resolution>> {
     try {
+      //console.log(`Starting createSelfResolution for issue ${issueId} by user ${userId}`);
+      
       const issue = await this.issueRepository.getIssueById(issueId);
       
       if (issue.resolved_at) {
@@ -392,12 +394,39 @@ export default class IssueService {
         const cluster = await this.clusterService.getClusterById(issue.cluster_id);
         numClusterMembers = cluster.issue_count;
       }
+  
+      let imageUrl: string | null = null;
+  
+      if (proofImage) {
+        //console.log(`Uploading proof image`);
+        const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
+        const { error } = await supabase.storage
+          .from("resolutions")
+          .upload(fileName, proofImage.buffer);
+  
+        if (error) {
+          console.error("Image upload error:", error);
+          throw APIError({
+            code: 500,
+            success: false,
+            error: "An error occurred while uploading the image. Please try again.",
+          });
+        }
+  
+        const { data: urlData } = supabase.storage
+          .from("resolutions")
+          .getPublicUrl(fileName);
+  
+        imageUrl = urlData.publicUrl;
+        //console.log(`Image uploaded successfully. URL: ${imageUrl}`);
+      }
     
+      //console.log(`Creating resolution`);
       const resolution = await this.resolutionService.createResolution({
         issue_id: issueId,
         resolver_id: userId,
         resolution_text: resolutionText,
-        proof_image: proofImage || null,
+        proof_image: imageUrl,
         resolution_source: 'self',
         num_cluster_members: numClusterMembers,
         political_association: null,
@@ -405,12 +434,14 @@ export default class IssueService {
         resolved_by: null
       });
   
+      //console.log(`Returning successful response`);
       return APIData({
         code: 200,
         success: true,
         data: resolution,
       });
     } catch (error) {
+      console.error("Error in createSelfResolution:", error);
       if (error instanceof APIError) {
         throw error;
       }
@@ -426,7 +457,7 @@ export default class IssueService {
     issueId: number, 
     userId: string, 
     resolutionText: string, 
-    proofImage?: string,
+    proofImage?: MulterFile,
     politicalAssociation?: string,
     stateEntityAssociation?: string,
     resolvedBy?: string
@@ -448,12 +479,36 @@ export default class IssueService {
         const cluster = await this.clusterService.getClusterById(issue.cluster_id);
         numClusterMembers = cluster.issue_count;
       }
+  
+      let imageUrl: string | null = null;
+  
+      if (proofImage) {
+        const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
+        const { error } = await supabase.storage
+          .from("resolutions")
+          .upload(fileName, proofImage.buffer);
+  
+        if (error) {
+          console.error(error);
+          throw APIError({
+            code: 500,
+            success: false,
+            error: "An error occurred while uploading the image. Please try again.",
+          });
+        }
+  
+        const { data: urlData } = supabase.storage
+          .from("resolutions")
+          .getPublicUrl(fileName);
+  
+        imageUrl = urlData.publicUrl;
+      }
     
       const resolution = await this.resolutionService.createResolution({
         issue_id: issueId,
         resolver_id: userId,
         resolution_text: resolutionText,
-        proof_image: proofImage || null,
+        proof_image: imageUrl,
         resolution_source: resolvedBy ? 'other' : 'unknown',
         num_cluster_members: numClusterMembers,
         political_association: politicalAssociation || null,
@@ -585,5 +640,50 @@ export default class IssueService {
       success: true,
       data: issuesWithUserInfo,
     });
+  }
+
+  async hasUserIssuesInCluster(userId: string, clusterId: string): Promise<APIResponse<boolean>> {
+    try {
+      const hasIssues = await this.issueRepository.hasUserIssuesInCluster(userId, clusterId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: hasIssues,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking user issues in the cluster.",
+      });
+    }
+  }
+
+  async getResolutionsForIssue(issueId: number): Promise<APIResponse<Resolution[]>> {
+    try {
+      const resolutions = await this.issueRepository.getResolutionsForIssue(issueId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: resolutions,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching resolutions for the issue.",
+      });
+    }
+  }
+
+  async getUserIssueInCluster(user_id: string, clusterId: string) {
+      const issue = await this.issueRepository.getUserIssueInCluster(user_id, clusterId);
+      return issue;
   }
 }
