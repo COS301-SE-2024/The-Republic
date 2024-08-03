@@ -126,4 +126,12 @@ export class ResolutionService {
   private async getAcceptedUsers(resolutionId: string): Promise<string[]> {
     return this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
   }
+
+  async getUserResolutions(userId: string): Promise<Resolution[]> {
+    return this.resolutionRepository.getUserResolutions(userId);
+  }
+  
+  async deleteResolution(resolutionId: string, userId: string): Promise<void> {
+    await this.resolutionRepository.deleteResolution(resolutionId, userId);
+  }
 }
