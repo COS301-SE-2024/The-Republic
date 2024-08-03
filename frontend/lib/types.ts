@@ -269,7 +269,15 @@ interface MulterFile {
   destination: string;
   filename: string;
   path: string;
-  buffer: Buffer;
+  buffer: 
+  Buffer;
+}
+
+interface SubsParams {
+  user_id: string;
+  issue_id?: string;
+  category_id?: string;
+  location_id?: string;
 }
 
 export type {
@@ -303,4 +311,5 @@ export type {
   MockUser,
   MulterFile,
   Location,
+  SubsParams,
 };
