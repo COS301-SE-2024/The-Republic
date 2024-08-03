@@ -80,6 +80,8 @@ interface Issue {
   content_embedding?: number[] | string | null;
   cluster_id?: string;
   cluster?: Cluster;
+  hasPendingResolution?: boolean;
+  pendingResolutionId?: string | null;
 }
 
 export { User, Category, ReactionCount, Issue, DatabaseUser };
