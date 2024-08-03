@@ -46,10 +46,11 @@ interface UserContextType {
 
 interface ProfileStatsProps {
   userId: string;
-  totalIssues: number | null;
-  resolvedIssues: number | null;
-  selectedTab: "issues" | "resolved";
-  setSelectedTab: (tab: "issues" | "resolved") => void;
+  totalIssues: number;
+  resolvedIssues: number;
+  totalResolutions: number;
+  selectedTab: "issues" | "resolved" | "resolutions";
+  setSelectedTab: (tab: "issues" | "resolved" | "resolutions") => void;
 }
 
 interface IssueInputBoxProps {
@@ -269,7 +270,7 @@ interface ProfileUpdate {
 
 interface ProfileFeedProps {
   userId: string;
-  selectedTab: "issues" | "resolved";
+  selectedTab: "issues" | "resolved" | "resolutions";
 }
 
 interface MulterFile {
