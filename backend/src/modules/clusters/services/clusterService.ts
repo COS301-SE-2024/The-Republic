@@ -223,7 +223,7 @@ export class ClusterService {
         error: "Issue not found",
       });
     }
-
+  
     if (!issue.cluster_id) {
       throw APIError({
         code: 400,
@@ -231,32 +231,59 @@ export class ClusterService {
         error: "Issue is not associated with a cluster",
       });
     }
-
+  
     const oldClusterId = issue.cluster_id;
     const clusterIssues = await this.clusterRepository.getIssuesInCluster(oldClusterId);
     
-    // Create a new cluster with the accepted issue
-    const newCluster = await this.clusterRepository.createCluster(issue);
-    await this.clusterRepository.updateIssueCluster(issueId, newCluster.cluster_id);
-
-    // Move accepted issues to the new cluster
-    for (const clusterIssue of clusterIssues) {
-      if (clusterIssue.issue_id !== issueId && acceptedUserIds.includes(clusterIssue.user_id)) {
-        await this.clusterRepository.updateIssueCluster(clusterIssue.issue_id, newCluster.cluster_id);
+    // Find accepted issues
+    const acceptedIssues = clusterIssues.filter(clusterIssue => 
+      clusterIssue.issue_id !== issueId && acceptedUserIds.includes(clusterIssue.user_id)
+    );
+  
+    let newClusterId = '';
+  
+    if (acceptedIssues.length > 0) {
+      // Check for similar clusters among accepted issues
+      const similarClusters = await this.clusterRepository.findSimilarClustersForIssues(acceptedIssues, 0.9);
+  
+      if (similarClusters.length > 0) {
+        // Move accepted issues to the most similar cluster
+        const mostSimilarCluster = similarClusters[0];
+        newClusterId = mostSimilarCluster.cluster_id;
+  
+        for (const acceptedIssue of acceptedIssues) {
+          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
+        }
+      } else {
+        // Create a new cluster with the first accepted issue
+        const newCluster = await this.clusterRepository.createCluster(acceptedIssues[0]);
+        newClusterId = newCluster.cluster_id;
+  
+        // Move accepted issues to the new cluster
+        for (const acceptedIssue of acceptedIssues) {
+          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
+        }
       }
+    } else {
+      // Create a new cluster with the accepted issue
+      const newCluster = await this.clusterRepository.createCluster(issue);
+      newClusterId = newCluster.cluster_id;
     }
-
+  
+    // Move the accepted issue to the new cluster
+    await this.clusterRepository.updateIssueCluster(issueId, newClusterId);
+  
     // Recalculate centroids for both old and new clusters
     await this.recalculateClusterCentroid(oldClusterId);
-    await this.recalculateClusterCentroid(newCluster.cluster_id);
-
+    await this.recalculateClusterCentroid(newClusterId);
+  
     // Check if the old cluster is empty and delete if necessary
     const oldClusterSize = await this.clusterRepository.getClusterSize(oldClusterId);
     if (oldClusterSize === 0) {
       await this.clusterRepository.deleteCluster(oldClusterId);
     }
-
-    return newCluster.cluster_id;
+  
+    return newClusterId;
   }
 
   private async recalculateClusterCentroid(clusterId: string): Promise<void> {
