@@ -20,11 +20,6 @@ export default class SubscriptionsRepository {
       .select('*')
       .eq('user_id', user_id)
       .single();
-
-    console.log("User ID: ", user_id);
-    console.log("Issue ID: ", issue_id);
-    console.log("Data: ", selectData);
-    console.log("Error: ", selectError);
   
     if (selectData && !selectError) {
       if (selectData.issues.includes(issue_id)) {
@@ -179,7 +174,7 @@ export default class SubscriptionsRepository {
       .select('locations')
       .eq('user_id', user_id)
       .single();
-    
+
     if (selectData && !selectError) {
       if (selectData.locations.includes(location_id)) {
         const updatedlocations = selectData.locations.filter((location: string) => location !== location_id);

@@ -19,6 +19,9 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { resolveIssue } from "@/lib/api/resolveIssue";
+import { SubsParams } from "@/lib/types";
+
+import { subscribe } from "@/lib/api/subscription";
 
 const Issue: React.FC<IssueProps> = ({
   issue,
@@ -73,6 +76,26 @@ const Issue: React.FC<IssueProps> = ({
     }
   });
 
+  const subscriptionMutation = useMutation({
+    mutationFn: async ({ data, url }: { data: SubsParams; url: string }) => {
+      return await subscribe(user, data, url);
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        description: "Subscription Added successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: "Failed to Subscribe to Issue",
+      });
+  
+      console.error(error);
+    }
+  });
+
   const menuItems = ["Delete"];
   if (!issue.resolved_at) {
     menuItems.push("Resolve Issue");
@@ -84,13 +107,28 @@ const Issue: React.FC<IssueProps> = ({
 
   const handleAvatarClick = () => {
     if (!issue.is_anonymous) {
-      router.push(`/profile/${issue.user.user_id}`);
+      router.push(`/profile/${issue.user?.user_id}`);
     }
   };
 
   const handleSubscribe = (type: string) => {
     setShowSubscribeDropdown(false);
-    console.log("Subscribed to:", type);
+    if (type === "Category") {
+      subscriptionMutation.mutate({ data: {
+        user_id: `${user?.user_id}`,
+        category_id: `${issue?.category_id}`,
+      }, url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscriptions/category` });
+    } else if (type === "Location") {
+      subscriptionMutation.mutate({ data: {
+        user_id: `${user?.user_id}`,
+        location_id: `${issue?.location_id}`,
+      }, url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscriptions/location` });
+    } else {
+      subscriptionMutation.mutate({ data: {
+        user_id: `${user?.user_id}`,
+        issue_id: `${issue?.issue_id}`,
+      }, url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscriptions/issue` });
+    }
   };
 
   useEffect(() => {
@@ -111,7 +149,6 @@ const Issue: React.FC<IssueProps> = ({
 
   const isOwner = user && user.user_id === issue.user_id;
   const isLoading = deleteMutation.isPending || resolveMutation.isPending;
-
   return (
     <Card className="mb-4" id={id}>
       <CardHeader className="place-content-stretch">
@@ -123,19 +160,19 @@ const Issue: React.FC<IssueProps> = ({
               style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
             >
               <Avatar>
-                <AvatarImage src={issue.user.image_url} />
-                <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
+                <AvatarImage src={issue.user?.image_url} />
+                <AvatarFallback>{issue.user?.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
             <div>
               <div className="flex items-center">
-                <div className="font-bold">{issue.user.fullname}</div>
+                <div className="font-bold">{issue.user?.fullname}</div>
                 <div className="mx-1 text-sm text-gray-500">·</div>
                 <div className="text-sm text-gray-500">
                   {timeSince(issue.created_at)}
                 </div>
               </div>
-              <div className="text-sm text-gray-600">{issue.user.username}</div>
+              <div className="text-sm text-gray-600">{issue.user?.username}</div>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -201,10 +238,10 @@ const Issue: React.FC<IssueProps> = ({
         </div>
         <div className="flex space-x-2 pt-2">
           <Badge variant="outline" className="">
-            {issue.category.name}
+            {issue.category?.name}
           </Badge>
           <Badge variant="outline" className="">
-            {issue.sentiment}
+            {issue?.sentiment}
           </Badge>
           {issue.location && (
             <Badge variant="outline" className="">
@@ -216,11 +253,11 @@ const Issue: React.FC<IssueProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        <p>{issue.content}</p>
-        {issue.image_url && (
+        <p>{issue?.content}</p>
+        {issue?.image_url && (
           <div className="relative w-1/4 h-auto mt-4">
             <Image
-              src={issue.image_url}
+              src={issue?.image_url}
               alt="Issue"
               layout="responsive"
               width={100}
@@ -229,7 +266,7 @@ const Issue: React.FC<IssueProps> = ({
             />
           </div>
         )}
-        {issue.resolved_at && (
+        {issue?.resolved_at && (
           <div className="flex space-x-2 pt-2">
             <Badge className="">Resolved {timeSince(issue.resolved_at)}</Badge>
           </div>
