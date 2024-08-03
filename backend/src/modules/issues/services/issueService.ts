@@ -4,18 +4,7 @@ import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
-
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
+import { MulterFile } from "@/types/users";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -165,8 +154,6 @@ export default class IssueService {
     }
 
     delete issue.issue_id;
-
-    // console.log(issue);
 
     const createdIssue = await this.issueRepository.createIssue({
       ...issue,
