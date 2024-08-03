@@ -31,6 +31,7 @@ const Issue: React.FC<IssueProps> = ({
 }) => {
   const { user } = useUser();
   const router = useRouter();
+  const [type, setType] = useState("");
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +84,7 @@ const Issue: React.FC<IssueProps> = ({
     onSuccess: (apiResponse) => {
       toast({
         variant: "success",
-        description: apiResponse,
+        description: `${type} ${apiResponse}`,
       });
     },
     onError: (error) => {
@@ -113,6 +114,8 @@ const Issue: React.FC<IssueProps> = ({
 
   const handleSubscribe = (type: string) => {
     setShowSubscribeDropdown(false);
+    setType(type);
+
     if (type === "Category") {
       subscriptionMutation.mutate({ data: {
         user_id: `${user?.user_id}`,
