@@ -80,10 +80,10 @@ const Issue: React.FC<IssueProps> = ({
     mutationFn: async ({ data, url }: { data: SubsParams; url: string }) => {
       return await subscribe(user, data, url);
     },
-    onSuccess: () => {
+    onSuccess: (apiResponse) => {
       toast({
         variant: "success",
-        description: "Subscription Added successfully",
+        description: apiResponse,
       });
     },
     onError: (error) => {

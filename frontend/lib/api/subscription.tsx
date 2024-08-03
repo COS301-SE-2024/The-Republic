@@ -11,8 +11,7 @@ const subscribe = async (user: User | null, data: SubsParams, url: string) => {
     });
   
     const apiResponse = await response.json();
-    console.log("Response: ", response);
-    
+        
     if (apiResponse.success && apiResponse.data) {
         return apiResponse.data;
     } else {
@@ -21,4 +20,3 @@ const subscribe = async (user: User | null, data: SubsParams, url: string) => {
 };
 
 export { subscribe };
-  
