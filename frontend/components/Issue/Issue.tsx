@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { resolveIssue } from "@/lib/api/resolveIssue";
+import ResolutionModal from '@/components/ResolutionModal/ResolutionModal';
 
 const Issue: React.FC<IssueProps> = ({
   issue,
@@ -30,6 +31,9 @@ const Issue: React.FC<IssueProps> = ({
   const router = useRouter();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isResolutionModalOpen, setIsResolutionModalOpen] = useState(false);
+
+  
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -73,11 +77,6 @@ const Issue: React.FC<IssueProps> = ({
     }
   });
 
-  const menuItems = ["Delete"];
-  if (!issue.resolved_at) {
-    menuItems.push("Resolve Issue");
-  }
-
   const handleCommentClick = () => {
     router.push(`/issues/${issue.issue_id}`);
   };
@@ -109,11 +108,43 @@ const Issue: React.FC<IssueProps> = ({
     };
   }, [dropdownRef]);
 
-  const isOwner = user && user.user_id === issue.user_id;
+  const isOwner = user ? user.user_id === issue.user_id : false;
   const isLoading = deleteMutation.isPending || resolveMutation.isPending;
 
+  const menuItems = isOwner ? ["Delete", "Resolve Issue"] : ["Resolve Issue"];
+
+  const handleMenuAction = (action: string) => {
+    switch (action) {
+      case "Delete":
+        if (isOwner) {
+          deleteMutation.mutate();
+        }
+        break;
+      case "Resolve Issue":
+        setIsResolutionModalOpen(true);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleResolutionSubmit = async (resolutionData: {
+    resolutionText: string;
+    proofImage: File | null;
+    resolutionSource: 'self' | 'unknown' | 'other';
+    resolvedBy?: string;
+    politicalAssociation?: string;
+    stateEntityAssociation?: string;
+  }) => {
+    console.log('Resolution submitted:', resolutionData);
+    // Here you would call your API to submit the resolution
+
+    setIsResolutionModalOpen(false);
+  };
+
+
   return (
-    <Card className="mb-4" id={id}>
+    <><Card className="mb-4" id={id}>
       <CardHeader className="place-content-stretch">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
@@ -145,9 +176,7 @@ const Issue: React.FC<IssueProps> = ({
                   type="button"
                   className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
                   id="subscribe-menu"
-                  onClick={() =>
-                    setShowSubscribeDropdown(!showSubscribeDropdown)
-                  }
+                  onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
                   title="Subscribe"
                 >
                   <Bell className="h-5 w-5" aria-hidden="true" />
@@ -187,16 +216,15 @@ const Issue: React.FC<IssueProps> = ({
                 </div>
               )}
             </div>
-            {isOwner && !isLoading && (
+            {!isLoading && (
               <MoreMenu
                 menuItems={menuItems}
                 isOwner={isOwner}
-                onDelete={() => deleteMutation.mutate()}
-                onResolve={() => resolveMutation.mutate()}
+                onAction={handleMenuAction}
                 onSubscribe={handleSubscribe}
               />
             )}
-            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400"/>}
+            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
           </div>
         </div>
         <div className="flex space-x-2 pt-2">
@@ -225,8 +253,7 @@ const Issue: React.FC<IssueProps> = ({
               layout="responsive"
               width={100}
               height={100}
-              className="rounded-lg"
-            />
+              className="rounded-lg" />
           </div>
         )}
         {issue.resolved_at && (
@@ -243,10 +270,17 @@ const Issue: React.FC<IssueProps> = ({
         <Reaction
           issueId={String(issue.issue_id)}
           initialReactions={issue.reactions}
-          userReaction={issue.user_reaction}
-        />
+          userReaction={issue.user_reaction} />
       </CardFooter>
     </Card>
+      
+    <ResolutionModal
+        isOpen={isResolutionModalOpen}
+        onClose={() => setIsResolutionModalOpen(false)}
+        isSelfResolution={isOwner}
+        onSubmit={handleResolutionSubmit}
+      />
+      </>
   );
 };
 
