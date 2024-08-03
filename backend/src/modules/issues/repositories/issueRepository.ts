@@ -81,7 +81,9 @@ export default class IssueRepository {
           province,
           city,
           suburb,
-          district
+          district,
+          latitude,
+          longitude
         ),
         comment_count
       `,
@@ -125,21 +127,24 @@ export default class IssueRepository {
               user_id,
             )
           : null;
-        return {
-          ...issue,
-          reactions,
-          user_reaction: userReaction?.emoji || null,
-          is_owner: issue.user_id === user_id,
-          user: issue.is_anonymous
-            ? {
-                user_id: null,
-                email_address: null,
-                username: "Anonymous",
-                fullname: "Anonymous",
-                image_url: null,
-              }
-            : issue.user,
-        };
+          const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
+          return {
+            ...issue,
+            reactions,
+            user_reaction: userReaction?.emoji || null,
+            is_owner: issue.user_id === user_id,
+            user: issue.is_anonymous
+              ? {
+                  user_id: null,
+                  email_address: null,
+                  username: "Anonymous",
+                  fullname: "Anonymous",
+                  image_url: null,
+                }
+              : issue.user,
+            hasPendingResolution: !!pendingResolution,
+            pendingResolutionId: pendingResolution?.resolution_id || null,
+          };
       }),
     );
 
@@ -165,7 +170,9 @@ export default class IssueRepository {
         location: location_id (
           suburb,
           city,
-          province
+          province,
+          latitude,
+          longitude
         ),
         cluster_id
       `,
@@ -200,6 +207,7 @@ export default class IssueRepository {
         )
       : null;
     const commentCount = await commentRepository.getNumComments(data.issue_id);
+    const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
 
     return {
       ...data,
@@ -216,6 +224,8 @@ export default class IssueRepository {
             image_url: null,
           }
         : data.user,
+      hasPendingResolution: !!pendingResolution,
+      pendingResolutionId: pendingResolution?.resolution_id || null,
     } as Issue;
   }
 
@@ -554,7 +564,9 @@ export default class IssueRepository {
         location: location_id (
           suburb,
           city,
-          province
+          province,
+          latitude,
+          longitude
         )
       `,
       )
@@ -606,10 +618,11 @@ export default class IssueRepository {
   }
 
   async updateIssueResolutionStatus(issueId: number, resolved: boolean): Promise<void> {
+    const resolvedAt = DateTime.now().setZone("UTC+2").toISO();
     const { error } = await supabase
       .from('issue')
       .update({ 
-        resolved_at: resolved ? new Date().toISOString() : null,
+        resolved_at: resolved ? resolvedAt : null,
         updated_at: new Date().toISOString()
       })
       .eq('issue_id', issueId);
@@ -661,5 +674,59 @@ export default class IssueRepository {
     }
 
     return data || null;
+  }
+
+  async getResolutionsForIssue(issueId: number): Promise<Resolution[]> {
+    const { data, error } = await supabase
+      .from('resolution')
+      .select('*')
+      .eq('issue_id', issueId)
+      .order('created_at', { ascending: false });
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching resolutions for the issue.",
+      });
+    }
+  
+    return data as Resolution[];
+  }
+
+  async hasUserIssuesInCluster(userId: string, clusterId: string): Promise<boolean> {
+    const { count, error } = await supabase
+      .from('issue')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('cluster_id', clusterId);
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking user issues in the cluster.",
+      });
+    }
+  
+    return count !== null && count > 0;
+  }
+
+  async getUserIssueInCluster(userId: string, clusterId: string): Promise<Issue | null> {
+    const { data, error } = await supabase
+      .from("issue")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("cluster_id", clusterId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user's issue in cluster:", error);
+      throw error;
+    }
+
+    return data as Issue;
   }
 }
