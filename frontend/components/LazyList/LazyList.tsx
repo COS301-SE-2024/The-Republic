@@ -18,7 +18,8 @@ export interface LazyListRef<D> {
 }
 
 interface LazyListProps<D> {
-  Item: (props: { data: D}) => ReactNode;
+  Item: (props: { data: D }) => ReactNode;
+  Failed: (props: { error: Error }) => ReactNode;
   Loading: () => ReactNode;
   Empty: () => ReactNode;
   fetcher: (from: number, amount: number) => Promise<D[]>;
@@ -31,6 +32,7 @@ interface LazyListProps<D> {
 
 export function LazyList<D>({
   Item,
+  Failed,
   Loading,
   Empty,
   fetcher,
@@ -43,6 +45,7 @@ export function LazyList<D>({
   const queryClient = useQueryClient();
   const {
     data,
+    error,
     fetchNextPage,
     hasNextPage,
     isFetching,
@@ -176,6 +179,8 @@ export function LazyList<D>({
           })}
         </Fragment>
       ))}
+
+      {error && <Failed error={error}/>}
 
       {isFetching && (
         <div key={`loading-${uniqueId}`}>
