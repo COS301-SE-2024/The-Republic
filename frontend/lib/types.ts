@@ -80,10 +80,11 @@ interface UserContextType {
 
 interface ProfileStatsProps {
   userId: string;
-  totalIssues: number | null;
-  resolvedIssues: number | null;
-  selectedTab: "issues" | "resolved";
-  setSelectedTab: (tab: "issues" | "resolved") => void;
+  totalIssues: number;
+  resolvedIssues: number;
+  totalResolutions: number;
+  selectedTab: "issues" | "resolved" | "resolutions";
+  setSelectedTab: (tab: "issues" | "resolved" | "resolutions") => void;
 }
 
 interface IssueInputBoxProps {
@@ -130,17 +131,22 @@ interface Issue {
     province: string;
     city: string;
     suburb: string;
+    latitude: string;
+    longitude: string;
   } | null;
   comment_count: number;
   is_owner: boolean;
   profile_user_id: string;
   user_reaction: string;
+  hasPendingResolution?: boolean;
+  pendingResolutionId?: string | null;
+  cluster_id?: string
 }
 interface IssueProps {
   issue: Issue;
   id?: string;
   onDeleteIssue?: (issue: Issue) => void;
-  onResolveIssue?: (issue: Issue, resolvedIssue: Issue) => void;
+  onResolveIssue?: (issue: Issue, resolution: Resolution) => void;
 }
 
 interface Comment {
@@ -299,7 +305,7 @@ interface ProfileUpdate {
 
 interface ProfileFeedProps {
   userId: string;
-  selectedTab: "issues" | "resolved";
+  selectedTab: "issues" | "resolved" | "resolutions";
 }
 
 interface MulterFile {
@@ -311,8 +317,35 @@ interface MulterFile {
   destination: string;
   filename: string;
   path: string;
-  buffer: Buffer;
+  buffer: 
+  Buffer;
 }
+
+interface SubsParams {
+  user_id: string;
+  issue_id?: string;
+  category_id?: string;
+  location_id?: string;
+}
+
+interface Resolution {
+  resolution_id: string;
+  issue_id: number;
+  resolver_id: string;
+  resolution_text: string;
+  proof_image: string | null;
+  status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
+  updated_at: string;
+  num_cluster_members: number;
+  num_cluster_members_accepted: number;
+  num_cluster_members_rejected: number;
+  political_association: string | null;
+  state_entity_association: string | null;
+  resolution_source: 'self' | 'unknown' | 'other';
+  resolved_by: string | null;
+}
+
 
 export type {
   AnalysisResult,
@@ -347,4 +380,6 @@ export type {
   MockUser,
   MulterFile,
   Location,
+  SubsParams,
+  Resolution
 };

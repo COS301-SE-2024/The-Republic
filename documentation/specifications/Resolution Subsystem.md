@@ -139,4 +139,4 @@ This is not the final schema for the table, just an idea of the type of informat
         - Permanent bans?
 
 ## Activity Diagram
-![alt text](<Resolution.drawio (2).png>)
+![alt text](../images/Resolution.drawio.png)

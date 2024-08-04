@@ -214,6 +214,124 @@ export class ClusterService {
     return new Array(embeddingLength).fill(0);
   }
 
+  async moveAcceptedMembersToNewCluster(issueId: number, acceptedUserIds: string[]): Promise<string> {
+    const issue = await this.issueRepository.getIssueById(issueId);
+    if (!issue) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue not found",
+      });
+    }
+  
+    if (!issue.cluster_id) {
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "Issue is not associated with a cluster",
+      });
+    }
+  
+    const oldClusterId = issue.cluster_id;
+    const clusterIssues = await this.clusterRepository.getIssuesInCluster(oldClusterId);
+    
+    // Find accepted issues
+    const acceptedIssues = clusterIssues.filter(clusterIssue => 
+      clusterIssue.issue_id !== issueId && acceptedUserIds.includes(clusterIssue.user_id)
+    );
+  
+    let newClusterId = '';
+  
+    if (acceptedIssues.length > 0) {
+      // Check for similar clusters among accepted issues
+      const similarClusters = await this.clusterRepository.findSimilarClustersForIssues(acceptedIssues, 0.9);
+  
+      if (similarClusters.length > 0) {
+        // Move accepted issues to the most similar cluster
+        const mostSimilarCluster = similarClusters[0];
+        newClusterId = mostSimilarCluster.cluster_id;
+  
+        for (const acceptedIssue of acceptedIssues) {
+          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
+        }
+      } else {
+        // Create a new cluster with the first accepted issue
+        const newCluster = await this.clusterRepository.createCluster(acceptedIssues[0]);
+        newClusterId = newCluster.cluster_id;
+  
+        // Move accepted issues to the new cluster
+        for (const acceptedIssue of acceptedIssues) {
+          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
+        }
+      }
+    } else {
+      // Create a new cluster with the accepted issue
+      const newCluster = await this.clusterRepository.createCluster(issue);
+      newClusterId = newCluster.cluster_id;
+    }
+  
+    // Move the accepted issue to the new cluster
+    await this.clusterRepository.updateIssueCluster(issueId, newClusterId);
+  
+    // Recalculate centroids for both old and new clusters
+    await this.recalculateClusterCentroid(oldClusterId);
+    await this.recalculateClusterCentroid(newClusterId);
+  
+    // Check if the old cluster is empty and delete if necessary
+    const oldClusterSize = await this.clusterRepository.getClusterSize(oldClusterId);
+    if (oldClusterSize === 0) {
+      await this.clusterRepository.deleteCluster(oldClusterId);
+    }
+  
+    return newClusterId;
+  }
+
+  private async recalculateClusterCentroid(clusterId: string): Promise<void> {
+    const issues = await this.clusterRepository.getIssuesInCluster(clusterId);
+    if (issues.length === 0) {
+      return; // Cluster is empty, no need to recalculate
+    }
+
+    const newCentroid = this.calculateAverageEmbedding(issues);
+    const formattedCentroid = this.formatCentroidForDatabase(newCentroid);
+    await this.clusterRepository.updateCluster(clusterId, formattedCentroid, issues.length);
+  }
+
+  private calculateAverageEmbedding(issues: Issue[]): number[] {
+    let sumEmbedding: number[] = [];
+    let validEmbeddingsCount = 0;
+
+    for (const issue of issues) {
+      let embeddingArray: number[] = [];
+      
+      if (typeof issue.content_embedding === 'string') {
+        try {
+          embeddingArray = JSON.parse(issue.content_embedding);
+        } catch (error) {
+          console.error(`Error parsing embedding for issue ${issue.issue_id}:`, error);
+          continue;
+        }
+      } else if (Array.isArray(issue.content_embedding)) {
+        embeddingArray = issue.content_embedding;
+      } else {
+        console.error(`Invalid embedding type for issue ${issue.issue_id}:`, typeof issue.content_embedding);
+        continue;
+      }
+
+      if (embeddingArray.length > 0) {
+        if (sumEmbedding.length === 0) {
+          sumEmbedding = new Array(embeddingArray.length).fill(0);
+        }
+        for (let i = 0; i < embeddingArray.length; i++) {
+          sumEmbedding[i] += embeddingArray[i];
+        }
+        validEmbeddingsCount++;
+      }
+    }
+
+    return sumEmbedding.map(val => val / validEmbeddingsCount);
+  }
+
   private formatCentroidForDatabase(centroid: number[]): string {
     return `[${centroid.map(val => {
       if (isNaN(val) || !isFinite(val)) {

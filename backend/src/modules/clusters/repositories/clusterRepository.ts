@@ -82,6 +82,76 @@ export class ClusterRepository {
     return data;
   }
 
+  async findSimilarClustersForIssues(
+    issues: Issue[],
+    threshold: number = 0.8
+  ): Promise<Cluster[]> {
+    if (issues.length === 0) {
+      return [];
+    }
+  
+    const categoryId = issues[0].category_id;
+    const locationId = issues[0].location_id;
+  
+    const embeddings = issues.map(issue => issue.content_embedding);
+    const averageEmbedding = this.calculateAverageEmbedding(embeddings);
+  
+    const { data, error } = await supabase
+      .rpc('find_similar_clusters', {
+        query_embedding: averageEmbedding,
+        similarity_threshold: threshold,
+        category_id_param: categoryId,
+        location_id_param: locationId,
+        current_time_param: new Date().toISOString()
+      });
+  
+    if (error) {
+      console.error('Error finding similar clusters:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while finding similar clusters.",
+      });
+    }
+  
+    return data;
+  }
+  
+  private calculateAverageEmbedding(embeddings: (number[] | string | null | undefined)[]): number[] {
+    let sumEmbedding: number[] = [];
+    let validEmbeddingsCount = 0;
+  
+    for (const embedding of embeddings) {
+      let embeddingArray: number[] = [];
+      
+      if (typeof embedding === 'string') {
+        try {
+          embeddingArray = JSON.parse(embedding);
+        } catch (error) {
+          console.error(`Error parsing embedding:`, error);
+          continue;
+        }
+      } else if (Array.isArray(embedding)) {
+        embeddingArray = embedding;
+      } else {
+        console.error(`Invalid embedding type:`, typeof embedding);
+        continue;
+      }
+  
+      if (embeddingArray.length > 0) {
+        if (sumEmbedding.length === 0) {
+          sumEmbedding = new Array(embeddingArray.length).fill(0);
+        }
+        for (let i = 0; i < embeddingArray.length; i++) {
+          sumEmbedding[i] += embeddingArray[i];
+        }
+        validEmbeddingsCount++;
+      }
+    }
+  
+    return sumEmbedding.map(val => val / validEmbeddingsCount);
+  }
+
   async getClusters(params: {
     categoryId: number;
     locationId: number;
@@ -171,5 +241,39 @@ export class ClusterRepository {
     }
   
     return data;
+  }
+
+  async updateIssueCluster(issueId: number, newClusterId: string): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ cluster_id: newClusterId })
+      .eq('issue_id', issueId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating the issue's cluster.",
+      });
+    }
+  }
+
+  async getClusterSize(clusterId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('issue')
+      .select('issue_id', { count: 'exact' })
+      .eq('cluster_id', clusterId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while getting the cluster size.",
+      });
+    }
+
+    return count || 0;
   }
 }

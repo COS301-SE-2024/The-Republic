@@ -6,6 +6,7 @@ import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import {
   Issue as IssueType,
   RequestBody,
+  Resolution,
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
 import { Loader2 } from "lucide-react";
@@ -23,10 +24,12 @@ const Feed: React.FC = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
   useEffect(() => {
     const loadLocation = async () => {
-      // First, check if there's a location in the search params
+      setIsLoadingLocation(true);
+
       const locationString = searchParams.get("location");
       if (locationString) {
         const locationParts = locationString.split(", ").slice(1);
@@ -47,19 +50,33 @@ const Feed: React.FC = () => {
         }
 
         setLocation(locationObject);
+        setIsLoadingLocation(false);
       } else if (user && user.location_id) {
-        // If no search param location, use user's default location
-        const userLocation = await fetchUserLocation(user.location_id);
-        if (userLocation) {
-          setLocation({ ...userLocation.value, location_id: "" });
+        try {
+          const userLocation = await fetchUserLocation(user.location_id);
+          if (userLocation) {
+            setLocation(() => {
+              return { ...userLocation.value, location_id: "" };
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user location:", error);
         }
       }
+
+      setIsLoadingLocation(false);
     };
 
-    loadLocation();
+    if (user !== null) {
+      loadLocation();
+    }
   }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
+    if (isLoadingLocation) {
+      return [];
+    }
+
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
@@ -103,7 +120,7 @@ const Feed: React.FC = () => {
     if (apiResponse.success) {
       return apiResponse.data as IssueType[];
     } else {
-      // Should throw or return null here
+      console.error("Failed to fetch issues:", apiResponse.error);
       return [];
     }
   };
@@ -116,8 +133,14 @@ const Feed: React.FC = () => {
     lazyRef.current?.remove(issue);
   };
 
-  const handleResolveIssue = (issue: IssueType, resolvedIssue: IssueType) => {
-    lazyRef.current?.update(issue, resolvedIssue);
+  const handleResolveIssue = (issue: IssueType, resolution: Resolution) => {
+    const updatedIssue = {
+      ...issue,
+      hasPendingResolution: true,
+      resolutionId: resolution.resolution_id,
+    };
+
+    lazyRef.current?.update(issue, updatedIssue);
   };
 
   const LoadingIndicator = () => (
@@ -134,13 +157,17 @@ const Feed: React.FC = () => {
 
   const scrollId = "issues_scroll";
 
+  if (isLoadingLocation) {
+    return <LoadingIndicator />;
+  }
+
   return (
     <div className="flex h-full">
       <div
-        className={`flex-1  px-6  overflow-y-scroll ${styles['feed-scroll']}`}
+        className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        { user && <IssueInputBox onAddIssue={handleAddIssue}/>}
+        {user && <IssueInputBox onAddIssue={handleAddIssue}/>}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}

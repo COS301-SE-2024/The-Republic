@@ -7,25 +7,49 @@ import ProfileStats from "@/components/ProfileStats/ProfileStats";
 import { useParams } from "next/navigation";
 import ProfileFeed from "@/components/ProfileFeed/ProfileFeed";
 import { Loader2 } from "lucide-react";
-
 import { fetchUserData } from "@/lib/api/fetchUserData";
+import { fetchUserResolutions } from "@/lib/api/fetchUserResolutions";
+import { profileFetchIssues } from "@/lib/api/profileFetchIssues";
 
 const ProfilePage: React.FC = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { userId } = useParams() satisfies { userId: string };
-  const [selectedTab, setSelectedTab] = useState<"issues" | "resolved">(
-    "issues",
-  );
+  const [selectedTab, setSelectedTab] = useState<"issues" | "resolved" | "resolutions">("issues");
 
   const {
     data: user,
-    isLoading,
-    isError,
+    isLoading: isUserLoading,
+    isError: isUserError,
   } = useQuery({
     queryKey: ["user_profile", userId],
     queryFn: () => fetchUserData(userId),
     enabled: userId !== undefined && userId !== null,
+  });
+
+  const {
+    data: issues,
+    isLoading: isIssuesLoading,
+    isError: isIssuesError,
+  } = useQuery({
+    queryKey: ["profile_issues", userId],
+    queryFn: () => {
+      if (user) {
+        return profileFetchIssues(user, userId, `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/user`);
+      }
+      return null;
+    },
+    enabled: !!user,
+  });
+
+  const {
+    data: resolutions,
+    isLoading: isResolutionsLoading,
+    isError: isResolutionsError,
+  } = useQuery({
+    queryKey: ["user_resolutions", userId],
+    queryFn: () => fetchUserResolutions(user!, userId),
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -48,6 +72,13 @@ const ProfilePage: React.FC = () => {
     </div>
   );
 
+  const isLoading = isUserLoading || isIssuesLoading || isResolutionsLoading;
+  const isError = isUserError || isIssuesError || isResolutionsError;
+
+  const totalIssues = issues?.length || 0;
+  const resolvedIssues = issues?.filter(issue => issue.resolved_at).length || 0;
+  const totalResolutions = resolutions?.length || 0;
+
   return (
     <>
       {isLoading ? (
@@ -68,8 +99,9 @@ const ProfilePage: React.FC = () => {
               />
               <ProfileStats
                 userId={user.user_id}
-                totalIssues={user.total_issues}
-                resolvedIssues={user.resolved_issues}
+                totalIssues={totalIssues}
+                resolvedIssues={resolvedIssues}
+                totalResolutions={totalResolutions}
                 selectedTab={selectedTab}
                 setSelectedTab={setSelectedTab}
               />
