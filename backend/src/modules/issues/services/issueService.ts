@@ -5,22 +5,11 @@ import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError, APIResponse } from "@/types/response";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
+import { MulterFile } from "@/types/users";
 import { PointsService } from "@/modules/points/services/pointsService";
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import { OpenAIService } from '@/modules/shared/services/openAIService';
 import { ResolutionService } from "@/modules/resolutions/services/resolutionService";
-
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
 
 export default class IssueService {
   private issueRepository: IssueRepository;

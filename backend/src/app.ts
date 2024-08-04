@@ -6,6 +6,7 @@ import commentRoutes from "@/modules/comments/routes/commentRoutes";
 import visualizationRoutes from "@/modules/visualizations/routes/visualizationRoutes";
 import reportsRoutes from "@/modules/reports/routes/reportsRoutes";
 import locationRoutes from "@/modules/locations/routes/locationRoutes";
+import subscriptionsRoutes from "@/modules/subscriptions/routes/subscriptionsRoutes";
 import pointsRoutes from "@/modules/points/routes/pointsRoutes";
 import clusterRoutes from "@/modules/clusters/routes/clusterRoutes";
 import { serverMiddleare } from "@/middleware/middleware";
@@ -32,6 +33,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/visualization", visualizationRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/locations", locationRoutes);
+app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/points", pointsRoutes);
 app.use('/api/clusters', clusterRoutes);
 

@@ -24,68 +24,66 @@ import { signOutWithToast } from "@/lib/utils";
 const Sidebar: React.FC<HomeAvatarProps> = () => {
   const { user } = useUser();
   const { toast } = useToast();
-  useEffect(() => {
-    if (user) {
-      const channelA = supabase
-        .channel("schema-db-changes")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "comments",
-            // filter: `user_id=neq.${user.user_id}`,
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "Comments Flooding for a Reported Issue",
-            });
-            const { new: notification } = payload;
-            console.log("Comments Notification Data: ", notification);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "reaction",
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "Issue Gaining Exposure, new Reactions",
-            });
-            const { new: notification } = payload;
-            console.log("Reaction Notification Data Now: ", notification);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "issue",
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "New Issue Reported, Check it Out!",
-            });
-            const { new: notification } = payload;
-            console.log("Issue Notification Data: ", notification);
-          },
-        )
-        .subscribe((status) => {
-          console.log("Subscription Result: ", status);
-        });
 
-      return () => {
-        channelA.unsubscribe();
-      };
-    }
-  }, [user]);
+  useEffect(() => {
+    const channelA = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "comment",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "Comments Flooding for a Reported Issue",
+          });
+          const { new: notification } = payload;
+          console.log("Comments Notification Data: ", notification);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reaction",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "Issue Gaining Exposure, new Reactions",
+          });
+          const { new: notification } = payload;
+          console.log("Reaction Notification Data Now: ", notification);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "issue",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "New Issue Reported, Check it Out!",
+          });
+          const { new: notification } = payload;
+          console.log("Issue Notification Data: ", notification);
+        },
+      )
+      .subscribe((status) => {
+        console.log("Subscription Result: ", status);
+      });
+
+    return () => {
+      channelA.unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="w-[300px] border-r h-full overflow-y-auto">
