@@ -63,8 +63,6 @@ const Leaderboard: React.FC = () => {
   
         const data = await fetchLeaderboard(user.user_id, rankingType, filterData);
   
-        console.log('Fetched leaderboard data:', data);
-  
         setLeaderboardData(data.leaderboard);
         setUserData(data.user);
         setIsLoading(false);
