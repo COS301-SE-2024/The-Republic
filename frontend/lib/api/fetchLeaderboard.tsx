@@ -68,8 +68,6 @@ const fetchLeaderboard = async (
 
     const responseData: ApiResponse = await response.json();
 
-    console.log('API Response Data:', responseData);
-
     if (!responseData.success || !responseData.data) {
       throw new Error("Invalid data structure");
     }
@@ -98,6 +96,7 @@ const fetchLeaderboard = async (
     leaderboardEntries.sort((a, b) => b.points - a.points);
 
    
+  let countryRank = 0;
   let provinceRank = 0;
   let cityRank = 0;
   let suburbRank = 0;
@@ -108,11 +107,10 @@ const fetchLeaderboard = async (
 
   leaderboardEntries.forEach((entry, index) => {
     // Country ranking
-    if (entry.province !== lastProvince || entry.points !== lastPoints) {
-      provinceRank = index + 1;
-      lastProvince = entry.province;
+    if (entry.points !== lastPoints) {
+      countryRank = index + 1;
     }
-    entry.provinceRanking = provinceRank;
+    entry.countryRanking = countryRank;
 
     // City ranking
     if (entry.city !== lastCity || entry.points !== lastPoints) {
