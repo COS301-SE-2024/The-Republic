@@ -1,9 +1,9 @@
 import { UserAlt as User, Issue as IssueType } from "@/lib/types";
 
 const fetchIssueDetails = async (
-  user: User,
-  issueId: string,
-): Promise<IssueType | null> => {
+  user: User | null,
+  issueId: number,
+): Promise<IssueType> => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };

@@ -140,7 +140,7 @@ const Feed: React.FC = () => {
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
           fetchKey={[
-            "fetch-issue",
+            "feed-issues",
             sortBy,
             filter,
             location
