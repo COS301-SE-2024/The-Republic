@@ -5,7 +5,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2 } from "lucide-react";
 import MoreMenu from "../MoreMenu/MoreMenu";
@@ -318,192 +319,198 @@ const Issue: React.FC<IssueProps> = ({
     }
   };
 
+
+  
+
   return (
-    <><Card className="mb-4" id={id}>
-      <CardHeader className="place-content-stretch">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center">
-            <div
-              className="pr-2"
-              onClick={handleAvatarClick}
-              style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
-            >
-              <Avatar>
-                <AvatarImage src={issue.user?.image_url} />
-                <AvatarFallback>{issue.user?.fullname[0]}</AvatarFallback>
-              </Avatar>
-            </div>
-            <div>
-              <div className="flex items-center">
-                <div className="font-bold">{issue.user?.fullname}</div>
-                <div className="mx-1 text-sm text-gray-500">·</div>
-                <div className="text-sm text-gray-500">
-                  {timeSince(issue.created_at)}
-                </div>
+    <>
+      <Card className="mb-4" id={id}>
+        <CardHeader className="place-content-stretch">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              <div
+                className="pr-2"
+                onClick={handleAvatarClick}
+                style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
+              >
+                <UserAvatarWithScore
+                  imageUrl={issue.user.image_url}
+                  username={issue.user.fullname}
+                  score={issue.user.user_score}
+                  className="w-12 h-12"
+                  isAnonymous={issue.is_anonymous}
+                />
               </div>
-              <div className="text-sm text-gray-600">{issue.user?.username}</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="relative inline-block text-left">
               <div>
-                <button
-                  type="button"
-                  className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
-                  id="subscribe-menu"
-                  onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
-                  title="Subscribe"
-                >
-                  <Bell className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-              {showSubscribeDropdown && (
-                <div
-                  ref={dropdownRef}
-                  className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="subscribe-menu"
-                >
-                  <div className="py-1" role="none">
-                    <button
-                      onClick={() => handleSubscribe("Issue")}
-                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
-                      role="menuitem"
-                    >
-                      Subscribe to Issue
-                    </button>
-                    <button
-                      onClick={() => handleSubscribe("Category")}
-                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
-                      role="menuitem"
-                    >
-                      Subscribe to Category
-                    </button>
-                    <button
-                      onClick={() => handleSubscribe("Location")}
-                      className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
-                      role="menuitem"
-                    >
-                      Subscribe to Location
-                    </button>
+                <div className="flex items-center">
+                  <div className="font-bold">{issue.user?.fullname}</div>
+                  <div className="mx-1 text-sm text-gray-500">·</div>
+                  <div className="text-sm text-gray-500">
+                    {timeSince(issue.created_at)}
                   </div>
                 </div>
-              )}
+                <div className="text-sm text-gray-600">{issue.user?.username}</div>
+              </div>
             </div>
-            {!isLoading && (
-              <MoreMenu
-                menuItems={menuItems}
-                isOwner={isOwner}
-                onAction={handleMenuAction}
-                onSubscribe={handleSubscribe}
-              />
-            )}
-            {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
+            <div className="flex items-center space-x-2">
+              <div className="relative inline-block text-left">
+                <div>
+                  <button
+                    type="button"
+                    className="inline-flex justify-center items-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 focus:outline-none"
+                    id="subscribe-menu"
+                    onClick={() => setShowSubscribeDropdown(!showSubscribeDropdown)}
+                    title="Subscribe"
+                  >
+                    <Bell className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
+                {showSubscribeDropdown && (
+                  <div
+                    ref={dropdownRef}
+                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="subscribe-menu"
+                  >
+                    <div className="py-1" role="none">
+                      <button
+                        onClick={() => handleSubscribe("Issue")}
+                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        role="menuitem"
+                      >
+                        Subscribe to Issue
+                      </button>
+                      <button
+                        onClick={() => handleSubscribe("Category")}
+                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        role="menuitem"
+                      >
+                        Subscribe to Category
+                      </button>
+                      <button
+                        onClick={() => handleSubscribe("Location")}
+                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        role="menuitem"
+                      >
+                        Subscribe to Location
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {!isLoading && (
+                <MoreMenu
+                  menuItems={menuItems}
+                  isOwner={isOwner}
+                  onAction={handleMenuAction}
+                  onSubscribe={handleSubscribe}
+                />
+              )}
+              {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
+            </div>
           </div>
-        </div>
-        <div className="flex space-x-2 pt-2">
-          <Badge variant="outline" className="">
-            {issue.category?.name}
-          </Badge>
-          <Badge variant="outline" className="">
-            {issue?.sentiment}
-          </Badge>
-          {issue.location && (
-            <Badge
-              variant="outline"
-              className={issue.location.latitude && issue.location.longitude ? "cursor-pointer" : ""}
-              onClick={() => {
-                if (issue.location?.latitude && issue.location?.longitude) {
-                  setIsMapModalOpen(true);
-                }
-              }}
-            >
-              {issue.location.suburb
-                ? `${issue.location.suburb}, ${issue.location.city}, ${issue.location.province}`
-                : `${issue.location.city}, ${issue.location.province}`}
-            </Badge>
-          )}
-          {issue.hasPendingResolution && (
-            <Badge 
-              variant="destructive" 
-              className="cursor-pointer"
-              onClick={() => setIsResolutionResponseModalOpen(true)}
-            >
-              Resolution Pending
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p>{issue?.content}</p>
-        {issue?.image_url && (
-          <div className="relative w-1/4 h-auto mt-4">
-            <Image
-              src={issue?.image_url}
-              alt="Issue"
-              layout="responsive"
-              width={100}
-              height={100}
-              className="rounded-lg" />
-          </div>
-        )}
-        {(issue?.resolved_at || resolutionTime) && (
           <div className="flex space-x-2 pt-2">
-            <Badge className="">
-              Resolved {timeSince(issue.resolved_at || resolutionTime?.toISOString() || '')}
+            <Badge variant="outline" className="">
+              {issue.category?.name}
             </Badge>
+            <Badge variant="outline" className="">
+              {issue?.sentiment}
+            </Badge>
+            {issue.location && (
+              <Badge
+                variant="outline"
+                className={issue.location.latitude && issue.location.longitude ? "cursor-pointer" : ""}
+                onClick={() => {
+                  if (issue.location?.latitude && issue.location?.longitude) {
+                    setIsMapModalOpen(true);
+                  }
+                }}
+              >
+                {issue.location.suburb
+                  ? `${issue.location.suburb}, ${issue.location.city}, ${issue.location.province}`
+                  : `${issue.location.city}, ${issue.location.province}`}
+              </Badge>
+            )}
+            {issue.hasPendingResolution && (
+              <Badge 
+                variant="destructive" 
+                className="cursor-pointer"
+                onClick={() => setIsResolutionResponseModalOpen(true)}
+              >
+                Resolution Pending
+              </Badge>
+            )}
           </div>
-        )}
-      </CardContent>
-      <CardFooter className="flex space-x-2 items-center">
-        <div className="flex items-center" onClick={handleCommentClick}>
-          <MessageCircle className="mr-1 cursor-pointer" />
-          <span>{issue.comment_count}</span>
-        </div>
-        <Reaction
-          issueId={String(issue.issue_id)}
-          initialReactions={issue.reactions}
-          userReaction={issue.user_reaction} />
-      </CardFooter>
-    </Card>
-      
-    <ResolutionModal
+        </CardHeader>
+        <CardContent>
+          <p>{issue?.content}</p>
+          {issue?.image_url && (
+            <div className="relative w-1/4 h-auto mt-4">
+              <Image
+                src={issue?.image_url}
+                alt="Issue"
+                layout="responsive"
+                width={100}
+                height={100}
+                className="rounded-lg" />
+            </div>
+          )}
+          {(issue?.resolved_at || resolutionTime) && (
+            <div className="flex space-x-2 pt-2">
+              <Badge className="">
+                Resolved {timeSince(issue.resolved_at || resolutionTime?.toISOString() || '')}
+              </Badge>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex space-x-2 items-center">
+          <div className="flex items-center" onClick={handleCommentClick}>
+            <MessageCircle className="mr-1 cursor-pointer" />
+            <span>{issue.comment_count}</span>
+          </div>
+          <Reaction
+            issueId={String(issue.issue_id)}
+            initialReactions={issue.reactions}
+            userReaction={issue.user_reaction} />
+        </CardFooter>
+      </Card>
+        
+      <ResolutionModal
         isOpen={isResolutionModalOpen}
         onClose={() => setIsResolutionModalOpen(false)}
         isSelfResolution={isOwner}
         onSubmit={handleResolutionSubmit}
       />
-    <ResolutionResponseModal
-      isOpen={isResolutionResponseModalOpen}
-      onClose={() => setIsResolutionResponseModalOpen(false)}
-      onRespond={handleResolutionResponse}
-      resolution={resolutions[0]}
-      canRespond={canRespond}
-    />
-    {isMapModalOpen && (
-  <MapModal
-    isOpen={isMapModalOpen}
-    onClose={handleMapModalClose}
-    defaultLocation={issue.location
-      ? {
-          label: issue.location.suburb,
-          value: {
-            place_id: "",
-            province: issue.location.province,
-            city: issue.location.city,
-            suburb: issue.location.suburb,
-            district: "",
-            lat: parseFloat(issue.location.latitude), 
-            lng: parseFloat(issue.location.longitude)
+      <ResolutionResponseModal
+        isOpen={isResolutionResponseModalOpen}
+        onClose={() => setIsResolutionResponseModalOpen(false)}
+        onRespond={handleResolutionResponse}
+        resolution={resolutions[0]}
+        canRespond={canRespond}
+      />
+      {isMapModalOpen && (
+        <MapModal
+          isOpen={isMapModalOpen}
+          onClose={handleMapModalClose}
+          defaultLocation={issue.location
+            ? {
+                label: issue.location.suburb,
+                value: {
+                  place_id: "",
+                  province: issue.location.province,
+                  city: issue.location.city,
+                  suburb: issue.location.suburb,
+                  district: "",
+                  lat: parseFloat(issue.location.latitude), 
+                  lng: parseFloat(issue.location.longitude)
+                }
+              }
+            : null
           }
-        }
-      : null
-    }
-  />
-)}
-
-      </>
+        />
+      )}
+    </>
   );
 };
 

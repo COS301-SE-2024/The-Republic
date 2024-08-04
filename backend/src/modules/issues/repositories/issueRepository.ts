@@ -72,7 +72,8 @@ export default class IssueRepository {
           email_address,
           username,
           fullname,
-          image_url
+          image_url,
+          user_score
         ),
         category: category_id (
           name
@@ -162,7 +163,8 @@ export default class IssueRepository {
           email_address,
           username,
           fullname,
-          image_url
+          image_url,
+          user_score
         ),
         category: category_id (
           name
@@ -487,7 +489,8 @@ export default class IssueRepository {
           email_address,
           username,
           fullname,
-          image_url
+          image_url,
+          user_score
         ),
         category: category_id (
           name
@@ -556,7 +559,8 @@ export default class IssueRepository {
           email_address,
           username,
           fullname,
-          image_url
+          image_url,
+          user_score
         ),
         category: category_id (
           name

@@ -2,13 +2,14 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Pencil } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { User } from "@/lib/types";
 import EditProfile from "@/components/EditProfile/EditProfile";
 import { useTheme } from "next-themes";
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
+
 
 interface ProfileHeaderProps {
   user: User;
@@ -34,10 +35,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className="h-32 bg-cover bg-center" />
       <div className="px-4 pb-4">
         <div className="-mt-16 flex justify-between items-end">
-          <Avatar className="w-32 h-32 border-4 border-white">
-            <AvatarImage src={user.image_url} />
-            <AvatarFallback>{user.fullname[0]}</AvatarFallback>
-          </Avatar>
+        <UserAvatarWithScore
+          imageUrl={user.image_url}
+          username={user.fullname}
+          score={user.user_score}
+          className="w-24 h-24"
+          scoreFontSize={20} 
+        />
           {isOwner && (
             <Dialog.Root open={isEditing} onOpenChange={setIsEditing}>
               <Dialog.Trigger asChild>
@@ -72,6 +76,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <h1 className="text-2xl font-bold">{user.fullname}</h1>
           <p className="text-gray-600">{user.username}</p>
           <p className="mt-2">{user.bio}</p>
+          {user.suspended_until && new Date(user.suspended_until) > new Date() && (
+            <p className="text-red-500 mt-2">
+              Suspended until {new Date(user.suspended_until).toLocaleDateString()}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it } from "@jest/globals";
+import { render, screen, fireEvent, act } from "@testing-library/react";
+import { describe, expect, it, jest } from "@jest/globals";
 import Reports from "@/components/ReportCharts/Reports";
 
 jest.mock("@/components/ReportCharts", () => ({
@@ -23,13 +23,14 @@ jest.mock('lucide-react', () => ({
 describe("Reports Component", () => {
   const mockSetSelectedCharts = jest.fn();
 
-  it("renders all chart components when all are selected", () => {
-    const allCharts = ["TransitionOfParliament", "BarChart", "RadarChart", "LineChart", "DonutChart", "StackedLineChart"];
-    render(<Reports selectedCharts={allCharts} setSelectedCharts={mockSetSelectedCharts} />);
+  it("initializes with all charts selected", () => {
+    let selectedCharts: string[] = [];
+    render(<Reports selectedCharts={selectedCharts} setSelectedCharts={(charts) => {
+      selectedCharts = typeof charts === 'function' ? charts(selectedCharts) : charts;
+    }} />);
     
-    allCharts.forEach(chartName => {
-      expect(screen.getByText(`Mocked ${chartName}`)).toBeInTheDocument();
-    });
+    const allCharts = ["TransitionOfParliament", "BarChart", "RadarChart", "LineChart", "DonutChart", "StackedLineChart"];
+    expect(selectedCharts).toEqual(allCharts);
   });
 
   it("renders filter button and opens filter menu", () => {
@@ -46,8 +47,13 @@ describe("Reports Component", () => {
   });
 
   it("toggles charts when filter buttons are clicked", () => {
-    const initialSelectedCharts = ["BarChart", "LineChart"];
-    render(<Reports selectedCharts={initialSelectedCharts} setSelectedCharts={mockSetSelectedCharts} />);
+    const allCharts = ["TransitionOfParliament", "BarChart", "RadarChart", "LineChart", "DonutChart", "StackedLineChart"];
+    let selectedCharts = [...allCharts];
+    const setSelectedCharts = (newCharts: string[] | ((prev: string[]) => string[])) => {
+      selectedCharts = typeof newCharts === 'function' ? newCharts(selectedCharts) : newCharts;
+    };
+
+    render(<Reports selectedCharts={selectedCharts} setSelectedCharts={setSelectedCharts} />);
     
     const filterButton = screen.getByText("Filter Charts");
     fireEvent.click(filterButton);
@@ -55,10 +61,6 @@ describe("Reports Component", () => {
     const donutChartButton = screen.getByText("Donut Chart");
     fireEvent.click(donutChartButton);
     
-    expect(mockSetSelectedCharts).toHaveBeenCalled();
-    
-    const newSelectedCharts = mockSetSelectedCharts.mock.calls[0][0];
-    
-    expect(newSelectedCharts(initialSelectedCharts)).toEqual(expect.arrayContaining([...initialSelectedCharts, "DonutChart"]));
+    expect(selectedCharts).toEqual(expect.arrayContaining(allCharts.filter(chart => chart !== "DonutChart")));
   });
 });

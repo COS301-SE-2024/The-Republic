@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { checkImageFileAndToast, cn } from "@/lib/utils";
-import { EditProfileProps, LocationType } from "@/lib/types";
+import { EditProfileProps, LocationType, ProfileUpdate } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useToast } from "../ui/use-toast";
@@ -43,7 +43,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     setUserLocation(location);
     setUpdatedUser((prev) => ({
       ...prev,
-      location_id: null,
+      location: location,
     }));
     setIsLocationModalOpen(false);
   };
@@ -73,12 +73,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
   };
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (dataToUpdate: ProfileUpdate) => {
       if (user) {
-        return await updateUserProfile(user, updatedUser, file);
+        return await updateUserProfile(user, dataToUpdate, file);
       } else {
         toast({
-          description: "You need to be logged in to delete a comment",
+          description: "You need to be logged in to update your profile",
         });
       }
     },
@@ -103,11 +103,20 @@ const EditProfile: React.FC<EditProfileProps> = ({
           return;
         }
       }
+      
+      const dataToUpdate: ProfileUpdate = {
+        fullname: updatedUser.fullname,
+        username: updatedUser.username,
+        bio: updatedUser.bio,
+      };
+  
+      if (userLocation) {
+        dataToUpdate.location = userLocation;
+      }
+      
+      mutation.mutate(dataToUpdate);
     }
-
-    mutation.mutate();
   };
-
   const handleCancel = () => {
     onCancel();
   };

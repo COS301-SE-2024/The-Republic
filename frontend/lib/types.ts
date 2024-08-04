@@ -5,11 +5,39 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
+  user_score: number;
   total_issues: number;
   resolved_issues: number;
   access_token: string;
   location?: LocationType | null;
   location_id?: number | null;
+  suspended_until?: number | null;
+}
+
+interface UserData {
+  name: string;
+  id: string;
+  countryRanking: number;
+  provinceRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+  city: string;
+  suburb: string;
+  points: number;
+}
+
+interface LeaderboardEntry {
+  username: string;
+  userId: string;
+  province: string;
+  city: string;
+  suburb: string;
+  points: number;
+  countryRanking: number;
+  provinceRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+  rank: number;
 }
 
 interface UserAlt {
@@ -18,13 +46,19 @@ interface UserAlt {
   username: string;
   fullname: string;
   image_url: string;
+  user_score: number;
   bio: string;
   is_owner: boolean;
   total_issues: number;
   resolved_issues: number;
   access_token: string;
-  location?: LocationType | null;
-  location_id?: number | null;
+  location: LocationType | null;
+  location_id: number | null;
+  ranking?: number | null;
+  countryRanking: number | null;
+  provinceRanking: number | null;
+  cityRanking?: number | null;
+  suburbRanking?: number | null;
 }
 
 interface MockUser {
@@ -217,6 +251,7 @@ interface AnalysisResult {
   severity: number;
 }
 
+
 interface Location {
   location_id: string;
   province?: string;
@@ -317,6 +352,8 @@ export type {
   FeedProps,
   RequestBody,
   UserAlt,
+  UserData,
+  LeaderboardEntry,
   IssueProps,
   IssueInputBoxProps,
   ProfileStatsProps,

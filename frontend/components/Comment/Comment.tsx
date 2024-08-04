@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Comment as CommentType } from "@/lib/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "../ui/use-toast";
@@ -77,17 +77,23 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
 
   const userAvatar = comment.user?.image_url || "";
   const userFullname = comment.user?.fullname || "Anonymous";
+  const userScore = comment.user?.user_score ?? 0;
   const isOwner = comment.user_id === user?.user_id;
+  const isAnonymous = !comment.user || comment.user.username === "Anonymous";
   const isReply = comment.parent_id !== null;
+
 
   return (
     <>
       <div className="flex items-start space-x-4 space-y-4 mb-4">
         <div className="relative space-y-6">
-          <Avatar>
-            <AvatarImage src={userAvatar} />
-            <AvatarFallback>{userFullname[0]}</AvatarFallback>
-          </Avatar>
+        <UserAvatarWithScore
+          imageUrl={userAvatar}
+          username={userFullname}
+          score={userScore}
+          className="w-12 h-12"
+          isAnonymous={isAnonymous}
+        />
         </div>
         <div className="flex-1">
           <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
