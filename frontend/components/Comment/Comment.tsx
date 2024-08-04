@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import CommentList from "./CommentList";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface CommentProps {
   comment: CommentType;
@@ -75,7 +76,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
     }
   };
 
-  const userAvatar = comment.user?.image_url || "";
+  const userAvatar = comment.user?.image_url;
   const userFullname = comment.user?.fullname || "Anonymous";
   const isOwner = comment.user_id === user?.user_id;
   const isReply = comment.parent_id !== null;
@@ -85,7 +86,14 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
       <div className="flex items-start space-x-4 space-y-4 mb-4">
         <div className="relative space-y-6">
           <Avatar>
-            <AvatarImage src={userAvatar} />
+            <AvatarImage asChild/>
+              {userAvatar && (
+                <Image
+                  src={userAvatar}
+                  alt="User avatar"
+                  fill
+                />
+              )}
             <AvatarFallback>{userFullname[0]}</AvatarFallback>
           </Avatar>
         </div>

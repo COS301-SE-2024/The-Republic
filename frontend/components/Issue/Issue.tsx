@@ -118,12 +118,19 @@ const Issue: React.FC<IssueProps> = ({
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
             <div
-              className="pr-2"
+              className="pr-2 relative"
               onClick={handleAvatarClick}
               style={{ cursor: issue.is_anonymous ? "default" : "pointer" }}
             >
               <Avatar>
-                <AvatarImage src={issue.user.image_url} />
+                <AvatarImage asChild/>
+                  {issue.user.image_url && (
+                    <Image
+                      src={issue.user.image_url}
+                      alt="User profile"
+                      fill
+                    />
+                  )}
                 <AvatarFallback>{issue.user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
