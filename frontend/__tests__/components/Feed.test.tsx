@@ -23,6 +23,7 @@ jest.mock("@/components/IssueInputBox/IssueInputBox", () => () => (
 ));
 import { SetStateAction } from "react";
 import { global } from "styled-jsx/css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock(
   "@/components/RightSidebar/RightSidebar",
@@ -43,6 +44,19 @@ jest.mock(
 jest.mock("@/components/Issue/Issue", () => (props: IssueProps) => (
   <div>Issue: {props.issue.content}</div>
 ));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
 
 const mockFetch = (
   data: { issue_id: string; title: string }[],
@@ -68,13 +82,13 @@ describe("Feed", () => {
 
   it("renders without crashing", () => {
     mockFetch([]);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     expect(screen.getByText("Spinner")).toBeInTheDocument();
   });
 
   it("shows loading indicator while fetching data", async () => {
     mockFetch([]);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     expect(screen.getByText("Spinner")).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
@@ -88,7 +102,7 @@ describe("Feed", () => {
       { issue_id: "2", title: "Issue Two 2" },
     ];
     mockFetch(issues);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
     );
@@ -101,7 +115,7 @@ describe("Feed", () => {
       { issue_id: "2", title: "Oldest Issue" },
     ];
     mockFetch(issues);
-    render(<Feed />);
+    renderWithClient(<Feed />);
     await waitFor(() =>
       expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
     );
