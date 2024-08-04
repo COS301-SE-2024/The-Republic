@@ -88,7 +88,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   }
 
   return (
-    <div className="w-[300px] border-l h-full overflow-y-auto">
+    <div className="w-[250px] border-l h-full overflow-y-auto">
       <div className="sticky top-0 p-4">
         <div className="mb-4">
           <Dropdown

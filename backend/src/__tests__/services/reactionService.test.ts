@@ -2,18 +2,25 @@ import ReactionService from "@/modules/reactions/services/reactionService";
 import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
 import { Reaction } from "@/modules/shared/models/reaction";
 import { APIResponse } from "@/types/response";
+import { PointsService } from "@/modules/points/services/pointsService";
 
 jest.mock("@/modules/reactions/repositories/reactionRepository");
+jest.mock("@/modules/points/services/pointsService");
 
 describe("ReactionService", () => {
   let reactionService: ReactionService;
   let reactionRepository: jest.Mocked<ReactionRepository>;
+  let mockPointsService: jest.Mocked<PointsService>;
 
   beforeEach(() => {
     reactionRepository =
       new ReactionRepository() as jest.Mocked<ReactionRepository>;
     reactionService = new ReactionService();
     reactionService.setReactionRepository(reactionRepository);
+    mockPointsService = {
+      awardPoints: jest.fn().mockResolvedValue(100),
+    } as unknown as jest.Mocked<PointsService>;
+    reactionService.setPointsService(mockPointsService);
   });
 
   describe("addOrRemoveReaction", () => {
@@ -37,6 +44,8 @@ describe("ReactionService", () => {
       const response = await reactionService.addOrRemoveReaction(
         newReaction as Reaction,
       );
+
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "Reacted to an issue");
 
       expect(response.data).toEqual({
         added: "👍",

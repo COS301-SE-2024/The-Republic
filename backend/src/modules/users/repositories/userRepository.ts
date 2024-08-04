@@ -80,4 +80,51 @@ export default class UserRepository {
 
     return data as User;
   }
+
+  async updateUserLocation(userId: string, locationId: number) {
+    const { data, error } = await supabase
+      .from("user")
+      .update({ location_id: locationId })
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating user location.",
+      });
+    }
+
+    return data;
+  }
+
+  async getUserWithLocation(userId: string) {
+    const { data, error } = await supabase
+      .from("user")
+      .select(`
+        *,
+        location:location_id (
+          location_id,
+          province,
+          city,
+          suburb,
+          district
+        )
+      `)
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching user data.",
+      });
+    }
+
+    return data;
+  }
 }

@@ -1,16 +1,10 @@
 "use client";
 
 import React from "react";
+import { useLoadScript } from "@react-google-maps/api";
 import GooglePlacesAutocomplete, {
   geocodeByPlaceId,
 } from "react-google-places-autocomplete";
-import { Button } from "../ui/button";
-import { MapPin } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { LocationType } from "@/lib/types";
 import { SingleValue } from "react-select";
 
@@ -29,10 +23,13 @@ interface GooglePlacesAutocompleteResult {
 }
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
-  location,
+  location = null,
   setLocation,
 }) => {
-  const [locationInputVisible, setLocationInputVisible] = React.useState(false);
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+  });
 
   const handlePlaceSelect = async (
     loc: SingleValue<GooglePlacesAutocompleteResult>,
@@ -41,10 +38,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       setLocation(null);
       return;
     }
-
+  
     const placeId = loc.value.place_id;
     const details = await geocodeByPlaceId(placeId);
-
+  
     if (details.length > 0) {
       const place = details[0];
       const addressComponents = place.address_components;
@@ -54,7 +51,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         suburb: "",
         district: "",
       };
-
+  
       addressComponents.forEach((component) => {
         if (component.types.includes("administrative_area_level_1")) {
           detailedLocation.province = component.long_name;
@@ -69,68 +66,58 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           detailedLocation.district = component.long_name;
         }
       });
-
-      setLocationInputVisible(false);
+  
+      const lat = place.geometry?.location.lat();
+      const lng = place.geometry?.location.lng();
+  
       setLocation({
         label: loc.label,
         value: {
           place_id: placeId,
           ...detailedLocation,
+          lat,
+          lng,
         },
       });
     }
   };
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div>
-      {location ? (
-        <div className="flex items-center mx-2 p-1 rounded">
-          <span className="mr-2">{location.label}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation(null)}
-            className="text-red-500"
-          >
-            X
-          </Button>
-        </div>
-      ) : (
-        <Popover
-          open={locationInputVisible}
-          onOpenChange={setLocationInputVisible}
-        >
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="mx-2">
-              <MapPin />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-72 p-2">
-            <GooglePlacesAutocomplete
-              apiKey={GOOGLE_MAPS_API_KEY}
-              selectProps={{
-                value: location,
-                onChange: handlePlaceSelect,
-                placeholder: "Enter location",
-                styles: {
-                  input: (provided) => ({
-                    ...provided,
-                    color: "var(--foreground)",
-                    backgroundColor: "var(--background)",
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: "var(--foreground)",
-                  }),
-                },
-              }}
-              autocompletionRequest={{
-                componentRestrictions: { country: "za" },
-              }}
-            />
-          </PopoverContent>
-        </Popover>
-      )}
+    <div className="w-full">
+      <GooglePlacesAutocomplete
+        apiKey={GOOGLE_MAPS_API_KEY}
+        selectProps={{
+          value: location,
+          onChange: handlePlaceSelect,
+          placeholder: "Search for a location",
+          styles: {
+            control: (provided) => ({
+              ...provided,
+              backgroundColor: "var(--background)",
+              borderColor: "var(--border)",
+            }),
+            input: (provided) => ({
+              ...provided,
+              color: "var(--foreground)",
+            }),
+            option: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isFocused ? "var(--accent)" : "var(--background)",
+              color: "var(--foreground)",
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              color: "var(--foreground)",
+            }),
+          },
+        }}
+        autocompletionRequest={{
+          componentRestrictions: { country: "za" },
+        }}
+      />
     </div>
   );
 };

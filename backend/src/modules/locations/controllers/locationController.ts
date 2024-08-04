@@ -13,3 +13,13 @@ export const getAllLocations = async (req: Request, res: Response) => {
     sendResponse(res, err as APIResponse);
   }
 };
+
+export const getLocationById = async (req: Request, res: Response) => {
+  try {
+    const locationId = parseInt(req.params.id);
+    const response = await locationService.getLocationById(locationId);
+    sendResponse(res, response);
+  } catch (err) {
+    sendResponse(res, err as APIResponse);
+  }
+};
