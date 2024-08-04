@@ -55,7 +55,7 @@ const CommentList: React.FC<CommentListProps> = ({
     if (responseData.success) {
       return responseData.data as CommentType[];
     } else {
-      return [];
+      throw new Error(responseData.error);
     }
   };
 
@@ -79,6 +79,12 @@ const CommentList: React.FC<CommentListProps> = ({
     </div>
   );
 
+  const FailedIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-muted-foreground">Failed to fetch comments</h3>
+    </div>
+  );
+
   const scrollId = `comments_scroll${v4uuid()}`;
 
   return (
@@ -94,12 +100,18 @@ const CommentList: React.FC<CommentListProps> = ({
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchComments}
+          fetchKey={[
+            "fetch-comments",
+            issueId,
+            parentCommentId
+          ]}
           Item={({ data: comment }) => (
             <Comment
               comment={comment}
               onCommentDeleted={handleCommentDeleted}
             />
           )}
+          Failed={FailedIndicator}
           Loading={LoadingIndicator}
           Empty={EmptyIndicator}
           controlRef={lazyRef}
