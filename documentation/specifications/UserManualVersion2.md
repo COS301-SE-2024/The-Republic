@@ -16,6 +16,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 6. [Making a comment](#making-a-comment-back-to-contents)
 7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
 8. [Profile Page Manangement](#profile-page-management-back-to-contents)
+9. [Analytics](#analytics-back-to-contents)
 
 ## Signing Up
 
@@ -122,6 +123,22 @@ Clicking on Profile on the left side bar will take you to the profile page where
 **2. Add the relevant information then click on "Save" to make the changes**<br>
 
 <img src="../images/User Manual Screenshots/ProfilePage_4.png"/><br>
+
+## Analytics<br> [Back to contents](#contents)
+
+The analytics page consists of two tabs, the Reports tab whereby you can view different reporting charts and a visualization tab whereby you can view a more explorative diagram.
+<img src="../images/User Manual Screenshots/Analytics.png"/>
+
+**1. To filter the reporting charts click on the filter charts button**<br>
+<img src="../images/User Manual Screenshots/Analytics_2.png"/><br>
+
+**2. Click on the visualization tab to navigate to the explorative diagram**<br>
+<img src="../images/User Manual Screenshots/Analytics_3.png"/><br>
+
+**3. Click on the different circles on the explorative diagram for more information**<br>
+<img src="../images/User Manual Screenshots/Analytics_4.png"/><br>
+
+
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
