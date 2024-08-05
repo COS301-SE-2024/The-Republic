@@ -185,7 +185,7 @@ const HelpMenu: React.FC = () => {
       </button>
       {isOpen && (
         <div
-          className={`fixed bottom-20 right-4 w-96 p-6 rounded-lg shadow-lg ${
+          className={`fixed bottom-20 right-4 w-96 p-6 rounded-lg shadow-lg max-h-[80vh] overflow-auto ${
             theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"
           }`}
         >
