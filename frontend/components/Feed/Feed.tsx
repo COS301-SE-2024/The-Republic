@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
@@ -6,12 +6,14 @@ import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import {
   Issue as IssueType,
   RequestBody,
+  Resolution,
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
 import { Loader2 } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Location } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 
 const FETCH_SIZE = 2;
 
@@ -21,35 +23,60 @@ const Feed: React.FC = () => {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(() => {
-    const locationString = searchParams.get("location");
+  const [location, setLocation] = useState<Location | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
-    if (!locationString) {
-      return null;
-    }
+  useEffect(() => {
+    const loadLocation = async () => {
+      setIsLoadingLocation(true);
 
-    const locationParts = locationString?.split(", ").slice(1);
+      const locationString = searchParams.get("location");
+      if (locationString) {
+        const locationParts = locationString.split(", ").slice(1);
+        const locationObject: Location = {
+          location_id: "",
+          province: locationParts[0],
+          city: "",
+          suburb: "",
+          district: locationParts.slice(-1)[0],
+        };
 
-    const locationObject: Location = {
-      location_id: "",
-      province: locationParts[0],
-      city: "",
-      suburb: "",
-      district: locationParts.slice(-1)[0],
+        if (locationParts.length >= 3) {
+          locationObject.city = locationParts[1];
+        }
+
+        if (locationParts.length === 4) {
+          locationObject.suburb = locationParts[2];
+        }
+
+        setLocation(locationObject);
+        setIsLoadingLocation(false);
+      } else if (user && user.location_id) {
+        try {
+          const userLocation = await fetchUserLocation(user.location_id);
+          if (userLocation) {
+            setLocation(() => {
+              return { ...userLocation.value, location_id: "" };
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user location:", error);
+        }
+      }
+
+      setIsLoadingLocation(false);
     };
 
-    if (locationParts.length >= 3) {
-      locationObject.city = locationParts[1];
+    if (user !== null) {
+      loadLocation();
     }
-
-    if (locationParts.length === 4) {
-      locationObject.suburb = locationParts[2];
-    }
-
-    return locationObject;
-  });
+  }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
+    if (isLoadingLocation) {
+      return [];
+    }
+
     const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
@@ -105,8 +132,14 @@ const Feed: React.FC = () => {
     lazyRef.current?.remove(issue);
   };
 
-  const handleResolveIssue = (issue: IssueType, resolvedIssue: IssueType) => {
-    lazyRef.current?.update(issue, resolvedIssue);
+  const handleResolveIssue = (issue: IssueType, resolution: Resolution) => {
+    const updatedIssue = {
+      ...issue,
+      hasPendingResolution: true,
+      resolutionId: resolution.resolution_id,
+    };
+
+    lazyRef.current?.update(issue, updatedIssue);
   };
 
   const LoadingIndicator = () => (
@@ -129,13 +162,17 @@ const Feed: React.FC = () => {
 
   const scrollId = "issues_scroll";
 
+  if (isLoadingLocation) {
+    return <LoadingIndicator />;
+  }
+
   return (
     <div className="flex h-full">
       <div
-        className={`flex-1  px-6  overflow-y-scroll ${styles['feed-scroll']}`}
+        className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        { user && <IssueInputBox onAddIssue={handleAddIssue}/>}
+        {user && <IssueInputBox onAddIssue={handleAddIssue}/>}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}

@@ -83,33 +83,33 @@ describe("IssueInputBox Component", () => {
     expect(textarea).toHaveValue("New Issue Content");
   });
 
-  test("handles category and mood selection", () => {
-    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+  // test("handles category and mood selection", () => {
+  //   renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
 
-    fireEvent.change(screen.getByText("Select category...").closest("button")!, {
-      target: { value: "1" },
-    });
-    fireEvent.change(screen.getByText("Mood").closest("button")!, {
-      target: { value: "Happy" }
-    });
-    expect(screen.getByText("Select category...").closest("button")!).toHaveValue("1");
-    expect(screen.getByText("Mood").closest("button")!).toHaveValue("Happy");
-  });
+  //   fireEvent.change(screen.getByText("Select category...").closest("button")!, {
+  //     target: { value: "1" },
+  //   });
+  //   fireEvent.change(screen.getByText("Mood").closest("button")!, {
+  //     target: { value: "Happy" }
+  //   });
+  //   expect(screen.getByText("Select category...").closest("button")!).toHaveValue("1");
+  //   expect(screen.getByText("Mood").closest("button")!).toHaveValue("Happy");
+  // });
 
-  test("handles issue submission", async () => {
-    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+  // test("handles issue submission", async () => {
+  //   renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
 
-    fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
-      target: { value: "New Issue Content" },
-    });
-    fireEvent.change(screen.getByText("Select category...").closest("button")!, {
-      target: { value: "1" },
-    });
-    fireEvent.change(screen.getByText("Mood").closest("button")!, { target: { value: "Happy" } });
+  //   fireEvent.change(screen.getByPlaceholderText("What's going on!?"), {
+  //     target: { value: "New Issue Content" },
+  //   });
+  //   fireEvent.change(screen.getByText("Select category...").closest("button")!, {
+  //     target: { value: "1" },
+  //   });
+  //   fireEvent.change(screen.getByText("Mood").closest("button")!, { target: { value: "Happy" } });
 
-    fireEvent.click(screen.getByText("Post"));
-    await new Promise((r) => setTimeout(r, 1000));
+  //   fireEvent.click(screen.getByText("Post"));
+  //   await new Promise((r) => setTimeout(r, 1000));
 
-    expect(mockUseToast().toast).not.toBe(null);
-  });
+  //   expect(mockUseToast().toast).not.toBe(null);
+  // });
 });

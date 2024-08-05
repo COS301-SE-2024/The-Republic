@@ -55,6 +55,17 @@ const EChartsComponent = () => {
       initChart(dataWrap.seriesData, dataWrap.maxDepth, dataWrap.maxIssueRate);
     }
 
+    const categories = [
+      "Healthcare Services",
+      "Public Safety",
+      "Water",
+      "Transportation",
+      "Electricity",
+      "Sanitation",
+      "Social Services",
+      "Administrative Services",
+    ];
+
     function prepareData(rawData: SubData) {
       const seriesData: SeriesDataItem[] = [];
       let maxDepth = 0;
@@ -106,6 +117,21 @@ const EChartsComponent = () => {
           });
         }
 
+        if (depth >= 1) {
+          const lastPart = basePath.split(", ").splice(-1)[0];
+
+          if (!categories.includes(lastPart)) {
+            seriesData.push({
+              id: basePath + ", " + "$label",
+              value: 0,
+              population: 0,
+              issueRate: 0,
+              depth: depth + 1,
+              index: seriesData.length,
+            });
+          }
+        }
+
         for (const key in source) {
           if (Object.prototype.hasOwnProperty.call(source, key) && !key.match(/^\$/)) {
             const path = basePath + ", " + key;
@@ -124,9 +150,9 @@ const EChartsComponent = () => {
     }
 
     function initChart(seriesData: SeriesDataItem[], maxDepth: number, maxIssueRate: number) {
-      let displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
+      let displayRoot = stratify("South Africa") as d3.HierarchyCircularNode<SeriesDataItem>;
 
-      function stratify() {
+      function stratify(rootId: string) {
         return d3
           .stratify<SeriesDataItem>()
           .parentId((d: SeriesDataItem): string => {
@@ -134,7 +160,23 @@ const EChartsComponent = () => {
             return d.id.substring(0, d.id.lastIndexOf(", "));
           })(seriesData)
           .sum((d: SeriesDataItem): number => {
-            if (d.depth === 0) return 0;
+            const pathParts = d.id.split(", ");
+            const isLabel = pathParts.slice(-1)[0] === "$label";
+            if (isLabel) {
+              if (
+                pathParts.slice(0, -1).join(", ") === rootId ||
+                pathParts.slice(0, -2).join(", ") === rootId
+              ) {
+                return 1;
+              } else {
+                return 0;
+              }
+            }
+
+            if (d.depth === 0) {
+              return 0;
+            }
+
             if (d.depth === 1) {
               const minSize = 1000;
               const maxSize = 100000;
@@ -142,7 +184,8 @@ const EChartsComponent = () => {
               // console.log(`Province: ${d.id}, Count: ${d.value}, Population: ${d.population}, Issue Rate: ${d.issueRate.toFixed(8)}, Calculated Size: ${size.toFixed(2)}`);
               return size;
             }
-            return 1;
+
+            return d.value;
           })
           .sort(
             (
@@ -181,14 +224,16 @@ const EChartsComponent = () => {
         if (!node) {
           return;
         }
-        const isLeaf = !node.children || !node.children.length;
         const focus = new Uint32Array(
           node.descendants().map(function (node) {
             return node.data.index;
           }),
         );
+        const pathParts = nodePath.split(", ");
+        const isLeaf = !node.children || !node.children.length;
+        const isLabel = pathParts.slice(-1)[0] === "$label";
         const nodeName = isLeaf
-          ? nodePath.substring(nodePath.lastIndexOf(",") + 2, nodePath.length)
+          ? pathParts.slice(isLabel ? -2 : -1)[0]
           : "";
         const z2 = Number(api.value("depth")) * 2;
         return {
@@ -197,7 +242,7 @@ const EChartsComponent = () => {
           shape: {
             cx: node.x,
             cy: node.y,
-            r: node.r,
+            r: isLabel ? 0 : node.r,
           },
           transition: ["shape"],
           z2: z2,
@@ -206,14 +251,14 @@ const EChartsComponent = () => {
             style: {
               text: nodeName,
               fontFamily: "Arial",
-              width: node.r * 1.3,
-              overflow: "truncate",
-              fontSize: node.r / 3,
+              width: node.r * 2,
+              overflow: isLabel ? "break" : "truncate",
+              fontSize: isLabel ? node.r / 3.5 : node.r / 5,
             },
             emphasis: {
               style: {
-                overflow: null,
-                fontSize: Math.max(node.r / 3, 12),
+                overflow: isLabel ? "break" : null,
+                fontSize: Math.max(node.r / 4, 12),
               },
             },
           },
@@ -276,23 +321,16 @@ const EChartsComponent = () => {
           typeof params.data === "object" &&
           "id" in params.data
         ) {
-          const categories = [
-            "Healthcare Services",
-            "Public Safety",
-            "Water",
-            "Transportation",
-            "Electricity",
-            "Sanitation",
-            "Social Services",
-            "Administrative Services",
-          ];
-
           const idParts = (params.data.id as string).split(", ");
-          const category = idParts.splice(-1)[0];
+          const lastPart = idParts.splice(-1)[0];
 
-          if (categories.includes(category)) {
+          if (lastPart === "$label") {
+            return;
+          }
+
+          if (categories.includes(lastPart)) {
             const locationParam = `location=${encodeURIComponent(idParts.join(", "))}`;
-            const categoryParam = `category=${encodeURIComponent(category)}`;
+            const categoryParam = `category=${encodeURIComponent(lastPart)}`;
             router.push(`/?${locationParam}&${categoryParam}`);
           } else {
             drillDown((params.data as { id: string }).id);
@@ -301,7 +339,7 @@ const EChartsComponent = () => {
       });
 
       function drillDown(targetNodeId: string | null = null): void {
-        displayRoot = stratify() as d3.HierarchyCircularNode<SeriesDataItem>;
+        displayRoot = stratify(targetNodeId ?? "South Africa") as d3.HierarchyCircularNode<SeriesDataItem>;
         if (targetNodeId != null) {
           displayRoot = displayRoot.descendants().find(function (node) {
             return node.data.id === targetNodeId;

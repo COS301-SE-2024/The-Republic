@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HomeIcon,
   ProfileIcon,
   LogoutIcon,
   ReportsIcon,
+  TrophyIcon,
   NotificationsIcon,
   SettingsIcon,
 } from "../icons";
@@ -24,68 +25,71 @@ import { signOutWithToast } from "@/lib/utils";
 const Sidebar: React.FC<HomeAvatarProps> = () => {
   const { user } = useUser();
   const { toast } = useToast();
-  useEffect(() => {
-    if (user) {
-      const channelA = supabase
-        .channel("schema-db-changes")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "comments",
-            // filter: `user_id=neq.${user.user_id}`,
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "Comments Flooding for a Reported Issue",
-            });
-            const { new: notification } = payload;
-            console.log("Comments Notification Data: ", notification);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "reaction",
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "Issue Gaining Exposure, new Reactions",
-            });
-            const { new: notification } = payload;
-            console.log("Reaction Notification Data Now: ", notification);
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "issue",
-          },
-          (payload) => {
-            toast({
-              variant: "warning",
-              description: "New Issue Reported, Check it Out!",
-            });
-            const { new: notification } = payload;
-            console.log("Issue Notification Data: ", notification);
-          },
-        )
-        .subscribe((status) => {
-          console.log("Subscription Result: ", status);
-        });
+  const [showLogout, setShowLogout] = useState(false);
 
-      return () => {
-        channelA.unsubscribe();
-      };
-    }
-  }, [user]);
+  useEffect(() => {
+    const channelA = supabase
+      .channel("schema-db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "comment",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "Comments Flooding for a Reported Issue",
+          });
+          const { new: notification } = payload;
+          console.log("Comments Notification Data: ", notification);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reaction",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "Issue Gaining Exposure, new Reactions",
+          });
+          const { new: notification } = payload;
+          console.log("Reaction Notification Data Now: ", notification);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "issue",
+        },
+        (payload) => {
+          toast({
+            variant: "warning",
+            description: "New Issue Reported, Check it Out!",
+          });
+          const { new: notification } = payload;
+          console.log("Issue Notification Data: ", notification);
+        },
+      )
+      .subscribe((status) => {
+        console.log("Subscription Result: ", status);
+      });
+
+    return () => {
+      channelA.unsubscribe();
+    };
+  }, []);
+
+  const toggleLogout = () => {
+    setShowLogout((prev) => !prev);
+  };
 
   return (
     <div className="w-[300px] border-r h-full overflow-y-auto">
@@ -104,6 +108,12 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
             <Link href="/analytics">
               <ReportsIcon />
               Analytics
+            </Link>
+          </li>
+          <li>
+            <Link href="/leaderboard">
+              <TrophyIcon />
+              Leaderboard
             </Link>
           </li>
           {user && (
@@ -129,18 +139,24 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
                   Settings
                 </Link>
               </li>
-              <li>
-                <Link href="" onClick={() => signOutWithToast(toast)}>
-                  <LogoutIcon />
-                  Logout
-                </Link>
-              </li>
             </>
           )}
         </ul>
         {user && (
           <div className={styles.userAccount}>
-            <div className={styles.userProfile}>
+            {showLogout && (
+              <div className={styles.logoutOverlay}>
+                <ul className={styles.sidebarLinks}>
+                  <li>
+                    <Link href="" onClick={() => signOutWithToast(toast)}>
+                      <LogoutIcon />
+                      Logout
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
+            <div className={styles.userProfile} onClick={toggleLogout}>
               <Avatar>
                 <AvatarImage src={user.image_url} />
                 <AvatarFallback>{user.fullname[0]}</AvatarFallback>

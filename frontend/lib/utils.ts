@@ -66,15 +66,21 @@ export function objectToQuery(obj: {
 export function colorFromCategory(api: Api, category: string) {
   switch (category) {
     case "Transportation":
-      return "#e7e7e7";
+      return "#E7E7E7";
     case "Healthcare Services":
-      return "#c72c48";
+      return "#E91E63";
     case "Public Safety":
-      return "#f0dc82";
+      return "#F75D4D";
     case "Water":
-      return "#f2f3f4";
+      return "#00BDEE";
     case "Electricity":
-      return "#1dacd6";
+      return "#EED288";
+    case "Sanitation":
+      return "#4CAF50";
+    case "Social Services":
+      return "#957DAD";
+    case "Administrative Services":
+      return "#80A3C5";
     default:
       return api.visual("color");
   }

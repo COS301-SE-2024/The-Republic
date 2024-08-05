@@ -4,8 +4,9 @@ import React from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Issue as IssueType, ProfileFeedProps } from "@/lib/types";
 import Issue from "../Issue/Issue";
-import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import ResolutionFeed from "../ResolutionFeed/ResolutionFeed";
 
 import { profileFetchIssues } from "@/lib/api/profileFetchIssues";
 
@@ -24,17 +25,21 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
   } = useQuery<IssueType[]>({
     queryKey: ["profile_issues", userId, selectedTab],
     queryFn: () => profileFetchIssues(user, userId, url),
-    enabled: Boolean(accessToken),
+    enabled: Boolean(accessToken) && selectedTab !== "resolutions",
   });
 
   // Filter out anonymous issues
   const nonAnonymousIssues = issues.filter((issue) => !issue.is_anonymous);
 
   const LoadingIndicator = () => (
-    <div className="flex justify-center items-center h-24">
-      <FaSpinner className="animate-spin text-4xl text-green-500" />
+    <div className="flex justify-center items-center h-32">
+      <Loader2 className="h-6 w-6 animate-spin text-green-400" />
     </div>
   );
+
+  if (selectedTab === "resolutions") {
+    return <ResolutionFeed userId={userId} />;
+  }
 
   return (
     <div className="w-full px-6">

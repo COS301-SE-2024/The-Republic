@@ -24,24 +24,18 @@ import { Button } from "@/components/ui/button";
 interface MoreMenuProps {
   menuItems: string[];
   isOwner: boolean;
-  onDelete: () => void;
-  onResolve: () => void;
+  onAction: (action: string) => void;
   onSubscribe: (option: string) => void;
 }
 
 const MoreMenu: React.FC<MoreMenuProps> = ({
   menuItems,
   isOwner,
-  onDelete,
-  onResolve,
+  onAction,
   onSubscribe,
 }) => {
-  const handleDelete = () => {
-    onDelete();
-  };
-
-  const handleResolve = () => {
-    onResolve();
+  const handleAction = (action: string) => {
+    onAction(action);
   };
 
   const handleSubscribeOptionClick = (option: string) => {
@@ -66,8 +60,8 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                 <DialogTrigger asChild>
                   <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DialogTrigger>
-              ) : item === "Resolve Issue" && isOwner ? (
-                <DropdownMenuItem onClick={handleResolve}>
+              ) : item === "Resolve Issue" ? (
+                <DropdownMenuItem onClick={() => handleAction("Resolve Issue")}>
                   Resolve Issue
                 </DropdownMenuItem>
               ) : item === "Subscribe" ? (
@@ -92,7 +86,9 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               ) : (
-                <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
+                <DropdownMenuItem key={index} onClick={() => handleAction(item)}>
+                  {item}
+                </DropdownMenuItem>
               )}
             </React.Fragment>
           ))}
@@ -111,7 +107,7 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant="destructive" onClick={() => handleAction("Delete")}>
               Delete
             </Button>
           </DialogClose>

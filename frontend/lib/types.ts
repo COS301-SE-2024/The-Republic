@@ -5,9 +5,39 @@ interface User {
   fullname: string;
   image_url: string;
   bio: string;
+  user_score: number;
   total_issues: number;
   resolved_issues: number;
   access_token: string;
+  location?: LocationType | null;
+  location_id?: number | null;
+  suspended_until?: number | null;
+}
+
+interface UserData {
+  name: string;
+  id: string;
+  countryRanking: number;
+  provinceRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+  city: string;
+  suburb: string;
+  points: number;
+}
+
+interface LeaderboardEntry {
+  username: string;
+  userId: string;
+  province: string;
+  city: string;
+  suburb: string;
+  points: number;
+  countryRanking: number;
+  provinceRanking: number;
+  cityRanking: number;
+  suburbRanking: number;
+  rank: number;
 }
 
 interface UserAlt {
@@ -16,11 +46,19 @@ interface UserAlt {
   username: string;
   fullname: string;
   image_url: string;
+  user_score: number;
   bio: string;
   is_owner: boolean;
   total_issues: number;
   resolved_issues: number;
   access_token: string;
+  location: LocationType | null;
+  location_id: number | null;
+  ranking?: number | null;
+  countryRanking: number | null;
+  provinceRanking: number | null;
+  cityRanking?: number | null;
+  suburbRanking?: number | null;
 }
 
 interface MockUser {
@@ -42,10 +80,11 @@ interface UserContextType {
 
 interface ProfileStatsProps {
   userId: string;
-  totalIssues: number | null;
-  resolvedIssues: number | null;
-  selectedTab: "issues" | "resolved";
-  setSelectedTab: (tab: "issues" | "resolved") => void;
+  totalIssues: number;
+  resolvedIssues: number;
+  totalResolutions: number;
+  selectedTab: "issues" | "resolved" | "resolutions";
+  setSelectedTab: (tab: "issues" | "resolved" | "resolutions") => void;
 }
 
 interface IssueInputBoxProps {
@@ -69,6 +108,8 @@ interface LocationType {
     city: string;
     suburb: string;
     district: string;
+    lat: number;
+    lng: number;
   };
 }
 
@@ -90,17 +131,22 @@ interface Issue {
     province: string;
     city: string;
     suburb: string;
+    latitude: string;
+    longitude: string;
   } | null;
   comment_count: number;
   is_owner: boolean;
   profile_user_id: string;
   user_reaction: string;
+  hasPendingResolution?: boolean;
+  pendingResolutionId?: string | null;
+  cluster_id?: string
 }
 interface IssueProps {
   issue: Issue;
   id?: string;
   onDeleteIssue?: (issue: Issue) => void;
-  onResolveIssue?: (issue: Issue, resolvedIssue: Issue) => void;
+  onResolveIssue?: (issue: Issue, resolution: Resolution) => void;
 }
 
 interface Comment {
@@ -205,6 +251,7 @@ interface AnalysisResult {
   severity: number;
 }
 
+
 interface Location {
   location_id: string;
   province?: string;
@@ -253,11 +300,12 @@ interface ProfileUpdate {
   fullname: string;
   username: string;
   bio: string;
+  location?: LocationType | null | undefined;
 }
 
 interface ProfileFeedProps {
   userId: string;
-  selectedTab: "issues" | "resolved";
+  selectedTab: "issues" | "resolved" | "resolutions";
 }
 
 interface MulterFile {
@@ -269,14 +317,43 @@ interface MulterFile {
   destination: string;
   filename: string;
   path: string;
-  buffer: Buffer;
+  buffer: 
+  Buffer;
 }
+
+interface SubsParams {
+  user_id: string;
+  issue_id?: string;
+  category_id?: string;
+  location_id?: string;
+}
+
+interface Resolution {
+  resolution_id: string;
+  issue_id: number;
+  resolver_id: string;
+  resolution_text: string;
+  proof_image: string | null;
+  status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
+  updated_at: string;
+  num_cluster_members: number;
+  num_cluster_members_accepted: number;
+  num_cluster_members_rejected: number;
+  political_association: string | null;
+  state_entity_association: string | null;
+  resolution_source: 'self' | 'unknown' | 'other';
+  resolved_by: string | null;
+}
+
 
 export type {
   AnalysisResult,
   FeedProps,
   RequestBody,
   UserAlt,
+  UserData,
+  LeaderboardEntry,
   IssueProps,
   IssueInputBoxProps,
   ProfileStatsProps,
@@ -303,4 +380,6 @@ export type {
   MockUser,
   MulterFile,
   Location,
+  SubsParams,
+  Resolution
 };

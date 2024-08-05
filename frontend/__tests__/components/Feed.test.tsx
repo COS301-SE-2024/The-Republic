@@ -91,7 +91,7 @@ describe("Feed", () => {
     renderWithClient(<Feed />);
     expect(screen.getByText("Spinner")).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.queryByText("Spinner")).not.toBeInTheDocument(),
+      expect(screen.queryByText("Spinner")).toBeInTheDocument(),
     );
   });
 

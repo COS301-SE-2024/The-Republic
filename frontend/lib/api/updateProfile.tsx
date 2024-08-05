@@ -19,6 +19,9 @@ const updateUserProfile = async (
   formData.append("fullname", updatedUser.fullname);
   formData.append("username", updatedUser.username);
   formData.append("bio", updatedUser.bio);
+  if (updatedUser.location) {
+    formData.append("location", JSON.stringify(updatedUser.location));
+  }
   if (file) {
     if (!(await checkImageFileAndToast(file, toast))) {
       throw new Error("Invalid image file");
@@ -35,7 +38,7 @@ const updateUserProfile = async (
     body: formData,
   });
 
-  console.log(response);
+  //console.log(response);
 
   if (!response.ok) {
     const responseData = await response.json();

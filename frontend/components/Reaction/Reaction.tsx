@@ -15,7 +15,7 @@ const Reaction: React.FC<ReactionProps> = ({
     userReaction,
   );
   const [reactions, setReactions] = useState<{ [key: string]: number }>(() =>
-    initialReactions.reduce(
+    initialReactions?.reduce(
       (acc, reaction) => {
         acc[reaction.emoji] = reaction.count;
         return acc;
@@ -74,7 +74,7 @@ const Reaction: React.FC<ReactionProps> = ({
           }`}
         >
           <span>{emoji}</span>
-          <span>{reactions[emoji] || 0}</span>
+          <span>{reactions?.[emoji] || 0}</span>
         </button>
       ))}
     </div>

@@ -15,9 +15,9 @@ export const categoryOptions = {
 export const moodOptions = {
   group: "Moods",
   items: [
-    { value: "Concerned", label: "Concerned" },
-    { value: "Angry", label: "Angry" },
-    { value: "Sad", label: "Sad" },
-    { value: "Happy", label: "Happy" },
+    { value: "Concerned", label: "Concerned", emoji: "😟" },
+    { value: "Angry", label: "Angry", emoji: "😡" },
+    { value: "Sad", label: "Sad", emoji: "😢" },
+    { value: "Happy", label: "Happy", emoji: "😊" },
   ],
 };

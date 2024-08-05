@@ -43,7 +43,8 @@ export class CommentRepository {
           email_address,
           username,
           fullname,
-          image_url
+          image_url,
+          user_score
         )
       `,
       )
