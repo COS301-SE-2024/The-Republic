@@ -16,6 +16,8 @@ The Republic is a platform that aims to improve citizen interaction with governm
 6. [Making a comment](#making-a-comment-back-to-contents)
 7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
 8. [Profile Page Manangement](#profile-page-management-back-to-contents)
+9. [Analytics](#analytics-back-to-contents)
+10. [Leaderboard](#Leaderboard-back-to-contents)
 
 ## Signing Up
 
@@ -39,13 +41,13 @@ The Republic is a platform that aims to improve citizen interaction with governm
 
 When you log in, you will be taken to the homepage. This is an example of what the homepage will look like.
 
- <img src="../images/User Manual Screenshots/HomePage.png"/>
+ <img src="../images/User Manual Screenshots/HomePagev2.png"/>
 
 ## NavBar<br> [Back to contents](#contents)
 
 The NavBar consists of your General section which includes, home page, visualization, reports and notifcations page. It also consists of the Accounts section whereby users can manage their accounts. It consists of the Profile, Settings and an option to logout.
 
- <img src="../images/User Manual Screenshots/NavBar.png"/>
+ <img src="../images/User Manual Screenshots/NavBarv2.png"/>
 
 ## Creating a Post<br> [Back to contents](#contents)
 
@@ -61,11 +63,19 @@ The NavBar consists of your General section which includes, home page, visualiza
 
 <img src="../images/User Manual Screenshots/IssuePost_3.png"/>
 
-**4. You can choose to be annonymous or not by clicking the checkbox**
+**4. Pick your location**
+
+<img src="../images/User Manual Screenshots/IssuePostv2.png"/>
+
+**5. You can choose to include an image**
+
+<img src="../images/User Manual Screenshots/IssuePostv2-1.png"/>
+
+**6. You can choose to be annonymous or not by clicking the checkbox**
 
 <img src="../images/User Manual Screenshots/IssuePost_4.png"/>
 
-**5. Once done, you can click on "Post" to post your issue**
+**7. Once done, you can click on "Post" to post your issue**
 
 <img src="../images/User Manual Screenshots/IssuePost_5.png"/>
 
@@ -92,25 +102,50 @@ Users can subscribe to what they are interested in. Users can also filter and so
 <img src="../images/User Manual Screenshots/Subscribe_2.png"/>
 
 **3. You can sort and Filter the issue posts displayed by clicking the sort and filter found on the right hand side bar**
-<img src="../images/User Manual Screenshots/Subscribe_3.png"/><br>
+<img src="../images/User Manual Screenshots/Subscribev2.png"/><br>
 
 **4. You can sort the issues according to "Newest", "Oldest" or "Most Comments.**<br>
-<img src="../images/User Manual Screenshots/Subscribe_4.png"/><br>
+<img src="../images/User Manual Screenshots/Subscribev2-2.png"/><br>
 
-**5. You can Filter the issues according to your subscriptions or the different categories.**<br>
-<img src="../images/User Manual Screenshots/Subscribe_5.png"/>
+**5. You can sort the issues according to your subscriptions or the different categories.**<br>
+<img src="../images/User Manual Screenshots/Subscribev2-3.png"/>
+
+**7. You can sort the issues according to your location.**<br>
+<img src="../images/User Manual Screenshots/Subscribev2-4.png"/>
 
 ## Profile Page Management<br> [Back to contents](#contents)
 
 Clicking on Profile on the left side bar will take you to the profile page whereby users may make changes<br>
-<img src="../images/User Manual Screenshots/ProfilePage.png"/>
+<img src="../images/User Manual Screenshots/ProfilePagev2.png"/>
 
 **1. To edit your profile click on "Edit Profile**<br>
-<img src="../images/User Manual Screenshots/ProfilePage_2.png"/><br>
+<img src="../images/User Manual Screenshots/ProfilePagev2-2.png"/><br>
 
 **2. Add the relevant information then click on "Save" to make the changes**<br>
 
 <img src="../images/User Manual Screenshots/ProfilePage_4.png"/><br>
+
+## Analytics<br> [Back to contents](#contents)
+
+The analytics page consists of two tabs, the Reports tab whereby you can view different reporting charts and a visualization tab whereby you can view a more explorative diagram.
+<img src="../images/User Manual Screenshots/Analytics.png"/>
+
+**1. To filter the reporting charts click on the filter charts button**<br>
+<img src="../images/User Manual Screenshots/Analytics_2.png"/><br>
+
+**2. Click on the visualization tab to navigate to the explorative diagram**<br>
+<img src="../images/User Manual Screenshots/Analytics_3.png"/><br>
+
+**3. Click on the different circles on the explorative diagram for more information**<br>
+<img src="../images/User Manual Screenshots/Analytics_4.png"/><br>
+
+## Leaderboard<br> [Back to contents](#contents)
+The leaderboard showcasses the point systems of the web app. Your ranking and points as well as the ranking and points of the top 10 users are displayed. 
+<img src="../images/User Manual Screenshots/Leaderboard.png"/><br>
+
+**1. You can filter the table ranking according to country, province, city, and suburb ranking once you've set your location for your profile. Click on filter to do so**<br>
+<img src="../images/User Manual Screenshots/Leaderboard_2.png"/><br>
+
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
