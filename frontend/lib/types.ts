@@ -346,6 +346,13 @@ interface Resolution {
   resolved_by: string | null;
 }
 
+// TODO: Update extracted type to match this and use it
+interface CommentListProps2 {
+  issueId: number;
+  parentCommentId: number | null;
+  showAddComment?: boolean;
+  showComments?: boolean;
+}
 
 export type {
   AnalysisResult,
@@ -372,6 +379,7 @@ export type {
   LocationType,
   AddCommentFormProps,
   CommentListProps,
+  CommentListProps2,
   EditProfileProps,
   ProfileUpdate,
   UserContextType,
