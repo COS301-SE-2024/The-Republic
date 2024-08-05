@@ -143,7 +143,7 @@ The analytics page consists of two tabs, the Reports tab whereby you can view di
 The leaderboard showcasses the point systems of the web app. Your ranking and points as well as the ranking and points of the top 10 users are displayed. 
 <img src="../images/User Manual Screenshots/Leaderboard.png"/><br>
 
-**1. You can filter the table ranking according to country, province, city, and suburb ranking once you've set your location for your profile. Click on filter**<br>
+**1. You can filter the table ranking according to country, province, city, and suburb ranking once you've set your location for your profile. Click on filter to do so**<br>
 <img src="../images/User Manual Screenshots/Leaderboard_2.png"/><br>
 
 
