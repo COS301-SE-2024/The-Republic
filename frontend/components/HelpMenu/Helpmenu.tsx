@@ -165,7 +165,7 @@ const HelpMenu: React.FC = () => {
                 className="flex flex-col items-center text-center cursor-pointer"
                 onClick={() => setActiveSection(item.key)}
               >
-                <div className="bg-green-100 rounded-full p-3 mb-2">{item.icon}</div>
+                <div className="bg-green-100 dark:bg-green-600 rounded-full p-3 mb-2">{item.icon}</div>
                 <span className="text-sm">{item.title}</span>
               </div>
             ))}
