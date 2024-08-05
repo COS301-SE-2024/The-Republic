@@ -75,7 +75,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
     }
   };
 
-  const userAvatar = comment.user?.image_url || "";
+  const userAvatar = comment.user?.image_url;
   const userFullname = comment.user?.fullname || "Anonymous";
   const userScore = comment.user?.user_score ?? 0;
   const isOwner = comment.user_id === user?.user_id;

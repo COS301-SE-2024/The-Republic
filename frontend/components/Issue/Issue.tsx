@@ -17,10 +17,10 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
-import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
 import { SubsParams } from "@/lib/types";
+import Image from "next/image";
 
 import { subscribe } from "@/lib/api/subscription";
 import { createSelfResolution } from "@/lib/api/createSelfResolution";
@@ -63,7 +63,7 @@ const Issue: React.FC<IssueProps> = ({
         toast({ variant: "destructive", description: "Failed to fetch resolutions" });
       }
     };
-  
+
     if (user && issue.issue_id) {
       fetchResolutions();
     }
@@ -88,7 +88,7 @@ const Issue: React.FC<IssueProps> = ({
       toast({ variant: "destructive", description: "Failed to submit self-resolution" });
     }
   });
-  
+
   const externalResolutionMutation = useMutation({
     mutationFn: (data: {
       resolutionText: string;
@@ -121,7 +121,7 @@ const Issue: React.FC<IssueProps> = ({
       toast({ variant: "destructive", description: "Failed to submit external resolution" });
     }
   });
-  
+
 
   const handleResolutionSubmit = (resolutionData: {
     resolutionText: string;
@@ -184,7 +184,7 @@ const Issue: React.FC<IssueProps> = ({
         variant: "destructive",
         description: "Failed to Subscribe to Issue",
       });
-  
+
       console.error(error);
     }
   });
@@ -252,7 +252,7 @@ const Issue: React.FC<IssueProps> = ({
     if (!user || !clusterId) {
       return false;
     }
-  
+
     try {
       return await checkUserIssuesInCluster(user, clusterId);
     } catch (error) {
@@ -301,7 +301,7 @@ const Issue: React.FC<IssueProps> = ({
       } else if (user && issue.cluster_id) {
         // Non-owner user is responding to the resolution for their issue in the same cluster
         const userIssue = await fetchUserIssueInCluster(user, issue.cluster_id);
-  
+
         if (userIssue && userIssue.pendingResolutionId) {
           await respondToResolution(user, userIssue.pendingResolutionId, accept);
           queryClient.invalidateQueries({ queryKey: ['issue', userIssue.issue_id] });
@@ -320,7 +320,7 @@ const Issue: React.FC<IssueProps> = ({
   };
 
 
-  
+
 
   return (
     <>
@@ -433,8 +433,8 @@ const Issue: React.FC<IssueProps> = ({
               </Badge>
             )}
             {issue.hasPendingResolution && (
-              <Badge 
-                variant="destructive" 
+              <Badge
+                variant="destructive"
                 className="cursor-pointer"
                 onClick={() => setIsResolutionResponseModalOpen(true)}
               >
@@ -475,7 +475,7 @@ const Issue: React.FC<IssueProps> = ({
             userReaction={issue.user_reaction} />
         </CardFooter>
       </Card>
-        
+
       <ResolutionModal
         isOpen={isResolutionModalOpen}
         onClose={() => setIsResolutionModalOpen(false)}
@@ -502,7 +502,7 @@ const Issue: React.FC<IssueProps> = ({
                   city: issue.location.city,
                   suburb: issue.location.suburb,
                   district: "",
-                  lat: parseFloat(issue.location.latitude), 
+                  lat: parseFloat(issue.location.latitude),
                   lng: parseFloat(issue.location.longitude)
                 }
               }

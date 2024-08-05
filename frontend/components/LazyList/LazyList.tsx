@@ -1,27 +1,29 @@
 import {
+  Fragment,
   ReactNode,
   Ref,
   useEffect,
   useImperativeHandle,
-  useState
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import equal from "fast-deep-equal";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 type Compare<D> = (one: D, two: D) => boolean;
 
 export interface LazyListRef<D> {
-  reload: () => void;
   add: (data: D) => void;
-  remove: (data: D, compare?: Compare<D>) => boolean;
-  update: (data: D, newData: D, compare?: Compare<D>) => boolean;
+  remove: (data: D, compare?: Compare<D>) => void;
+  update: (data: D, newData: D, compare?: Compare<D>) => void;
 }
 
 interface LazyListProps<D> {
-  Item: (props: { data: D}) => ReactNode;
+  Item: (props: { data: D }) => ReactNode;
+  Failed: (props: { error: Error }) => ReactNode;
   Loading: () => ReactNode;
   Empty: () => ReactNode;
   fetcher: (from: number, amount: number) => Promise<D[]>;
+  fetchKey: unknown[],
   pageSize: number;
   parentId?: string;
   controlRef?: Ref<LazyListRef<D>>;
@@ -30,144 +32,161 @@ interface LazyListProps<D> {
 
 export function LazyList<D>({
   Item,
+  Failed,
   Loading,
   Empty,
   fetcher,
+  fetchKey,
   pageSize,
   parentId,
   controlRef,
   uniqueId = uuidv4()
 }: LazyListProps<D>) {
-  const [items, setItems] = useState<(D | "Loading" | "Deleted" )[]>(["Loading"]);
+  const queryClient = useQueryClient();
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+  } = useInfiniteQuery({
+    queryKey: fetchKey,
+    queryFn: ({ pageParam }) => fetcher(pageParam, pageSize),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.length === 0) {
+        return null;
+      }
+
+      return pages.length * pageSize;
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+  });
 
   useImperativeHandle(controlRef, () => ({
-    reload: () => setItems(["Loading"]),
-
-    add: (data) => setItems([data, ...items]),
-
-    remove: (data, compare = equal) => {
-      const index = items.findIndex((item) =>
-        item !== "Loading" &&
-        item !== "Deleted" &&
-        compare(item, data)
-      );
-
-      if (index !== -1) {
-        items[index] = "Deleted";
-        setItems([...items]);
-
-        return true;
-      } else {
-        return false;
+    add: (newData) => {
+      if (!data) {
+        return;
       }
+
+      queryClient.setQueryData(fetchKey, {
+        pages: [
+          [newData, ...data.pages[0]],
+          ...data.pages.slice(1)
+        ],
+        pageParams: data.pageParams,
+      });
     },
 
-    update: (data, newData, compare = equal) => {
-      const index = items.findIndex((item) =>
-        item !== "Loading" &&
-        item !== "Deleted" &&
-        compare(item, data)
+    remove: (newData, compare = equal) => {
+      if (!data) {
+        return;
+      }
+
+      const newPages = data.pages.map((page) =>
+        page.filter((item) => !compare(item, newData))
       );
 
-      if (index !== -1) {
-        items[index] = newData;
-        setItems([...items]);
-
-        return true;
-      } else {
-        return false;
-      }
+      queryClient.setQueryData(fetchKey, {
+        pages: newPages,
+        pageParams: data.pageParams,
+      });
     },
-  }), [items]);
+
+    update: (oldData, newData, compare = equal) => {
+      if (!data) {
+        return;
+      }
+
+      const newPages = data.pages.map((page) => {
+        const index = page.findIndex((item) =>
+          compare(item, oldData)
+        );
+
+        return index !== -1
+          ? [
+            ...page.slice(0, index),
+            newData,
+            ...page.slice(index + 1)
+          ]
+          : page;
+      });
+
+      queryClient.setQueryData(fetchKey, {
+        pages: newPages,
+        pageParams: data.pageParams,
+      });
+    },
+  }), [data, queryClient]);
 
   useEffect(() => {
-    if (items[items.length - 1] === "Loading") {
-      let ignoreResult = false;
-      const getItems = async () => {
-        const fetchedItems = await fetcher(
-          items.length - 1,
-          pageSize,
-        );
+    if (data && hasNextPage) {
+      const handleIntersection = (
+        [entry]: IntersectionObserverEntry[],
+        observer: IntersectionObserver
+      )  => {
+        if (!entry.isIntersecting) return;
 
-        if (ignoreResult) return;
-
-        items.pop();
-        if (fetchedItems.length > 0) {
-          setItems([...items, ...fetchedItems, "Loading"]);
-        } else {
-          setItems([...items]);
-        }
+        observer.unobserve(entry.target);
+        fetchNextPage();
       };
 
-      let observer: IntersectionObserver | null = null;
+      let loadFrom = 0;
+      data.pages.forEach((page) =>
+        loadFrom += page.length
+      );
+      loadFrom -= pageSize;
+      loadFrom = loadFrom > 0 ? loadFrom : 0;
 
-      if (items[0] !== "Loading") {
-        const handleIntersection = (
-          [entry]: IntersectionObserverEntry[],
-          observer: IntersectionObserver
-        )  => {
-          if (!entry.isIntersecting) return;
+      const loadFromElement = document.querySelector(
+        `#item-${loadFrom}-${uniqueId}`
+      );
+      const rootElement = document.querySelector(
+        parentId ?? `#items-scroll-${uniqueId}`
+      );
 
-          observer.unobserve(entry.target);
-          getItems();
-        };
+      const observer = new IntersectionObserver(handleIntersection, {
+        root: rootElement,
+      });
 
-        let loadFrom = items.length - pageSize;
-        loadFrom = loadFrom > 0 ? loadFrom : 1;
-
-        const loadFromElement = document.querySelector(
-          `#item_${loadFrom}-${uniqueId}`
-        );
-        const rootElement = document.querySelector(
-          parentId ?? `#items_scroll-${uniqueId}`
-        );
-
-        observer = new IntersectionObserver(handleIntersection, {
-          root: rootElement,
-        });
-
-        observer.observe(loadFromElement!);
-      } else {
-        getItems();
-      }
+      observer.observe(loadFromElement!);
 
       return () => {
-        ignoreResult = true;
-        observer?.disconnect();
+        observer.disconnect();
       };
     }
   });
 
-  const isEmpty =
-    items.length === 0 ||
-    items.every((item) => item === "Deleted");
+  let itemIndex = 0;
 
   return (
     <div
       className={`flex flex-col h-full ${parentId || "overflow-y-scroll"}`}
-      id={`items_scroll-${uniqueId}`}
+      id={`items-scroll-${uniqueId}`}
     >
-      { !isEmpty
-        ? items.map((item, index) => {
-          const id = `item_${index + 1}-${uniqueId}`;
+      {data?.pages.every((page) => page.length === 0) && <Empty/>}
 
-          return (
-            <div id={id} key={id}>
-              {(() => {
-                switch(item) {
-                  case "Loading":
-                    return <Loading/>;
-                  case "Deleted":
-                    return <></>;
-                  default:
-                    return <Item data={item}/>;
-                }
-              })()}
-            </div>
-          );
-        })
-        : <Empty/>
-      }
+      {data?.pages.map((page, pageIndex) => (
+        <Fragment key={`page-${pageIndex}-${uniqueId}`}>
+          {page.map((item) => {
+            const id = `item-${itemIndex++}-${uniqueId}`;
+
+            return (
+              <div id={id} key={id}>
+                <Item data={item}/>
+              </div>
+            );
+          })}
+        </Fragment>
+      ))}
+
+      {error && <Failed error={error}/>}
+
+      {isFetching && (
+        <div key={`loading-${uniqueId}`}>
+          <Loading/>
+        </div>
+      )}
     </div>
   );
 }

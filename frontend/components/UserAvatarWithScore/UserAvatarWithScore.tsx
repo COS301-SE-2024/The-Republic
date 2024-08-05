@@ -1,6 +1,7 @@
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface UserAvatarWithScoreProps {
   imageUrl: string;
@@ -11,9 +12,9 @@ interface UserAvatarWithScoreProps {
   scoreFontSize?: number;
 }
 
-const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({ 
-  imageUrl, 
-  username, 
+const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
+  imageUrl,
+  username,
   score,
   className,
   isAnonymous = false,
@@ -21,13 +22,13 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
 }) => {
 
   const getBackgroundColor = (score: number) => {
-    if (score === 0) return 'rgba(255, 255, 255, 1)'; 
+    if (score === 0) return 'rgba(255, 255, 255, 1)';
 
     const baseColor = score > 0 ? [0, 255, 0] : [255, 0, 0];
-    const maxIntensity = 0.5; 
-    const intensity = Math.min(Math.abs(score) / 100, maxIntensity); 
+    const maxIntensity = 0.5;
+    const intensity = Math.min(Math.abs(score) / 100, maxIntensity);
 
-    const color = baseColor.map(channel => 
+    const color = baseColor.map(channel =>
       Math.round(channel * (1 - intensity) + 255 * intensity)
     );
 
@@ -36,10 +37,10 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
 
   const backgroundColor = getBackgroundColor(score);
   const scoreLength = Math.abs(score).toString().length;
-  
+
   // Adjust bubble size based on scoreFontSize and score length
   const bubbleSize = Math.min(50, Math.max(50, 50 + (scoreLength - 1) * 5));
-  
+
   // Use scoreFontSize prop and adjust based on score length
   const fontSize = Math.max(scoreFontSize * 0.75, scoreFontSize - (scoreLength - 1) * 2);
 
@@ -56,11 +57,17 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
   return (
     <div className={cn("relative inline-block", className)}>
       <Avatar className="w-full h-full">
-        <AvatarImage src={imageUrl} alt={username} />
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            alt={`${username}'s avatar`}
+            fill
+          />
+        )}
         <AvatarFallback>{username[0]}</AvatarFallback>
       </Avatar>
-      {!isAnonymous && score !== 0 && (
-        <div 
+      {!isAnonymous && (
+        <div
           className="absolute top-0 right-0 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm overflow-hidden"
           style={{
             backgroundColor,
@@ -75,6 +82,7 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
           {displayScore(score)}
         </div>
       )}
+
     </div>
   );
 };

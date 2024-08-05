@@ -1,4 +1,4 @@
-import { Comment as CommentType } from "@/lib/types";
+import { Comment as CommentType, CommentListProps2 } from "@/lib/types";
 import Comment from "./Comment";
 import { useUser } from "@/lib/contexts/UserContext";
 import AddCommentForm from "./AddCommentForm";
@@ -6,18 +6,11 @@ import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Loader2 } from "lucide-react";
 import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";
+import { fetchMoreComments } from "@/lib/api/fetchMoreComments";
 
 const FETCH_SIZE = 2;
 
-// TODO: Update extracted type to match this and use it
-interface CommentListProps {
-  issueId: number;
-  parentCommentId: number | null;
-  showAddComment?: boolean;
-  showComments?: boolean;
-}
-
-const CommentList: React.FC<CommentListProps> = ({
+const CommentList: React.FC<CommentListProps2> = ({
   issueId,
   parentCommentId,
   showAddComment = true,
@@ -26,37 +19,12 @@ const CommentList: React.FC<CommentListProps> = ({
   const { user } = useUser();
   const lazyRef = useRef<LazyListRef<CommentType>>(null);
 
-  // Move to @/lib/api/
   const fetchComments = async (from: number, amount: number) => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    if (user) {
-      headers.Authorization = `Bearer ${user.access_token}`;
-    }
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments`,
-      {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          from,
-          amount,
-          issue_id: issueId,
-          parent_id: parentCommentId
-        }),
-      },
-    );
-
-    const responseData = await response.json();
-
-    if (responseData.success) {
-      return responseData.data as CommentType[];
-    } else {
+    if (!user) {
       return [];
     }
+    
+    return fetchMoreComments(user, from, amount, issueId, parentCommentId);
   };
 
   const handleCommentAdded = (comment: CommentType) => {
@@ -79,6 +47,12 @@ const CommentList: React.FC<CommentListProps> = ({
     </div>
   );
 
+  const FailedIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-muted-foreground">Failed to fetch comments</h3>
+    </div>
+  );
+
   const scrollId = `comments_scroll${v4uuid()}`;
 
   return (
@@ -94,12 +68,19 @@ const CommentList: React.FC<CommentListProps> = ({
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchComments}
+          fetchKey={[
+            "fetch-comments",
+            user,
+            issueId,
+            parentCommentId
+          ]}
           Item={({ data: comment }) => (
             <Comment
               comment={comment}
               onCommentDeleted={handleCommentDeleted}
             />
           )}
+          Failed={FailedIndicator}
           Loading={LoadingIndicator}
           Empty={EmptyIndicator}
           controlRef={lazyRef}

@@ -120,8 +120,7 @@ const Feed: React.FC = () => {
     if (apiResponse.success) {
       return apiResponse.data as IssueType[];
     } else {
-      console.error("Failed to fetch issues:", apiResponse.error);
-      return [];
+      throw new Error(apiResponse.error);
     }
   };
 
@@ -155,6 +154,12 @@ const Feed: React.FC = () => {
     </div>
   );
 
+  const FailedIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
+    </div>
+  );
+
   const scrollId = "issues_scroll";
 
   if (isLoadingLocation) {
@@ -171,6 +176,12 @@ const Feed: React.FC = () => {
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
+          fetchKey={[
+            "feed-issues",
+            sortBy,
+            filter,
+            location
+          ]}
           Item={({ data }) => (
             <Issue
               issue={data}
@@ -178,6 +189,7 @@ const Feed: React.FC = () => {
               onResolveIssue={handleResolveIssue}
             />
           )}
+          Failed={FailedIndicator}
           Loading={LoadingIndicator}
           Empty={EmptyIndicator}
           parentId={scrollId}
@@ -186,20 +198,11 @@ const Feed: React.FC = () => {
       </div>
       <RightSidebar
         sortBy={sortBy}
-        setSortBy={(_sortyBy) => {
-          lazyRef.current?.reload();
-          setSortBy(_sortyBy);
-        }}
+        setSortBy={setSortBy}
         filter={filter}
-        setFilter={(_filter) => {
-          lazyRef.current?.reload();
-          setFilter(_filter);
-        }}
+        setFilter={setFilter}
         location={location}
-        setLocation={(newLocation) => {
-          setLocation(newLocation);
-          lazyRef.current?.reload();
-        }}
+        setLocation={setLocation}
       />
     </div>
   );
