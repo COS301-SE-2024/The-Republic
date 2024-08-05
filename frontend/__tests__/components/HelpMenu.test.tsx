@@ -27,9 +27,13 @@ describe("HelpMenu", () => {
   it("opens and closes HelpMenu on button click", () => {
     const { getByTitle, getByText, queryByText } = render(<HelpMenu />);
     const button = getByTitle("Toggle Help Menu");
+    
+    
     fireEvent.click(button);
-    expect(getByText("Help Menu")).toBeInTheDocument();
+    expect(getByText("Hello, How Can We Help You?")).toBeInTheDocument();
+    
+    
     fireEvent.click(button);
-    expect(queryByText("Help Menu")).not.toBeInTheDocument();
+    expect(queryByText("Hello, How Can We Help You?")).not.toBeInTheDocument();
   });
 });
