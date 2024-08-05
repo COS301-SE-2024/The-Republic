@@ -15,6 +15,8 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { Upload, X } from "lucide-react";
 import Image from 'next/image';
+import Dropdown from "@/components/Dropdown/Dropdown"; 
+import { politicalAssociationOptions  } from "@/lib/constants"; 
 
 interface ResolutionModalProps {
   isOpen: boolean;
@@ -43,7 +45,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     isSelfResolution ? 'self' : 'unknown'
   );
   const [resolvedBy, setResolvedBy] = useState('');
-  const [politicalAssociation, setPoliticalAssociation] = useState('');
+  const [politicalAssociation, setPoliticalAssociation] = useState('NONE');
   const [stateEntityAssociation, setStateEntityAssociation] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme } = useTheme();
@@ -55,7 +57,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       proofImage,
       resolutionSource,
       resolvedBy: resolutionSource === 'other' ? resolvedBy : undefined,
-      politicalAssociation: !isSelfResolution ? politicalAssociation : undefined,
+      politicalAssociation: resolutionSource !== 'unknown' ? politicalAssociation : undefined,
       stateEntityAssociation: !isSelfResolution ? stateEntityAssociation : undefined,
     });
     resetForm();
@@ -67,7 +69,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     setImagePreview(null);
     setResolutionSource(isSelfResolution ? 'self' : 'unknown');
     setResolvedBy('');
-    setPoliticalAssociation('');
+    setPoliticalAssociation('NONE');
     setStateEntityAssociation('');
   };
 
@@ -143,16 +145,19 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
             />
           </div>
 
-          {!isSelfResolution && (
+          {!isSelfResolution && resolutionSource !== 'unknown' && (
             <>
               <div>
                 <Label htmlFor="politicalAssociation">Political Association (optional)</Label>
-                <Input
-                  id="politicalAssociation"
-                  value={politicalAssociation}
-                  onChange={(e) => setPoliticalAssociation(e.target.value)}
-                  placeholder="Political association (if any)"
-                />
+                <div className="w-full">
+                  <Dropdown
+                    options={politicalAssociationOptions}
+                    value={politicalAssociation}
+                    onChange={setPoliticalAssociation}
+                    placeholder="Select political association"
+                    className="w-full"
+                  />
+                </div>
               </div>
 
               <div>
