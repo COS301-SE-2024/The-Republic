@@ -17,6 +17,7 @@ The Republic is a platform that aims to improve citizen interaction with governm
 7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
 8. [Profile Page Manangement](#profile-page-management-back-to-contents)
 9. [Analytics](#analytics-back-to-contents)
+10. [Leaderboard](#Leaderboard-back-to-contents)
 
 ## Signing Up
 
@@ -138,6 +139,9 @@ The analytics page consists of two tabs, the Reports tab whereby you can view di
 **3. Click on the different circles on the explorative diagram for more information**<br>
 <img src="../images/User Manual Screenshots/Analytics_4.png"/><br>
 
+## Leaderboard<br> [Back to contents](#contents)
+The leaderboard showcasses the point systems of the web app. Your ranking and points as well as the ranking and points of the top 10 users are displayed. 
+<img src="../images/User Manual Screenshots/Leaderboard.png"/><br>
 
 
 [Back](./../README.md)<br>
