@@ -114,10 +114,10 @@ Users can subscribe to what they are interested in. Users can also filter and so
 ## Profile Page Management<br> [Back to contents](#contents)
 
 Clicking on Profile on the left side bar will take you to the profile page whereby users may make changes<br>
-<img src="../images/User Manual Screenshots/ProfilePage.png"/>
+<img src="../images/User Manual Screenshots/ProfilePagev2.png"/>
 
 **1. To edit your profile click on "Edit Profile**<br>
-<img src="../images/User Manual Screenshots/ProfilePage_2.png"/><br>
+<img src="../images/User Manual Screenshots/ProfilePagev2-2.png"/><br>
 
 **2. Add the relevant information then click on "Save" to make the changes**<br>
 
