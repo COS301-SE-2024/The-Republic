@@ -228,6 +228,8 @@ As a user, I want to review and confirm or decline resolutions of issues in my c
 - **FR6.3**: Users can view standard data analytics visualizations according to the province.
 - **FR6.4**: Users can zoom into an issue analytics circle to see how huge it is in that area.
 
+---
+
 ### 📊 Use Case Diagrams
 
 <div>
