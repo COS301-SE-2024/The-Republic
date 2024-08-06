@@ -24,6 +24,10 @@ This platform aims to improve citizen interaction with government services, fost
 
 ---
 
+### 📚 User Stories
+
+---
+
 #### ✏️ User Story 1: Posts
 
 ---
@@ -105,6 +109,20 @@ As a user, I want to sort my feed of issues from oldest to newest or by most com
 
 **5.3. Feed Filtering**  
 As a user, I want to filter my feed by category, such as electricity or water, so that I can easily find posts related to my interests or concerns.
+
+---
+
+#### 🔍 User Story 6: Clustering of Issues
+
+---
+
+**6.1. Issue Clustering**  
+As a user, I want related issues to be grouped together based on content, time, location, and category, so that I can easily find and understand similar issues.
+
+**6.2. Cluster Assignment**  
+As a user, I want new issues to be assigned to the nearest existing cluster, if appropriate, so that similar issues are grouped dynamically.
+
+---
 
 ## ⚙️ Functional Requirements Sorted by Subsystems
 
