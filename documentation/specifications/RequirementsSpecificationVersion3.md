@@ -124,6 +124,25 @@ As a user, I want new issues to be assigned to the nearest existing cluster, if 
 
 ---
 
+#### 🎮 User Story 7: Gamification
+
+---
+
+**7.1. Earn Points for Resolving Issues**  
+As a user, I want to earn points for resolving issues, so that I am motivated to contribute positively to the platform.
+
+**7.2. Earn Points for Posting Issues**  
+As a user, I want to earn points for posting issues, so that I am encouraged to report problems.
+
+**7.3. Earn Points for Comments and Reactions**  
+As a user, I want to earn points for leaving comments and reacting to issues, so that I am motivated to engage with the community.
+
+**7.4. Leaderboard**  
+As a user, I want to see a leaderboard of top users based on scores, so that I can track my progress and compete with others.
+
+---
+
+
 ## ⚙️ Functional Requirements Sorted by Subsystems
 
 ---
