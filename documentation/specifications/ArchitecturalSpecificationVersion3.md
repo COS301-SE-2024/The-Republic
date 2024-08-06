@@ -48,84 +48,126 @@ By prioritizing aspects such as modularity, code quality, and comprehensive docu
 
 While strategies like decomposition and test case generation are undoubtedly valuable and will be employed throughout the project lifecycle, the primary architectural design strategy centers on addressing key quality requirements.
 
-# Quality Requirements 📋
+# Quality Requirements
 
-The following Quality Requirements have been identified by the team and the client. They are listed in order of importance and discussed in some detail below.
+## 1. Performance
 
-- **1. Performance**
-- **2. Reliability**
-- **3. Scalability**
-- **4. Security**
-- **5. Usability**
+Performance in our system is crucial for handling high volumes of user posts and data analysis requests efficiently.
 
-## Performance 🚀
+### Key Implementations:
+- **Load Balancing:** We utilize Heroku's built-in load balancer to distribute traffic across multiple backend instances. This automatically scales by launching new instances when necessary, ensuring consistent performance during traffic spikes.
 
-Performance requirements ensure that the system can handle a high volume of users and interactions without significant latency. The system must maintain high speed and responsiveness even under load.
+- **Client-side Caching:** Our frontend implements client-side caching strategies to reduce server load and improve response times. This is particularly effective for frequently accessed data like user profiles or common complaint categories.
 
-- **Caching:** Implementing caching strategies at multiple levels to reduce load times and improve response speeds. Frequently accessed data is cached to minimize database queries.
-- **Load Balancing:** Using load balancers to distribute incoming traffic evenly across multiple servers. This ensures that no single server becomes a bottleneck, maintaining system performance even during peak usage.
-- **Optimized Queries:** Database queries are optimized to handle large volumes of data efficiently. Indexing and query optimization techniques are employed to ensure quick data retrieval.
+- **Request Deduplication:** To minimize redundant processing, we've implemented request deduplication on the backend. This is especially useful for preventing duplicate submissions when users double-click submit buttons or experience network issues.
 
-| Stimulus Source                                               | Stimulus                                                                | Response                                                                                                                                            | Response Measure                                                                                                               | Environment                           | Artifact                                   |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- | ------------------------------------------ |
-| High number of concurrent users / High volume of interactions | User actions like creating posts, uploading media, and filtering posts. | - Implement caching strategies.<br> - Use load balancers to distribute traffic.<br> - Optimize database queries.<br> - Monitor performance metrics. | - Average response time under load (e.g., <200ms).<br> - System handles peak load without significant performance degradation. | High user activity / Peak usage times | User interaction points, database queries. |
+- **Pagination and Prefetching:** For large datasets, such as extensive complaint lists or complex data visualizations, we use pagination to limit the amount of data transferred in a single request. We also implement prefetching to anticipate and prepare upcoming data requests, reducing perceived loading times.
 
-## Reliability 🛡️
+### Performance Scenario:
+During a major government service outage, our system experiences a sudden influx of 10,000 concurrent users trying to submit complaints and view service status updates.
 
-Reliability ensures that the system is available and functional when users need it. Users should be able to perform critical tasks like creating accounts, posting, or resetting passwords without issues.
+**Response:**
+- The Heroku load balancer distributes incoming requests across multiple backend instances.
+- Client-side caching serves frequently accessed data like service status updates without hitting the server.
+- Request deduplication prevents duplicate complaint submissions from users frantically clicking the submit button.
+- Pagination ensures that the system only loads manageable chunks of complaint data at a time, while prefetching prepares the next set of data.
 
-- **Redundancy:** Critical components must have redundant systems in place to handle failures gracefully. This includes redundant servers, databases, and network connections.
-- **Backups:** Regular backups of all critical data ensure that data can be restored quickly in case of a failure, minimizing downtime and data loss.
+**Measure:** 
+- 95% of API requests are processed within 500ms.
+- Complex data visualizations render within 3 seconds.
 
-| Stimulus Source              | Stimulus                                                     | Response                                                                                                                                                                   | Response Measure                                                                                                                                                                                   | Environment                                    | Artifact                                               |
-| ---------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
-| System demand/ User Activity | User attempts to create accounts, log in, or reset passwords | - The system should have high uptime and minimal downtime. <br> - Implement redundancy to handle failures gracefully. <br> - Perform regular backups to prevent data loss. | - System uptime percentage (99.9%).<br> - Successful completion of critical user actions (account creation success rate above 99%).<br> - Minimal downtime incidents (less than 1 hour per month). | System operating normally / During maintenance | User authentication and account management components. |
+## 2. Reliability
 
-## Scalability 📈
+Reliability ensures our system remains available and functional for users to post complaints and access data consistently.
 
-The system is built to scale efficiently to handle growth in users, data, and complexity.
+### Key Implementations:
+- **Multiple Backend Instances:** We run multiple instances of our backend on Heroku, providing redundancy in case of individual instance failures.
 
-- **Microservices Architecture:** Although currently using a monolithic design, the system is planned to transition to a microservices architecture. This will allow different functionalities to be managed independently and scaled as needed.
-- **Horizontal Scaling:** Services are designed to scale horizontally by adding more instances to handle increased load, ensuring that performance remains stable as the user base grows.
-- **Database Partitioning:** Employing database partitioning and sharding to manage data growth efficiently. This ensures that large datasets are handled effectively without degrading performance.
+- **Supabase Replication:** We leverage Supabase's built-in replication features for our database, ensuring data consistency and availability even if one database node fails.
 
-| Stimulus Source                          | Stimulus                               | Response                                                                                                                            | Response Measure                                                                                                                  | Environment                                | Artifact                                                      |
-| ---------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------- |
-| Increasing number of users / Data growth | Addition of new users, posts, and data | - Design for horizontal scaling.<br> - Plan transition to microservices architecture.<br> - Use database partitioning and sharding. | - Stable performance with growing user base.<br> - Efficient data handling.<br> - Seamless addition of new services and features. | Growing user base / Increasing data volume | Core functionalities like post management and data analytics. |
+### Reliability Scenario:
+During a planned maintenance window, one of our backend instances goes offline.
 
-## Security 🔒
+**Response:**
+- Incoming requests are automatically routed to the remaining active instances by Heroku's load balancer.
+- Supabase replication ensures that all data remains consistent and accessible across the database cluster.
 
-The system addresses the crucial attribute of security with a comprehensive, layered approach to protect sensitive data and ensure secure user interactions.
+**Measure:**
+- The system maintains 99.9% uptime.
+- No data loss occurs during the instance downtime.
 
-- **Entry Point Validation:** At the initial entry point, all incoming requests are validated and sanitized to defend against malformed or malicious data. This serves as the first line of defense, preventing potentially harmful requests from reaching deeper layers of the system.
-- **Service-Level Security:** Within the system, individual services such as User Management enforce strict access controls. Only users with the correct permissions can access or modify sensitive information. For example, the User Management service uses a dedicated PostgreSQL database with role-based access control to ensure that sensitive user data is protected.
-- **Data Storage Security:** The system ensures that sensitive information is masked, and access is restricted to read-only where appropriate, thus maintaining data integrity and confidentiality. Additionally, compliance with data protection regulations, such as the POPI Act, is ensured by implementing necessary data masking and encryption protocols.
+## 3. Scalability
 
-| Stimulus Source                       | Stimulus                                                          | Response                                                                                                                                                                                  | Response Measure                                                                                                                                               | Environment             | Artifact                                                    |
-| ------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------------------------------- |
-| Malicious actors / Unauthorized users | Attempts to access sensitive data or perform unauthorized actions | - Validate and sanitize incoming requests.<br> - Use token-based middleware for session management.<br> - Implement role-based access control.<br> - Encrypt data at rest and in transit. | - Unauthorized access attempts identified and flagged.<br> - Only authorized users access sensitive data.<br> - No unauthorized modifications to the database. | System running normally | API endpoints, data access layers, user management service. |
+Our system is designed to handle growth in users, posts, and data analysis requirements efficiently.
 
-## Usability 🖐️
+### Key Implementations:
+- **Heroku and Vercel Scaling:** We utilize Heroku's dynamic scaling for our backend and Vercel's serverless architecture for our frontend. This allows us to automatically adjust resources based on demand.
 
-Usability ensures that the system is easy to use and provides a good user experience for users of all backgrounds.
+- **Future Microservices Architecture:** While currently monolithic, our system is designed with a future transition to microservices in mind. This will allow different functionalities to scale independently as needed.
 
-- **Intuitive UI/UX:** Designing interfaces that are intuitive and easy to navigate. Users can perform necessary actions effortlessly, even without prior training.
+### Scalability Scenario:
+Our user base doubles over a weekend due to a viral social media post about government services.
 
-| Stimulus Source             | Stimulus                                     | Response                                                                                                | Response Measure                                                                             | Environment  | Artifact                                       |
-| --------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
-| User interaction / Feedback | User attempts to navigate and use the system | - Design intuitive and accessible user interfaces.<br> - Provide clear instructions and help resources. | - Number of usability-related issues reported.<br> - Time taken for users to complete tasks. | Normal usage | User interface and user experience components. |
+**Response:**
+- Heroku automatically scales our backend instances to handle the increased load.
+- Vercel's serverless architecture ensures the frontend remains responsive despite the traffic surge.
+- Our design allows for easy transition to a microservices architecture if sustained growth requires it.
 
-## Maintainability 🔧
+**Measure:**
+- The system maintains performance while handling up to 1 million concurrent users.
+- Data processing and analysis capabilities scale to handle at least 10 million user posts.
 
-Maintainability ensures that the system can be easily updated and improved over time.
+## 4. Security
 
-- **Modular Code:** Writing clean, modular code to simplify updates and enhancements. Each module can be developed, tested, and maintained independently.
-- **Documentation:** Comprehensive and up-to-date documentation is maintained for developers and users, ensuring that the system is easy to understand and modify.
-- **CI/CD Practices:** Implementing continuous integration and continuous deployment (CI/CD) practices to streamline development and deployment processes. This allows for frequent updates and quick delivery of new features.
+Security is paramount in our system to protect user data and ensure secure interactions.
 
-| Stimulus Source                         | Stimulus                                                    | Response                                                                                                  | Response Measure                                                                                                                             | Environment                           | Artifact                                          |
-| --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------- |
-| Need for updates / New feature requests | Introduction of new features, bug fixes, and system updates | - Write clean, modular code.<br> - Maintain comprehensive documentation.<br> - Implement CI/CD practices. | - Time taken to implement updates and new features.<br> - Ease of identifying and fixing issues.<br> - Minimal disruption during deployment. | Ongoing development / Regular updates | Codebase, documentation, and deployment pipeline. |
+### Key Implementations:
+- **JWT Authentication:** We use JSON Web Tokens (JWT) for secure user authentication and session management.
+
+- **HTTPS:** All data transmissions are encrypted using HTTPS to prevent man-in-the-middle attacks.
+
+- **User ID Obfuscation:** We hide or obfuscate user IDs in public-facing areas of the application to enhance user privacy.
+
+- **Nginx Proxy:** We utilize Nginx as a reverse proxy, leveraging its additional security features like rate limiting and request filtering.
+
+### Security Scenario:
+A malicious actor attempts to gain unauthorized access to user data through a series of automated attacks.
+
+**Response:**
+- JWT verification fails for all unauthorized access attempts.
+- All data remains encrypted in transit due to HTTPS implementation.
+- User IDs remain obfuscated, preventing the attacker from easily targeting specific users.
+- Nginx proxy detects and blocks suspicious request patterns.
+
+**Measure:**
+- Zero successful unauthorized data access attempts.
+- All sensitive data remains encrypted in transit and at rest.
+
+## 5. Usability
+
+Usability ensures our system provides a positive user experience across various devices and user capabilities.
+
+### Key Implementations:
+- **Intuitive Frontend Components:** We've carefully designed our UI components to provide intuitive navigation and interaction.
+
+- **Responsive Design:** Our application adapts seamlessly to different screen sizes, ensuring usability on both mobile devices and desktop computers.
+
+- **Consistent Theming:** We implement a consistent visual theme throughout the application for a cohesive user experience.
+
+- **User-Centric Design:** Our UX prioritizes ease of use for core functionalities like submitting complaints and viewing data visualizations.
+
+### Usability Scenario:
+A new user accesses our system for the first time on a mobile device to submit a complaint about a local government service.
+
+**Response:**
+- Intuitive frontend components guide the user through the complaint submission process.
+- Responsive design ensures all elements are properly sized and positioned on the mobile screen.
+- Consistent theming provides a professional and trustworthy appearance.
+- Streamlined UX allows the user to submit their complaint with minimal steps.
+
+**Measure:**
+- User satisfaction score of at least 4 out of 5 in post-interaction surveys.
+- Successful complaint submission rate of over 90% for first-time users.
 
 # Architectural Patterns 🔨
 - TO DO (HAS TO BE UPDATED)
