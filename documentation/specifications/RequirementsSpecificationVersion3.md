@@ -142,6 +142,20 @@ As a user, I want to see a leaderboard of top users based on scores, so that I c
 
 ---
 
+#### 🛠️ User Story 8: Issue Resolution
+
+---
+
+**8.1. Self-Resolution**  
+As a user, I want to mark my issue as resolved, provide details about the resolution, and earn points, so that I can update the community on the status of the issue.
+
+**8.2. External Resolution**  
+As a user, I want to submit proof and additional information for external resolution, so that I can ensure the issue is properly documented and resolved.
+
+**8.3. Review and Confirm Resolutions**  
+As a user, I want to review and confirm or decline resolutions of issues in my cluster, so that I can ensure the accuracy and validity of resolved issues.
+
+---
 
 ## ⚙️ Functional Requirements Sorted by Subsystems
 
