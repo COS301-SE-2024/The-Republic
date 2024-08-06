@@ -21,8 +21,14 @@ import { useUser } from "@/lib/contexts/UserContext";
 
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
+import { XIcon } from "lucide-react";
 
-const Sidebar: React.FC<HomeAvatarProps> = () => {
+interface SidebarProps extends HomeAvatarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, ...props }) => {
   const { user } = useUser();
   const { toast } = useToast();
   const [showLogout, setShowLogout] = useState(false);
@@ -92,25 +98,37 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
   };
 
   return (
-    <div className="w-[300px] border-r h-full overflow-y-auto">
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" 
+          onClick={onClose}
+        />
+      )}
+    <div className={`fixed inset-y-0 left-0 z-30 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
+      <div className="lg:hidden absolute top-4 right-4">
+          <button onClick={onClose} className="p-2">
+            <XIcon className="h-6 w-6" />
+          </button>
+      </div>
       <div className={`${styles.sidebar} sticky top-0`}>
         <ul className={styles.sidebarLinks}>
           <h4>
             <span>General</span>
           </h4>
-          <li>
+          <li onClick={onClose}>
             <Link href="/">
               <HomeIcon />
               Home
             </Link>
           </li>
-          <li>
+          <li onClick={onClose}>
             <Link href="/analytics">
               <ReportsIcon />
               Analytics
             </Link>
           </li>
-          <li>
+          <li onClick={onClose}>
             <Link href="/leaderboard">
               <TrophyIcon />
               Leaderboard
@@ -118,7 +136,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
           </li>
           {user && (
             <>
-              <li>
+              <li onClick={onClose}>
                 <Link href="/notifications">
                   <NotificationsIcon />
                   Notifications
@@ -127,13 +145,13 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
               <h4>
                 <span>Account</span>
               </h4>
-              <li>
+              <li onClick={onClose}>
                 <Link href={`/profile/${user.user_id}`}>
                   <ProfileIcon />
                   Profile
                 </Link>
               </li>
-              <li>
+              <li onClick={onClose}>
                 <Link href="/settings">
                   <SettingsIcon />
                   Settings
@@ -170,6 +188,7 @@ const Sidebar: React.FC<HomeAvatarProps> = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
