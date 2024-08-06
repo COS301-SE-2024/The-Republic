@@ -9,11 +9,19 @@ import {
   Resolution,
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
-import { Loader2 } from "lucide-react";
+import { Filter, Loader2, Plus } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Location } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import FilterModal from "@/components/FilterModal/FilterModal";
 
 const FETCH_SIZE = 2;
 
@@ -25,6 +33,9 @@ const Feed: React.FC = () => {
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   useEffect(() => {
     const loadLocation = async () => {
@@ -126,6 +137,7 @@ const Feed: React.FC = () => {
 
   const handleAddIssue = (issue: IssueType) => {
     lazyRef.current?.add(issue);
+    setIsInputModalOpen(false);
   };
 
   const handleDeleteIssue = (issue: IssueType) => {
@@ -172,7 +184,41 @@ const Feed: React.FC = () => {
         className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        {user && <IssueInputBox onAddIssue={handleAddIssue}/>}
+        <div className="flex justify-between items-center mb-4">
+          {user && !isDesktop && (
+            <Dialog open={isInputModalOpen} onOpenChange={setIsInputModalOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex-1 mr-2">
+                  <Plus className="mr-2 h-4 w-4" /> Report an Issue
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <IssueInputBox onAddIssue={handleAddIssue} />
+              </DialogContent>
+            </Dialog>
+          )}
+          {!isDesktop && (
+            <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="flex-shrink-0">
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <FilterModal
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  filter={filter}
+                  setFilter={setFilter}
+                  location={location}
+                  setLocation={setLocation}
+                  onClose={() => setIsFilterModalOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+        {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
@@ -196,15 +242,17 @@ const Feed: React.FC = () => {
           controlRef={lazyRef}
         />
       </div>
-      <RightSidebar
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        filter={filter}
-        setFilter={setFilter}
-        location={location}
-        setLocation={setLocation}
-      />
-    </div>
+      {isDesktop && (
+        <RightSidebar
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          filter={filter}
+          setFilter={setFilter}
+          location={location}
+          setLocation={setLocation}
+        />
+      )}
+      </div>
   );
 };
 
