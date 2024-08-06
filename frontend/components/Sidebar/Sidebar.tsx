@@ -28,7 +28,7 @@ interface SidebarProps extends HomeAvatarProps {
   onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, ...props }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useUser();
   const { toast } = useToast();
   const [showLogout, setShowLogout] = useState(false);

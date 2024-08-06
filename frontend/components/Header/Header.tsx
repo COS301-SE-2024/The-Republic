@@ -10,7 +10,7 @@ import styles from "@/styles/Custom.module.css";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-const Header = ({ onToggleLeftSidebar, onToggleRightSidebar, isDesktop }: { onToggleLeftSidebar: () => void, onToggleRightSidebar: () => void, isDesktop: boolean }) => {
+const Header = ({ onToggleLeftSidebar, isDesktop }: { onToggleLeftSidebar: () => void, isDesktop: boolean }) => {
   const { user } = useUser();
   const { theme } = useTheme();
   const [logoSrc, setLogoSrc] = useState("/images/b-logo-full-black.png");

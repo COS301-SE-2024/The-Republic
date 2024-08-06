@@ -27,7 +27,6 @@ export default function HomeLayout({
     <div className="flex flex-col h-screen">
       <Header 
         onToggleLeftSidebar={() => setLeftSidebarOpen(!leftSidebarOpen)}
-        onToggleRightSidebar={() => setRightSidebarOpen(!rightSidebarOpen)}
         isDesktop={isDesktop}
       />
        <div className="flex flex-1 overflow-hidden">

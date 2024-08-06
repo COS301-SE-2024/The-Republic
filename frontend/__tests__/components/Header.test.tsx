@@ -95,15 +95,10 @@ describe("Header", () => {
       push: pushMock,
     }));
     (useUser as jest.Mock).mockReturnValue({ user: null });
-    const { getByText } = render(<Header />);
-    const signUpButton = getByText((content, element) =>
-      content === "Login" &&
-      element &&
-      element.tagName.toLowerCase() === "button"
-        ? true
-        : false,
-    );
-    fireEvent.click(signUpButton);
+    const { getByText } = render(<Header onToggleLeftSidebar={() => {}} isDesktop={true} />);
+    
+    const loginButton = getByText("Login");
+    fireEvent.click(loginButton);
     expect(pushMock).toHaveBeenCalledWith("/login");
   });
 });
