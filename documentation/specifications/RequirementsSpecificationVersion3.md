@@ -230,7 +230,38 @@ As a user, I want to review and confirm or decline resolutions of issues in my c
 
 ---
 
-### 📊 Use Case Diagrams
+#### 7. Clustering
+
+---
+
+- **FR7.1**: Implement clustering of issues based on content, time, location, and category.
+- **FR7.2**: Automatically assign new issues to existing clusters, if appropriate.
+
+---
+
+#### 8. Gamification
+
+---
+
+- **FR8.1**: Users can earn points for posting issues.
+- **FR8.2**: Users can earn points for resolving issues.
+- **FR8.3**: Users can earn points for comments and reactions.
+- **FR8.4**: Users can view their total points.
+- **FR8.5**: Users can view a leaderboard.
+
+---
+
+#### 9. Issue Resolution
+
+---
+
+- **FR9.1**: Users can mark an issue as resolved.
+- **FR9.2**: Users can submit proof and additional information for external resolution.
+- **FR9.3**: Users can review and confirm or decline resolutions of issues in their cluster.
+- **FR9.4**: Users can provide details about the resolution when marking an issue as resolved.
+
+
+### 📊 Use Case Diagrams TO BE UPDATED !!!!!
 
 <div>
     <img src="../images/diagrams/authentication.png" alt="authentication use case diagram"/>
