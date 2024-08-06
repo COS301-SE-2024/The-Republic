@@ -326,8 +326,8 @@ const Issue: React.FC<IssueProps> = ({
     <>
       <Card className="mb-4" id={id}>
         <CardHeader className="place-content-stretch">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center">
+          <div className="flex items-start justify-between w-full">
+            <div className="flex items-start sm:items-center">
               <div
                 className="pr-2"
                 onClick={handleAvatarClick}
@@ -342,9 +342,9 @@ const Issue: React.FC<IssueProps> = ({
                 />
               </div>
               <div>
-                <div className="flex items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center">
                   <div className="font-bold">{issue.user?.fullname}</div>
-                  <div className="mx-1 text-sm text-gray-500">·</div>
+                  <div className="hidden sm:block mx-1 text-sm text-gray-500">·</div>
                   <div className="text-sm text-gray-500">
                     {timeSince(issue.created_at)}
                   </div>
@@ -352,7 +352,7 @@ const Issue: React.FC<IssueProps> = ({
                 <div className="text-sm text-gray-600">{issue.user?.username}</div>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-start space-x-2">
               <div className="relative inline-block text-left">
                 <div>
                   <button
@@ -410,11 +410,11 @@ const Issue: React.FC<IssueProps> = ({
               {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
             </div>
           </div>
-          <div className="flex space-x-2 pt-2">
-            <Badge variant="outline" className="">
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Badge variant="outline">
               {issue.category?.name}
             </Badge>
-            <Badge variant="outline" className="">
+            <Badge variant="outline" className="hidden sm:inline-flex">
               {issue?.sentiment}
             </Badge>
             {issue.location && (
@@ -444,9 +444,9 @@ const Issue: React.FC<IssueProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p>{issue?.content}</p>
+          <p className="whitespace-pre-wrap">{issue?.content}</p>
           {issue?.image_url && (
-            <div className="relative w-1/4 h-auto mt-4">
+            <div className="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3 h-auto mt-4">
               <Image
                 src={issue?.image_url}
                 alt="Issue"
@@ -464,9 +464,9 @@ const Issue: React.FC<IssueProps> = ({
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex space-x-2 items-center">
-          <div className="flex items-center" onClick={handleCommentClick}>
-            <MessageCircle className="mr-1 cursor-pointer" />
+        <CardFooter className="flex flex-wrap gap-4 items-center">
+          <div className="flex items-center cursor-pointer" onClick={handleCommentClick}>
+            <MessageCircle className="mr-1" />
             <span>{issue.comment_count}</span>
           </div>
           <Reaction
