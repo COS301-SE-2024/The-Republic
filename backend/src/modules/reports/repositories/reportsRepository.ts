@@ -2,7 +2,7 @@ import { Issue } from "@/modules/shared/models/issue";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { GetIssuesParams } from "@/types/issue";
 import { APIError } from "@/types/response";
-import { Counts, CategoryCounts } from "@/modules/shared/models/reports";
+import { Counts, CategoryCounts, NameValue } from "@/modules/shared/models/reports";
 
 export default class ReportsRepository {
   async getAllIssuesGroupedByResolutionStatus({
@@ -283,5 +283,41 @@ export default class ReportsRepository {
     );
 
     return normalizedCounts;
+  }
+
+  async groupedByPoliticalAssociation(): Promise<NameValue[]> {
+    const { data, error } = await supabase
+      .from("resolution")
+      .select(`
+        name: political_association,
+        value: num_cluster_members_accepted.sum()
+      `);
+
+    if (error) {
+      console.log(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later."
+      });
+    }
+
+
+    return (data as NameValue[]).reduce<NameValue[]>((newData, current) => {
+      if (["NONE", null].includes(current.name)) {
+        if (newData[0]?.name === "No party") {
+          newData[0].value += current.value;
+        } else {
+          newData.unshift({
+            name: "No party",
+            value: current.value,
+          });
+        }
+      } else {
+        newData.push(current);
+      }
+
+      return newData;
+    }, []);
   }
 }

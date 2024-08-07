@@ -1,5 +1,5 @@
 import ReportsRepository from "@/modules/reports/repositories/reportsRepository";
-import { APIResponse, APIError } from "@/types/response";
+import { APIResponse, APIError, APIData } from "@/types/response";
 import {
   CatCounts,
   GroupedIssuesResponse,
@@ -7,6 +7,7 @@ import {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
+  NameValue
 } from "../../shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
 
@@ -129,5 +130,16 @@ export default class ReportsService {
         error: "CountGroupedByCategoryAndCreatedAt: Something Went wrong",
       });
     }
+  }
+
+  async groupedByPoliticalAssociation(): Promise<APIResponse<NameValue[]>> {
+    const data =
+      await this.ReportsRepository.groupedByPoliticalAssociation();
+
+    return APIData({
+      code: 200,
+      success: true,
+      data
+    });
   }
 }

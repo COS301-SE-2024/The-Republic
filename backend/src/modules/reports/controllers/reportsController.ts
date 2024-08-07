@@ -85,3 +85,16 @@ export const getIssuesCountGroupedByCategoryAndCreatedAt = async (
     sendResponse(res, error as APIResponse);
   }
 };
+
+export const groupedByPoliticalAssociation = async (
+  _: Request,
+  res: Response,
+) => {
+  try {
+    const response =
+      await reportsService.groupedByPoliticalAssociation();
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
+  }
+};

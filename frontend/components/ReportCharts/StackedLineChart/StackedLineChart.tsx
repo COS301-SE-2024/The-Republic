@@ -30,9 +30,7 @@ function StackedLineChart() {
       !isErrorCharts &&
       chartRef.current
     ) {
-      if (!chartInstance.current) {
-        chartInstance.current = echarts.init(chartRef.current);
-      }
+      chartInstance.current = echarts.init(chartRef.current);
 
       const dates = Array.from(
         new Set(
@@ -160,9 +158,9 @@ function StackedLineChart() {
                 <div className="card-body">
                   <div
                     ref={chartRef}
-                    style={{ 
-                      width: "100%", 
-                      height: isMobile ? "400px" : "600px" 
+                    style={{
+                      width: "100%",
+                      height: isMobile ? "400px" : "600px"
                     }}
                   ></div>
                 </div>

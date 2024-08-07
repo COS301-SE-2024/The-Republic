@@ -3,51 +3,32 @@ import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
-import { useMediaQuery } from "@/lib/useMediaQuery";
 import { reportCharts } from "@/lib/api/reportCharts";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
-function DonutChart() {
+function PoliticalChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedPoliticalAssociation`;
 
   const {
     data,
     isLoading: isLoadingCharts,
     isError: isErrorCharts,
   } = useQuery({
-    queryKey: [`chart_data`],
+    queryKey: [`political_data`],
     queryFn: () => reportCharts(url),
-    enabled: true,
   });
 
   useEffect(() => {
-    const transformData = (data: {
-      resolved: { [key: string]: number };
-      unresolved: { [key: string]: number };
-    }) => {
-      const merged = { ...data.resolved };
-
-      Object.entries(data.unresolved).forEach(([key, value]) => {
-        if (merged[key]) {
-          merged[key] += value;
-        } else {
-          merged[key] = value;
-        }
-      });
-
-      return Object.entries(merged).map(([name, value]) => ({ name, value }));
-    };
-
-    if (data && "resolved" in data && "unresolved" in data) {
-      const transformedData = transformData(data);
-      setDataArray(transformedData);
+    if (data) {
+      setDataArray(data);
     }
   }, [data]);
 
   useEffect(() => {
     if (dataArray.length > 0) {
-      const element = document.querySelector("#donutChart") as HTMLElement;
+      const element = document.querySelector("#politicalChart") as HTMLElement;
       if (element) {
         const donutChart = echarts.init(element);
         donutChart.setOption({
@@ -55,7 +36,7 @@ function DonutChart() {
             trigger: "item",
           },
           title: {
-            text: "Distribution of Reported Issues by Category",
+            text: "Distribution of Resolved Issues by Political Party",
             left: "center",
             top: "0%",
             textStyle: {
@@ -72,13 +53,12 @@ function DonutChart() {
           },
           series: [
             {
-              name: "Issue Category",
+              name: "Political Party",
               type: "pie",
-              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"],
-              avoidLabelOverlap: false,
+              radius: isMobile ? ["30%", "60%"] : ["35%", "70%"],
               label: {
                 show: false,
-                position: "center",
+                position: "center"
               },
               emphasis: {
                 label: {
@@ -87,30 +67,26 @@ function DonutChart() {
                   fontWeight: "bold",
                 },
               },
-              labelLine: {
-                show: false,
-              },
               data: dataArray,
             },
           ],
         });
 
-        // Add resize event listener
         const handleResize = () => {
           donutChart.resize();
         };
+
         window.addEventListener('resize', handleResize);
 
-        // Clean up function
         return () => {
           window.removeEventListener('resize', handleResize);
           donutChart.dispose();
         };
       } else {
-        console.error("Element #donutChart not found");
+        console.error("Element #politicalChart not found");
       }
     }
-  }, [dataArray, isMobile]);
+  }, [dataArray]);
 
   return (
     <>
@@ -124,13 +100,16 @@ function DonutChart() {
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
-            <div className="col-lg-6 w-full">
+            <div className="col-lg-6">
               <div className="card">
                 <div className="card-body pb-0">
                   <div
-                    id="donutChart"
-                    style={{ height: isMobile ? "300px" : "400px" }}
-                    className="echart w-full"
+                    id="politicalChart"
+                    style={{
+                      minHeight: "400px",
+                      height: isMobile ? "300px" : "400px",
+                    }}
+                    className="echart"
                   ></div>
                 </div>
               </div>
@@ -144,4 +123,4 @@ function DonutChart() {
   );
 }
 
-export default DonutChart;
+export default PoliticalChart;
