@@ -1,9 +1,3 @@
-Here is a comprehensive technical installation manual that includes instructions on accessing APIs, configuring Supabase, and other necessary setup details:
-
----
-
-## Technical Installation Manual for Next.js and Express Project
-
 ### Introduction
 This project consists of a Next.js frontend and an Express backend, both housed within a single repository. The frontend application is responsible for the user interface and client-side rendering, while the backend server manages API endpoints and business logic. To get the project up and running, you'll need to set up both environments and configure necessary services, such as Supabase and external APIs.
 
