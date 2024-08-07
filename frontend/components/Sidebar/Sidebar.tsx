@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" 
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden" 
           onClick={onClose}
         />
       )}
