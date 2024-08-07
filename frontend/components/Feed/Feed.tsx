@@ -16,11 +16,6 @@ import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import FilterModal from "@/components/FilterModal/FilterModal";
 import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
@@ -34,7 +29,6 @@ const Feed: React.FC = () => {
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
-  const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
