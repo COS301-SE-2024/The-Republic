@@ -733,4 +733,22 @@ export default class IssueRepository {
 
     return data as Issue;
   }
+
+  async getIssuesInCluster(clusterId: string): Promise<Issue[]> {
+    const { data, error } = await supabase
+      .from('issue')
+      .select('*')
+      .eq('cluster_id', clusterId);
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching issues in the cluster.",
+      });
+    }
+  
+    return data;
+  }
 }
