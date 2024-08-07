@@ -98,42 +98,52 @@ private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[
 }
 
 async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string): Promise<Resolution> {
-    const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
-    
-    if (resolution.status !== 'pending') {
-      throw APIError({
-        code: 400,
-        success: false,
-        error: "This resolution has already been processed.",
-      });
-    }
-
-    const issue = await this.issueRepository.getIssueById(resolution.issue_id);
-    if (issue.user_id !== userId) {
-      throw APIError({
-        code: 403,
-        success: false,
-        error: "You don't have permission to respond to this resolution.",
-      });
-    }
-
-    await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
-
-    const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
-      num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
-      num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
+  const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
+  
+  if (resolution.status !== 'pending') {
+    throw APIError({
+      code: 400,
+      success: false,
+      error: "This resolution has already been processed.",
     });
-
-    const majority = Math.ceil(updatedResolution.num_cluster_members / 2);
-
-    if (updatedResolution.num_cluster_members_accepted > majority) {
-      await this.finalizeResolution(updatedResolution);
-    } else if (updatedResolution.num_cluster_members_rejected >= majority) {
-      await this.rejectResolution(updatedResolution);
-    }
-
-    return updatedResolution;
   }
+
+  const issue = await this.issueRepository.getIssueById(resolution.issue_id);
+  if (issue.user_id !== userId) {
+    throw APIError({
+      code: 403,
+      success: false,
+      error: "You don't have permission to respond to this resolution.",
+    });
+  }
+
+  await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
+
+  const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
+    num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
+    num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
+  });
+
+  const totalResponses = updatedResolution.num_cluster_members_accepted + updatedResolution.num_cluster_members_rejected;
+  
+  // Only process the final decision if all members have responded
+  if (totalResponses === updatedResolution.num_cluster_members) {
+    if (updatedResolution.num_cluster_members_accepted > updatedResolution.num_cluster_members_rejected) {
+      await this.finalizeResolution(updatedResolution);
+    } else if (updatedResolution.num_cluster_members_accepted < updatedResolution.num_cluster_members_rejected) {
+      await this.rejectResolution(updatedResolution);
+    } else {
+      // In case of a tie, accept external resolutions and reject self-resolutions
+      if (updatedResolution.resolution_source !== 'self') {
+        await this.finalizeResolution(updatedResolution);
+      } else {
+        await this.rejectResolution(updatedResolution);
+      }
+    }
+  }
+
+  return updatedResolution;
+}
 
   private async finalizeResolution(resolution: Resolution): Promise<void> {
     await this.resolutionRepository.updateResolution(resolution.resolution_id, { 
@@ -161,7 +171,15 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
       status: 'declined',
     });
 
-    await this.pointsService.penalizeUser(resolution.resolver_id, 50, "Resolution rejected");
+    if (resolution.resolution_source !== 'self') {
+      // Check if all members have responded or if a majority has rejected
+      const totalResponses = resolution.num_cluster_members_accepted + resolution.num_cluster_members_rejected;
+      const majority = Math.ceil(resolution.num_cluster_members / 2);
+
+      if (totalResponses === resolution.num_cluster_members || resolution.num_cluster_members_rejected > majority) {
+        await this.pointsService.penalizeUser(resolution.resolver_id, 50, "External resolution rejected");
+      }
+    }
 
     // Get the list of users who accepted the resolution
     const acceptedUsers = await this.getAcceptedUsers(resolution.resolution_id);
