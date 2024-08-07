@@ -55,7 +55,7 @@ function PoliticalChart() {
             {
               name: "Political Party",
               type: "pie",
-              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"],
+              radius: isMobile ? ["30%", "60%"] : ["35%", "70%"],
               label: {
                 show: false,
                 position: "center"
