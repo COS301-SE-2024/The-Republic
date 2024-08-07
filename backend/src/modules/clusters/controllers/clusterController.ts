@@ -14,19 +14,19 @@ export class ClusterController {
 
   getClusters = async (req: Request, res: Response) => {
     try {
-      const { categoryId, locationId, fromDate, toDate } = req.query;
+      const { categoryId, suburb, fromDate, toDate } = req.query;
 
-      if (!categoryId || !locationId) {
+      if (!categoryId || !suburb) {
         throw APIError({
           code: 400,
           success: false,
-          error: "Category ID and Location ID are required",
+          error: "Category ID and Suburb are required",
         });
       }
 
       const clusters = await this.clusterService.getClusters({
         categoryId: Number(categoryId),
-        locationId: Number(locationId),
+        suburb: String(suburb),
         fromDate: fromDate ? new Date(fromDate as string) : undefined,
         toDate: toDate ? new Date(toDate as string) : undefined,
       });
