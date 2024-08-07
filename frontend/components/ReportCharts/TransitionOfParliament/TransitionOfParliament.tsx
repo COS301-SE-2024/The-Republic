@@ -174,8 +174,6 @@ const TransitionOfParliament: React.FC = () => {
         } as echarts.EChartsOption;
       })();
 
-      const chartElement = document.getElementById("transitionOfParliament");
-
       if (!chartInstance.current) {
         chartInstance.current = echarts.init(chartRef.current);
       }
