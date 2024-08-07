@@ -101,7 +101,7 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
 
           return (
             <div key={chartName} className="relative">
-              <div className="absolute top-2 right-2 z-10">
+              <div className="absolute top-12 left-2 z-10">
                 <button
                   onClick={() => toggleChart(chartName)}
                   className="p-2 bg-white dark:bg-gray-700 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300"
