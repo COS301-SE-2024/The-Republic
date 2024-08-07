@@ -28,19 +28,27 @@ describe("Reports Component", () => {
     render(<Reports selectedCharts={selectedCharts} setSelectedCharts={(charts) => {
       selectedCharts = typeof charts === 'function' ? charts(selectedCharts) : charts;
     }} />);
-    
-    const allCharts = ["TransitionOfParliament", "BarChart", "RadarChart", "LineChart", "DonutChart", "StackedLineChart"];
+
+    const allCharts = [
+      "TransitionOfParliament",
+      "BarChart",
+      "RadarChart",
+      "PoliticalChart",
+      "LineChart",
+      "DonutChart",
+      "StackedLineChart"
+    ];
     expect(selectedCharts).toEqual(allCharts);
   });
 
   it("renders filter button and opens filter menu", () => {
     render(<Reports selectedCharts={[]} setSelectedCharts={mockSetSelectedCharts} />);
-    
+
     const filterButton = screen.getByText("Filter Charts");
     expect(filterButton).toBeInTheDocument();
-    
+
     fireEvent.click(filterButton);
-    
+
     expect(screen.getByText("Transition Of Parliament")).toBeInTheDocument();
     expect(screen.getByText("Bar Chart")).toBeInTheDocument();
     expect(screen.getByText("Radar Chart")).toBeInTheDocument();
@@ -54,13 +62,13 @@ describe("Reports Component", () => {
     };
 
     render(<Reports selectedCharts={selectedCharts} setSelectedCharts={setSelectedCharts} />);
-    
+
     const filterButton = screen.getByText("Filter Charts");
     fireEvent.click(filterButton);
-    
+
     const donutChartButton = screen.getByText("Donut Chart");
     fireEvent.click(donutChartButton);
-    
+
     expect(selectedCharts).toEqual(expect.arrayContaining(allCharts.filter(chart => chart !== "DonutChart")));
   });
 });
