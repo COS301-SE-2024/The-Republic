@@ -18,7 +18,7 @@ export class ClusterService {
 
   async getClusters(params: {
     categoryId: number;
-    locationId: number;
+    suburb: string
     fromDate?: Date;
     toDate?: Date;
   }): Promise<Cluster[]> {

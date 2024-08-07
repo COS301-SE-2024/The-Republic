@@ -5,6 +5,7 @@ import { PointsService } from '@/modules/points/services/pointsService';
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import IssueRepository from '@/modules/issues/repositories/issueRepository';
 import { ResolutionResponseRepository } from '../repositories/resolutionResponseRepository';
+import { Issue } from '@/modules/shared/models/issue';
 
 export class ResolutionService {
   private resolutionRepository: ResolutionRepository;
@@ -40,53 +41,109 @@ export class ResolutionService {
       });
     }
 
+    const issue = await this.issueRepository.getIssueById(resolution.issue_id);
+    const clusterId = issue.cluster_id;
+
+    let status: 'pending' | 'accepted' | 'declined' = 'pending';
+    if (resolution.resolution_source === 'self') {
+      status = 'accepted';
+      await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
+      await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, [resolution.resolver_id]);
+      await this.pointsService.awardPoints(resolution.resolver_id, 70, "Self-resolution logged and accepted");
+    }
+
+    const clusterIssues = clusterId ? await this.issueRepository.getIssuesInCluster(clusterId) : [issue];
+    const numClusterMembers = clusterIssues.length;
+
     const createdResolution = await this.resolutionRepository.createResolution({
       ...resolution,
-      status: 'pending',
-      num_cluster_members_accepted: 0,
+      status,
+      num_cluster_members: numClusterMembers,
+      num_cluster_members_accepted: resolution.resolution_source === 'self' ? 1 : 0,
       num_cluster_members_rejected: 0,
     });
-    
-    if (resolution.resolution_source === 'self') {
-      await this.pointsService.awardPoints(resolution.resolver_id, 20, "Logged a self-resolution");
-      await this.finalizeResolution(createdResolution);
-    } else {
-      // Notify cluster members (to be implemented)
-      // they will be creating resolution responses
+
+    // Create resolutions for other issues in the cluster
+    if (clusterId) {
+      for (const clusterIssue of clusterIssues) {
+        if (clusterIssue.issue_id !== resolution.issue_id) {
+          await this.resolutionRepository.createResolution({
+            ...resolution,
+            issue_id: clusterIssue.issue_id,
+            status: 'pending',
+            num_cluster_members: numClusterMembers,
+            num_cluster_members_accepted: 0,
+            num_cluster_members_rejected: 0,
+          });
+        }
+      }
     }
+
+    // Notify cluster members for both self and external resolutions
+    await this.notifyClusterMembers(createdResolution, clusterIssues);
 
     return createdResolution;
-  }
+}
 
-  async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string): Promise<Resolution> {
-    const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
-    
-    if (resolution.status !== 'pending') {
-      throw APIError({
-        code: 400,
-        success: false,
-        error: "This resolution has already been processed.",
-      });
+private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[]): Promise<void> {
+  // Implement logic to notify cluster members about the new resolution
+  // For self-resolutions, inform them that the issue has been resolved but ask for their feedback
+  // For external resolutions, ask for their acceptance or rejection
+  // Only notify users who have issues in the cluster
+  for (const issue of clusterIssues) {
+    if (issue.user_id !== resolution.resolver_id) {
+      // Implement notification logic here
     }
+  }
+}
 
-    await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
-
-    const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
-      status: status === 'accepted' ? 'accepted' : 'declined',
-      num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
-      num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
+async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string): Promise<Resolution> {
+  const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
+  
+  if (resolution.status !== 'pending') {
+    throw APIError({
+      code: 400,
+      success: false,
+      error: "This resolution has already been processed.",
     });
-
-    const majority = Math.ceil(updatedResolution.num_cluster_members / 2);
-
-    if (updatedResolution.num_cluster_members_accepted > majority) {
-      await this.finalizeResolution(updatedResolution);
-    } else if (updatedResolution.num_cluster_members_rejected >= majority) {
-      await this.rejectResolution(updatedResolution);
-    }
-
-    return updatedResolution;
   }
+
+  const issue = await this.issueRepository.getIssueById(resolution.issue_id);
+  if (issue.user_id !== userId) {
+    throw APIError({
+      code: 403,
+      success: false,
+      error: "You don't have permission to respond to this resolution.",
+    });
+  }
+
+  await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
+
+  const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
+    num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
+    num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
+  });
+
+  const totalResponses = updatedResolution.num_cluster_members_accepted + updatedResolution.num_cluster_members_rejected;
+  
+  // Only process the final decision if all members have responded
+  if (totalResponses === updatedResolution.num_cluster_members) {
+    if (updatedResolution.num_cluster_members_accepted > updatedResolution.num_cluster_members_rejected) {
+      await this.finalizeResolution(updatedResolution);
+    } else if (updatedResolution.num_cluster_members_accepted < updatedResolution.num_cluster_members_rejected) {
+      await this.rejectResolution(updatedResolution);
+    } else {
+      // In case of a tie, accept external resolutions and reject self-resolutions
+      if (updatedResolution.resolution_source !== 'self') {
+        await this.finalizeResolution(updatedResolution);
+      } else {
+        await this.rejectResolution(updatedResolution);
+      }
+    }
+  }
+
+  return updatedResolution;
+}
 
   private async finalizeResolution(resolution: Resolution): Promise<void> {
     await this.resolutionRepository.updateResolution(resolution.resolution_id, { 
@@ -114,7 +171,15 @@ export class ResolutionService {
       status: 'declined',
     });
 
-    await this.pointsService.penalizeUser(resolution.resolver_id, 50, "Resolution rejected");
+    if (resolution.resolution_source !== 'self') {
+      // Check if all members have responded or if a majority has rejected
+      const totalResponses = resolution.num_cluster_members_accepted + resolution.num_cluster_members_rejected;
+      const majority = Math.ceil(resolution.num_cluster_members / 2);
+
+      if (totalResponses === resolution.num_cluster_members || resolution.num_cluster_members_rejected > majority) {
+        await this.pointsService.penalizeUser(resolution.resolver_id, 50, "External resolution rejected");
+      }
+    }
 
     // Get the list of users who accepted the resolution
     const acceptedUsers = await this.getAcceptedUsers(resolution.resolution_id);
