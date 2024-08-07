@@ -14,11 +14,9 @@ import {
 import { supabase } from "@/lib/globals";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
 import { HomeAvatarProps } from "@/lib/types";
 import styles from "@/styles/Custom.module.css";
 import { useUser } from "@/lib/contexts/UserContext";
-
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
 import { XIcon } from "lucide-react";
@@ -100,94 +98,101 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" 
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 lg:hidden"
           onClick={onClose}
         />
       )}
-    <div className={`fixed inset-y-0 left-0 z-30 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
-      <div className="lg:hidden absolute top-4 right-4">
+      <div className={`fixed inset-y-0 left-0 z-30 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
+        <div className="lg:hidden absolute top-4 right-4">
           <button onClick={onClose} className="p-2">
             <XIcon className="h-6 w-6" />
           </button>
-      </div>
-      <div className={`${styles.sidebar} sticky top-0`}>
-        <ul className={styles.sidebarLinks}>
-          <h4>
-            <span>General</span>
-          </h4>
-          <li onClick={onClose}>
-            <Link href="/">
-              <HomeIcon />
-              Home
-            </Link>
-          </li>
-          <li onClick={onClose}>
-            <Link href="/analytics">
-              <ReportsIcon />
-              Analytics
-            </Link>
-          </li>
-          <li onClick={onClose}>
-            <Link href="/leaderboard">
-              <TrophyIcon />
-              Leaderboard
-            </Link>
-          </li>
-          {user && (
-            <>
+        </div>
+        <div className={`${styles.sidebar} sticky top-0`}>
+          <ul className={styles.sidebarLinks}>
+            <h4>
+              <span>General</span>
+            </h4>
+            <li onClick={onClose}>
+              <Link href="/">
+                <HomeIcon />
+                Home
+              </Link>
+            </li>
+            <li onClick={onClose}>
+              <Link href="/analytics">
+                <ReportsIcon />
+                Analytics
+              </Link>
+            </li>
+            <li onClick={onClose}>
+              <Link href="/leaderboard">
+                <TrophyIcon />
+                Leaderboard
+              </Link>
+            </li>
+            {user ? (
+              <>
+                <li onClick={onClose}>
+                  <Link href="/notifications">
+                    <NotificationsIcon />
+                    Notifications
+                  </Link>
+                </li>
+                <h4>
+                  <span>Account</span>
+                </h4>
+                <li onClick={onClose}>
+                  <Link href={`/profile/${user.user_id}`}>
+                    <ProfileIcon />
+                    Profile
+                  </Link>
+                </li>
+                <li onClick={onClose}>
+                  <Link href="/settings">
+                    <SettingsIcon />
+                    Settings
+                  </Link>
+                </li>
+              </>
+            ) : (
               <li onClick={onClose}>
-                <Link href="/notifications">
-                  <NotificationsIcon />
-                  Notifications
-                </Link>
-              </li>
-              <h4>
-                <span>Account</span>
-              </h4>
-              <li onClick={onClose}>
-                <Link href={`/profile/${user.user_id}`}>
+                <Link href="/login">
                   <ProfileIcon />
-                  Profile
+                  Login
                 </Link>
               </li>
-              <li onClick={onClose}>
-                <Link href="/settings">
-                  <SettingsIcon />
-                  Settings
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-        {user && (
-          <div className={styles.userAccount}>
-            {showLogout && (
-              <div className={styles.logoutOverlay}>
-                <ul className={styles.sidebarLinks}>
-                  <li>
-                    <Link href="" onClick={() => signOutWithToast(toast)}>
-                      <LogoutIcon />
-                      Logout
-                    </Link>
-                  </li>
-                </ul>
-              </div>
             )}
-            <div className={styles.userProfile} onClick={toggleLogout}>
-              <Avatar>
-                <AvatarImage src={user.image_url} />
-                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
-              </Avatar>
-              <div className={styles.userDetail}>
-                <h3>{user.fullname}</h3>
-                <span>@{user.username}</span>
+          </ul>
+          {user && (
+            <div className={styles.userAccount}>
+              {showLogout && (
+                <div className={styles.logoutOverlay}>
+                  <ul className={styles.sidebarLinks}>
+                    <li>
+                      <Link href="" onClick={() => signOutWithToast(toast)}>
+                        <LogoutIcon />
+                        Logout
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+              <div className={styles.userProfile} onClick={toggleLogout}>
+                <Avatar>
+                  <AvatarImage src={user.image_url} />
+                  <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                </Avatar>
+                <div className={styles.userDetail}>
+                  <h3>{user.fullname}</h3>
+                  <span>@{user.username}</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };

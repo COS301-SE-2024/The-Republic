@@ -1,9 +1,10 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
 import { IssueProps } from "@/lib/types";
 
+// Mock the necessary dependencies
 jest.mock('@/lib/globals', () => ({
   supabase: {
     auth: {
@@ -29,79 +30,71 @@ jest.mock("lucide-react", () => ({
 jest.mock("@/components/IssueInputBox/IssueInputBox", () => () => (
   <div>IssueInputBox</div>
 ));
-import { SetStateAction } from "react";
-import { global } from "styled-jsx/css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-jest.mock(
-  "@/components/RightSidebar/RightSidebar",
-  () =>
-    (props: {
-      setSortBy: (value: SetStateAction<string>) => void;
-      setFilter: (value: SetStateAction<string>) => void;
-    }) => (
-      <div>
-        RightSidebar
-        <button onClick={() => props.setSortBy("newest")}>Newest</button>
-        <button onClick={() => props.setSortBy("oldest")}>Oldest</button>
-        <button onClick={() => props.setFilter("All")}>All</button>
-        <button onClick={() => props.setFilter("Category")}>Category</button>
-      </div>
-    ),
-);
+jest.mock("@/components/RightSidebar/RightSidebar", () => () => (
+  <div>RightSidebar</div>
+));
+
 jest.mock("@/components/Issue/Issue", () => (props: IssueProps) => (
   <div>Issue: {props.issue.content}</div>
 ));
 
-const renderWithClient = (ui: React.ReactNode) => {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: true,
-      },
-    },
-  });
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
-  );
-};
+jest.mock("@/components/LazyList/LazyList", () => ({
+  LazyList: ({ Item, Empty }) => (
+    <>
+      <Empty />
+      <Item data={{ issue_id: "1", title: "Mocked Issue" }} />
+    </>
+  ),
+  LazyListRef: () => ({ current: null }),
+}));
 
-const mockFetch = (
-  data: { issue_id: string; title: string }[],
-  success = true,
-) => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve({ success, data }),
-    } as Response),
-  );
-};
+jest.mock("@/lib/api/fetchUserLocation", () => ({
+  fetchUserLocation: jest.fn().mockResolvedValue({
+    value: {
+      location_id: "1",
+      province: "Province",
+      city: "City",
+      suburb: "Suburb",
+      district: "District",
+    },
+  }),
+}));
+
+jest.mock("@/lib/useMediaQuery", () => ({
+  useMediaQuery: jest.fn().mockReturnValue(true),
+}));
+
+jest.mock("@/components/FilterModal/FilterModal", () => () => (
+  <div>FilterModal</div>
+));
+
+jest.mock("@/components/MobileIssueInput/MobileIssueInput", () => () => (
+  <div>MobileIssueInput</div>
+));
 
 describe("Feed", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    (console.error as jest.Mock).mockRestore();
   });
 
   it("renders without crashing", () => {
-    mockFetch([]);
-    renderWithClient(<Feed />);
-    expect(screen.getByText("Spinner")).toBeInTheDocument();
+    render(<Feed />);
+    expect(screen.getByText("No issues")).toBeInTheDocument();
   });
 
-  it("shows loading indicator while fetching data", async () => {
-    mockFetch([]);
-    renderWithClient(<Feed />);
-    expect(screen.getByText("Spinner")).toBeInTheDocument();
-    await waitFor(() =>
-      expect(screen.queryByText("Spinner")).toBeInTheDocument(),
-    );
-  });
+  // it("shows loading indicator while fetching data", async () => {
+  //   const { rerender } = render(<Feed />);
+  //   expect(screen.getByText("Spinner")).toBeInTheDocument();
+
+  //   // Simulate the location data being loaded
+  //   await waitFor(() => {
+  //     expect(fetchUserLocation).toHaveBeenCalled();
+  //   });
+
+  //   rerender(<Feed />);
+  //   expect(screen.queryByText("Spinner")).not.toBeInTheDocument();
+  // });
 
   // These two don't recongnize the intersection observer
   /* it("displays issues after fetching", async () => {

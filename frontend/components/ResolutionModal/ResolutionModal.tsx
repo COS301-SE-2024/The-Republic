@@ -96,7 +96,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={() => { onClose(); resetForm(); }}>
       <DialogContent className={cn(
-        theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+        "bg-card"
       )}>
         <DialogHeader>
           <DialogTitle>Resolve Issue</DialogTitle>
