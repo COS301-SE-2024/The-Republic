@@ -1,9 +1,9 @@
-interface TransitionOfParliamentItem {
-  value: number;
+interface NameValue<T = number> {
   name: string;
+  value: T;
 }
 
-type TransitionOfParliamentModel = TransitionOfParliamentItem[];
+type TransitionOfParliamentModel = NameValue[];
 
 interface StackedLineChartItem {
   name: string;
@@ -125,4 +125,5 @@ export {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
+  NameValue
 };
