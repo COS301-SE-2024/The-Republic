@@ -23,38 +23,38 @@ const Header = ({ onToggleLeftSidebar, isDesktop }: { onToggleLeftSidebar: () =>
 
   return (
     <header className="flex items-center justify-between p-3 border-b">
-      {isDesktop ? (
-        <>
-          <div className={styles.republicHeader}>
-            <Image priority width={500} height={500} src={logoSrc} alt="logo" />
-          </div>
-          <div className="flex items-center">
-            <div className="mr-4">
+      <div className="flex items-center justify-between w-full">
+        {isDesktop ? (
+          <>
+            <div className={styles.republicHeader}>
+              <Image priority width={500} height={500} src={logoSrc} alt="logo" />
+            </div>
+            <div className="flex items-center space-x-4">
+              <ModeToggle />
+              {!user && (
+                <Button onClick={() => router.push("/login")}>
+                  Login
+                </Button>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <button onClick={onToggleLeftSidebar} className="p-2">
+              <Avatar>
+                <AvatarImage src={user?.image_url} />
+                <AvatarFallback>{user?.fullname?.[0]}</AvatarFallback>
+              </Avatar>
+            </button>
+            <div className={styles.mobileHeader}>
+              <Image priority width={70} height={70} src={logoSrc} alt="logo" />
+            </div>
+            <div className="flex items-center space-x-2">
               <ModeToggle />
             </div>
-            {!user && (
-              <Button onClick={() => router.push("/login")}>
-                Login
-              </Button>
-            )}
-          </div>
-        </>
-      ) : (
-        <>
-          <button onClick={onToggleLeftSidebar} className="p-2">
-            <Avatar>
-              <AvatarImage src={user?.image_url} />
-              <AvatarFallback>{user?.fullname?.[0]}</AvatarFallback>
-            </Avatar>
-          </button>
-          <div className={`${styles.republicHeader} ${styles.mobileHeader}`}>
-            <Image priority width={70} height={70} src={logoSrc} alt="logo" />
-          </div>
-          <div className="p-2">
-
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </header>
   );
 };
