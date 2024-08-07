@@ -8,6 +8,7 @@ import {
   RadarChart,
   StackedLineChart,
   TransitionOfParliament,
+  PoliticalChart
 } from "@/components/ReportCharts";
 import { Eye, EyeOff, Filter } from 'lucide-react';
 
@@ -17,6 +18,7 @@ const chartComponents: Record<string, ChartComponentType> = {
   TransitionOfParliament,
   BarChart,
   RadarChart,
+  PoliticalChart,
   LineChart,
   DonutChart,
   StackedLineChart,
@@ -54,7 +56,7 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
       <p className="mb-6 text-center text-gray-600 dark:text-gray-400">
         This page provides an overview of various metrics and trends related to key issues facing South Africa. Use the filter to customize your view.
       </p>
-      
+
       <div className="mb-6 flex justify-end relative">
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -63,7 +65,7 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
           <Filter className="h-5 w-5 mr-2" />
           Filter Charts
         </button>
-        
+
         {isFilterOpen && (
           <div className="absolute top-full right-0 mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md z-10">
             <div className="flex flex-col gap-2">
@@ -94,7 +96,7 @@ function Reports({ selectedCharts, setSelectedCharts }: ReportsProps) {
         {Object.keys(chartComponents).map((chartName) => {
           const ChartComponent = chartComponents[chartName];
           const isVisible = selectedCharts.includes(chartName);
-          
+
           if (!isVisible) return null;
 
           return (
