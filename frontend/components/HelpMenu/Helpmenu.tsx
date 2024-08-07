@@ -186,7 +186,7 @@ const HelpMenu: React.FC = () => {
     <>
       <button
         onClick={toggleMenu}
-        className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} bg-green-500 text-white rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} flex items-center justify-center shadow-lg z-50`}
+        className={`fixed ${isMobile ? 'bottom-2 left-2' : 'bottom-4 right-4'} bg-green-500 text-white rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} flex items-center justify-center shadow-lg z-50`}
         title="Toggle Help Menu"
       >
         <CircleHelp size={isMobile ? 20 : 24} />

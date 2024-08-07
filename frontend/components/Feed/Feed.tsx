@@ -22,6 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import FilterModal from "@/components/FilterModal/FilterModal";
+import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
 const FETCH_SIZE = 2;
 
@@ -36,6 +37,7 @@ const Feed: React.FC = () => {
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
 
   useEffect(() => {
     const loadLocation = async () => {
@@ -137,7 +139,7 @@ const Feed: React.FC = () => {
 
   const handleAddIssue = (issue: IssueType) => {
     lazyRef.current?.add(issue);
-    setIsInputModalOpen(false);
+    setIsMobileIssueInputOpen(false);
   };
 
   const handleDeleteIssue = (issue: IssueType) => {
@@ -179,43 +181,20 @@ const Feed: React.FC = () => {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full relative">
       <div
         className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        <div className="flex justify-between items-center mb-4">
-          {user && !isDesktop && (
-            <Dialog open={isInputModalOpen} onOpenChange={setIsInputModalOpen}>
-              <DialogTrigger asChild>
-                <Button className="flex-1 mr-2">
-                  <Plus className="mr-2 h-4 w-4" /> Report an Issue
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <IssueInputBox onAddIssue={handleAddIssue} />
-              </DialogContent>
-            </Dialog>
-          )}
+        <div className="flex justify-end items-center mb-4">
           {!isDesktop && (
-            <Dialog open={isFilterModalOpen} onOpenChange={setIsFilterModalOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="flex-shrink-0">
-                  <Filter className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <FilterModal
-                  sortBy={sortBy}
-                  setSortBy={setSortBy}
-                  filter={filter}
-                  setFilter={setFilter}
-                  location={location}
-                  setLocation={setLocation}
-                  onClose={() => setIsFilterModalOpen(false)}
-                />
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="outline"
+              className="flex-shrink-0"
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <Filter className="h-4 w-4" />
+            </Button>
           )}
         </div>
         {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
@@ -252,7 +231,34 @@ const Feed: React.FC = () => {
           setLocation={setLocation}
         />
       )}
-      </div>
+      {!isDesktop && (
+        <>
+          <Button
+            className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg"
+            onClick={() => setIsMobileIssueInputOpen(true)}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+          {isMobileIssueInputOpen && (
+            <MobileIssueInput
+              onClose={() => setIsMobileIssueInputOpen(false)}
+              onAddIssue={handleAddIssue}
+            />
+          )}
+          {isFilterModalOpen && (
+            <FilterModal
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              filter={filter}
+              setFilter={setFilter}
+              location={location}
+              setLocation={setLocation}
+              onClose={() => setIsFilterModalOpen(false)}
+            />
+          )}
+        </>
+      )}
+    </div>
   );
 };
 
