@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Resolution } from '@/lib/types';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface ResolutionResponseModalProps {
   isOpen: boolean;
@@ -21,7 +22,9 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className={cn(
+        "bg-card"
+      )}>
         <DialogHeader>
           <DialogTitle>Pending Resolution</DialogTitle>
         </DialogHeader>
