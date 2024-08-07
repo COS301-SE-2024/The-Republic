@@ -4,7 +4,6 @@ import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import { useMediaQuery } from "@/lib/useMediaQuery";
-
 import { reportCharts } from "@/lib/api/reportCharts";
 
 function DonutChart() {
@@ -64,13 +63,12 @@ function DonutChart() {
             },
           },
           legend: {
+            type: "scroll",
             top: "8%",
             left: "center",
             textStyle: {
               fontSize: isMobile ? 10 : 12,
             },
-            itemWidth: isMobile ? 10 : 25,
-            itemHeight: isMobile ? 10 : 14,
           },
           series: [
             {

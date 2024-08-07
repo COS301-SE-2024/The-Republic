@@ -3,11 +3,12 @@ import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
-
 import { reportCharts } from "@/lib/api/reportCharts";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 function PoliticalChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedPoliticalAssociation`;
 
   const {
@@ -38,23 +39,31 @@ function PoliticalChart() {
             text: "Distribution of Resolved Issues by Political Party",
             left: "center",
             top: "0%",
+            textStyle: {
+              fontSize: isMobile ? 14 : 18,
+            },
           },
           legend: {
+            type: "scroll",
             top: "8%",
             left: "center",
+            textStyle: {
+              fontSize: isMobile ? 10 : 12,
+            },
           },
           series: [
             {
               name: "Political Party",
               type: "pie",
-              radius: "70%",
+              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"],
               label: {
-                show: true,
+                show: false,
+                position: "center"
               },
               emphasis: {
                 label: {
                   show: true,
-                  fontSize: "18",
+                  fontSize: isMobile ? "14" : "18",
                   fontWeight: "bold",
                 },
               },
@@ -62,8 +71,19 @@ function PoliticalChart() {
             },
           ],
         });
+
+        const handleResize = () => {
+          donutChart.resize();
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+          window.removeEventListener('resize', handleResize);
+          donutChart.dispose();
+        };
       } else {
-        console.error("Element #donutChart not found");
+        console.error("Element #politicalChart not found");
       }
     }
   }, [dataArray]);
@@ -85,7 +105,10 @@ function PoliticalChart() {
                 <div className="card-body pb-0">
                   <div
                     id="politicalChart"
-                    style={{ minHeight: "400px" }}
+                    style={{
+                      minHeight: "400px",
+                      height: isMobile ? "300px" : "400px",
+                    }}
                     className="echart"
                   ></div>
                 </div>
