@@ -4,11 +4,14 @@ import React, { useEffect } from "react";
 import * as echarts from "echarts";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
+import { useMediaQuery } from "@/lib/useMediaQuery"; // Import the hook
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
 function BarChart() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+  const isMobile = useMediaQuery('(max-width: 768px)'); // Use the hook to detect mobile screens
+
   const {
     data,
     isLoading: isLoadingCharts,
@@ -51,6 +54,9 @@ function BarChart() {
           text: "Count of Resolved vs Unresolved Issues by Category",
           left: "center",
           top: "0%",
+          textStyle: {
+            fontSize: isMobile ? 12 : 18, // Smaller font size on mobile
+          },
         },
         tooltip: {
           trigger: "axis",
@@ -61,6 +67,9 @@ function BarChart() {
         legend: {
           data: ["Unresolved", "Resolved"],
           top: "8%",
+          textStyle: {
+            fontSize: isMobile ? 10 : 12, // Smaller font size on mobile
+          },
         },
         xAxis: {
           type: "category",
@@ -69,8 +78,13 @@ function BarChart() {
           nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: 16,
+            fontSize: isMobile ? 12 : 16, // Smaller font size on mobile
             fontWeight: "bold",
+          },
+          axisLabel: {
+            interval: 0,
+            rotate: isMobile ? 45 : 0, // Rotate labels on mobile for better fit
+            fontSize: isMobile ? 8 : 12, // Smaller font size on mobile
           },
         },
         yAxis: {
@@ -79,7 +93,7 @@ function BarChart() {
           nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: 16,
+            fontSize: isMobile ? 12 : 16, // Smaller font size on mobile
             fontWeight: "bold",
           },
         },
@@ -98,8 +112,20 @@ function BarChart() {
           },
         ],
       });
+
+      // Add resize event listener
+      const handleResize = () => {
+        barChart.resize();
+      };
+      window.addEventListener('resize', handleResize);
+
+      // Clean up function
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        barChart.dispose();
+      };
     }
-  }, [data]);
+  }, [data, isMobile]); // Add isMobile to the dependency array
 
   return (
     <>
@@ -113,13 +139,13 @@ function BarChart() {
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
-            <div className="col-lg-6">
+            <div className="col-lg-6 w-full">
               <div className="card">
                 <div className="card-body">
                   <div
                     id="barChart"
-                    style={{ minHeight: "400px" }}
-                    className="echart"
+                    style={{ height: isMobile ? "300px" : "400px" }} // Smaller height on mobile
+                    className="echart w-full"
                   ></div>
                 </div>
               </div>

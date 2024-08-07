@@ -3,12 +3,14 @@ import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
 function DonutChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data,
@@ -57,16 +59,24 @@ function DonutChart() {
             text: "Distribution of Reported Issues by Category",
             left: "center",
             top: "0%",
+            textStyle: {
+              fontSize: isMobile ? 14 : 18,
+            },
           },
           legend: {
             top: "8%",
             left: "center",
+            textStyle: {
+              fontSize: isMobile ? 10 : 12,
+            },
+            itemWidth: isMobile ? 10 : 25,
+            itemHeight: isMobile ? 10 : 14,
           },
           series: [
             {
               name: "Issue Category",
               type: "pie",
-              radius: ["40%", "70%"],
+              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"],
               avoidLabelOverlap: false,
               label: {
                 show: false,
@@ -75,7 +85,7 @@ function DonutChart() {
               emphasis: {
                 label: {
                   show: true,
-                  fontSize: "18",
+                  fontSize: isMobile ? "14" : "18",
                   fontWeight: "bold",
                 },
               },
@@ -86,11 +96,23 @@ function DonutChart() {
             },
           ],
         });
+
+        // Add resize event listener
+        const handleResize = () => {
+          donutChart.resize();
+        };
+        window.addEventListener('resize', handleResize);
+
+        // Clean up function
+        return () => {
+          window.removeEventListener('resize', handleResize);
+          donutChart.dispose();
+        };
       } else {
         console.error("Element #donutChart not found");
       }
     }
-  }, [dataArray]);
+  }, [dataArray, isMobile]);
 
   return (
     <>
@@ -104,13 +126,13 @@ function DonutChart() {
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
-            <div className="col-lg-6">
+            <div className="col-lg-6 w-full">
               <div className="card">
                 <div className="card-body pb-0">
                   <div
                     id="donutChart"
-                    style={{ minHeight: "400px" }}
-                    className="echart"
+                    style={{ height: isMobile ? "300px" : "400px" }}
+                    className="echart w-full"
                   ></div>
                 </div>
               </div>

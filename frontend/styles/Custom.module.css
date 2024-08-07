@@ -149,3 +149,8 @@
 .logoutOverlay li a:hover {
   background-color: #f5f5f5;
 }
+
+.mobileHeader img {
+  width: 200px;
+  height: auto;
+}

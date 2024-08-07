@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
 const TransitionOfParliament: React.FC = () => {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data,
@@ -45,26 +49,22 @@ const TransitionOfParliament: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (dataArray.length > 0) {
+    if (dataArray.length > 0 && chartRef.current) {
       const defaultPalette = [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc",
+        "#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de",
+        "#3ba272", "#fc8452", "#9a60b4", "#ea7ccc",
       ];
 
-      const radius = ["30%", "80%"];
+      const radius = isMobile ? ["20%", "70%"] : ["30%", "80%"];
 
       const pieOption: echarts.EChartsOption = {
         title: {
           text: "Hierarchical Distribution of Issues by Service Category",
           left: "center",
           top: "0%",
+          textStyle: {
+            fontSize: isMobile ? 12 : 18,
+          },
         },
         series: [
           {
@@ -73,6 +73,7 @@ const TransitionOfParliament: React.FC = () => {
             radius: radius,
             label: {
               show: true,
+              fontSize: isMobile ? 10 : 12,
             },
             universalTransition: true,
             animationDurationUpdate: 1000,
@@ -140,7 +141,7 @@ const TransitionOfParliament: React.FC = () => {
               const r1 = ((parseFloat(radius[1]) / 100) * viewSize) / 2;
               const cx = api.getWidth() * 0.5;
               const cy = api.getHeight() * 0.5;
-              const size = viewSize / 50;
+              const size = isMobile ? viewSize / 60 : viewSize / 50;
 
               const points = parliamentLayout(
                 angles[idx],
@@ -173,29 +174,34 @@ const TransitionOfParliament: React.FC = () => {
         } as echarts.EChartsOption;
       })();
 
-      const chartElement = document.getElementById("transitionOfParliament");
-
-      if (chartElement) {
-        const myChart = echarts.init(
-          chartElement,
-          null,
-          { width: 500 }
-        );
-        myChart.setOption(pieOption);
-
-        chartElement.onmouseenter = () => {
-          myChart.setOption(parliamentOption);
-        };
-
-        chartElement.onmouseleave = () => {
-          myChart.setOption(pieOption);
-        };
-
-
-        return () => {
-          myChart.dispose();
-        };
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current);
       }
+
+      chartInstance.current.setOption(pieOption);
+
+      const handleMouseEnter = () => {
+        chartInstance.current?.setOption(parliamentOption);
+      };
+
+      const handleMouseLeave = () => {
+        chartInstance.current?.setOption(pieOption);
+      };
+
+      chartRef.current.addEventListener('mouseenter', handleMouseEnter);
+      chartRef.current.addEventListener('mouseleave', handleMouseLeave);
+
+      const handleResize = () => {
+        chartInstance.current?.resize();
+      };
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        chartRef.current?.removeEventListener('mouseenter', handleMouseEnter);
+        chartRef.current?.removeEventListener('mouseleave', handleMouseLeave);
+        chartInstance.current?.dispose();
+      };
     }
   }, [dataArray]);
 
@@ -204,19 +210,19 @@ const TransitionOfParliament: React.FC = () => {
       {!isErrorCharts ? (
         <>
           {isLoadingCharts ? (
-            <div
-              className="flex justify-center items-center"
-              style={{ height: "200px" }}
-            >
+            <div className="flex justify-center items-center h-[200px]">
               <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
           ) : (
-            <div className="col-lg-6">
+            <div className="w-full">
               <div className="card">
                 <div className="card-body">
                   <div
-                    id="transitionOfParliament"
-                    style={{ width: "max-content", height: "400px" }}
+                    ref={chartRef}
+                    style={{ 
+                      width: '100%', 
+                      height: isMobile ? "300px" : "400px" 
+                    }}
                     className="echart mx-auto"
                   ></div>
                 </div>
@@ -225,7 +231,7 @@ const TransitionOfParliament: React.FC = () => {
           )}
         </>
       ) : (
-        <div></div>
+        <div>Error loading chart data</div>
       )}
     </>
   );

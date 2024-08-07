@@ -217,16 +217,16 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   return (
     <Card className="mb-4 w-full bg-background border-primary rounded-lg">
       <CardContent className="p-4">
-        <div className="flex items-start">
+        <div className="flex flex-col sm:flex-row items-start">
           {user && (
-            <div className="pr-2">
+            <div className="pr-2 mb-2 sm:mb-0">
               <Avatar>
                 <AvatarImage src={user.image_url} />
                 <AvatarFallback>{user.fullname[0]}</AvatarFallback>
               </Avatar>
             </div>
           )}
-          <div className="flex-grow">
+          <div className="flex-grow w-full">
             <TextareaAutosize
               placeholder="What's going on!?"
               value={content}
@@ -256,28 +256,28 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-wrap items-center justify-between">
-        <div className="flex items-center space-x-2">
+      <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+        <div className="flex flex-wrap items-center space-x-2 space-y-2 sm:space-y-0">
           <Dropdown
             options={categoryOptions}
             value={category}
             onChange={setCategory}
             placeholder="Select category..."
-            className="w-40"
+            className="w-full sm:w-40 mb-2 sm:mb-0"
           />
           <Dropdown
             options={moodOptions}
             value={mood}
             onChange={setMood}
             placeholder="😟"
-            className="w-36"
+            className="w-full sm:w-36"
             showSearch={false}
             compact={true}
           />
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center"
+            className="flex items-center w-full sm:w-auto"
             onClick={() => setIsLocationModalOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-1" />
@@ -286,11 +286,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
           <Button
             variant="ghost"
             size="sm"
+            className="w-full sm:w-auto"
             onClick={() => fileInputRef.current?.click()}
           >
             <LucideImage className="w-4 h-4" />
           </Button>
-          <div className="flex items-center">
+          <div className="flex items-center w-full sm:w-auto">
             <Checkbox
               id="anon"
               checked={isAnonymous}
@@ -301,11 +302,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             </label>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
           <CircularProgress charCount={charCount} />
           <Button
             onClick={handleIssueSubmit}
             disabled={charCount > MAX_CHAR_COUNT || !content}
+            className="w-full sm:w-auto"
           >
             Post
             {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}

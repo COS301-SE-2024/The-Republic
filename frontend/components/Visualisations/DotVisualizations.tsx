@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as echarts from "echarts";
 import * as d3 from "d3";
 import "d3-hierarchy";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import {
   SubData,
@@ -22,6 +23,7 @@ import { useRouter } from "next/navigation";
 const EChartsComponent = () => {
   const chartRef = useRef(null);
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/visualization`;
   const { data, isLoading, isError } = useQuery({
@@ -362,7 +364,13 @@ const EChartsComponent = () => {
 
     run();
 
+    const handleResize = () => {
+      myChart.resize();
+    };
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       myChart.dispose();
     };
   }, [data]);
@@ -381,13 +389,13 @@ const EChartsComponent = () => {
           ) : (
             <div
               ref={chartRef}
-              style={{ height: "100vh" }}
+              style={{ height: isMobile ? "80vh" : "100vh" }}
               data-testid="echarts-container"
             />
           )}
         </>
       ) : (
-        <div></div>
+        <div>Error loading visualization</div>
       )}
     </>
   );

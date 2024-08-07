@@ -9,11 +9,15 @@ import {
   Resolution,
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
-import { Loader2 } from "lucide-react";
+import { Filter, Loader2, Plus } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
 import { Location } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+import { Button } from "@/components/ui/button";
+import FilterModal from "@/components/FilterModal/FilterModal";
+import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
 const FETCH_SIZE = 2;
 
@@ -25,6 +29,9 @@ const Feed: React.FC = () => {
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
   const [location, setLocation] = useState<Location | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
 
   useEffect(() => {
     const loadLocation = async () => {
@@ -126,6 +133,7 @@ const Feed: React.FC = () => {
 
   const handleAddIssue = (issue: IssueType) => {
     lazyRef.current?.add(issue);
+    setIsMobileIssueInputOpen(false);
   };
 
   const handleDeleteIssue = (issue: IssueType) => {
@@ -167,12 +175,23 @@ const Feed: React.FC = () => {
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full relative">
       <div
         className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
         id={scrollId}
       >
-        {user && <IssueInputBox onAddIssue={handleAddIssue}/>}
+        <div className="flex justify-end items-center mb-4">
+          {!isDesktop && (
+            <Button
+              variant="outline"
+              className="flex-shrink-0"
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <Filter className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
@@ -196,14 +215,43 @@ const Feed: React.FC = () => {
           controlRef={lazyRef}
         />
       </div>
-      <RightSidebar
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        filter={filter}
-        setFilter={setFilter}
-        location={location}
-        setLocation={setLocation}
-      />
+      {isDesktop && (
+        <RightSidebar
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          filter={filter}
+          setFilter={setFilter}
+          location={location}
+          setLocation={setLocation}
+        />
+      )}
+      {!isDesktop && (
+        <>
+          <Button
+            className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg"
+            onClick={() => setIsMobileIssueInputOpen(true)}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+          {isMobileIssueInputOpen && (
+            <MobileIssueInput
+              onClose={() => setIsMobileIssueInputOpen(false)}
+              onAddIssue={handleAddIssue}
+            />
+          )}
+          {isFilterModalOpen && (
+            <FilterModal
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              filter={filter}
+              setFilter={setFilter}
+              location={location}
+              setLocation={setLocation}
+              onClose={() => setIsFilterModalOpen(false)}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

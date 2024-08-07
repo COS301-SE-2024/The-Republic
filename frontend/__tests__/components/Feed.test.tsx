@@ -4,6 +4,14 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
 import { IssueProps } from "@/lib/types";
 
+jest.mock('@/lib/globals', () => ({
+  supabase: {
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    },
+  },
+}));
+
 jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn().mockReturnValue({
     get: jest.fn().mockReturnValue(null),
