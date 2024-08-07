@@ -74,9 +74,7 @@ const Feed: React.FC = () => {
       setIsLoadingLocation(false);
     };
 
-    if (user !== null) {
-      loadLocation();
-    }
+    loadLocation();
   }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
