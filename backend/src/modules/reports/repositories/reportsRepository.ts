@@ -302,12 +302,22 @@ export default class ReportsRepository {
       });
     }
 
-    return (data as NameValue[]).map((nameValue) => {
-      if (nameValue.name === null) {
-        nameValue.name = "No Party";
+
+    return (data as NameValue[]).reduce<NameValue[]>((newData, current) => {
+      if (["NONE", null].includes(current.name)) {
+        if (newData[0]?.name === "No party") {
+          newData[0].value += current.value;
+        } else {
+          newData.unshift({
+            name: "No party",
+            value: current.value,
+          });
+        }
+      } else {
+        newData.push(current);
       }
 
-      return nameValue;
-    });
+      return newData;
+    }, []);
   }
 }
