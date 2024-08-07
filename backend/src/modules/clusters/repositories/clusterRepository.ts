@@ -5,17 +5,32 @@ import { Cluster } from '@/modules/shared/models/cluster';
 
 export class ClusterRepository {
   async createCluster(issue: Issue): Promise<Cluster> {
+    const { data: locationData, error: locationError } = await supabase
+      .from('location')
+      .select('suburb')
+      .eq('location_id', issue.location_id)
+      .single();
+  
+    if (locationError) {
+      console.error('Error fetching location:', locationError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching location data.",
+      });
+    }
+  
     const { data, error } = await supabase
       .from('cluster')
       .insert({
         category_id: issue.category_id,
-        location_id: issue.location_id,
+        suburb: locationData.suburb,
         issue_count: 1,
         centroid_embedding: issue.content_embedding
       })
       .select()
       .single();
-
+  
     if (error) {
       console.error(error);
       throw APIError({
@@ -24,7 +39,7 @@ export class ClusterRepository {
         error: "An unexpected error occurred while creating a new cluster.",
       });
     }
-
+  
     return data;
   }
 
@@ -50,7 +65,7 @@ export class ClusterRepository {
 
   async findSimilarClusters(
     issue: Issue, 
-    threshold: number = 0.8
+    threshold: number = 0.9
   ): Promise<Cluster[]> {
     // console.log('Finding similar clusters for issue:', {
     //   issue_id: issue.issue_id,
@@ -58,13 +73,28 @@ export class ClusterRepository {
     //   location_id: issue.location_id,
     //   threshold
     // });
+
+    const { data: locationData, error: locationError } = await supabase
+    .from('location')
+    .select('suburb')
+    .eq('location_id', issue.location_id)
+    .single();
+
+  if (locationError) {
+    console.error('Error fetching location:', locationError);
+    throw APIError({
+      code: 500,
+      success: false,
+      error: "An unexpected error occurred while fetching location data.",
+    });
+  }
   
     const { data, error } = await supabase
       .rpc('find_similar_clusters', { 
         query_embedding: issue.content_embedding,
         similarity_threshold: threshold,
         category_id_param: issue.category_id,
-        location_id_param: issue.location_id,
+        suburb_param: locationData.suburb,
         current_time_param: new Date().toISOString()
       });
   
@@ -91,7 +121,16 @@ export class ClusterRepository {
     }
   
     const categoryId = issues[0].category_id;
-    const locationId = issues[0].location_id;
+    const suburb = issues[0].location?.suburb || issues[0].location_data?.suburb;
+
+    if (!suburb) {
+      console.error('No suburb information found for the issue');
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "Suburb information is missing for the issue.",
+      });
+    }
   
     const embeddings = issues.map(issue => issue.content_embedding);
     const averageEmbedding = this.calculateAverageEmbedding(embeddings);
@@ -101,7 +140,7 @@ export class ClusterRepository {
         query_embedding: averageEmbedding,
         similarity_threshold: threshold,
         category_id_param: categoryId,
-        location_id_param: locationId,
+        suburb_param: suburb,
         current_time_param: new Date().toISOString()
       });
   
@@ -154,7 +193,7 @@ export class ClusterRepository {
 
   async getClusters(params: {
     categoryId: number;
-    locationId: number;
+    suburb: string;
     fromDate?: Date;
     toDate?: Date;
   }): Promise<Cluster[]> {
@@ -162,7 +201,7 @@ export class ClusterRepository {
       .from('cluster')
       .select('*')
       .eq('category_id', params.categoryId)
-      .eq('location_id', params.locationId);
+      .eq('suburb', params.suburb)
 
     if (params.fromDate) {
       query = query.gte('created_at', params.fromDate.toISOString());
