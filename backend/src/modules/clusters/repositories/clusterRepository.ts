@@ -201,7 +201,7 @@ export class ClusterRepository {
       .from('cluster')
       .select('*')
       .eq('category_id', params.categoryId)
-      .eq('suburb', params.suburb)
+      .eq('suburb', params.suburb);
 
     if (params.fromDate) {
       query = query.gte('created_at', params.fromDate.toISOString());
