@@ -3,14 +3,14 @@ import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
-import { useMediaQuery } from "@/lib/useMediaQuery"; // Import the hook
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
 function DonutChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-  const isMobile = useMediaQuery('(max-width: 768px)'); // Use the hook to detect mobile screens
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data,
@@ -60,23 +60,23 @@ function DonutChart() {
             left: "center",
             top: "0%",
             textStyle: {
-              fontSize: isMobile ? 14 : 18, // Smaller font size on mobile
+              fontSize: isMobile ? 14 : 18,
             },
           },
           legend: {
             top: "8%",
             left: "center",
             textStyle: {
-              fontSize: isMobile ? 10 : 12, // Smaller font size on mobile
+              fontSize: isMobile ? 10 : 12,
             },
-            itemWidth: isMobile ? 10 : 25, // Smaller legend items on mobile
+            itemWidth: isMobile ? 10 : 25,
             itemHeight: isMobile ? 10 : 14,
           },
           series: [
             {
               name: "Issue Category",
               type: "pie",
-              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"], // Smaller radius on mobile
+              radius: isMobile ? ["30%", "60%"] : ["40%", "70%"],
               avoidLabelOverlap: false,
               label: {
                 show: false,
@@ -112,7 +112,7 @@ function DonutChart() {
         console.error("Element #donutChart not found");
       }
     }
-  }, [dataArray, isMobile]); // Add isMobile to the dependency array
+  }, [dataArray, isMobile]);
 
   return (
     <>
@@ -131,7 +131,7 @@ function DonutChart() {
                 <div className="card-body pb-0">
                   <div
                     id="donutChart"
-                    style={{ height: isMobile ? "300px" : "400px" }} // Smaller height on mobile
+                    style={{ height: isMobile ? "300px" : "400px" }}
                     className="echart w-full"
                   ></div>
                 </div>

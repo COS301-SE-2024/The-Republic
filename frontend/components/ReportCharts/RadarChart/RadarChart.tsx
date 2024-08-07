@@ -5,7 +5,7 @@ import * as echarts from "echarts";
 import { DataItem2 } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
-import { useMediaQuery } from "@/lib/useMediaQuery"; // Import the hook
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
@@ -15,8 +15,7 @@ function RadarChart() {
   const [resolvedData, setResolvedData] = useState<number[]>([]);
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
-  const isMobile = useMediaQuery('(max-width: 768px)'); // Use the hook to detect mobile screens
-
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
   const {
     data,
