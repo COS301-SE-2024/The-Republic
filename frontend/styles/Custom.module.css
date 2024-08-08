@@ -1,116 +1,156 @@
-
 .sidebar {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 90vh;
-    display: flex;
-    overflow-x: hidden;
-    flex-direction: column;
-    background: hsl(var(--background));
-    padding: 25px 20px;
-    transition: all 0.4s ease;
+  position: relative;
+  top: 0;
+  left: 0;
+  height: 90vh;
+  display: flex;
+  overflow-x: hidden;
+  flex-direction: column;
+  background: hsl(var(--background));
+  padding: 25px 20px;
+  transition: all 0.4s ease;
 }
 
+
+
 .republicHeader {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .republicHeader img {
-    width: 42px;
-    border-radius: 50%;
+  width: 270px;
+  border: none;
 }
 
-.republicHeader h2 {
-    color: hsl(var(--foreground));
-    font-size: 1.25rem;
-    font-weight: 600;
-    white-space: nowrap;
-    margin-left: 23px;
+.logo {
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
 }
 
 .sidebarLinks h4 {
-    color: hsl(var(--foreground));
-    font-weight: 500;
-    white-space: nowrap;
-    margin: 10px 0;
-    position: relative;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 10px 0;
+  position: relative;
 }
 
 .sidebarLinks h4 span {
-    opacity: 0;
+  opacity: 0;
 }
 
 .sidebarLinks h4 span {
-    opacity: 1;
-    color: hsl(var(--grey-medium));
+  opacity: 1;
+  color: hsl(var(--grey-medium));
 }
 
 .sidebarLinks {
-    list-style: none;
-    margin-top: 20px;
-    height: 80%;
-    overflow-y: auto;
-    scrollbar-width: none;
+  list-style: none;
+  margin-top: 20px;
+  height: 80%;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .sidebarLinks::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .sidebarLinks li a {
-    margin-top: 10px;
-    display: flex;
-    border-radius: 7px;
-    align-items: center;
-    gap: 0 20px;
-    color: hsl(var(--foreground));
-    font-weight: 500;
-    white-space: nowrap;
-    padding: 15px 10px;
-    text-decoration: none;
-    transition: 0.2s ease;
-    background: hsl(var(--grey));
+  margin-top: 10px;
+  display: flex;
+  border-radius: 7px;
+  align-items: center;
+  gap: 0 20px;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 15px 10px;
+  text-decoration: none;
+  transition: 0.2s ease;
+  border-color: hsl(var(--grey));
+  border-width: 1.6px;
 }
 
 .sidebarLinks li a:hover {
-    background: hsl(var(--grey-dark));
-    border-radius: 4px;
+  background: hsl(var(--grey-dark));
+  border-radius: 4px;
 }
 
 .userAccount {
-    margin-top: auto;
-    padding: 12px 10px;
-    margin-left: -10px;
-    color: hsl(var(--foreground));
-    background: hsl(var(--grey));
-    border-radius: 14px;
+  margin-top: auto;
+  padding: 12px 10px;
+  margin-left: -10px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--grey));
+  border-radius: 14px;
+  position:relative;
 }
 
 .userProfile {
-    display: flex;
-    align-items: center;
-    color: hsl(var(--foreground));
+  display: flex;
+  align-items: center;
+  color: hsl(var(--foreground));
+  cursor: pointer;
 }
 
 .userProfile img {
-    width: 42px;
-    border-radius: 50%;
-    border: 2px solid hsl(var(--foreground));
+  width: 42px;
+  border-radius: 50%;
+  border: 2px solid hsl(var(--foreground));
 }
 
 .userProfile h3 {
-    font-size: 1rem;
-    font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .userProfile span {
-    font-size: 0.775rem;
-    font-weight: 600;
+  font-size: 0.775rem;
+  font-weight: 600;
 }
 
 .userDetail {
-    margin-left: 23px;
-    white-space: nowrap;
+  margin-left: 23px;
+  white-space: nowrap;
+}
+
+.logoutOverlay {
+  position: absolute;
+  top: -50px; /* Adjust this value as needed */
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden; /* Ensure the border-radius is applied properly */
+}
+
+.logoutOverlay ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.logoutOverlay li {
+  padding: 10px;
+}
+
+.logoutOverlay li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+}
+
+.logoutOverlay li a:hover {
+  background-color: #f5f5f5;
+}
+
+.mobileHeader img {
+  width: 200px;
+  height: auto;
 }

@@ -1,2 +1,0 @@
-// styleMock.ts
-export default {};

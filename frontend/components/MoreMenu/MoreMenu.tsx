@@ -18,31 +18,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MoreHorizontal} from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MoreMenuProps {
   menuItems: string[];
   isOwner: boolean;
-  onDelete: () => void;
-  onResolve: () => void;
+  onAction: (action: string) => void;
   onSubscribe: (option: string) => void;
 }
 
 const MoreMenu: React.FC<MoreMenuProps> = ({
   menuItems,
   isOwner,
-  onDelete,
-  onResolve,
+  onAction,
   onSubscribe,
 }) => {
-
-  const handleDelete = () => {
-    onDelete();
-  };
-
-  const handleResolve = () => {
-    onResolve();
+  const handleAction = (action: string) => {
+    onAction(action);
   };
 
   const handleSubscribeOptionClick = (option: string) => {
@@ -53,7 +46,10 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center rounded-full p-1 hover:bg-gray-200">
+          <button
+            className="flex items-center rounded-full p-1 hover:bg-gray-200"
+            title="More Options"
+          >
             <MoreHorizontal />
           </button>
         </DropdownMenuTrigger>
@@ -64,33 +60,38 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
                 <DialogTrigger asChild>
                   <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DialogTrigger>
-              ) : item === "Resolve Issue" && isOwner ? (
-                <DropdownMenuItem onClick={handleResolve}>
+              ) : item === "Resolve Issue" ? (
+                <DropdownMenuItem onClick={() => handleAction("Resolve Issue")}>
                   Resolve Issue
                 </DropdownMenuItem>
               ) : item === "Subscribe" ? (
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                  Subscribe 
-                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubTrigger>Subscribe</DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Issue")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Issue")}
+                    >
                       Issue
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Category")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Category")}
+                    >
                       Category
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleSubscribeOptionClick("Location")}>
+                    <DropdownMenuItem
+                      onClick={() => handleSubscribeOptionClick("Location")}
+                    >
                       Location
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               ) : (
-                <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
+                <DropdownMenuItem key={index} onClick={() => handleAction(item)}>
+                  {item}
+                </DropdownMenuItem>
               )}
             </React.Fragment>
           ))}
-        
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent>
@@ -106,7 +107,7 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant="destructive" onClick={() => handleAction("Delete")}>
               Delete
             </Button>
           </DialogClose>

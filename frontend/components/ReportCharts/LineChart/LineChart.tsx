@@ -1,113 +1,161 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from "react";
-import * as echarts from 'echarts';
-import { IssuesGroupedByDate } from "@/lib/reports";
+import React, { useEffect, useState, useRef } from "react";
+import * as echarts from "echarts";
 import { formatDate } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { FaSpinner } from "react-icons/fa";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+
+import { reportCharts } from "@/lib/api/reportCharts";
 
 function LineChart() {
-  const [dates, setDates] = useState<string[]>(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
-  const [data, setData] = useState<number[]>([150, 230, 224, 218, 135, 147, 260]);
-  const [returndedData, setReturndedData] = useState<IssuesGroupedByDate>({});
+  const [dates, setDates] = useState<string[]>([]);
+  const [data, setData] = useState<number[]>([]);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCreatedAt`;
+  const {
+    data: returnedData,
+    isLoading: isLoadingCharts,
+    isError: isErrorCharts,
+  } = useQuery({
+    queryKey: [`line_chart`],
+    queryFn: () => reportCharts(url),
+    enabled: true,
+  });
 
   useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCreatedAt`;
-        const response = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify({
-            from: 0,
-            amount: 99,
-          }),
-          headers: {
-            "content-type": "application/json"
-          }
-        });
-        const apiResponse = await response.json();
-
-        if (apiResponse.success && apiResponse.data) {
-          setReturndedData(apiResponse.data);
-        } else {
-          console.error("Error fetching issues:", apiResponse.error);
-        }
-      } catch (error) {
-        console.error("Error fetching issues:", error);
-      }
-    };
-
-    fetchIssues();
-  }, []);
-
-  useEffect(() => {
-    if (returndedData) {
+    if (returnedData) {
       const dateCounts: { [key: string]: number } = {};
 
-      Object.keys(returndedData).forEach(date => {
+      Object.keys(returnedData).forEach((date) => {
         const formattedDate = formatDate(date);
         if (!dateCounts[formattedDate]) {
           dateCounts[formattedDate] = 0;
         }
 
-        dateCounts[formattedDate] += returndedData[date].length;
+        dateCounts[formattedDate] += returnedData[date].length;
       });
 
       const datesData = Object.keys(dateCounts).reverse();
-      const updateData = datesData.map(date => dateCounts[date]);
-  
+      const updateData = datesData.map((date) => dateCounts[date]);
+
       setDates(datesData);
       setData(updateData);
     }
-  }, [returndedData]);  
+  }, [returnedData]);
 
   useEffect(() => {
-    // ECharts Line Chart
-    if (dates.length > 0 && data.length > 0) {
-      const lineChart = echarts.init(document.querySelector("#lineChart") as HTMLElement);
-      lineChart.setOption({
+    if (
+      dates.length > 0 &&
+      data.length > 0 &&
+      !isLoadingCharts &&
+      !isErrorCharts &&
+      chartRef.current
+    ) {
+      if (!chartInstance.current) {
+        chartInstance.current = echarts.init(chartRef.current);
+      }
+
+      const option: echarts.EChartsOption = {
         title: {
-          text: 'Trend of Reported Issues Over Time',
-          left: 'center',
-          top: '0%'
+          text: "Trend of Reported Issues Over Time",
+          left: "center",
+          top: "0%",
+          textStyle: {
+            fontSize: isMobile ? 14 : 18,
+          },
+        },
+        grid: {
+          left: isMobile ? '10%' : '3%',
+          right: isMobile ? '5%' : '4%',
+          bottom: isMobile ? '15%' : '10%',
+          containLabel: true,
         },
         xAxis: {
-          type: 'category',
+          type: "category",
           data: dates,
-          name: 'Days (date)',
-          nameLocation: 'middle',
+          name: "Days (date)",
+          nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: 16,
-            fontWeight: 'bold',
+            fontSize: isMobile ? 12 : 16,
+            fontWeight: "bold",
+          },
+          axisLabel: {
+            rotate: isMobile ? 45 : 0,
+            fontSize: isMobile ? 8 : 12,
           },
         },
         yAxis: {
-          type: 'value',
-          name: 'Reported Issues Count',
-          nameLocation: 'middle',
+          type: "value",
+          name: "Reported Issues Count",
+          nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: 16,
-            fontWeight: 'bold',
+            fontSize: isMobile ? 12 : 16,
+            fontWeight: "bold",
           },
         },
-        series: [{
-          data: data,
-          type: 'line',
-          smooth: true
-        }]
-      });
+        series: [
+          {
+            data: data,
+            type: "line",
+            smooth: true,
+          },
+        ],
+        tooltip: {
+          trigger: 'axis',
+        },
+      };
+
+      chartInstance.current.setOption(option);
+
+      const handleResize = () => {
+        chartInstance.current?.resize();
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        chartInstance.current?.dispose();
+      };
     }
-  }, [data]);
+  }, [data, dates, isLoadingCharts, isErrorCharts, isMobile]);
 
   return (
-    <div className="col-lg-6">
-        <div className="card">
-            <div className="card-body">
-                <div id="lineChart" style={{ minHeight: "400px" }} className="echart"></div>
+    <>
+      {!isErrorCharts ? (
+        <>
+          {isLoadingCharts ? (
+            <div className="flex justify-center items-center h-[200px]">
+              <FaSpinner className="animate-spin text-4xl text-green-500" />
             </div>
-        </div>
-    </div>
+          ) : (
+            <div className="w-full">
+              <div className="card">
+                <div className="card-body">
+                  <div
+                    ref={chartRef}
+                    style={{ 
+                      width: '100%',
+                      height: isMobile ? "300px" : "400px"
+                    }}
+                    className="echart"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div>Error loading chart data</div>
+      )}
+    </>
   );
 }
 

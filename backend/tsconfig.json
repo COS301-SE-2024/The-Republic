@@ -7,8 +7,12 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
-  "include": ["src/**/*", "src/tests/**/*"],
+  "include": ["src/**/*", "src/__tests__/**/*"],
   "exclude": ["node_modules"]
 }

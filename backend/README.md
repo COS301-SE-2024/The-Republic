@@ -36,13 +36,11 @@ Follow these steps to install the application:
    git clone https://github.com/COS301-SE-2024/The-Republic.git
    cd backend
    ```
-
 2. **Install dependencies:**
 
    ```bash
    npm install
    ```
-
 3. **Install TypeScript (if not already installed globally):**
 
    ```bash
@@ -57,7 +55,6 @@ Follow these steps to install the application:
    SUPABASE_URL=https://your-project-url.supabase.co
    SUPABASE_ANON_KEY=your-anon-key
    ```
-
 2. **Modify the `supabaseClient.ts` file to use environment variables:**
 
    ```typescript
@@ -172,8 +169,23 @@ backend/
 │   │   └── exampleMiddleware.ts
 │   ├── utils/
 │   │   └── exampleUtil.ts
+│   ├── repositories/
+│   │   └── exampleRepository.ts
+│   ├── config/
+│   │   └── exampleConfig.ts
 │   ├── app.ts
 │   └── server.ts
+├── tests/
+│   ├── controllers/
+│   │   └── exampleController.test.ts
+│   ├── services/
+│   │   └── supabaseClient.test.ts
+├── docs/
+│   └── api.md
+├── logs/
+│   └── app.log
+├── scripts/
+│   └── migrate.ts
 ├── public/
 ├── node_modules/
 ├── .gitignore
@@ -188,6 +200,8 @@ backend/
 - **src/supabaseClient.ts:** Supabase client setup.
 - **public/:** Compiled JavaScript files.
 
+This structure enhances the modularity, maintainability, and scalability of our project.
+
 ## Running the Project
 
 - #### Running The Development Server:
@@ -197,10 +211,10 @@ backend/
   npm i
   npm run dev
   ```
-
 - #### Running the Application locally in a Docker Container
 
   - Changing working directory to the backend folder
+
     ```bash
     cd backend
     ```
@@ -209,8 +223,8 @@ backend/
     ```bash
     docker build -t backend_the_republic .
     ```
-
   - Running the application locally:
+
     ```bash
     docker run -p 8080:8080 -d backend_the_republic
     ```
@@ -220,13 +234,14 @@ backend/
     docker stop $(docker ps -a -q)
     docker rm $(docker ps -a -q)
     ```
-
   - Removing all Unused Docker Objects:
+
     ```bash
     docker system prune -a
     ```
 
 > Open [http://localhost:8080](http://localhost:8080) with your browser to see the result. The page auto-updates as you edit the file.
+
 ---
 
 [Read Project Documentation](./../documentation/README.md)

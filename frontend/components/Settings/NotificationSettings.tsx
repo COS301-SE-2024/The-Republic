@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Bell, Filter } from 'lucide-react';
-import { Switch } from '@/components/ui/switch'; 
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Bell, Filter } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface Preferences {
   comments: boolean;
@@ -49,19 +49,31 @@ const NotificationSettings: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center space-x-2">
-          <Switch id="notifications" checked={notificationsOn} onCheckedChange={toggleNotifications} />
+          <Switch
+            id="notifications"
+            checked={notificationsOn}
+            onCheckedChange={toggleNotifications}
+          />
           <Label htmlFor="notifications">Enable Notifications</Label>
         </div>
 
         <div>
           <h4 className="text-sm font-medium mb-2">Notification Preferences</h4>
           <div className="space-y-2">
-            {(Object.keys(preferences) as Array<keyof Preferences>).map((key) => (
-              <div key={key} className="flex items-center space-x-2">
-                <Checkbox id={key} checked={preferences[key]} onCheckedChange={() => handlePreferenceChange(key)} />
-                <Label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</Label>
-              </div>
-            ))}
+            {(Object.keys(preferences) as Array<keyof Preferences>).map(
+              (key) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={key}
+                    checked={preferences[key]}
+                    onCheckedChange={() => handlePreferenceChange(key)}
+                  />
+                  <Label htmlFor={key}>
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </Label>
+                </div>
+              ),
+            )}
           </div>
         </div>
 
@@ -72,7 +84,11 @@ const NotificationSettings: React.FC = () => {
           <div className="space-y-2">
             {(Object.keys(filters) as Array<keyof Filters>).map((key) => (
               <div key={key} className="flex items-center space-x-2">
-                <Checkbox id={key} checked={filters[key]} onCheckedChange={() => handleFilterChange(key)} />
+                <Checkbox
+                  id={key}
+                  checked={filters[key]}
+                  onCheckedChange={() => handleFilterChange(key)}
+                />
                 <Label htmlFor={key}>From {key}</Label>
               </div>
             ))}

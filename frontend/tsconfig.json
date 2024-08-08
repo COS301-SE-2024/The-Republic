@@ -13,6 +13,7 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": "./",
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
@@ -22,6 +23,13 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "cypress/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "cypress/**/*.ts",
+    "global.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

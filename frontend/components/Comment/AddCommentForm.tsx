@@ -4,106 +4,83 @@ import { useToast } from "@/components/ui/use-toast";
 import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import { useMutation } from "@tanstack/react-query";
+import { AddComment } from "@/lib/api/AddComment";
 
 interface AddCommentFormProps {
-  issueId: string;
-  parentCommentId?: string;
+  issueId: number;
+  parentCommentId: number | null;
   onCommentAdded: (comment: Comment) => void;
 }
 
-const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentId = null, onCommentAdded }) => {
+const AddCommentForm: React.FC<AddCommentFormProps> = ({
+  issueId,
+  parentCommentId = null,
+  onCommentAdded,
+}) => {
   const [content, setContent] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { user } = useUser();
   const { toast } = useToast();
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const isContentAppropriate = await checkContentAppropriateness(content);
+      if (!isContentAppropriate) {
+        throw new Error("Content");
+      }
+
+      if (!user) {
+        throw new Error("User");
+      }
+
+      return await AddComment(
+        user,
+        issueId,
+        content,
+        isAnonymous,
+        parentCommentId,
+      );
+    },
+    onSuccess: (responseData) => {
+      setContent("");
+      setIsAnonymous(false);
+
       toast({
-        description: "You need to be logged in to comment",
-      });
-      return;
-    }
-
-    const isContentAppropriate = await checkContentAppropriateness(content);
-    if (!isContentAppropriate) {
-      toast({
-        variant: "destructive",
-        description: "Please use appropriate language.",
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.access_token}`
-        },
-        body: JSON.stringify({
-          issue_id: issueId,
-          content,
-          is_anonymous: isAnonymous,
-          parent_id: parentCommentId,
-        }),
+        description: "Comment posted successfully",
       });
 
-      const responseData = await response.json();
-      if (responseData.success) {
-        onCommentAdded(responseData.data);
-        setContent("");
+      onCommentAdded(responseData);
+    },
+    onError: (error) => {
+      if (error.message === "Content") {
         toast({
-          description: "Comment posted successfully",
+          variant: "destructive",
+          description: "Please use appropriate language.",
+        });
+      } else if (error.message === "User") {
+        toast({
+          description: "You need to be logged in to comment",
         });
       } else {
-        console.error("Failed to post comment:", responseData.error);
         toast({
           description: "Failed to post comment",
         });
-      }
-    } catch (error) {
-      console.error("Error posting comment:", error);
-      toast({
-        description: "Error posting comment",
-      });
-    }
-  };
 
-  const checkContentAppropriateness = async (text: string): Promise<boolean> => {
-    const apiKey = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY as string;
-    const url = process.env.NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL as string;
-  
-    const headers = {
-      "Ocp-Apim-Subscription-Key": apiKey,
-      "Content-Type": "text/plain",
-    };
-  
-    const response = await fetch(`${url}`, {
-      method: "POST",
-      headers,
-      body: text,
-    });
-  
-    const result = await response.json();
-  
-    if (
-      (result.Terms && result.Terms.length > 0) ||
-      result.Classification.Category1.Score > 0.5 ||
-      result.Classification.Category2.Score > 0.5 ||
-      result.Classification.Category3.Score > 0.5
-    ) {
-      return false;
-    }
-  
-    return true;
-  };
+        console.error("Failed to post comment:", error);
+      }
+    },
+  });
 
   return (
-    <form onSubmit={handleCommentSubmit} className="flex flex-col space-y-4 mt-4 p-4 rounded shadow bg-card dark:bg-card">
+    <form
+      action={() => mutation.mutate()}
+      className="flex flex-col space-y-4 mb-4 p-4 rounded shadow bg-card dark:bg-card"
+    >
       <div className="flex items-center space-x-3">
         {user && (
           <Avatar>
@@ -121,11 +98,19 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({ issueId, parentCommentI
       </div>
       <div className="flex items-center justify-between">
         <label className="flex items-center space-x-2">
-          <Checkbox checked={isAnonymous} onCheckedChange={(state) => setIsAnonymous(state as boolean)} />
+          <Checkbox
+            checked={isAnonymous}
+            onCheckedChange={(state) => setIsAnonymous(state as boolean)}
+          />
           <span>Post anonymously</span>
         </label>
-        <Button type="submit" className="bg-primary text-primary-foreground px-4 py-2 rounded" disabled={!content.trim()}>
+        <Button
+          type="submit"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded"
+          disabled={!content.trim()}
+        >
           Send
+          {mutation.isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin text-white"/>}
         </Button>
       </div>
     </form>

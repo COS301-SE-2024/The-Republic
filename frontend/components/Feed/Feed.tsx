@@ -1,146 +1,255 @@
-import React, { useEffect, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useUser } from "@/lib/contexts/UserContext";
 import Issue from "../Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
-import { Issue as IssueType } from "@/lib/types";
-import { supabase } from "@/lib/globals";
-import { FaSpinner } from 'react-icons/fa';
+import {
+  Issue as IssueType,
+  RequestBody,
+  Resolution,
+} from "@/lib/types";
+import styles from '@/styles/Feed.module.css';
+import { Filter, Loader2, Plus } from "lucide-react";
+import { LazyList, LazyListRef } from "../LazyList/LazyList";
+import { Location } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+import { Button } from "@/components/ui/button";
+import FilterModal from "@/components/FilterModal/FilterModal";
+import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
-interface User {
-  user_id: string;
-  email_address: string;
-  username: string;
-  fullname: string;
-  image_url: string;
-  bio: string;
-  is_owner: boolean;
-  total_issues: number;
-  resolved_issues: number;
-  access_token: string;
-}
+const FETCH_SIZE = 2;
 
-interface RequestBody {
-  from: number;
-  amount: number;
-  order_by: string;
-  ascending: boolean;
-  category?: string;
-}
-
-interface FeedProps {
-  userId?: string;
-  showInputBox?: boolean;
-}
-
-const Feed: React.FC<FeedProps> = ({ userId, showInputBox = true }) => {
-  const [issues, setIssues] = useState<IssueType[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+const Feed: React.FC = () => {
+  const { user } = useUser();
+  const lazyRef = useRef<LazyListRef<IssueType>>(null);
+  const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
-  const [filter, setFilter] = useState("All");
-  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
+  const [location, setLocation] = useState<Location | null>(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: sessionData, error } = await supabase.auth.getSession();
-      if (!error && sessionData.session) {
-        const session = sessionData.session;
-        const userDetailsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${session.user.id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        });
+    const loadLocation = async () => {
+      setIsLoadingLocation(true);
 
-        if (userDetailsResponse.ok) {
-          const userDetails = await userDetailsResponse.json();
-          const user: User = {
-            user_id: session.user.id,
-            fullname: userDetails.data.fullname,
-            image_url: userDetails.data.image_url,
-            email_address: session.user.email as string,
-            username: userDetails.data.username,
-            bio: userDetails.data.bio,
-            is_owner: false,
-            total_issues: 0,
-            resolved_issues: 0,
-            access_token: session.access_token,
-          };
-          setUser(user);
+      const locationString = searchParams.get("location");
+      if (locationString) {
+        const locationParts = locationString.split(", ").slice(1);
+        const locationObject: Location = {
+          location_id: "",
+          province: locationParts[0],
+          city: "",
+          suburb: "",
+          district: locationParts.slice(-1)[0],
+        };
+
+        if (locationParts.length >= 3) {
+          locationObject.city = locationParts[1];
+        }
+
+        if (locationParts.length === 4) {
+          locationObject.suburb = locationParts[2];
+        }
+
+        setLocation(locationObject);
+        setIsLoadingLocation(false);
+      } else if (user && user.location_id) {
+        try {
+          const userLocation = await fetchUserLocation(user.location_id);
+          if (userLocation) {
+            setLocation(() => {
+              return { ...userLocation.value, location_id: "" };
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user location:", error);
         }
       }
+
+      setIsLoadingLocation(false);
     };
 
-    fetchUser();
-  }, []);
+    loadLocation();
+  }, [user, searchParams]);
 
-  useEffect(() => {
-    const fetchIssues = async () => {
-      setLoading(true);
-      try {
-        const headers: HeadersInit = {
-          "Content-Type": "application/json",
-        };
-    
-        if (user) {
-          headers.Authorization = `Bearer ${user.access_token}`;
-        }
-    
-        const requestBody: RequestBody = {
-          from: 0,
-          amount: 99,
-          order_by: sortBy === "newest" ? "created_at" : sortBy === "oldest" ? "created_at" : "comment_count",
-          ascending: sortBy === "oldest",
-        };
-    
-        if (filter !== "All") {
-          requestBody.category = filter;
-        }
-    
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
-        const response = await fetch(url, {
-          method: "POST",
-          headers,
-          body: JSON.stringify(requestBody),
-        });
-    
-        const apiResponse = await response.json();
-    
-        if (apiResponse.success && apiResponse.data) {
-          setIssues(apiResponse.data);
-        } else {
-          console.error("Error fetching issues:", apiResponse.error);
-        }
-      } catch (error) {
-        console.error("Error fetching issues:", error);
-      } finally {
-        setLoading(false);
-      }
+  const fetchIssues = async (from: number, amount: number) => {
+    if (isLoadingLocation) {
+      return [];
+    }
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
     };
 
-    fetchIssues();
-  }, [user, userId, sortBy, filter]);
+    if (user) {
+      headers.Authorization = `Bearer ${user.access_token}`;
+    }
+
+    const requestBody: RequestBody = {
+      from,
+      amount,
+      order_by: (() => {
+        switch (sortBy) {
+          case "newest":
+          case "oldest":
+            return "created_at";
+          default:
+            return "comment_count";
+        }
+      })(),
+      ascending: sortBy === "oldest",
+    };
+
+    if (filter !== "All") {
+      requestBody.category = filter;
+    }
+
+    if (location) {
+      requestBody.location = location;
+    }
+
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    const apiResponse = await response.json();
+
+    if (apiResponse.success) {
+      return apiResponse.data as IssueType[];
+    } else {
+      throw new Error(apiResponse.error);
+    }
+  };
+
+  const handleAddIssue = (issue: IssueType) => {
+    lazyRef.current?.add(issue);
+    setIsMobileIssueInputOpen(false);
+  };
+
+  const handleDeleteIssue = (issue: IssueType) => {
+    lazyRef.current?.remove(issue);
+  };
+
+  const handleResolveIssue = (issue: IssueType, resolution: Resolution) => {
+    const updatedIssue = {
+      ...issue,
+      hasPendingResolution: true,
+      resolutionId: resolution.resolution_id,
+    };
+
+    lazyRef.current?.update(issue, updatedIssue);
+  };
 
   const LoadingIndicator = () => (
-    <div className="flex justify-center items-center h-24">
-      <FaSpinner className="animate-spin text-4xl text-blue-500" />
+    <div className="flex justify-center items-center h-32">
+      <Loader2 className="h-6 w-6 animate-spin text-green-400" />
     </div>
   );
 
+  const EmptyIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-lg">No issues</h3>
+    </div>
+  );
+
+  const FailedIndicator = () => (
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
+    </div>
+  );
+
+  const scrollId = "issues_scroll";
+
+  if (isLoadingLocation) {
+    return <LoadingIndicator />;
+  }
+
   return (
-    <div className="flex">
-      <div className="w-full px-6">
-        {showInputBox && user && <IssueInputBox user={user} />}
-        {loading ? (
-          <LoadingIndicator />
-        ) : issues.length > 0 ? (
-          issues.map((issue) => (
-            <Issue key={issue.issue_id} issue={issue} />
-          ))
-        ) : (
-          <p>No issues found.</p>
-        )}
+    <div className="flex h-full relative">
+      <div
+        className={`flex-1 px-6 overflow-y-scroll ${styles['feed-scroll']}`}
+        id={scrollId}
+      >
+        <div className="flex justify-end items-center mb-4">
+          {!isDesktop && (
+            <Button
+              variant="outline"
+              className="flex-shrink-0"
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              <Filter className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
+        <LazyList
+          pageSize={FETCH_SIZE}
+          fetcher={fetchIssues}
+          fetchKey={[
+            "feed-issues",
+            sortBy,
+            filter,
+            location
+          ]}
+          Item={({ data }) => (
+            <Issue
+              issue={data}
+              onDeleteIssue={handleDeleteIssue}
+              onResolveIssue={handleResolveIssue}
+            />
+          )}
+          Failed={FailedIndicator}
+          Loading={LoadingIndicator}
+          Empty={EmptyIndicator}
+          parentId={scrollId}
+          controlRef={lazyRef}
+        />
       </div>
-      <RightSidebar sortBy={sortBy} setSortBy={setSortBy} filter={filter} setFilter={setFilter} />
+      {isDesktop && (
+        <RightSidebar
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          filter={filter}
+          setFilter={setFilter}
+          location={location}
+          setLocation={setLocation}
+        />
+      )}
+      {!isDesktop && (
+        <>
+          <Button
+            className="fixed bottom-4 right-4 rounded-full w-14 h-14 shadow-lg"
+            onClick={() => setIsMobileIssueInputOpen(true)}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+          {isMobileIssueInputOpen && (
+            <MobileIssueInput
+              onClose={() => setIsMobileIssueInputOpen(false)}
+              onAddIssue={handleAddIssue}
+            />
+          )}
+          {isFilterModalOpen && (
+            <FilterModal
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              filter={filter}
+              setFilter={setFilter}
+              location={location}
+              setLocation={setLocation}
+              onClose={() => setIsFilterModalOpen(false)}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

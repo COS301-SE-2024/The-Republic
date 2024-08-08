@@ -1,9 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Shield, Upload } from 'lucide-react';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Shield, Upload } from "lucide-react";
 
 interface FormData {
   firstName: string;
@@ -17,11 +17,11 @@ interface FormData {
 
 const RequestVerifications: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    municipality: '',
-    address: '',
-    role: '',
+    firstName: "",
+    lastName: "",
+    municipality: "",
+    address: "",
+    role: "",
     proofFile: null,
     idFile: null,
   });
@@ -52,20 +52,36 @@ const RequestVerifications: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="firstName">First Name(s)</Label>
-              <Input id="firstName" value={formData.firstName} onChange={handleChange} />
+              <Input
+                id="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label htmlFor="lastName">Last Name</Label>
-              <Input id="lastName" value={formData.lastName} onChange={handleChange} />
+              <Input
+                id="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div>
             <Label htmlFor="municipality">Name of Municipality</Label>
-            <Input id="municipality" value={formData.municipality} onChange={handleChange} />
+            <Input
+              id="municipality"
+              value={formData.municipality}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <Label htmlFor="address">Office Address</Label>
-            <Input id="address" value={formData.address} onChange={handleChange} />
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <Label htmlFor="role">Role at Municipality</Label>

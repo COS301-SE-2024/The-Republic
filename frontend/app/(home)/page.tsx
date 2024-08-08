@@ -1,9 +1,12 @@
 "use client";
 
 import Feed from "@/components/Feed/Feed";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <Feed showInputBox={true}/>
+    <Suspense>
+      <Feed/>
+    </Suspense>
   );
 }

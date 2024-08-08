@@ -1,12 +1,12 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { User, Lock } from 'lucide-react';
+import React, { useState, ChangeEvent } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { User, Lock } from "lucide-react";
 
 const ProfileSettings: React.FC = () => {
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState("");
 
   const handleRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setRole(e.target.value);

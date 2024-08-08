@@ -17,7 +17,7 @@
 //       bio: "This is John's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -36,7 +36,7 @@
 //       bio: "This is Jane's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -55,7 +55,7 @@
 //       bio: "This is John's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -74,7 +74,7 @@
 //       bio: "This is John's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -93,7 +93,7 @@
 //       bio: "This is John's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -112,7 +112,7 @@
 //       bio: "This is Jane's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 //   {
@@ -131,7 +131,7 @@
 //       bio: "This is John's bio.",
 //       is_owner: false,
 //       total_issues: 0,
-//       resolved_issues: 0, 
+//       resolved_issues: 0,
 //     },
 //   },
 // ];

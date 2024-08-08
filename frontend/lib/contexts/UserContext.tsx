@@ -1,75 +1,51 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/globals";
-
-interface User {
-  user_id: string;
-  email_address: string;
-  username: string;
-  fullname: string;
-  image_url: string;
-  bio: string;
-  is_owner: boolean;
-  total_issues: number;
-  resolved_issues: number;
-  access_token: string;
-}
-
-interface UserContextType {
-  user: User | null;
-}
+import Cookies from "js-cookie";
+import { UserAlt, UserContextType } from "@/lib/types";
+import { fetchUserData } from "@/lib/api/fetchUserData";
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserAlt | null>(null);
+
+  const { data: userData, isLoading, isError, refetch } = useQuery({
+    queryKey: ['user_data'],
+    queryFn: () => fetchUserData(),
+  });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Failed to retrieve session:', sessionError);
-        return;
-      }
+    if (!isLoading && !isError) {
+      setUser(userData ?? null);
+    }
 
-      if (session) {
-        const { data: { user: authUser }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") {
+        Cookies.set("Authorization", session?.access_token ?? "", {
+          expires: new Date((session?.expires_at ?? 0) * 1000),
+        });
 
-        if (userError) {
-          console.error('Failed to retrieve user:', userError);
-          return;
+        if (user === null) {
+          refetch();
         }
-
-        if (authUser) {
-          try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${authUser.id}`, {
-              headers: {
-                Authorization: `Bearer ${session.access_token}`,
-                "Content-Type": "application/json",
-              },
-            });
-
-            if (!response.ok) {
-              throw new Error('Failed to fetch user data');
-            }
-
-            const apiResponse = await response.json();
-            setUser({ ...apiResponse.data, access_token: session.access_token });
-          } catch (error) {
-            console.error('Failed to fetch user data:', error);
-          }
-        }
+      } else if (event === "SIGNED_OUT") {
+        Cookies.remove("Authorization");
+        setUser(null);
       }
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-
-    fetchUser();
-  }, []);
+  }, [userData]);
 
   return (
-    <UserContext.Provider value={{ user }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
   );
 };
 

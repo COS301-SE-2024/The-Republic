@@ -5,5 +5,13 @@ export interface GetIssuesParams {
   ascending: boolean;
   category?: string;
   mood?: string;
-  user_id?: string
+  user_id?: string;
+  location: {
+    province?: string;
+    city?: string;
+    suburb?: string;
+    district?: string;
+    place_id?: string;
+  };
+  location_id?: number;
 }

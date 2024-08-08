@@ -1,10 +1,6 @@
 import React from "react";
-import { 
-  Avatar, 
-  AvatarImage, 
-  AvatarFallback
-} from "../ui/avatar";
-import { 
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -29,7 +25,9 @@ export function HomeAvatar({ imageUrl }: HomeAvatarProps) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="m-2">
-        <DropdownMenuItem onClick={() => signOutWithToast(toast)}>Sign out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOutWithToast(toast)}>
+          Sign out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
