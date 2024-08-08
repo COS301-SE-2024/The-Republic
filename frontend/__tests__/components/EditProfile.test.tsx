@@ -48,6 +48,7 @@ describe("EditProfile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
     (useTheme as jest.Mock).mockReturnValue({ theme: "light" });
   });
 
