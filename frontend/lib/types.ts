@@ -112,11 +112,22 @@ interface LocationType {
     lng: number;
   };
 }
+
 interface ReactionNotification {
   created_at: string;
   emoji: string;
   issue_id: number;
   reaction_id: number;
+  user_id: string;
+}
+
+interface CommentNotification {
+  comment_id: string;
+  content: string;
+  created_at: string;
+  is_anonymous: boolean;
+  issue_id: string;
+  parent_id: string | null;
   user_id: string;
 }
 
@@ -149,6 +160,7 @@ interface Issue {
   pendingResolutionId?: string | null;
   cluster_id?: string
 }
+
 interface IssueProps {
   issue: Issue;
   id?: string;
@@ -397,5 +409,6 @@ export type {
   Location,
   SubsParams,
   Resolution,
-  ReactionNotification
+  ReactionNotification,
+  CommentNotification
 };

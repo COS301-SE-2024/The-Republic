@@ -20,6 +20,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
 import { XIcon } from "lucide-react";
+import { ReactionNotification, CommentNotification, Issue } from "@/lib/types";
 
 interface SidebarProps extends HomeAvatarProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "comment",
         },
@@ -46,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           console.log("New Comment notification:", notification);
           if (notification && Object.keys(notification).length > 0) {
             console.log("Comments Flooding for a Reported Issue: ", notification);
-            const { parent_id, is_anonymous, user_id } = notification;
+            const { parent_id, is_anonymous, user_id } = notification as CommentNotification;
             if (user_id != user?.user_id) {
               toast({
                 variant: "warning",
@@ -64,14 +65,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "reaction",
         },
         async (payload) => {
           const { new: notification } = payload;
           if (notification && Object.keys(notification).length > 0) {
-            const { emoji, user_id } = notification;
+            const { emoji, user_id } = notification as ReactionNotification;
             if (user_id != user?.user_id) {
               toast({
                 variant: "warning",
@@ -89,14 +90,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "issue",
         },
         (payload) => {
           const { new: notification } = payload;
+          console.log("New Issue notification:", notification);
           if (notification && Object.keys(notification).length > 0) {
-            const { sentiment, user_id } = notification;
+            const { sentiment, user_id } = notification as Partial<Issue>;
             if (user_id != user?.user_id) {
               toast({
                 variant: "warning",

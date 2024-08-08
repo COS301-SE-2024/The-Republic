@@ -10,3 +10,14 @@ export interface NotificationData {
     locations: string[];
     issues: string[];
 }
+
+export interface Notification {
+    type: string;
+    content: string;
+    issue_id?: string;
+    category?: string;
+    location?: string;
+    created_at: string;
+    other_user_id?: string;
+    other_username?: string;
+}
