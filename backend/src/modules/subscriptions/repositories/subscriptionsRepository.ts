@@ -261,4 +261,32 @@ export default class SubscriptionsRepository {
 
     return result;
   }
+
+
+  async getNotifications({
+    user_id
+  } : Partial<SubsParams>) {
+    return [
+      {
+        type: "string",
+        content: "string",
+        issue_id: "string",
+        category: "string",
+        location: "string",
+        created_at: "string",
+        other_user_id: user_id,
+        other_username: "string",
+      },
+      {
+        type: "string",
+        content: "string",
+        issue_id: "string",
+        category: "string",
+        location: "string",
+        created_at: "string",
+        other_user_id: user_id,
+        other_username: "string",
+      }
+    ];
+  }
 }
