@@ -16,20 +16,21 @@ export default class SubscriptionsRepository {
     }
 
     const { data: selectData, error: selectError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user_id)
-      .single();
-  
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', user_id)
+    .single();
+
     if (selectData && !selectError) {
       if (selectData.issues.includes(issue_id)) {
         const updatedIssues = selectData.issues.filter((issue: string) => issue !== issue_id);
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ issues: updatedIssues })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedIssues) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -45,9 +46,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ issues: updatedIssues })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedIssues) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -108,9 +110,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ categories: updatedCategories })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedCategories) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -126,9 +129,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ categories: updatedCategories })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedCategories) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -181,9 +185,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ locations: updatedlocations })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedlocations) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -199,9 +204,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ locations: updatedlocations })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedlocations) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
