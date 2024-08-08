@@ -1,13 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Visualizations from '@/components/Visualisations/Visualizations';
 import Reports from '@/components/ReportCharts/Reports';
 
 function Tabs() {
-  const [activeTab, setActiveTab] = useState(
-    sessionStorage.getItem("analyticsTab") ?? "Reports"
-  );
+  const [activeTab, setActiveTab] = useState("Reports");
   const [selectedCharts, setSelectedCharts] = useState<string[]>([]);
+
+  useEffect(() => {
+    const savedTab = sessionStorage.getItem("analyticsTab");
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, []);
 
   const handleTabClick = (tab: string) => {
     sessionStorage.setItem("analyticsTab", tab);

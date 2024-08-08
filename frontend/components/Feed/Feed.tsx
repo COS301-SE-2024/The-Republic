@@ -192,7 +192,7 @@ const Feed: React.FC = () => {
       setTimeout(() => {
         sessionStorage.setItem("feedScroll", feed.scrollTop.toString());
         isHandling = false;
-      }, 1000);
+      }, 250);
     };
   }, [isLoadingLocation]);
 
