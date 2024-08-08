@@ -16,9 +16,10 @@ import {
 } from "@/lib/types";
 import { colorFromCategory } from "@/lib/utils";
 import { LoadingSpinner } from "../Spinner/Spinner";
-
 import { dotVisualization } from "@/lib/api/dotVisualization";
 import { useRouter } from "next/navigation";
+
+let displayRoot: d3.HierarchyCircularNode<SeriesDataItem>;
 
 const EChartsComponent = () => {
   const chartRef = useRef(null);
@@ -152,7 +153,7 @@ const EChartsComponent = () => {
     }
 
     function initChart(seriesData: SeriesDataItem[], maxDepth: number, maxIssueRate: number) {
-      let displayRoot = stratify("South Africa") as d3.HierarchyCircularNode<SeriesDataItem>;
+      displayRoot ??= stratify("South Africa") as d3.HierarchyCircularNode<SeriesDataItem>;
 
       function stratify(rootId: string) {
         return d3
@@ -333,6 +334,7 @@ const EChartsComponent = () => {
           if (categories.includes(lastPart)) {
             const locationParam = `location=${encodeURIComponent(idParts.join(", "))}`;
             const categoryParam = `category=${encodeURIComponent(lastPart)}`;
+            sessionStorage.removeItem("feedSroll");
             router.push(`/?${locationParam}&${categoryParam}`);
           } else {
             drillDown((params.data as { id: string }).id);
@@ -341,8 +343,11 @@ const EChartsComponent = () => {
       });
 
       function drillDown(targetNodeId: string | null = null): void {
+        if (displayRoot.id === targetNodeId) {
+          targetNodeId = null;
+        }
         displayRoot = stratify(targetNodeId ?? "South Africa") as d3.HierarchyCircularNode<SeriesDataItem>;
-        if (targetNodeId != null) {
+        if (targetNodeId !== null) {
           displayRoot = displayRoot.descendants().find(function (node) {
             return node.data.id === targetNodeId;
           }) as d3.HierarchyCircularNode<SeriesDataItem>;
