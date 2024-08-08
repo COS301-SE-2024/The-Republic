@@ -42,12 +42,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           table: "comment",
         },
         (payload) => {
-          toast({
-            variant: "warning",
-            description: "Comments Flooding for a Reported Issue",
-          });
           const { new: notification } = payload;
-          console.log("Comments Notification Data: ", notification);
+          console.log("New Comment notification:", notification);
+          if (notification && Object.keys(notification).length > 0) {
+            console.log("Comments Flooding for a Reported Issue: ", notification);
+            const { parent_id, is_anonymous, user_id } = notification;
+            if (user_id != user?.user_id) {
+              toast({
+                variant: "warning",
+                description: `New ${is_anonymous ? 'Anonymous ' : ''}Comment on ${parent_id != null ? 'a Comment' : 'an Issue'}`,
+              });
+            } else {
+              toast({
+                variant: "warning",
+                description: `Gained 10 Points for leaving a Comment on an Issue`,
+              });
+            }
+          }
         },
       )
       .on(
@@ -57,13 +68,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           schema: "public",
           table: "reaction",
         },
-        (payload) => {
-          toast({
-            variant: "warning",
-            description: "Issue Gaining Exposure, new Reactions",
-          });
+        async (payload) => {
           const { new: notification } = payload;
-          console.log("Reaction Notification Data Now: ", notification);
+          if (notification && Object.keys(notification).length > 0) {
+            const { emoji, user_id } = notification;
+            if (user_id != user?.user_id) {
+              toast({
+                variant: "warning",
+                description: `New ${emoji} Reaction to an Issue Report`,
+              });
+            } else {
+              toast({
+                variant: "warning",
+                description: `Gained 5 Points on your ${emoji} Reaction`,
+              });
+            }
+          }
         },
       )
       .on(
@@ -74,12 +94,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           table: "issue",
         },
         (payload) => {
-          toast({
-            variant: "warning",
-            description: "New Issue Reported, Check it Out!",
-          });
           const { new: notification } = payload;
-          console.log("Issue Notification Data: ", notification);
+          if (notification && Object.keys(notification).length > 0) {
+            const { sentiment, user_id } = notification;
+            if (user_id != user?.user_id) {
+              toast({
+                variant: "warning",
+                description: `${(sentiment == 'Angry') ? 'An ' : 'A '} ${sentiment} User Created a New Issue Report`,
+              });
+            } else {
+              toast({
+                variant: "warning",
+                description: `Gained 20 Points for Reporting an Issue`,
+              });
+            }
+          }
         },
       )
       .subscribe((status) => {
@@ -105,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       )}
       <div className={`fixed inset-y-0 left-0 z-30 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
         <div className="lg:hidden absolute top-4 right-4">
-          <button onClick={onClose} className="p-2">
+          <button onClick={onClose} className="p-2" title="Close">
             <XIcon className="h-6 w-6" />
           </button>
         </div>

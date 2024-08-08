@@ -112,6 +112,13 @@ interface LocationType {
     lng: number;
   };
 }
+interface ReactionNotification {
+  created_at: string;
+  emoji: string;
+  issue_id: number;
+  reaction_id: number;
+  user_id: string;
+}
 
 interface Issue {
   issue_id: number;
@@ -389,5 +396,6 @@ export type {
   MulterFile,
   Location,
   SubsParams,
-  Resolution
+  Resolution,
+  ReactionNotification
 };
