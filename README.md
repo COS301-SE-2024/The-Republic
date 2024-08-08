@@ -42,12 +42,12 @@ The documentation provides different versions and progress for each demo, guidin
 ## Links to the Latest Documentation of the Project
 
 - [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
-- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion2.md)
+- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion3.md)
 - [Delivery Specification](./documentation/specifications/DeliverySpecificationVersion2.md)
-- [Testing Specification](./documentation/specifications/TestingSpecificationVersion2.md)
-- [User Manual](./documentation/specifications/UserManualVersion2.md)
-- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion2.md)
-- [API / Services Contract](./specifications/APISpecificationVersion2.md)
+- [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
+- [User Manual](./documentation/specifications/UserManualVersion3.md)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion3.md)
+
 
 
 <h1 align="center">Meet The Infinite Loopers!</h1>
