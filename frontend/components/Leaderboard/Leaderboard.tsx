@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Loader2 } from "lucide-react";
 import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
@@ -10,6 +9,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import ErrorDisplay from '@/components/ui/error_display';
 
 type RankingType = 'country' | 'province' |'city' | 'suburb';
 
@@ -91,33 +91,25 @@ const Leaderboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[65vh] mt-10">
-        <h4 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Leaderboard data unavailable</h4>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Please check your internet connection. Reload the page if the iissue persists or try login again.</p>
-        <Link href="/login" className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
-          Login Here
-          <svg className="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-          </svg>
-        </Link>
-      </div>
+      <ErrorDisplay
+        title="Leaderboard data unavailable"
+        message="Please check your internet connection. Reload the page if the issue persists or try logging in again."
+        linkHref="/login"
+        linkText="Login Here"
+      />
     );
   }
-
+  
   if (!userData) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[65vh] mt-10">
-        <h4 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">No user data available</h4>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">You need to be logged in to view leaderboard information. Create an account or login to an existing account.</p>
-        <Link href="/login" className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
-          Login Here
-          <svg className="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-          </svg>
-        </Link>
-      </div>
+      <ErrorDisplay
+        title="No user data available"
+        message="You need to be logged in to view leaderboard information. Create an account or log in to an existing account."
+        linkHref="/login"
+        linkText="Login Here"
+      />
     );
-  }
+  }  
 
   return (
     <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>

@@ -382,6 +382,13 @@ interface CommentListProps2 {
   showComments?: boolean;
 }
 
+interface ErrorDisplayProps {
+  title: string;
+  message: string;
+  linkHref: string;
+  linkText: string;
+}
+
 export type {
   AnalysisResult,
   FeedProps,
@@ -420,5 +427,6 @@ export type {
   Resolution,
   ReactionNotification,
   CommentNotification,
-  NotificationType
+  NotificationType,
+  ErrorDisplayProps
 };
