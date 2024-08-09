@@ -32,6 +32,9 @@ import { fetchResolutionsForIssue } from "@/lib/api/fetchResolutionsForIssue";
 import { checkUserIssuesInCluster } from "@/lib/api/checkUserIssuesInCluster";
 import { fetchUserIssueInCluster } from "@/lib/api/fetchUserIssueInCluster";
 import MapModal from "@/components/MapModal/MapModal";
+import { Sparkles as Star } from "lucide-react";
+import { fetchRelatedIssues } from "@/lib/api/fetchRelatedIssues";
+import RelatedIssuesModal from "@/components/RelatedIssuesModal/RelatedIssuesModal"
 
 
 const Issue: React.FC<IssueProps> = ({
@@ -54,6 +57,27 @@ const Issue: React.FC<IssueProps> = ({
   const [resolutionTime, setResolutionTime] = useState<Date | null>(issue.resolved_at ? new Date(issue.resolved_at) : null);
   const [isResolutionResponseLoading, setIsResolutionResponseLoading] = useState(false);
   const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
+  const [isRelatedIssuesModalOpen, setIsRelatedIssuesModalOpen] = useState(false);
+  const [relatedIssues, setRelatedIssues] = useState<IssueProps['issue'][]>([]);
+  const [hasRelatedIssues, setHasRelatedIssues] = useState(false);
+
+  const fetchRelatedIssuesData = async () => {
+    if (user && issue.cluster_id) {
+      try {
+        const fetchedIssues = await fetchRelatedIssues(user, issue.issue_id);
+        const filteredIssues = fetchedIssues.filter(relatedIssue => relatedIssue.issue_id !== issue.issue_id);
+        setRelatedIssues(filteredIssues);
+        setHasRelatedIssues(filteredIssues.length > 0);
+      } catch (error) {
+        console.error("Failed to fetch related issues:", error);
+        toast({ variant: "destructive", description: "Failed to fetch related issues" });
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchRelatedIssuesData();
+  }, []);
 
   useEffect(() => {
     const fetchResolutions = async () => {
@@ -365,6 +389,16 @@ const Issue: React.FC<IssueProps> = ({
               </div>
             </div>
             <div className="flex items-start space-x-2">
+              {hasRelatedIssues && (
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center p-2 rounded-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white hover:from-purple-500 hover:via-pink-600 hover:to-red-600 focus:outline-none transition-all duration-300 ease-in-out transform hover:scale-105"
+                  onClick={() => setIsRelatedIssuesModalOpen(true)}
+                  title="View Related Issues"
+                >
+                  <Star className="h-5 w-5" aria-hidden="true" />
+                </button>
+              )}
               <div className="relative inline-block text-left">
                 <div>
                   <button
@@ -527,6 +561,11 @@ const Issue: React.FC<IssueProps> = ({
           }
         />
       )}
+      <RelatedIssuesModal
+        isOpen={isRelatedIssuesModalOpen}
+        onClose={() => setIsRelatedIssuesModalOpen(false)}
+        relatedIssues={relatedIssues}
+      />
     </>
   );
 };

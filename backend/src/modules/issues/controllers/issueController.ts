@@ -216,3 +216,23 @@ export const deleteResolution = async (req: Request, res: Response) => {
     handleError(res, err);
   }
 };
+
+export const getRelatedIssues = async (req: Request, res: Response) => {
+  try {
+    const { issueId } = req.body;
+    const userId = req.body?.user_id;
+
+    if (!userId) {
+      return sendResponse(res, APIError({
+        code: 401,
+        success: false,
+        error: "Unauthorized",
+      }));
+    }
+
+    const response = await issueService.getRelatedIssues(parseInt(issueId), userId);
+    sendResponse(res, response);
+  } catch (err) {
+    handleError(res, err);
+  }
+};
