@@ -15,14 +15,20 @@ const app = express();
 
 app.use(express.json());
 
+const allowedOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:3000";
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization",
   );
-  next();
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
 app.use(serverMiddleare);
