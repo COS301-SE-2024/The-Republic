@@ -60,6 +60,7 @@ const Issue: React.FC<IssueProps> = ({
   const [isRelatedIssuesModalOpen, setIsRelatedIssuesModalOpen] = useState(false);
   const [relatedIssues, setRelatedIssues] = useState<IssueProps['issue'][]>([]);
   const [hasRelatedIssues, setHasRelatedIssues] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(true);
 
   const fetchRelatedIssuesData = async () => {
     if (user && issue.cluster_id) {
@@ -304,6 +305,14 @@ const Issue: React.FC<IssueProps> = ({
     checkCanRespond();
   }, [isOwner, user, issue.cluster_id]);
 
+  useEffect(() => {
+    if (resolutionTime && !isOwner) {
+      setShowMoreMenu(false);
+    } else {
+      setShowMoreMenu(true);
+    }
+  }, [resolutionTime, isOwner]);
+
   const menuItems = isOwner ? ["Delete"] : [];
   if (!resolutionTime && !issue.hasPendingResolution) {
     menuItems.push("Resolve Issue");
@@ -445,7 +454,7 @@ const Issue: React.FC<IssueProps> = ({
                   </div>
                 )}
               </div>
-              {!isLoading && (
+              {!isLoading && showMoreMenu && menuItems.length > 0 && (
                 <MoreMenu
                   menuItems={menuItems}
                   isOwner={isOwner}

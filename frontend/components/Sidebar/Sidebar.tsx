@@ -193,10 +193,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             }
           }
         },
-      );
-      // .subscribe((status) => {
-      //   // console.log("Subscription Result: ", status);
-      // });
+      )
+      .subscribe((status) => {
+        console.log("Subscription Result: ", status);
+      });
 
     return () => {
       channelA.unsubscribe();
