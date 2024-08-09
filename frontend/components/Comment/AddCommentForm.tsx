@@ -50,10 +50,6 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
       setContent("");
       setIsAnonymous(false);
 
-      toast({
-        description: "Comment posted successfully",
-      });
-
       onCommentAdded(responseData);
     },
     onError: (error) => {
