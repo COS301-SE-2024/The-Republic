@@ -2,6 +2,8 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { SubsParams } from "@/types/subscriptions";
 import { APIError } from "@/types/response";
 
+import { Notification } from "@/types/subscriptions";
+
 export default class SubscriptionsRepository {
   async issueSubscriptions({
     user_id,
@@ -16,20 +18,21 @@ export default class SubscriptionsRepository {
     }
 
     const { data: selectData, error: selectError } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', user_id)
-      .single();
-  
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', user_id)
+    .single();
+
     if (selectData && !selectError) {
-      if (selectData.issues.includes(issue_id)) {
+      if (selectData.issues.includes(issue_id?.toString())) {
         const updatedIssues = selectData.issues.filter((issue: string) => issue !== issue_id);
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ issues: updatedIssues })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedIssues) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -45,9 +48,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ issues: updatedIssues })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedIssues) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -103,14 +107,15 @@ export default class SubscriptionsRepository {
       .single();
   
     if (selectData && !selectError) {
-      if (selectData.categories.includes(category_id)) {
+      if (selectData.categories.includes(category_id?.toString())) {
         const updatedCategories = selectData.categories.filter((category: string) => category !== category_id);
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ categories: updatedCategories })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedCategories) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -126,9 +131,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ categories: updatedCategories })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedCategories) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -176,14 +182,15 @@ export default class SubscriptionsRepository {
       .single();
 
     if (selectData && !selectError) {
-      if (selectData.locations.includes(location_id)) {
+      if (selectData.locations.includes(location_id?.toString())) {
         const updatedlocations = selectData.locations.filter((location: string) => location !== location_id);
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ locations: updatedlocations })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
 
-        if (!updatedlocations) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -199,9 +206,10 @@ export default class SubscriptionsRepository {
         const { data: updateData, error: updateError } = await supabase
           .from('subscriptions')
           .update({ locations: updatedlocations })
-          .eq('user_id', user_id);
+          .eq('user_id', user_id)
+          .select();
         
-        if (!updatedlocations) {
+        if (updateError || !updateData) {
           console.error(updateError);
           console.error(updateData);
           throw APIError({
@@ -254,5 +262,135 @@ export default class SubscriptionsRepository {
     };
 
     return result;
+  }
+
+
+  async getNotifications({
+    user_id
+  } : Partial<SubsParams>) {    
+    const subscriptions = await this.getSubscriptions({ user_id });
+    if (!subscriptions) {
+      console.error('Failed to retrieve subscriptions');
+      return [];
+    }
+    
+    const { issues: subIssues, categories: subCategories, locations: subLocations } = subscriptions;
+    const { data: issueData, error: issueError } = await supabase
+      .from('issue')
+      .select(`
+        issue_id,
+        user_id,
+        location_id,
+        category_id,
+        content,
+        is_anonymous,
+        created_at,
+        sentiment,
+        comment (
+          content,
+          is_anonymous,
+          created_at
+        ),
+        reaction (
+          emoji,
+          created_at
+        ),
+        resolution (
+          resolution_text,
+          status,
+          created_at
+        )
+      `);
+
+    if (issueError) {
+      console.error('Error fetching issue data:', issueError);
+      return [];
+    }
+
+    const { data: pointsData, error: pointsError } = await supabase
+      .from('points_history')
+      .select(`
+        user_id,
+        action,
+        points,
+        created_at
+      `);
+
+    if (pointsError) {
+      console.error('Error fetching points history:', pointsError);
+      return [];
+    }
+
+    const filteredNotifications: Notification[] = [];
+
+    issueData.forEach(issue => {
+      if (subIssues.includes(issue.issue_id?.toString()) || subCategories.includes(issue.category_id?.toString()) || subLocations.includes(issue.location_id?.toString())) {
+        filteredNotifications.push({
+          type: 'issue',
+          content: issue.content,
+          issue_id: issue.issue_id,
+          category: issue.category_id,
+          location: issue.location_id,
+          created_at: issue.created_at
+        });
+
+        if (issue.comment) {
+          issue.comment.forEach(comment => {
+            if (subIssues.includes(issue.issue_id?.toString())) {
+              filteredNotifications.push({
+                type: 'comment',
+                content: comment.content,
+                issue_id: issue.issue_id,
+                category: issue.category_id,
+                location: issue.location_id,
+                created_at: comment.created_at
+              });
+            }
+          });
+        }
+
+        if (issue.reaction) {
+          issue.reaction.forEach(reaction => {
+            if (subIssues.includes(issue.issue_id?.toString())) {
+              filteredNotifications.push({
+                type: 'reaction',
+                content: `reacted with ${reaction.emoji}`,
+                issue_id: issue.issue_id,
+                category: issue.category_id,
+                location: issue.location_id,
+                created_at: reaction.created_at
+              });
+            }
+          });
+        }
+
+        if (issue.resolution) {
+          issue.resolution.forEach(resolution => {
+            if (subIssues.includes(issue.issue_id?.toString())) {
+              filteredNotifications.push({
+                type: 'resolution',
+                content: `Your ${resolution.resolution_text}`,
+                issue_id: issue.issue_id,
+                category: issue.category_id,
+                location: issue.location_id,
+                created_at: resolution.created_at
+              });
+            }
+          });
+        }
+      }
+    });
+
+    pointsData.forEach(points => {
+      if (points.user_id === user_id) {
+        filteredNotifications.push({
+          type: 'points',
+          content: `You earned ${points.points} points, because you ${points.action}.`,
+          created_at: points.created_at
+        });
+      }
+    });      
+      
+    return filteredNotifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
 }

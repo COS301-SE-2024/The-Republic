@@ -49,7 +49,7 @@ export class ResolutionService {
       status = 'accepted';
       await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
       await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, [resolution.resolver_id]);
-      await this.pointsService.awardPoints(resolution.resolver_id, 70, "Self-resolution logged and accepted");
+      await this.pointsService.awardPoints(resolution.resolver_id, 70, "self-resolution logged and accepted");
     }
 
     const clusterIssues = clusterId ? await this.issueRepository.getIssuesInCluster(clusterId) : [issue];
@@ -153,9 +153,9 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
     await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
 
     if (resolution.resolution_source === 'self') {
-      await this.pointsService.awardPoints(resolution.resolver_id, 50, "Self-resolution accepted");
+      await this.pointsService.awardPoints(resolution.resolver_id, 50, "self-resolution accepted");
     } else {
-      await this.pointsService.awardPoints(resolution.resolver_id, 100, "External resolution accepted");
+      await this.pointsService.awardPoints(resolution.resolver_id, 100, "external resolution accepted");
     }
 
     await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
@@ -177,7 +177,7 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
       const majority = Math.ceil(resolution.num_cluster_members / 2);
 
       if (totalResponses === resolution.num_cluster_members || resolution.num_cluster_members_rejected > majority) {
-        await this.pointsService.penalizeUser(resolution.resolver_id, 50, "External resolution rejected");
+        await this.pointsService.penalizeUser(resolution.resolver_id, 50, "external resolution rejected");
       }
     }
 

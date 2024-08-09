@@ -9,5 +9,6 @@ router.post("/issue", subscriptionsController.issueSubscriptions);
 router.post("/category", subscriptionsController.categorySubscriptions);
 router.post("/location", subscriptionsController.locationSubscriptions);
 router.post("/subscriptions", subscriptionsController.getSubscriptions);
+router.post("/notifications", subscriptionsController.getNotifications);
 
 export default router;

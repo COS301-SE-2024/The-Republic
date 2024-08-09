@@ -52,10 +52,6 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
       );
 
       if (response.ok) {
-        toast({
-          description: "Comment deleted successfully",
-        });
-
         onCommentDeleted(comment);
       } else {
         const responseData = await response.json();

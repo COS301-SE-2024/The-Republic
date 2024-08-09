@@ -208,8 +208,8 @@ describe("IssueService", () => {
       // Wait for any pending promises to resolve
       await new Promise(process.nextTick);
 
-      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "Created first issue");
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "Created first issue");
+      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "created first issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "created first issue");
       expect(response.data).toEqual(createdIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledWith(newIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);

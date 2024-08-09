@@ -45,7 +45,7 @@ describe("ReactionService", () => {
         newReaction as Reaction,
       );
 
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "Reacted to an issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "reacted to an issue");
 
       expect(response.data).toEqual({
         added: "👍",

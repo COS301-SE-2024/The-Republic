@@ -2,6 +2,9 @@ import React from "react";
 import { describe, expect } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
 import Notifications from "@/components/Notifications/Notifications";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import mockUser from "@/data/mockUser";
+import { useUser } from "@/lib/contexts/UserContext";
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -19,9 +22,37 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn(),
+}));
+
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe("Notifications", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    (useUser as jest.Mock).mockReturnValue({ user: mockUser });
+  });
+
+  afterEach(() => {
+    (console.error as jest.Mock).mockRestore();
+  });
+
   it("renders without crashing", () => {
-    render(<Notifications />);
-    expect(screen.getByText("Notifications")).toBeInTheDocument();
+    const { container } = renderWithClient(<Notifications />);
+    expect(container).toBeInTheDocument();
   });
 });

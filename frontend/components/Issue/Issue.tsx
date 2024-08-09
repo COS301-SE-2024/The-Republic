@@ -74,7 +74,6 @@ const Issue: React.FC<IssueProps> = ({
       createSelfResolution(user!, issue.issue_id, data.resolutionText, data.proofImage),
     onSuccess: (response) => {
       const resolvedIssue = response;
-      //console.log(resolvedIssue);
       queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
       if (resolvedIssue) {
         onResolveIssue!(issue, resolvedIssue);
