@@ -34,7 +34,7 @@ import { fetchUserIssueInCluster } from "@/lib/api/fetchUserIssueInCluster";
 import MapModal from "@/components/MapModal/MapModal";
 import { Sparkles as Star } from "lucide-react";
 import { fetchRelatedIssues } from "@/lib/api/fetchRelatedIssues";
-import RelatedIssuesModal from "@/components/RelatedIssuesModal/RelatedIssuesModal"
+import RelatedIssuesModal from "@/components/RelatedIssuesModal/RelatedIssuesModal";
 
 
 const Issue: React.FC<IssueProps> = ({

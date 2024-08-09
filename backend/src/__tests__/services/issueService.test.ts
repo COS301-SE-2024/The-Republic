@@ -367,6 +367,7 @@ describe("IssueService", () => {
   it("should use existing location if it already exists", async () => {
     const newIssue: Partial<Issue> = {
       user_id: "1",
+      location_id: 1,
       location_data: {
         province: "Province",
         city: "City",
@@ -421,14 +422,6 @@ describe("IssueService", () => {
       profile_user_id: "0",
     };
 
-    locationRepository.getLocationByPlacesId.mockResolvedValue({
-      location_id: 1,
-      province: "Province",
-      city: "City",
-      suburb: "Suburb",
-      district: "District",
-      place_id: "place_id",
-    });
 
     issueRepository.createIssue.mockResolvedValue(createdIssue);
     jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({
