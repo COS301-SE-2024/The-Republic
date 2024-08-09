@@ -179,13 +179,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           const { new: notification } = payload;
 
           if (notification && Object.keys(notification).length > 0) {
-            const { sentiment, user_id } = notification as Partial<Issue>;
+            const { user_id } = notification as Partial<Issue>;
             if (user_id !== user?.user_id) {
-              toast({
-                variant: "warning",
-                description: `${(sentiment == 'Angry') ? 'An ' : 'A '} ${sentiment} User Created a New Issue Report`,
-              });
-            } else {
               toast({
                 variant: "warning",
                 description: `Gained 20 Points for Reporting an Issue`,
