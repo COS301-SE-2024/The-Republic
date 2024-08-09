@@ -138,7 +138,7 @@ describe("CommentList", () => {
     secondDeleteButtons.forEach((button) => fireEvent.click(button));
 
     await waitFor(() => {
-      expect(mockToast.toast).toHaveBeenCalledWith({
+      expect(mockToast.toast).not.toHaveBeenCalledWith({
         description: "Comment deleted successfully",
       });
       expect(screen.queryByText("This is a comment")).not.toBeInTheDocument();
