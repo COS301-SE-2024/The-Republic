@@ -21,6 +21,9 @@ import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 import { ReactionNotification, CommentNotification, Issue } from "@/lib/types";
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
+import { fetchUserData } from '@/lib/api/fetchUserData';
+import { useRouter } from 'next/navigation';
 
 interface SidebarProps extends HomeAvatarProps {
   isOpen: boolean;
@@ -31,8 +34,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useUser();
   const { toast } = useToast();
   const [showLogout, setShowLogout] = useState(false);
+  const router = useRouter();
+
+  const navigateToIssue = (issueId: number) => {
+    router.push(`/issues/${issueId}`);
+  };
+  
 
   useEffect(() => {
+    if (!user) return;
+
     const channelA = supabase
       .channel("schema-db-changes")
       .on(
@@ -42,18 +53,55 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           schema: "public",
           table: "comment",
         },
-        (payload) => {
+        async (payload) => {
           const { new: notification } = payload;
-          console.log("New Comment notification:", notification);
+          // console.log("New Comment notification:", notification);
           if (notification && Object.keys(notification).length > 0) {
-            console.log("Comments Flooding for a Reported Issue: ", notification);
-            const { parent_id, is_anonymous, user_id } = notification as CommentNotification;
-            if (user_id != user?.user_id) {
+            // console.log("Comments Flooding for a Reported Issue: ", notification);
+            const { parent_id, is_anonymous, user_id, issue_id } = notification as CommentNotification;
+            
+            // Fetch the issue to check if it belongs to the current user
+            const { data: issueData, error: issueError } = await supabase
+              .from('issue')
+              .select('user_id')
+              .eq('issue_id', issue_id)
+              .single();
+
+            if (issueError) {
+              console.error("Error fetching issue:", issueError);
+              return;
+            }
+
+            if (issueData.user_id === user.user_id && user_id !== user.user_id) {
+              let commenterInfo = null;
+              if (!is_anonymous) {
+                commenterInfo = await fetchUserData(user_id);
+              }
+
               toast({
                 variant: "warning",
-                description: `New ${is_anonymous ? 'Anonymous ' : ''}Comment on ${parent_id != null ? 'a Comment' : 'an Issue'}`,
+                description: (
+                  <div 
+                    className="flex items-center cursor-pointer" 
+                    onClick={() => navigateToIssue(Number(issue_id))}
+                  >
+                    {commenterInfo ? (
+                      <UserAvatarWithScore
+                        imageUrl={commenterInfo.image_url}
+                        username={commenterInfo.username}
+                        score={commenterInfo.user_score}
+                        className="mr-2 w-8 h-8"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 mr-2 bg-gray-300 rounded-full"></div>
+                    )}
+                    <span>
+                      {commenterInfo ? commenterInfo.username : "Someone"} commented on your issue
+                    </span>
+                  </div>
+                ),
               });
-            } else {
+            } else if (user_id === user.user_id) {
               toast({
                 variant: "warning",
                 description: `Gained 10 Points for leaving a Comment on an Issue`,
@@ -72,13 +120,46 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         async (payload) => {
           const { new: notification } = payload;
           if (notification && Object.keys(notification).length > 0) {
-            const { emoji, user_id } = notification as ReactionNotification;
-            if (user_id != user?.user_id) {
+            const { emoji, user_id, issue_id } = notification as ReactionNotification;
+            
+            const { data: issueData, error: issueError } = await supabase
+              .from('issue')
+              .select('user_id')
+              .eq('issue_id', issue_id)
+              .single();
+
+            if (issueError) {
+              console.error("Error fetching issue:", issueError);
+              return;
+            }
+
+            if (issueData.user_id === user.user_id && user_id !== user.user_id) {
+              const reactorInfo = await fetchUserData(user_id);
+
               toast({
                 variant: "warning",
-                description: `New ${emoji} Reaction to an Issue Report`,
+                description: (
+                  <div 
+                    className="flex items-center cursor-pointer" 
+                    onClick={() => navigateToIssue(issue_id)}
+                  >
+                    {reactorInfo ? (
+                      <UserAvatarWithScore
+                        imageUrl={reactorInfo.image_url}
+                        username={reactorInfo.username}
+                        score={reactorInfo.user_score}
+                        className="mr-2 w-8 h-8"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 mr-2 bg-gray-300 rounded-full"></div>
+                    )}
+                    <span>
+                      {reactorInfo ? reactorInfo.username : "Someone"} reacted with {emoji} to your issue
+                    </span>
+                  </div>
+                ),
               });
-            } else {
+            } else if (user_id === user.user_id) {
               toast({
                 variant: "warning",
                 description: `Gained 5 Points on your ${emoji} Reaction`,
@@ -96,10 +177,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         },
         (payload) => {
           const { new: notification } = payload;
-          console.log("New Issue notification:", notification);
+
           if (notification && Object.keys(notification).length > 0) {
             const { sentiment, user_id } = notification as Partial<Issue>;
-            if (user_id != user?.user_id) {
+            if (user_id !== user?.user_id) {
               toast({
                 variant: "warning",
                 description: `${(sentiment == 'Angry') ? 'An ' : 'A '} ${sentiment} User Created a New Issue Report`,
@@ -114,13 +195,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         },
       )
       .subscribe((status) => {
-        console.log("Subscription Result: ", status);
+        // console.log("Subscription Result: ", status);
       });
 
     return () => {
       channelA.unsubscribe();
     };
-  }, []);
+  }, [user]);
 
   const toggleLogout = () => {
     setShowLogout((prev) => !prev);

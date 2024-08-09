@@ -59,8 +59,8 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       proofImage,
       resolutionSource,
       resolvedBy: resolutionSource === 'other' ? resolvedBy : undefined,
-      politicalAssociation: resolutionSource !== 'unknown' ? politicalAssociation : undefined,
-      stateEntityAssociation: !isSelfResolution ? stateEntityAssociation : undefined,
+      politicalAssociation: resolutionSource === 'self' ? politicalAssociation : undefined,
+      stateEntityAssociation: resolutionSource === 'self' ? stateEntityAssociation : undefined,
     });
     if (!isLoading) {
       resetForm();
@@ -99,9 +99,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => { onClose(); resetForm(); }}>
-      <DialogContent className={cn(
-        "bg-card"
-      )}>
+      <DialogContent className={cn("bg-card")}>
         <DialogHeader>
           <DialogTitle>Resolve Issue</DialogTitle>
         </DialogHeader>
@@ -149,7 +147,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
             />
           </div>
 
-          {!isSelfResolution && resolutionSource !== 'unknown' && (
+          {resolutionSource === 'self' && (
             <>
               <div>
                 <Label htmlFor="politicalAssociation">Political Association (optional)</Label>
