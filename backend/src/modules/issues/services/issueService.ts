@@ -202,9 +202,9 @@ export default class IssueService {
 
     this.processIssueAsync(createdIssue.issue_id);
 
-    const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "Created first issue");
+    const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "created first issue");
     const points = isFirstIssue ? 50 : 20;
-    await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "Created first issue" : "Created an issue");
+    await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "created first issue" : "created an issue");
 
     return await this.getIssueById({
       issue_id: createdIssue.issue_id,

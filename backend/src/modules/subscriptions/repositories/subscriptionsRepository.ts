@@ -354,7 +354,7 @@ export default class SubscriptionsRepository {
             if (subIssues.includes(issue.issue_id?.toString())) {
               filteredNotifications.push({
                 type: 'reaction',
-                content: `Reacted with ${reaction.emoji}`,
+                content: `reacted with ${reaction.emoji}`,
                 issue_id: issue.issue_id,
                 category: issue.category_id,
                 location: issue.location_id,
@@ -369,7 +369,7 @@ export default class SubscriptionsRepository {
             if (subIssues.includes(issue.issue_id?.toString())) {
               filteredNotifications.push({
                 type: 'resolution',
-                content: resolution.resolution_text,
+                content: `Your ${resolution.resolution_text}`,
                 issue_id: issue.issue_id,
                 category: issue.category_id,
                 location: issue.location_id,
@@ -385,7 +385,7 @@ export default class SubscriptionsRepository {
       if (points.user_id === user_id) {
         filteredNotifications.push({
           type: 'points',
-          content: `Your earned ${points.points} points, Because you/your ${points.action}.`,
+          content: `You earned ${points.points} points, because you ${points.action}.`,
           created_at: points.created_at
         });
       }
