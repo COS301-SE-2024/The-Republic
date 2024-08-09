@@ -3,6 +3,11 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect } from "@jest/globals";
 import { useUser } from "@/lib/contexts/UserContext";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import { useRouter } from 'next/navigation';
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}));
 
 jest.mock("@supabase/supabase-js", () => ({
   createClient: jest.fn().mockReturnValue({
@@ -34,7 +39,11 @@ describe("Sidebar", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, "error").mockImplementation(() => {});
+    (useRouter as jest.Mock).mockReturnValue({
+      push: jest.fn(),
+    });
   });
+  
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
