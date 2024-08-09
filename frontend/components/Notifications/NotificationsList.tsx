@@ -1,178 +1,121 @@
-// components/Notifications/NotificationsList.tsx
 "use client";
 
 import React from "react";
+import { Loader2 } from "lucide-react";
+import Link from 'next/link';
 import { Card, CardContent } from "@/components/ui/card";
-import { ThumbsUp, MessageSquare, CheckCircle, Plus } from "lucide-react";
+import { ThumbsUp, MessageSquare, CheckCircle, Plus, Trophy } from "lucide-react";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { subscribe } from "@/lib/api/subscription";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/lib/contexts/UserContext";
 
-export type NotificationType = "reaction" | "comment" | "resolve" | "newIssue";
+import type { NotificationType } from "@/lib/types";
 
-export interface User {
-  id: string;
-  name: string;
-}
+const LoadingIndicator = () => (
+  <div className="flex justify-center items-center h-32">
+    <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+  </div>
+);
 
-export interface Issue {
-  id: string;
-  title: string;
-}
+export type Notification = "reaction" | "comment" | "resolution" | "issue" | "points";
 
-export interface Notification {
-  id: string;
-  type: NotificationType;
-  user: User;
-  issue: Issue;
-  createdAt: string;
-}
-
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "newIssue",
-    user: { id: "user1", name: "Thabo Mbeki" },
-    issue: { id: "issue1", title: "Pothole on Nelson Mandela Drive, Pretoria" },
-    createdAt: "2024-06-09T08:00:00Z",
-  },
-  {
-    id: "2",
-    type: "comment",
-    user: { id: "user2", name: "Nkosazana Dlamini-Zuma" },
-    issue: {
-      id: "issue2",
-      title: "Streetlight out on Desmond Tutu Street, Cape Town",
-    },
-    createdAt: "2024-06-09T07:30:00Z",
-  },
-  {
-    id: "3",
-    type: "resolve",
-    user: { id: "user3", name: "Johannesburg City Worker" },
-    issue: { id: "issue1", title: "Pothole on Nelson Mandela Drive, Pretoria" },
-    createdAt: "2024-06-09T06:00:00Z",
-  },
-  {
-    id: "4",
-    type: "newIssue",
-    user: { id: "user4", name: "Charlize Theron" },
-    issue: { id: "issue3", title: "Load shedding in Soweto, Johannesburg" },
-    createdAt: "2024-06-08T13:00:00Z",
-  },
-  {
-    id: "5",
-    type: "reaction",
-    user: { id: "user5", name: "Siya Kolisi" },
-    issue: {
-      id: "issue4",
-      title: "Rugby field maintenance needed in East London",
-    },
-    createdAt: "2024-06-08T10:00:00Z",
-  },
-  {
-    id: "6",
-    type: "newIssue",
-    user: { id: "user6", name: "Caster Semenya" },
-    issue: {
-      id: "issue5",
-      title: "Athletics track renovation required in Polokwane",
-    },
-    createdAt: "2024-06-07T18:00:00Z",
-  },
-  {
-    id: "7",
-    type: "comment",
-    user: { id: "user7", name: "Trevor Noah" },
-    issue: {
-      id: "issue6",
-      title: "Need more recycling bins in Durban beachfront",
-    },
-    createdAt: "2024-06-07T15:30:00Z",
-  },
-  {
-    id: "8",
-    type: "resolve",
-    user: { id: "user8", name: "Cape Town Water Management" },
-    issue: {
-      id: "issue7",
-      title: "Water conservation plan for drought in Western Cape",
-    },
-    createdAt: "2024-06-07T12:00:00Z",
-  },
-  {
-    id: "9",
-    type: "newIssue",
-    user: { id: "user9", name: "Rolene Strauss" },
-    issue: { id: "issue8", title: "Clinic renovation needed in Bloemfontein" },
-    createdAt: "2024-06-06T09:00:00Z",
-  },
-  {
-    id: "10",
-    type: "reaction",
-    user: { id: "user10", name: "Patrice Motsepe" },
-    issue: {
-      id: "issue9",
-      title: "Solar panel installation for schools in Limpopo",
-    },
-    createdAt: "2024-06-05T14:00:00Z",
-  },
-];
-
-const getNotificationIcon = (type: NotificationType): JSX.Element => {
+const getNotificationIcon = (type: Notification): JSX.Element => {
   switch (type) {
     case "reaction":
       return <ThumbsUp className="h-5 w-5" />;
     case "comment":
       return <MessageSquare className="h-5 w-5" />;
-    case "resolve":
+    case "resolution":
       return <CheckCircle className="h-5 w-5" />;
-    case "newIssue":
+    case "issue":
       return <Plus className="h-5 w-5" />;
-  }
+    case "points":
+      return <Trophy className="h-5 w-5" />;
+    }
 };
 
-const formatRelativeTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSecs = Math.round(diffMs / 1000);
-  const diffMins = Math.round(diffSecs / 60);
-  const diffHours = Math.round(diffMins / 60);
-  const diffDays = Math.round(diffHours / 24);
+const getNotificationLink = (type: string, id: string = "") => {
+  const linkMap: { [key: string]: string } = {
+    points: "/leaderboard",
+    resolution: `/issues/${id}`,
+    issue: `/issues/${id}`,
+    reaction: `/issues/${id}`,
+    comment: `/issues/${id}`,
+  };
 
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-
-  if (diffSecs < 60) return rtf.format(-diffSecs, "second");
-  if (diffMins < 60) return rtf.format(-diffMins, "minute");
-  if (diffHours < 24) return rtf.format(-diffHours, "hour");
-  return rtf.format(-diffDays, "day");
+  return linkMap[type] || "/";
 };
 
 const NotificationsList: React.FC = () => {
+  const { user } = useUser();
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscriptions/notifications`;
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: [`notifications_page`, user, url],
+    queryFn: () => subscribe(user, { user_id: ((user != null) ? user.user_id : "no-request")}, url),
+    enabled: true,
+  });
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
+  if (!data || isError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[65vh] mt-10">
+        <h4 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">No Notifications</h4>
+        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">You currently have no notifications. Once you receive notifications, they will appear here.</p>
+        <Link href="/" className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+          View Issues
+          <svg className="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+          </svg>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <Card>
       <CardContent className="p-0">
-        <ul className="divide-y divide-gray-200">
-          {mockNotifications.map((notification) => (
+        <ul className="divide-y divide-gray-700">
+          {(data as NotificationType[]).map((notification, index) => (
+
             <li
-              key={notification.id}
+              key={index}
               className="flex items-start space-x-3 p-4 hover:bg-gray-50"
             >
-              <div className="flex-shrink-0 mt-1">
-                {getNotificationIcon(notification.type)}
-              </div>
-              <div>
-                <p className="text-sm font-medium">
-                  {notification.user.name}{" "}
-                  {notification.type === "newIssue"
-                    ? "reported"
-                    : notification.type === "reaction"
-                      ? "reacted to"
-                      : notification.type}{" "}
-                  "{notification.issue.title}"
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {formatRelativeTime(notification.createdAt)}
-                </p>
-              </div>
+              <Link
+                href={getNotificationLink(notification.type, (notification.type != "points") ? notification.issue_id : "none")}
+              >
+                <div className="flex-shrink-0 mt-1">
+                  {getNotificationIcon(notification.type as Notification)}
+                </div>
+                <div>
+                  <p className="text-sm font-medium">
+                    {
+                      (notification.type === "points")
+                      ? notification.content :
+                      (notification.type === "resolution")
+                      ? "New resolution logged: " + notification.content:
+                      (notification.type === "issue")
+                      ? "New issue reported: " + notification.content :
+                      (notification.type === "reaction")
+                      ? "Someone " + notification.content + " to an Issue you are involved in." :
+                      (notification.type === "comment")
+                      ? `New comment on an issue you're following: "${notification.content}"` :
+                      `You were mentioned in an Issue, Check it out.`
+                    }
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatRelativeTime(notification.created_at)}
+                  </p>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
