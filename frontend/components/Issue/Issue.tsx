@@ -52,6 +52,8 @@ const Issue: React.FC<IssueProps> = ({
   const [canRespond, setCanRespond] = useState(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [resolutionTime, setResolutionTime] = useState<Date | null>(issue.resolved_at ? new Date(issue.resolved_at) : null);
+  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = useState(false);
+  const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
 
   useEffect(() => {
     const fetchResolutions = async () => {
@@ -122,7 +124,7 @@ const Issue: React.FC<IssueProps> = ({
   });
 
 
-  const handleResolutionSubmit = (resolutionData: {
+  const handleResolutionSubmit = async (resolutionData: {
     resolutionText: string;
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
@@ -130,20 +132,29 @@ const Issue: React.FC<IssueProps> = ({
     politicalAssociation?: string;
     stateEntityAssociation?: string;
   }) => {
-    if (resolutionData.resolutionSource === 'self') {
-      selfResolutionMutation.mutate({
-        resolutionText: resolutionData.resolutionText,
-        proofImage: resolutionData.proofImage || undefined,
-      });
-    } else {
-      externalResolutionMutation.mutate({
-        resolutionText: resolutionData.resolutionText,
-        resolutionSource: resolutionData.resolutionSource as 'unknown' | 'other',
-        resolvedBy: resolutionData.resolvedBy,
-        politicalAssociation: resolutionData.politicalAssociation,
-        stateEntityAssociation: resolutionData.stateEntityAssociation,
-        proofImage: resolutionData.proofImage || undefined,
-      });
+    setIsResolutionSubmitLoading(true);
+    try {
+      if (resolutionData.resolutionSource === 'self') {
+        await selfResolutionMutation.mutateAsync({
+          resolutionText: resolutionData.resolutionText,
+          proofImage: resolutionData.proofImage || undefined,
+        });
+      } else {
+        await externalResolutionMutation.mutateAsync({
+          resolutionText: resolutionData.resolutionText,
+          resolutionSource: resolutionData.resolutionSource as 'unknown' | 'other',
+          resolvedBy: resolutionData.resolvedBy,
+          politicalAssociation: resolutionData.politicalAssociation,
+          stateEntityAssociation: resolutionData.stateEntityAssociation,
+          proofImage: resolutionData.proofImage || undefined,
+        });
+      }
+      setIsResolutionModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", description: "Failed to submit resolution" });
+    } finally {
+      setIsResolutionSubmitLoading(false);
     }
   };
 
@@ -290,31 +301,33 @@ const Issue: React.FC<IssueProps> = ({
   };
 
   const handleResolutionResponse = async (accept: boolean) => {
+    setIsResolutionResponseLoading(true);
     try {
       if (isOwner && issue.pendingResolutionId) {
-        // Owner is responding to the resolution for their own issue
         await respondToResolution(user!, issue.pendingResolutionId, accept);
-        queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
-        toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
-        setIsResolutionResponseModalOpen(false);
       } else if (user && issue.cluster_id) {
-        // Non-owner user is responding to the resolution for their issue in the same cluster
         const userIssue = await fetchUserIssueInCluster(user, issue.cluster_id);
-
         if (userIssue && userIssue.pendingResolutionId) {
           await respondToResolution(user, userIssue.pendingResolutionId, accept);
-          queryClient.invalidateQueries({ queryKey: ['issue', userIssue.issue_id] });
-          toast({ description: accept ? "Resolution accepted for your issue" : "Resolution rejected for your issue" });
-          setIsResolutionResponseModalOpen(false);
-        } else {
-          //console.log("No pending resolution found for the user's issue in the cluster.");
         }
-      } else {
-        //console.log("User cannot respond to the resolution.");
       }
+
+      // Optimistically update the UI
+      if (accept) {
+        setResolutionTime(new Date());
+        issue.hasPendingResolution = false;
+      }
+
+      // Refetch the issue data
+      await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
+
+      toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
+      setIsResolutionResponseModalOpen(false);
     } catch (error) {
       console.error(error);
       toast({ variant: "destructive", description: "Failed to respond to resolution" });
+    } finally {
+      setIsResolutionResponseLoading(false);
     }
   };
 
@@ -435,7 +448,10 @@ const Issue: React.FC<IssueProps> = ({
               <Badge
                 variant="destructive"
                 className="cursor-pointer"
-                onClick={() => setIsResolutionResponseModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsResolutionResponseModalOpen(true);
+                }}
               >
                 Resolution Pending
               </Badge>
@@ -480,6 +496,7 @@ const Issue: React.FC<IssueProps> = ({
         onClose={() => setIsResolutionModalOpen(false)}
         isSelfResolution={isOwner}
         onSubmit={handleResolutionSubmit}
+        isLoading={isResolutionSubmitLoading}
       />
       <ResolutionResponseModal
         isOpen={isResolutionResponseModalOpen}
@@ -487,6 +504,7 @@ const Issue: React.FC<IssueProps> = ({
         onRespond={handleResolutionResponse}
         resolution={resolutions[0]}
         canRespond={canRespond}
+        isLoading={isResolutionResponseLoading}
       />
       {isMapModalOpen && (
         <MapModal

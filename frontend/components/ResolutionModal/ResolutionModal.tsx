@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { Upload, X } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import Image from 'next/image';
 import Dropdown from "@/components/Dropdown/Dropdown"; 
 import { politicalAssociationOptions  } from "@/lib/constants"; 
@@ -30,6 +30,7 @@ interface ResolutionModalProps {
     politicalAssociation?: string;
     stateEntityAssociation?: string;
   }) => void;
+  isLoading: boolean;
 }
 
 const ResolutionModal: React.FC<ResolutionModalProps> = ({
@@ -37,6 +38,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   onClose,
   isSelfResolution,
   onSubmit,
+  isLoading
 }) => {
   const [resolutionText, setResolutionText] = useState('');
   const [proofImage, setProofImage] = useState<File | null>(null);
@@ -50,9 +52,9 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme } = useTheme();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
+    await onSubmit({
       resolutionText,
       proofImage,
       resolutionSource,
@@ -60,7 +62,9 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       politicalAssociation: resolutionSource !== 'unknown' ? politicalAssociation : undefined,
       stateEntityAssociation: !isSelfResolution ? stateEntityAssociation : undefined,
     });
-    resetForm();
+    if (!isLoading) {
+      resetForm();
+    }
   };
 
   const resetForm = () => {
@@ -219,10 +223,11 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Submit Resolution
             </Button>
           </DialogFooter>
