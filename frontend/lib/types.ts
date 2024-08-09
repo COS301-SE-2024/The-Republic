@@ -131,6 +131,15 @@ interface CommentNotification {
   user_id: string;
 }
 
+interface NotificationType {
+  type: string;
+  content: string;
+  issue_id?: string;
+  category?: string;
+  location?: string;
+  created_at: string;
+}
+
 interface Issue {
   issue_id: number;
   user_id: string;
@@ -410,5 +419,6 @@ export type {
   SubsParams,
   Resolution,
   ReactionNotification,
-  CommentNotification
+  CommentNotification,
+  NotificationType
 };
