@@ -8,7 +8,7 @@ import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";
 import { fetchMoreComments } from "@/lib/api/fetchMoreComments";
 
-const FETCH_SIZE = 2;
+const FETCH_SIZE = 10;
 
 const CommentList: React.FC<CommentListProps2> = ({
   issueId,
@@ -23,7 +23,7 @@ const CommentList: React.FC<CommentListProps2> = ({
     if (!user) {
       return [];
     }
-    
+
     return fetchMoreComments(user, from, amount, issueId, parentCommentId);
   };
 
