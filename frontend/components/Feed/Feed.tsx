@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import FilterModal from "@/components/FilterModal/FilterModal";
 import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
-const FETCH_SIZE = 2;
+const FETCH_SIZE = 5;
 
 const Feed: React.FC = () => {
   const { user } = useUser();
