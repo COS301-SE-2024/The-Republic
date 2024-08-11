@@ -62,23 +62,7 @@ const Issue: React.FC<IssueProps> = ({
   const [hasRelatedIssues, setHasRelatedIssues] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(true);
 
-  const fetchRelatedIssuesData = async () => {
-    if (user && issue.cluster_id) {
-      try {
-        const fetchedIssues = await fetchRelatedIssues(user, issue.issue_id);
-        const filteredIssues = fetchedIssues.filter(relatedIssue => relatedIssue.issue_id !== issue.issue_id);
-        setRelatedIssues(filteredIssues);
-        setHasRelatedIssues(filteredIssues.length > 0);
-      } catch (error) {
-        console.error("Failed to fetch related issues:", error);
-        toast({ variant: "destructive", description: "Failed to fetch related issues" });
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchRelatedIssuesData();
-  }, []);
+  
 
   useEffect(() => {
     const fetchResolutions = async () => {
@@ -87,7 +71,6 @@ const Issue: React.FC<IssueProps> = ({
         setResolutions(fetchedResolutions);
       } catch (error) {
         console.error("Failed to fetch resolutions:", error);
-        toast({ variant: "destructive", description: "Failed to fetch resolutions" });
       }
     };
 
@@ -363,6 +346,23 @@ const Issue: React.FC<IssueProps> = ({
       setIsResolutionResponseLoading(false);
     }
   };
+
+  const fetchRelatedIssuesData = async () => {
+    if (user && issue.cluster_id) {
+      try {
+        const fetchedIssues = await fetchRelatedIssues(user, issue.issue_id);
+        const filteredIssues = fetchedIssues.filter(relatedIssue => relatedIssue.issue_id !== issue.issue_id);
+        setRelatedIssues(filteredIssues);
+        setHasRelatedIssues(filteredIssues.length > 0);
+      } catch (error) {
+        console.error("Failed to fetch related issues:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchRelatedIssuesData();
+  }, []);
 
 
 
