@@ -26,7 +26,8 @@
 | Demo   | Video                                                                                                          | Slides                                                                                                                                                                         |
 | ------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Demo 1 | [InfiniteLoopers-Demo1](https://drive.google.com/file/d/1kq7h8HXzmYTXZwq0jo13LooH_8M5kjMx/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGG4_iuy44/iqlGvxp0i5SekCY6Ez_RQA/edit?utm_content=DAGG4_iuy44&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
-| Demo 2 | [InfiniteLoopers-Demo2](https://drive.google.com/file/d/17EW3HTqoN-14ORK8A0OgFcvNDD3qFsIy/view?usp=drive_link)               | [Demo 2 Slides](https://www.canva.com/design/DAGIqTO5pm0/8a0ufCyylomFZPgixK5pjA/view?utm_content=DAGIqTO5pm0&utm_campaign=designshare&utm_medium=link&utm_source=editor)                                                                                                             |
+| Demo 2 | [InfiniteLoopers-Demo2](https://drive.google.com/file/d/17EW3HTqoN-14ORK8A0OgFcvNDD3qFsIy/view?usp=drive_link)               | [Demo 2 Slides](https://www.canva.com/design/DAGIqTO5pm0/8a0ufCyylomFZPgixK5pjA/view?utm_content=DAGIqTO5pm0&utm_campaign=designshare&utm_medium=link&utm_source=editor)  
+| Demo 3 | [InfiniteLoopers-Demo3](https://drive.google.com/file/d/1ncg-2HV6LOdES1L4BKdLpv2B8081rlg-/view?usp=drive_link) | [Demo 3 Slides](https://www.canva.com/design/DAGNGkJM8JA/Jw6P7E72tlVr6HYlEJFXqQ/view?utm_content=DAGNGkJM8JA&utm_campaign=designshare&utm_medium=link&utm_source=editor)                                                                                                           |
 
 </div>
 
@@ -41,11 +42,12 @@ The documentation provides different versions and progress for each demo, guidin
 
 ## Links to the Latest Documentation of the Project
 
+- [User Manual](./documentation/specifications/UserManualVersion3.md)
+- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManual1.md)
 - [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
 - [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion3.md)
 - [Delivery Specification](./documentation/specifications/DeliverySpecificationVersion2.md)
 - [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
-- [User Manual](./documentation/specifications/UserManualVersion3.md)
 - [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion3.md)
 
 

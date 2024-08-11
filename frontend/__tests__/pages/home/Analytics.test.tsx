@@ -23,6 +23,7 @@ describe('Tabs Component', () => {
     const reportsTab = screen.getByText('Reports');
     const visualizationsTab = screen.getByText('Visualizations');
 
+    fireEvent.click(reportsTab);
     expect(reportsTab).toHaveClass('text-green-600');
     expect(visualizationsTab).not.toHaveClass('text-green-600');
 

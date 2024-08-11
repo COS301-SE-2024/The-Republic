@@ -12,14 +12,22 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserAlt | null>(null);
 
-  const { data: userData, isLoading, isError, refetch } = useQuery({
+  const { data: userData, refetch } = useQuery({
     queryKey: ['user_data'],
     queryFn: () => fetchUserData(),
   });
 
   useEffect(() => {
-    if (!isLoading && !isError) {
-      setUser(userData ?? null);
+    const savedUser = localStorage.getItem("savedUser");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      setUser(userData);
+      localStorage.setItem("savedUser", JSON.stringify(userData));
     }
 
     const {
@@ -35,6 +43,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } else if (event === "SIGNED_OUT") {
         Cookies.remove("Authorization");
+        localStorage.removeItem("savedUser");
         setUser(null);
       }
     });
