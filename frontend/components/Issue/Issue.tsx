@@ -71,7 +71,6 @@ const Issue: React.FC<IssueProps> = ({
         setResolutions(fetchedResolutions);
       } catch (error) {
         console.error("Failed to fetch resolutions:", error);
-        toast({ variant: "destructive", description: "Failed to fetch resolutions" });
       }
     };
 

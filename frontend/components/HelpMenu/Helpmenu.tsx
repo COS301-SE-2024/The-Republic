@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircleHelp, Search, Book, Lightbulb, FileText, X, Home, BarChart2, UserCircle, Bell, MapPin, Trophy } from "lucide-react";
+import { CircleHelp, Search, Book, Lightbulb, X, BarChart2, UserCircle, Trophy } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 
