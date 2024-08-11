@@ -369,7 +369,7 @@ const Issue: React.FC<IssueProps> = ({
 
   return (
     <>
-      <Card className="mb-4" id={id}>
+      <Card className="mb-4" id={id} data-testid="issue-item">
         <CardHeader className="place-content-stretch">
           <div className="flex items-start justify-between w-full">
             <div className="flex items-start sm:items-center">
