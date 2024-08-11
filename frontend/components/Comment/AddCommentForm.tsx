@@ -85,6 +85,7 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
           </Avatar>
         )}
         <TextareaAutosize
+          data-testid="comment-input"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="flex-grow p-2 border rounded resize-none bg-background text-foreground dark:bg-background dark:text-foreground"
