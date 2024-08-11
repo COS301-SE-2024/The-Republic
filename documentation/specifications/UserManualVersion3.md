@@ -17,7 +17,8 @@ The Republic is a platform that aims to improve citizen interaction with governm
 7. [Subscription & Filtering](#subscription-and-filtering-back-to-contents)
 8. [Profile Page Manangement](#profile-page-management-back-to-contents)
 9. [Analytics](#analytics-back-to-contents)
-10. [Leaderboard](#Leaderboard-back-to-contents)
+10. [Setting your location](#Setting-your-location-back-to-contents)
+11. [Leaderboard](#Leaderboard-back-to-contents)
 
 ## Signing Up
 
@@ -138,6 +139,21 @@ The analytics page consists of two tabs, the Reports tab whereby you can view di
 
 **3. Click on the different circles on the explorative diagram for more information**<br>
 <img src="../images/User Manual Screenshots/Analytics_4.png"/><br>
+
+
+## Setting your location<br> [Back to contents](#contents)
+
+**1. Navigate to your profile page**<br>
+<img src="../images/User Manual Screenshots/ProfilePagev2.png"/>
+
+**2. Click on Edit Profile**<br>
+<img src="../images/User Manual Screenshots/ProfilePagev2-2.png"/><br>
+
+**3. Click on Update Location**<br>
+<img src="../images/User Manual Screenshots/location_v3.png"/><br>
+
+**4. Choose whether to make use of a pin location or manually type your location**<br>
+<img src="../images/User Manual Screenshots/location2_v3.png"/><br>
 
 ## Leaderboard<br> [Back to contents](#contents)
 The leaderboard showcasses the point systems of the web app. Your ranking and points as well as the ranking and points of the top 10 users are displayed. 
