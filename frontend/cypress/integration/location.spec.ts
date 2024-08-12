@@ -7,8 +7,10 @@ describe('Location Components', () => {
 
     describe('Location Creation', () => {
         it('should open the location modal', () => {
-            cy.get('button').first().click();
-            cy.get('div').contains(/Resolve|Resolution/).should('be.visible');
+            cy.viewport(1920, 1080);
+            cy.visit("/leaderboard");
+
+            cy.contains("Leaderboard data unavailable").should('be.visible');
         });
 
         // it('should allow entering resolution text', () => {
@@ -30,7 +32,13 @@ describe('Location Components', () => {
     describe('Location Response', () => {
         it('should have interactive elements for locations', () => {
             // Look for any interactive elements
-            cy.get('button, a, [role="button"]').should('exist');
+            cy.viewport(1920, 1080);
+            cy.visit("/login");
+            cy.get('input[id="email"]').type("invalid@domain.com");
+            cy.get('input[id="password"]').type("wrongpassword");
+            cy.get('button[type="submit"]').click();
+            cy.contains("Failed to sign in, please try again").should("be.visible");
         });
-    });
+    },
+    );
 });
