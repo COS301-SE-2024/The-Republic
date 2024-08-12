@@ -287,15 +287,18 @@ export default class SubscriptionsRepository {
         created_at,
         sentiment,
         comment (
+          user_id,
           content,
           is_anonymous,
           created_at
         ),
         reaction (
+          user_id,
           emoji,
           created_at
         ),
         resolution (
+          resolver_id,
           resolution_text,
           status,
           created_at
@@ -322,62 +325,70 @@ export default class SubscriptionsRepository {
     }
 
     const filteredNotifications: Notification[] = [];
+    const addedIssues = new Set<string>();
 
     issueData.forEach(issue => {
-      if (subIssues.includes(issue.issue_id?.toString()) || subCategories.includes(issue.category_id?.toString()) || subLocations.includes(issue.location_id?.toString())) {
-        filteredNotifications.push({
-          type: 'issue',
-          content: issue.content,
-          issue_id: issue.issue_id,
-          category: issue.category_id,
-          location: issue.location_id,
-          created_at: issue.created_at
+      const issueIdStr = issue.issue_id?.toString();
+      const categoryIdStr = issue.category_id?.toString();
+      const locationIdStr = issue.location_id?.toString();
+      
+      if (subIssues.includes(issueIdStr) || subCategories.includes(categoryIdStr) || subLocations.includes(locationIdStr) || issue.user_id === user_id) {
+        if (!addedIssues.has(issueIdStr)) {
+          filteredNotifications.push({
+            type: 'issue',
+            content: issue.content,
+            issue_id: issue.issue_id,
+            category: issue.category_id,
+            location: issue.location_id,
+            created_at: issue.created_at
+          });
+          addedIssues.add(issueIdStr);
+        }
+      }
+
+      if (issue.comment) {
+        issue.comment.forEach(comment => {
+          if (subIssues.includes(issueIdStr) || comment.user_id === user_id) {
+            filteredNotifications.push({
+              type: 'comment',
+              content: comment.content,
+              issue_id: issue.issue_id,
+              category: issue.category_id,
+              location: issue.location_id,
+              created_at: comment.created_at
+            });
+          }
         });
+      }
 
-        if (issue.comment) {
-          issue.comment.forEach(comment => {
-            if (subIssues.includes(issue.issue_id?.toString())) {
-              filteredNotifications.push({
-                type: 'comment',
-                content: comment.content,
-                issue_id: issue.issue_id,
-                category: issue.category_id,
-                location: issue.location_id,
-                created_at: comment.created_at
-              });
-            }
-          });
-        }
+      if (issue.reaction) {
+        issue.reaction.forEach(reaction => {
+          if (subIssues.includes(issueIdStr) || reaction.user_id === user_id) {
+            filteredNotifications.push({
+              type: 'reaction',
+              content: `reacted with ${reaction.emoji}`,
+              issue_id: issue.issue_id,
+              category: issue.category_id,
+              location: issue.location_id,
+              created_at: reaction.created_at
+            });
+          }
+        });
+      }
 
-        if (issue.reaction) {
-          issue.reaction.forEach(reaction => {
-            if (subIssues.includes(issue.issue_id?.toString())) {
-              filteredNotifications.push({
-                type: 'reaction',
-                content: `reacted with ${reaction.emoji}`,
-                issue_id: issue.issue_id,
-                category: issue.category_id,
-                location: issue.location_id,
-                created_at: reaction.created_at
-              });
-            }
-          });
-        }
-
-        if (issue.resolution) {
-          issue.resolution.forEach(resolution => {
-            if (subIssues.includes(issue.issue_id?.toString())) {
-              filteredNotifications.push({
-                type: 'resolution',
-                content: `Your ${resolution.resolution_text}`,
-                issue_id: issue.issue_id,
-                category: issue.category_id,
-                location: issue.location_id,
-                created_at: resolution.created_at
-              });
-            }
-          });
-        }
+      if (issue.resolution) {
+        issue.resolution.forEach(resolution => {
+          if (subIssues.includes(issueIdStr) || resolution.resolver_id === user_id) {
+            filteredNotifications.push({
+              type: 'resolution',
+              content: `Your ${resolution.resolution_text}`,
+              issue_id: issue.issue_id,
+              category: issue.category_id,
+              location: issue.location_id,
+              created_at: resolution.created_at
+            });
+          }
+        });
       }
     });
 
@@ -389,7 +400,7 @@ export default class SubscriptionsRepository {
           created_at: points.created_at
         });
       }
-    });      
+    });
       
     return filteredNotifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
