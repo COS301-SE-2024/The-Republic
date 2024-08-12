@@ -175,16 +175,16 @@ The layered architecture was used to maintain separate parts of the web app. By 
 <img src="../images/diagrams/arch_sketch.drawio.png"/>
 
 ### MVVM Pattern:
-In the presentation layer the MVVM pattern is used. The view model has components which alloes us to separate concerns and scale independently. The fetcher works as the model it represents the applications data and business logic. 
+In the presentation layer, the MVVM pattern is used. The view model has components that allow us to separate concerns and scale independently. The fetcher works as the model it represents the application's data and business logic. 
 <img src="../images/diagrams/arch2.png"/>
 
 ### SOA Pattern:
-In the business layer the SOA pattern helps us to easily extend the application by adding new services thus improving scalability
+In the business layer, the SOA pattern helps us to easily extend the application by adding new services thus improving scalability
 <img src="../images/diagrams/arch3.png"/>
 
 
 ## Architecture Diagram
-<img src="../images/diagrams/arch_sketch.drawio.png"/>
+<img src="../images/diagrams/ArchitecturalDiagramVersion.png"/>
 
 
 # Technology Choices 💭
