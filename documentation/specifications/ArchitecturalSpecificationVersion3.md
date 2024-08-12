@@ -9,7 +9,7 @@
 
 1. [Introduction](#Introduction)
 2. [Design Strategy](#Design-Strategy-)
-3. [Quality Requirements](#Quality-Requirements-)
+3. [Quality Requirements](#Quality-Requirements)
 4. [Architectural Patterns](#Architectural-Patterns-)
 5. [Technology Choices](#Technology-Choices-)
 6. [Architectural Constraints](#Architectural-Constraints-)
