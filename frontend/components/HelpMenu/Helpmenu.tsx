@@ -234,6 +234,7 @@ const ExpandedHelpMenu: React.FC = () => {
     { title: "Setting your location", section: "profile-management" },
     { title: "Using the Analytics page", section: "analytics" },
     { title: "Understanding the Leaderboard", section: "leaderboard" },
+    { title: "Point system", section: "key-concepts" },
   ].filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
