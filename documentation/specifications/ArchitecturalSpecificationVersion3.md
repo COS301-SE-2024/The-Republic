@@ -172,15 +172,15 @@ A new user accesses our system for the first time on a mobile device to submit a
 # Architectural Patterns 🔨
 ### Layered Pattern:
 The layered architecture was used to maintain separate parts of the web app. By isolating resource-intensive operations to specific layers, the architecture can optimize performance in critical areas without impacting the entire system.
-<img src="../images/diagrams/arch_sketch.drawio.png"/>
+<img src="../images/diagrams/ArchitecturalDiagramVersion.png"/>
 
 ### MVVM Pattern:
 In the presentation layer, the MVVM pattern is used. The view model has components that allow us to separate concerns and scale independently. The fetcher works as the model it represents the application's data and business logic.
-<img src="../images/diagrams/arch2.png"/>
+<img src="../images/diagrams/MVVMVersion2.png"/>
 
 ### SOA Pattern:
 In the business layer, the SOA pattern helps us to easily extend the application by adding new services thus improving scalability
-<img src="../images/diagrams/arch3.png"/>
+<img src="../images/diagrams/SOAVersion2.png"/>
 
 
 ## Architecture Diagram
