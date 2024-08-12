@@ -172,7 +172,7 @@ A new user accesses our system for the first time on a mobile device to submit a
 # Architectural Patterns 🔨
 ### Layered Pattern:
 The layered architecture was used to maintain separate parts of the web app. By isolating resource-intensive operations to specific layers, the architecture can optimize performance in critical areas without impacting the entire system.
-<img src="../images/diagrams/Architectural Diagram.jpg"/>
+<img src="../images/diagrams/arch_sketch.drawio.png"/>
 
 ### MVC Pattern:
 In the presentation layer the MVC pattern is used. The different views are made into composobale modules so that we have reusability of code it also improves scalability.
@@ -184,10 +184,8 @@ In the business layer the SOA pattern helps us to easily extend the application 
 
 ### Load Balancer Pattern:
 We make use of a load balancer in our backend to distribute incoming requests across multiple services to prevent any single point from becoming a bottleneck. Thus increasing performance
-<img src="../images/diagrams/arch3.png"/>
 
 ## Architecture Diagram
-- TO DO (HAS TO BE UPDATED)
 <img src="../images/diagrams/arch_sketch.drawio.png"/>
 
 
