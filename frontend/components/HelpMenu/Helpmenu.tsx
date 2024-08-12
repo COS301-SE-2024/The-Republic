@@ -92,6 +92,38 @@ const KeyConcepts = () => (
           </p>
         </details>
       </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">How does the point system work?</summary>
+          <p className="mt-2">
+            Our platform uses a point system to encourage positive contributions:
+            <br /><br />
+            <strong>Positive Actions:</strong>
+            <ul className="list-disc ml-6 mt-2">
+              <li>Resolving an issue: +100 points (first time), +50 points (thereafter)</li>
+              <li>Posting issues: +50 points (first time), +20 points (thereafter)</li>
+              <li>Leaving a comment on an open issue: +10 points</li>
+              <li>Reacting to an issue: +5 points</li>
+            </ul>
+            <br />
+            <strong>Negative Actions:</strong>
+            <ul className="list-disc ml-6 mt-2">
+              <li>Falsely resolving someone else's issue: -75 points</li>
+              <li>Breaking community guidelines: -200 points</li>
+            </ul>
+            <br />
+            Note: If your score falls below -150, your account may be blocked.
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Avoiding Penalties</summary>
+          <p className="mt-2">
+            To avoid penalties, ensure you accurately resolve issues. Falsely resolving an issue can result in penalties.
+          </p>
+        </details>
+      </li>
     </ul>
   </div>
 );
