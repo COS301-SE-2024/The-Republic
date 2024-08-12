@@ -174,16 +174,14 @@ A new user accesses our system for the first time on a mobile device to submit a
 The layered architecture was used to maintain separate parts of the web app. By isolating resource-intensive operations to specific layers, the architecture can optimize performance in critical areas without impacting the entire system.
 <img src="../images/diagrams/arch_sketch.drawio.png"/>
 
-### MVC Pattern:
-In the presentation layer the MVC pattern is used. The different views are made into composobale modules so that we have reusability of code it also improves scalability.
+### MVVM Pattern:
+In the presentation layer the MVVM pattern is used. The view model has components which alloes us to separate concerns and scale independently. The fetcher works as the model it represents the applications data and business logic. 
 <img src="../images/diagrams/arch2.png"/>
 
 ### SOA Pattern:
 In the business layer the SOA pattern helps us to easily extend the application by adding new services thus improving scalability
 <img src="../images/diagrams/arch3.png"/>
 
-### Load Balancer Pattern:
-We make use of a load balancer in our backend to distribute incoming requests across multiple services to prevent any single point from becoming a bottleneck. Thus increasing performance
 
 ## Architecture Diagram
 <img src="../images/diagrams/arch_sketch.drawio.png"/>
