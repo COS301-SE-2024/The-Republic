@@ -9,10 +9,10 @@
 
 1. [Introduction](#Introduction)
 2. [Design Strategy](#Design-Strategy-)
-3. [Quality Requirements](#Quality-Requirements-)
+3. [Quality Requirements](#Quality-Requirements)
 4. [Architectural Patterns](#Architectural-Patterns-)
 5. [Technology Choices](#Technology-Choices-)
-6. [Architectural Constraints](#Architectural-Constraints-)
+6. [Architectural Constraints](#Architectural-Constraints)
 
 # Introduction
 
@@ -170,11 +170,21 @@ A new user accesses our system for the first time on a mobile device to submit a
 - Successful complaint submission rate of over 90% for first-time users.
 
 # Architectural Patterns 🔨
-- TO DO (HAS TO BE UPDATED)
+### Layered Pattern:
+The layered architecture was used to maintain separate parts of the web app. By isolating resource-intensive operations to specific layers, the architecture can optimize performance in critical areas without impacting the entire system.
+<img src="../images/diagrams/ArchitecturalDiagramVersion.png"/>
+
+### MVVM Pattern:
+In the presentation layer, the MVVM pattern is used. The view model has components that allow us to separate concerns and scale independently. The fetcher works as the model it represents the application's data and business logic.
+<img src="../images/diagrams/MVVCVersion2.png"/>
+
+### SOA Pattern:
+In the business layer, the SOA pattern helps us to easily extend the application by adding new services thus improving scalability
+<img src="../images/diagrams/SOAVersion2.png"/>
+
 
 ## Architecture Diagram
-- TO DO (HAS TO BE UPDATED)
-<img src="../images/diagrams/Architectural Diagram.jpg"/>
+<img src="../images/diagrams/ArchitecturalDiagramVersion.png"/>
 
 
 # Technology Choices 💭
