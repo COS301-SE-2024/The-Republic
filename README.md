@@ -1,6 +1,6 @@
 # The Republic
 
-<img id="loopingGif" src="/documentation/images/LogoVid.gif" alt="Infinite Loopers Logo" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
+<img id="loopingGif" src="/documentation/images/logoVid.gif" alt="Infinite Loopers Logo" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
 
 
 
