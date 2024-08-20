@@ -208,8 +208,8 @@ describe("IssueService", () => {
       // Wait for any pending promises to resolve
       await new Promise(process.nextTick);
 
-      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "Created first issue");
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "Created first issue");
+      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "created first issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "created first issue");
       expect(response.data).toEqual(createdIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledWith(newIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
@@ -367,6 +367,7 @@ describe("IssueService", () => {
   it("should use existing location if it already exists", async () => {
     const newIssue: Partial<Issue> = {
       user_id: "1",
+      location_id: 1,
       location_data: {
         province: "Province",
         city: "City",
@@ -421,14 +422,6 @@ describe("IssueService", () => {
       profile_user_id: "0",
     };
 
-    locationRepository.getLocationByPlacesId.mockResolvedValue({
-      location_id: 1,
-      province: "Province",
-      city: "City",
-      suburb: "Suburb",
-      district: "District",
-      place_id: "place_id",
-    });
 
     issueRepository.createIssue.mockResolvedValue(createdIssue);
     jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({

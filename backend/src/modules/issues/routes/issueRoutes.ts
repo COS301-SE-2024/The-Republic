@@ -19,6 +19,7 @@ router.post("/resolutions", issueController.getResolutionsForIssue);
 router.post("/user-issues-in-cluster", issueController.hasUserIssuesInCluster);
 router.post("/user-resolutions", issueController.getUserResolutions);
 router.post("/delete-resolution", issueController.deleteResolution);
+router.post("/related", issueController.getRelatedIssues);
 
 
 export default router;

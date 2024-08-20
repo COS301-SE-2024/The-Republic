@@ -188,10 +188,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       setLocation(null);
       setImage(null);
 
-      toast({
-        description: "Post successful",
-      });
-
       const apiResponse = await res.json();
       onAddIssue(apiResponse.data);
     }

@@ -9,6 +9,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import ErrorDisplay from '@/components/ui/error_display';
 
 type RankingType = 'country' | 'province' |'city' | 'suburb';
 
@@ -89,12 +90,26 @@ const Leaderboard: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <ErrorDisplay
+        title="Leaderboard data unavailable"
+        message="Please check your internet connection. Reload the page if the issue persists or try logging in again."
+        linkHref="/login"
+        linkText="Login Here"
+      />
+    );
   }
-
+  
   if (!userData) {
-    return <div>No user data available</div>;
-  }
+    return (
+      <ErrorDisplay
+        title="No user data available"
+        message="You need to be logged in to view leaderboard information. Create an account or log in to an existing account."
+        linkHref="/login"
+        linkText="Login Here"
+      />
+    );
+  }  
 
   return (
     <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>

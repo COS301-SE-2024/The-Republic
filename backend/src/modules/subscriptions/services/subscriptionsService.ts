@@ -1,8 +1,6 @@
 import SubscriptionsRepository from "@/modules/subscriptions/repositories/subscriptionsRepository";
 import { APIResponse, APIError } from "@/types/response";
-
-import { SubsParams, NotificationData } from "@/types/subscriptions";
-
+import { SubsParams, NotificationData, Notification } from "@/types/subscriptions";
 export default class SubscriptionsService {
   private SubscriptionsRepository: SubscriptionsRepository;
 
@@ -77,6 +75,23 @@ export default class SubscriptionsService {
     try {
       const data =
         await this.SubscriptionsRepository.getSubscriptions(params);
+      return { code: 200, success: true, data };
+    } catch (error) {
+      console.error("Error: ", error);
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Notifications: Something Went wrong",
+      });
+    }
+  }
+
+  async getNotifications(
+    params: Partial<SubsParams>,
+  ): Promise<APIResponse<Notification[]>> {
+    try {
+      const data =
+        await this.SubscriptionsRepository.getNotifications(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);
