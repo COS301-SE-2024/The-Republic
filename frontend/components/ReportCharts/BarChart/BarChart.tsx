@@ -4,13 +4,13 @@ import React, { useEffect } from "react";
 import * as echarts from "echarts";
 import { useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
-import { useMediaQuery } from "@/lib/useMediaQuery"; // Import the hook
+import { useMediaQuery } from "@/lib/useMediaQuery";
 
 import { reportCharts } from "@/lib/api/reportCharts";
 
 function BarChart() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
-  const isMobile = useMediaQuery('(max-width: 768px)'); // Use the hook to detect mobile screens
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     data,
@@ -55,7 +55,7 @@ function BarChart() {
           left: "center",
           top: "0%",
           textStyle: {
-            fontSize: isMobile ? 12 : 18, // Smaller font size on mobile
+            fontSize: isMobile ? 12 : 18,
           },
         },
         tooltip: {
@@ -68,7 +68,7 @@ function BarChart() {
           data: ["Unresolved", "Resolved"],
           top: "8%",
           textStyle: {
-            fontSize: isMobile ? 10 : 12, // Smaller font size on mobile
+            fontSize: isMobile ? 10 : 12,
           },
         },
         xAxis: {
@@ -78,13 +78,13 @@ function BarChart() {
           nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: isMobile ? 12 : 16, // Smaller font size on mobile
+            fontSize: isMobile ? 12 : 16,
             fontWeight: "bold",
           },
           axisLabel: {
             interval: 0,
-            rotate: isMobile ? 45 : 0, // Rotate labels on mobile for better fit
-            fontSize: isMobile ? 8 : 12, // Smaller font size on mobile
+            rotate: isMobile ? 45 : 0,
+            fontSize: isMobile ? 8 : 12,
           },
         },
         yAxis: {
@@ -93,7 +93,7 @@ function BarChart() {
           nameLocation: "middle",
           nameGap: 30,
           nameTextStyle: {
-            fontSize: isMobile ? 12 : 16, // Smaller font size on mobile
+            fontSize: isMobile ? 12 : 16,
             fontWeight: "bold",
           },
         },
@@ -113,19 +113,17 @@ function BarChart() {
         ],
       });
 
-      // Add resize event listener
       const handleResize = () => {
         barChart.resize();
       };
       window.addEventListener('resize', handleResize);
 
-      // Clean up function
       return () => {
         window.removeEventListener('resize', handleResize);
         barChart.dispose();
       };
     }
-  }, [data, isMobile]); // Add isMobile to the dependency array
+  }, [data, isMobile]);
 
   return (
     <>
@@ -144,7 +142,7 @@ function BarChart() {
                 <div className="card-body">
                   <div
                     id="barChart"
-                    style={{ height: isMobile ? "300px" : "400px" }} // Smaller height on mobile
+                    style={{ height: isMobile ? "300px" : "400px" }}
                     className="echart w-full"
                   ></div>
                 </div>

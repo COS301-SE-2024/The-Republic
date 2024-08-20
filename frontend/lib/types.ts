@@ -113,6 +113,33 @@ interface LocationType {
   };
 }
 
+interface ReactionNotification {
+  created_at: string;
+  emoji: string;
+  issue_id: number;
+  reaction_id: number;
+  user_id: string;
+}
+
+interface CommentNotification {
+  comment_id: string;
+  content: string;
+  created_at: string;
+  is_anonymous: boolean;
+  issue_id: string;
+  parent_id: string | null;
+  user_id: string;
+}
+
+interface NotificationType {
+  type: string;
+  content: string;
+  issue_id?: string;
+  category?: string;
+  location?: string;
+  created_at: string;
+}
+
 interface Issue {
   issue_id: number;
   user_id: string;
@@ -142,6 +169,7 @@ interface Issue {
   pendingResolutionId?: string | null;
   cluster_id?: string
 }
+
 interface IssueProps {
   issue: Issue;
   id?: string;
@@ -354,6 +382,13 @@ interface CommentListProps2 {
   showComments?: boolean;
 }
 
+interface ErrorDisplayProps {
+  title: string;
+  message: string;
+  linkHref: string;
+  linkText: string;
+}
+
 export type {
   AnalysisResult,
   FeedProps,
@@ -389,5 +424,9 @@ export type {
   MulterFile,
   Location,
   SubsParams,
-  Resolution
+  Resolution,
+  ReactionNotification,
+  CommentNotification,
+  NotificationType,
+  ErrorDisplayProps
 };

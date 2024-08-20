@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import FilterModal from "@/components/FilterModal/FilterModal";
 import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
-const FETCH_SIZE = 2;
+const FETCH_SIZE = 5;
 
 const Feed: React.FC = () => {
   const { user } = useUser();
@@ -167,6 +167,34 @@ const Feed: React.FC = () => {
   );
 
   const scrollId = "issues_scroll";
+
+  useEffect(() => {
+    const feed = document.querySelector(`#${scrollId}`) as HTMLDivElement;
+    if (!feed) {
+      return;
+    }
+
+    const savedFeedScroll = sessionStorage.getItem("feedScroll");
+    if (savedFeedScroll) {
+      feed.scroll({
+        top: Number.parseFloat(savedFeedScroll),
+        behavior: "instant"
+      });
+    }
+
+    let isHandling: boolean;
+    feed.onscroll = () => {
+      if (isHandling) {
+        return;
+      }
+
+      isHandling = true;
+      setTimeout(() => {
+        sessionStorage.setItem("feedScroll", feed.scrollTop.toString());
+        isHandling = false;
+      }, 250);
+    };
+  }, [isLoadingLocation]);
 
   if (isLoadingLocation) {
     return <LoadingIndicator />;

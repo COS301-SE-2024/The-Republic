@@ -20,6 +20,10 @@ import { useUser } from "@/lib/contexts/UserContext";
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
 import { XIcon } from "lucide-react";
+import { ReactionNotification, CommentNotification, Issue } from "@/lib/types";
+import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
+import { fetchUserData } from '@/lib/api/fetchUserData';
+import { useRouter } from 'next/navigation';
 
 interface SidebarProps extends HomeAvatarProps {
   isOpen: boolean;
@@ -30,56 +34,159 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useUser();
   const { toast } = useToast();
   const [showLogout, setShowLogout] = useState(false);
+  const router = useRouter();
+
+  const navigateToIssue = (issueId: number) => {
+    router.push(`/issues/${issueId}`);
+  };
+  
 
   useEffect(() => {
+    if (!user) return;
+
     const channelA = supabase
       .channel("schema-db-changes")
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "comment",
         },
-        (payload) => {
-          toast({
-            variant: "warning",
-            description: "Comments Flooding for a Reported Issue",
-          });
+        async (payload) => {
           const { new: notification } = payload;
-          console.log("Comments Notification Data: ", notification);
+          // console.log("New Comment notification:", notification);
+          if (notification && Object.keys(notification).length > 0) {
+            // console.log("Comments Flooding for a Reported Issue: ", notification);
+            const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
+            
+            // Fetch the issue to check if it belongs to the current user
+            const { data: issueData, error: issueError } = await supabase
+              .from('issue')
+              .select('user_id')
+              .eq('issue_id', issue_id)
+              .single();
+
+            if (issueError) {
+              console.error("Error fetching issue:", issueError);
+              return;
+            }
+
+            if (issueData.user_id === user.user_id && user_id !== user.user_id) {
+              let commenterInfo = null;
+              if (!is_anonymous) {
+                commenterInfo = await fetchUserData(user_id);
+              }
+
+              toast({
+                variant: "warning",
+                description: (
+                  <div 
+                    className="flex items-center cursor-pointer" 
+                    onClick={() => navigateToIssue(Number(issue_id))}
+                  >
+                    {commenterInfo ? (
+                      <UserAvatarWithScore
+                        imageUrl={commenterInfo.image_url}
+                        username={commenterInfo.username}
+                        score={commenterInfo.user_score}
+                        className="mr-2 w-8 h-8"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 mr-2 bg-gray-300 rounded-full"></div>
+                    )}
+                    <span>
+                      {commenterInfo ? commenterInfo.username : "Someone"} commented on your issue
+                    </span>
+                  </div>
+                ),
+              });
+            } else if (user_id === user.user_id) {
+              toast({
+                variant: "warning",
+                description: `Gained 10 Points for leaving a Comment on an Issue`,
+              });
+            }
+          }
         },
       )
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "reaction",
         },
-        (payload) => {
-          toast({
-            variant: "warning",
-            description: "Issue Gaining Exposure, new Reactions",
-          });
+        async (payload) => {
           const { new: notification } = payload;
-          console.log("Reaction Notification Data Now: ", notification);
+          if (notification && Object.keys(notification).length > 0) {
+            const { emoji, user_id, issue_id } = notification as ReactionNotification;
+            
+            const { data: issueData, error: issueError } = await supabase
+              .from('issue')
+              .select('user_id')
+              .eq('issue_id', issue_id)
+              .single();
+
+            if (issueError) {
+              console.error("Error fetching issue:", issueError);
+              return;
+            }
+
+            if (issueData.user_id === user.user_id && user_id !== user.user_id) {
+              const reactorInfo = await fetchUserData(user_id);
+
+              toast({
+                variant: "warning",
+                description: (
+                  <div 
+                    className="flex items-center cursor-pointer" 
+                    onClick={() => navigateToIssue(issue_id)}
+                  >
+                    {reactorInfo ? (
+                      <UserAvatarWithScore
+                        imageUrl={reactorInfo.image_url}
+                        username={reactorInfo.username}
+                        score={reactorInfo.user_score}
+                        className="mr-2 w-8 h-8"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 mr-2 bg-gray-300 rounded-full"></div>
+                    )}
+                    <span>
+                      {reactorInfo ? reactorInfo.username : "Someone"} reacted with {emoji} to your issue
+                    </span>
+                  </div>
+                ),
+              });
+            } else if (user_id === user.user_id) {
+              toast({
+                variant: "warning",
+                description: `Gained 5 Points on your ${emoji} Reaction`,
+              });
+            }
+          }
         },
       )
       .on(
         "postgres_changes",
         {
-          event: "*",
+          event: "INSERT",
           schema: "public",
           table: "issue",
         },
         (payload) => {
-          toast({
-            variant: "warning",
-            description: "New Issue Reported, Check it Out!",
-          });
           const { new: notification } = payload;
-          console.log("Issue Notification Data: ", notification);
+
+          if (notification && Object.keys(notification).length > 0) {
+            const { user_id } = notification as Partial<Issue>;
+            if (user_id !== user?.user_id) {
+              toast({
+                variant: "warning",
+                description: `Gained 20 Points for Reporting an Issue`,
+              });
+            }
+          }
         },
       )
       .subscribe((status) => {
@@ -89,7 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     return () => {
       channelA.unsubscribe();
     };
-  }, []);
+  }, [user]);
 
   const toggleLogout = () => {
     setShowLogout((prev) => !prev);
@@ -103,9 +210,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           onClick={onClose}
         />
       )}
-      <div className={`fixed inset-y-0 left-0 z-30 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
+      <div className={`fixed inset-y-0 left-0 z-30 lg:z-0 w-[300px] border-r h-full overflow-y-auto bg-background transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:relative lg:translate-x-0`}>
         <div className="lg:hidden absolute top-4 right-4">
-          <button onClick={onClose} className="p-2">
+          <button onClick={onClose} className="p-2" title="Close">
             <XIcon className="h-6 w-6" />
           </button>
         </div>

@@ -65,7 +65,7 @@ export class ClusterRepository {
 
   async findSimilarClusters(
     issue: Issue, 
-    threshold: number = 0.9
+    threshold: number = 0.7
   ): Promise<Cluster[]> {
     // console.log('Finding similar clusters for issue:', {
     //   issue_id: issue.issue_id,

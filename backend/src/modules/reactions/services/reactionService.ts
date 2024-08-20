@@ -59,7 +59,7 @@ export default class ReactionService {
       const addedReaction = await this.reactionRepository.addReaction(reaction);
       added = addedReaction.emoji;
 
-      await this.pointsService.awardPoints(reaction.user_id, 5, "Reacted to an issue");
+      await this.pointsService.awardPoints(reaction.user_id, 5, "reacted to an issue");
     }
 
     return APIData({

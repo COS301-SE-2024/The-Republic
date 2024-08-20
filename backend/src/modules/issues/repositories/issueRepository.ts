@@ -237,7 +237,6 @@ export default class IssueRepository {
     let locationId: number | null = null;
   
     if (issue.location_data) {
-      //console.log("Raw location data:", issue.location_data);
   
       let locationDataObj;
       try {
@@ -246,36 +245,33 @@ export default class IssueRepository {
             ? JSON.parse(issue.location_data)
             : issue.location_data;
   
-        //console.log("Parsed location data:", locationDataObj);
+        const locationRepository = new LocationRepository();
+        const existingLocations = await locationRepository.getLocationByPlacesId(
+          locationDataObj.place_id
+        );
   
-        if (locationDataObj.location_id) {
-          locationId = locationDataObj.location_id;
+        if (existingLocations.length > 0) {
+          // If locations exist, use the first one
+          locationId = existingLocations[0].location_id;
         } else {
-          const locationRepository = new LocationRepository();
-          const existingLocation = await locationRepository.getLocationByPlacesId(
-            locationDataObj.place_id
-          );
-  
-          if (existingLocation) {
-            locationId = existingLocation.location_id;
-          } else {
-            const newLocation = await locationRepository.createLocation({
-              place_id: locationDataObj.place_id,
-              province: locationDataObj.province,
-              city: locationDataObj.city,
-              suburb: locationDataObj.suburb,
-              district: locationDataObj.district,
-            });
-            locationId = newLocation.location_id;
-          }
+          // If no location exists, create a new one
+          const newLocation = await locationRepository.createLocation({
+            place_id: locationDataObj.place_id,
+            province: locationDataObj.province,
+            city: locationDataObj.city,
+            suburb: locationDataObj.suburb,
+            district: locationDataObj.district,
+            latitude: locationDataObj.lat,
+            longitude: locationDataObj.lng
+          });
+          locationId = newLocation.location_id;
         }
-        // console.log("Final locationId:", locationId);
       } catch (error) {
         console.error("Error processing location data:", error);
         throw APIError({
           code: 500,
           success: false,
-          error: `An error occurred while processing location data: ${error}`,
+          error: `An error occurred while processing location data: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
         });
       }
     }

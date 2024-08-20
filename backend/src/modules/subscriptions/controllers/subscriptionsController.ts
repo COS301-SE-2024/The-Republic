@@ -58,3 +58,16 @@ export const getSubscriptions = async (
     sendResponse(res, error as APIResponse);
   }
 };
+
+
+export const getNotifications = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const response = await subscriptionsService.getNotifications(req.body);
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
+  }
+};

@@ -52,10 +52,6 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
       );
 
       if (response.ok) {
-        toast({
-          description: "Comment deleted successfully",
-        });
-
         onCommentDeleted(comment);
       } else {
         const responseData = await response.json();
@@ -85,7 +81,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
 
   return (
     <>
-      <div className="flex items-start space-x-4 space-y-4 mb-4">
+      <div className="flex items-start space-x-4 space-y-4 mb-4" data-testid="comment">
         <div className="relative space-y-6">
         <UserAvatarWithScore
           imageUrl={userAvatar}
@@ -163,6 +159,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
             </Button>
             <Button
               variant="destructive"
+              data-testid="confirm-delete-button"
               onClick={() => {
                 setConfirmDelete(false);
                 handleDelete();

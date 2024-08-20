@@ -6,6 +6,8 @@ import { useTheme } from "next-themes";
 import { supabase } from "@/lib/globals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import userMock from "@/data/user";
+
 jest.mock("next-themes", () => ({
   useTheme: jest.fn(),
 }));
@@ -17,19 +19,6 @@ jest.mock("@/lib/globals", () => ({
     },
   },
 }));
-
-const user = {
-  user_id: "user123",
-  email_address: "user@example.com",
-  username: "user123",
-  fullname: "User Fullname",
-  image_url: "http://example.com/image.jpg",
-  bio: "User biography",
-  is_owner: true,
-  total_issues: 10,
-  resolved_issues: 5,
-  access_token: "access_token_value",
-};
 
 const renderWithClient = (ui: React.ReactNode) => {
   const testQueryClient = new QueryClient({
@@ -48,6 +37,7 @@ describe("EditProfile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
     (useTheme as jest.Mock).mockReturnValue({ theme: "light" });
   });
 
@@ -57,7 +47,7 @@ describe("EditProfile", () => {
 
   it("renders correctly with user data", () => {
     const { getByDisplayValue } = renderWithClient(
-      <EditProfile user={user} onUpdate={() => {}} onCancel={() => {}} />,
+      <EditProfile user={userMock} onUpdate={() => {}} onCancel={() => {}} />,
     );
     expect(getByDisplayValue("User Fullname")).toBeInTheDocument();
     expect(getByDisplayValue("user123")).toBeInTheDocument();
@@ -70,7 +60,7 @@ describe("EditProfile", () => {
       data: { session: { user: {}, access_token: "test-token" } },
     });
     const { getByText, getByLabelText } = renderWithClient(
-      <EditProfile user={user} onUpdate={onUpdate} onCancel={() => {}} />,
+      <EditProfile user={userMock} onUpdate={onUpdate} onCancel={() => {}} />,
     );
 
     fireEvent.change(getByLabelText("Full Name"), {
@@ -84,7 +74,7 @@ describe("EditProfile", () => {
   it("calls onCancel when cancel button is clicked", () => {
     const onCancel = jest.fn();
     const { getByText } = renderWithClient(
-      <EditProfile user={user} onUpdate={() => {}} onCancel={onCancel} />,
+      <EditProfile user={userMock} onUpdate={() => {}} onCancel={onCancel} />,
     );
     fireEvent.click(getByText("Cancel"));
     expect(onCancel).toHaveBeenCalled();

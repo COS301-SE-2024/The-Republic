@@ -10,6 +10,8 @@ import { PointsService } from "@/modules/points/services/pointsService";
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import { OpenAIService } from '@/modules/shared/services/openAIService';
 import { ResolutionService } from "@/modules/resolutions/services/resolutionService";
+import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
+import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -18,6 +20,8 @@ export default class IssueService {
   private clusterService: ClusterService;
   private openAIService: OpenAIService;
   private resolutionService: ResolutionService;
+  private reactionRepository: ReactionRepository;
+  private commentRepository: CommentRepository;
 
   constructor() {
     this.issueRepository = new IssueRepository();
@@ -26,6 +30,8 @@ export default class IssueService {
     this.clusterService = new ClusterService();
     this.openAIService = new OpenAIService();
     this.resolutionService = new ResolutionService();
+    this.reactionRepository = new ReactionRepository();
+    this.commentRepository = new CommentRepository();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
@@ -50,6 +56,14 @@ export default class IssueService {
 
   setResolutionService(resolutionService: ResolutionService): void {
     this.resolutionService = resolutionService;
+  }
+
+  setReactionRepository(reactionRepository: ReactionRepository): void{
+    this.reactionRepository = reactionRepository;
+  }
+
+  setCommentRepository(commentRepository: CommentRepository): void{
+    this.commentRepository = commentRepository;
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {
@@ -202,9 +216,9 @@ export default class IssueService {
 
     this.processIssueAsync(createdIssue.issue_id);
 
-    const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "Created first issue");
+    const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "created first issue");
     const points = isFirstIssue ? 50 : 20;
-    await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "Created first issue" : "Created an issue");
+    await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "created first issue" : "created an issue");
 
     return await this.getIssueById({
       issue_id: createdIssue.issue_id,
@@ -682,5 +696,47 @@ export default class IssueService {
   
   async deleteResolution(resolutionId: string, userId: string): Promise<void> {
     await this.resolutionService.deleteResolution(resolutionId, userId);
+  }
+
+  async getRelatedIssues(issueId: number, userId: string): Promise<APIResponse<Issue[]>> {
+    try {
+      const issue = await this.issueRepository.getIssueById(issueId);
+      if (!issue.cluster_id) {
+        return APIData({
+          code: 200,
+          success: true,
+          data: [],
+        });
+      }
+  
+      const relatedIssues = await this.issueRepository.getIssuesInCluster(issue.cluster_id);
+      const processedIssues = await Promise.all(relatedIssues
+        .filter(relatedIssue => relatedIssue.issue_id !== issueId)
+        .map(async (relatedIssue) => {
+          // Use the existing getIssueById method to get full issue details
+          const fullIssue = await this.issueRepository.getIssueById(relatedIssue.issue_id, userId);
+          
+          // Add any additional properties not included in getIssueById
+          const processedIssue: Issue = {
+            ...fullIssue,
+            is_owner: fullIssue.user_id === userId,
+          };
+          
+          return processedIssue;
+        }));
+  
+      return APIData({
+        code: 200,
+        success: true,
+        data: processedIssues,
+      });
+    } catch (error) {
+      console.error("Error in getRelatedIssues:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching related issues.",
+      });
+    }
   }
 }
