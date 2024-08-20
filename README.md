@@ -1,7 +1,7 @@
 # Infinite Loopers - The Republic
 
 <video id="loopingVideo" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;" autoplay muted>
-    <source src="/documentation/images/Logo-3-[remix].mp4" type="video/mp4">
+    <source src="/documentation/images/logoVid.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
