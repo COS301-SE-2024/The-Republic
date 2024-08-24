@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from 'next/link';
 
 interface UserAvatarWithScoreProps {
   imageUrl: string;
@@ -67,8 +68,8 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
         <AvatarFallback>{username[0]}</AvatarFallback>
       </Avatar>
       {!isAnonymous && (
-        <div
-          className="absolute top-0 right-0 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm overflow-hidden"
+        <Link href="/leaderboard">
+        <div className="absolute top-0 right-0 text-black rounded-full flex items-center justify-center font-bold border border-gray-300 shadow-sm overflow-hidden"
           style={{
             backgroundColor,
             width: `${bubbleSize}%`,
@@ -81,6 +82,7 @@ const UserAvatarWithScore: React.FC<UserAvatarWithScoreProps> = ({
         >
           {displayScore(score)}
         </div>
+      </Link>
       )}
 
     </div>

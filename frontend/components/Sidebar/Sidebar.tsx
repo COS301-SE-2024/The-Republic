@@ -234,9 +234,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               </Link>
             </li>
             <li onClick={onClose}>
-              <Link href="/leaderboard">
+              <Link href="/organization">
                 <TrophyIcon />
-                Leaderboard
+                Organization
               </Link>
             </li>
             {user ? (
