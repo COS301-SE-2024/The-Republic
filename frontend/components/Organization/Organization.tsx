@@ -5,7 +5,6 @@ import React from 'react';
 interface Organization {
   id: number;
   name: string;
-  description: string;
   members: number;
   userIsMember: boolean;
 }
@@ -16,9 +15,10 @@ interface OrganizationProps {
 }
 
 const organizations: Organization[] = [
-  { id: 1, name: 'Organization 1', description: 'Description 1', members: 10, userIsMember: true },
-  { id: 2, name: 'Organization 2', description: 'Description 2', members: 15, userIsMember: false },
-  { id: 3, name: 'Organization 3', description: 'Description 3', members: 20, userIsMember: true },
+  { id: 1, name: 'ZCC', members: 1500, userIsMember: true },
+  { id: 2, name: 'ArsenalRecruiters', members: 9051, userIsMember: false },
+  { id: 3, name: 'Betway', members: 4368, userIsMember: true },
+  { id: 4, name: 'ANC', members: 5494, userIsMember: false },
 ];
 
 const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter }) => {
@@ -27,29 +27,17 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
     : organizations.filter(org => org.userIsMember);
 
   return (
-    <div>
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="text-left p-3 text-sm font-semibold text-gray-600">Name</th>
-            <th className="text-left p-3 text-sm font-semibold text-gray-600">Description</th>
-            <th className="text-left p-3 text-sm font-semibold text-gray-600">Members</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredOrganizations.map((org) => (
-            <tr
-              key={org.id}
-              className="border-t border-gray-200 hover:bg-gray-50 cursor-pointer"
-              onClick={() => onOrganizationClick(org.id)}
-            >
-              <td className="p-3 text-sm text-gray-700">{org.name}</td>
-              <td className="p-3 text-sm text-gray-700">{org.description}</td>
-              <td className="p-3 text-sm text-gray-700">{org.members}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-4">
+      {filteredOrganizations.map((org) => (
+        <div
+          key={org.id}
+          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded"
+          onClick={() => onOrganizationClick(org.id)}
+        >
+          <h2 className="font-bold text-black dark:text-white">{org.name}</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{org.members} members</p>
+        </div>
+      ))}
     </div>
   );
 };
