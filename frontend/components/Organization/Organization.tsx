@@ -1,13 +1,7 @@
 'use client';
 
 import React from 'react';
-
-interface Organization {
-  id: number;
-  name: string;
-  members: number;
-  userIsMember: boolean;
-}
+import { Organization } from '../../lib/types';
 
 interface OrganizationProps {
   onOrganizationClick: (id: number) => void;
@@ -15,10 +9,10 @@ interface OrganizationProps {
 }
 
 const organizations: Organization[] = [
-  { id: 1, name: 'ZCC', members: 1500, userIsMember: true },
-  { id: 2, name: 'ArsenalRecruiters', members: 9051, userIsMember: false },
-  { id: 3, name: 'Betway', members: 4368, userIsMember: true },
-  { id: 4, name: 'ANC', members: 5494, userIsMember: false },
+  { id: 1, name: 'ZCC', description:"A powerful organization about blah blah blah", members: 1500, userIsMember: true },
+  { id: 2, name: 'ArsenalRecruiters',description:"A powerful organization about blah blah blah", members: 9051, userIsMember: false },
+  { id: 3, name: 'Betway', description:"A powerful organization about blah blah blah", members: 4368, userIsMember: true },
+  { id: 4, name: 'ANC', description:"A powerful organization about blah blah blah", members: 5494, userIsMember: false },
 ];
 
 const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter }) => {

@@ -14,6 +14,26 @@ interface User {
   suspended_until?: number | null;
 }
 
+export interface Organization {
+  id: number;
+  name: string;
+  description: string;
+  members: number;
+  userIsMember: boolean;
+}
+
+export interface Member {
+  id: number;
+  name: string;
+  role: string;
+}
+
+export interface AnalyticsData {
+  date: string;
+  issuesResolved: number;
+  interactions: number;
+}
+
 interface UserData {
   name: string;
   id: string;
