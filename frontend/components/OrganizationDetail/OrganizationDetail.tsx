@@ -1,40 +1,50 @@
 import React, { useState } from 'react';
-import { Organization, Member, AnalyticsData } from '../../lib/types';
+import { Organization, AnalyticsData } from '../../lib/types';
 import BarChart from '../ReportCharts/BarChart/BarChart'; 
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV, FaGlobe } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
-interface OrganizationDetailProps {
-  organization: Organization;
-  analytics: AnalyticsData[];
-}
-
-// Mock data for 15 members
-const mockMembers: Member[] = Array.from({ length: 15 }, (_, i) => ({
-  id: i + 1,
-  name: `Member ${i + 1}`,
-  role: ['Admin', 'Editor', 'Viewer'][Math.floor(Math.random() * 3)]
-}));
-
-const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organization, analytics }) => {
+const OrganizationDetail: React.FC<{ organization: Organization; analytics: AnalyticsData[] }> = ({ organization, analytics }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const totalMembers = mockMembers.length;
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
   const totalInteractions = analytics.reduce((sum, data) => sum + data.interactions, 0);
 
   return (
     <div className="p-5 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">{organization.name}</h1>
+        <div className="flex items-center space-x-4">
+          {organization.logo && (
+            <Image
+              src={organization.logo}
+              alt={`${organization.name} logo`}
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
+          )}
+          <h1 className="text-3xl font-bold">{organization.name}</h1>
+        </div>
         <FaEllipsisV className="text-gray-500 cursor-pointer" />
       </div>
       
       {/* About Section */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">About</h2>
-        <p className="text-gray-700">{organization.description}</p>
+        <p className="text-gray-700 mb-2">{organization.description}</p>
+        {organization.website && (
+          <a
+            href={organization.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 flex items-center"
+          >
+            <FaGlobe className="mr-2" />
+            {organization.website}
+          </a>
+        )}
       </div>
 
       {/* Members Summary and Analytics Cards */}
@@ -45,7 +55,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organization, a
             <div className="bg-white p-4 rounded-lg shadow cursor-pointer">
               <h3 className="text-sm text-gray-500 mb-1">Total Members</h3>
               <div className="flex justify-between items-baseline">
-                <span className="text-2xl font-bold">{totalMembers}</span>
+                <span className="text-2xl font-bold">{organization.members}</span>
               </div>
             </div>
           </Dialog.Trigger>
@@ -54,14 +64,11 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organization, a
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
               <Dialog.Title className="text-xl font-bold mb-4">Members List</Dialog.Title>
               <ul className="list-none mb-4">
-                {mockMembers.map(member => (
-                  <li key={member.id} className="text-gray-700 mb-2">
-                    <span className="font-semibold">{member.name}</span> - {member.role}
-                  </li>
-                ))}
+                {/* Assuming you want to display a list of members here */}
+                <li className="text-gray-700 mb-2">Member List is not provided in the mock data</li>
               </ul>
               <Dialog.Close asChild>
-                <button className="absolute top-2 right-2 p-1">
+                <button className="absolute top-2 right-2 p-1 text-gray-500 hover:text-gray-700">
                   <X className="w-4 h-4" />
                 </button>
               </Dialog.Close>
@@ -74,7 +81,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organization, a
       {/* Analytics Charts */}
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Issues Resolved vs Unresolved</h2>
-        <BarChart />
+        <BarChart  />
       </div>
     </div>
   );

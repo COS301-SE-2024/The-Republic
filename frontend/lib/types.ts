@@ -20,7 +20,10 @@ export interface Organization {
   description: string;
   members: number;
   userIsMember: boolean;
+  logo?: string; 
+  website?: string; 
 }
+
 
 export interface Member {
   id: number;

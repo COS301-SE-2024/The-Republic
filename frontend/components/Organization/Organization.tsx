@@ -9,12 +9,14 @@ interface OrganizationProps {
   filter: 'all' | 'userOnly';
 }
 
+// In Organizations component
 const organizations: Organization[] = [
-  { id: 1, name: 'ZCC', description: "A powerful organization about blah blah blah", members: 1500, userIsMember: true },
-  { id: 2, name: 'ArsenalRecruiters', description: "A powerful organization about blah blah blah", members: 9051, userIsMember: false },
-  { id: 3, name: 'Betway', description: "A powerful organization about blah blah blah", members: 4368, userIsMember: true },
-  { id: 4, name: 'ANC', description: "A powerful organization about blah blah blah", members: 5494, userIsMember: false },
+  { id: 1, name: 'ZCC', description: "A powerful organization about blah blah blah", members: 1500, userIsMember: true, logo: 'https://via.placeholder.com/64?text=ZCC', website: 'https://zcc.com' },
+  { id: 2, name: 'ArsenalRecruiters', description: "A powerful organization about blah blah blah", members: 9051, userIsMember: false, logo: 'https://via.placeholder.com/64?text=Arsenal', website: 'https://arsenalrecruiters.com' },
+  { id: 3, name: 'Betway', description: "A powerful organization about blah blah blah", members: 4368, userIsMember: true, logo: 'https://via.placeholder.com/64?text=Betway', website: 'https://betway.com' },
+  { id: 4, name: 'ANC', description: "A powerful organization about blah blah blah", members: 5494, userIsMember: false, logo: 'https://via.placeholder.com/64?text=ANC', website: 'https://anc.com' },
 ];
+
 
 const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter }) => {
   const [showMenu, setShowMenu] = useState<number | null>(null);
