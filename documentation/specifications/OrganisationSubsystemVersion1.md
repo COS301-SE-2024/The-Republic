@@ -35,3 +35,10 @@ As an organization admin, I want to approve or reject join requests of users for
 
 2.4. Remove Members
 As an organization admin, I want to remove members from the organization when necessary, so that I can maintain the integrity of the organization if needs be.
+
+##### 📊 User Story 3: Organization Interaction and Reporting
+3.1. View Organizations
+As a user, I want to view a list of organizations I can join (press join button), so that I can find relevant groups to participate in.
+
+3.2. Generate Reports
+As an organization admin, I want to generate detailed reports about the organization's activities, including issues raised and individual user contributions, so that I can track the organization's impact and member engagement, as the data can be valuable.
