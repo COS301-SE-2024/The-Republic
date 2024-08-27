@@ -52,7 +52,16 @@ export default function Signup() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <div className="flex justify-center mt-12 mb-8">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl font-bold text-green-700 dark:text-green-500"
+        >
 
+        </motion.h1>
+      </div>
       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto bg-white dark:bg-transparent rounded-xl overflow-hidden shadow-lg">
         <div className="w-full md:w-1/2 p-10 bg-green-600 text-white relative overflow-hidden">
           <h2 className="text-3xl font-bold mb-6">Welcome to The Republic</h2>
