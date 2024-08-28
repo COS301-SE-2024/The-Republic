@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Organization, AnalyticsData } from '../../lib/types';
 import BarChart from '../ReportCharts/BarChart/BarChart'; 
-import { FaEllipsisV, FaGlobe } from 'react-icons/fa';
+import { FaEllipsisV } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import Image from 'next/image';
 
 const OrganizationDetail: React.FC<{ organization: Organization; analytics: AnalyticsData[] }> = ({ organization, analytics }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
+  // Calculate total issues resolved and interactions
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
   const totalInteractions = analytics.reduce((sum, data) => sum + data.interactions, 0);
 
@@ -16,16 +16,35 @@ const OrganizationDetail: React.FC<{ organization: Organization; analytics: Anal
     <div className="p-5 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
-          {organization.logo && (
-            <Image
+          {/* Logo rendering */}
+          {organization.logo ? (
+            <img
               src={organization.logo}
               alt={`${organization.name} logo`}
               width={64}
               height={64}
               className="rounded-full"
             />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-gray-500">No Logo</span>
+            </div>
           )}
-          <h1 className="text-3xl font-bold">{organization.name}</h1>
+          <div>
+            <h1 className="text-3xl font-bold">{organization.name}</h1>
+            {organization.website ? (
+              <a
+                href={organization.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-600 hover:text-green-800 flex items-center mt-2"
+              >
+                {organization.website}
+              </a>
+            ) : (
+              <p className="text-gray-500 mt-2">No website provided</p>
+            )}
+          </div>
         </div>
         <FaEllipsisV className="text-gray-500 cursor-pointer" />
       </div>
@@ -34,17 +53,6 @@ const OrganizationDetail: React.FC<{ organization: Organization; analytics: Anal
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">About</h2>
         <p className="text-gray-700 mb-2">{organization.description}</p>
-        {organization.website && (
-          <a
-            href={organization.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 flex items-center"
-          >
-            <FaGlobe className="mr-2" />
-            {organization.website}
-          </a>
-        )}
       </div>
 
       {/* Members Summary and Analytics Cards */}
@@ -64,7 +72,7 @@ const OrganizationDetail: React.FC<{ organization: Organization; analytics: Anal
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
               <Dialog.Title className="text-xl font-bold mb-4">Members List</Dialog.Title>
               <ul className="list-none mb-4">
-                {/* Assuming you want to display a list of members here */}
+                {/* Display list of members if available */}
                 <li className="text-gray-700 mb-2">Member List is not provided in the mock data</li>
               </ul>
               <Dialog.Close asChild>

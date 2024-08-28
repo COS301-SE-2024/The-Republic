@@ -24,6 +24,14 @@ export interface Organization {
   website?: string; 
 }
 
+export interface CreateOrganizationData {
+  name: string;
+  description: string;
+  logo: File | null;
+  website: string;
+  joinPolicy: 'open' | 'request';
+}
+
 
 export interface Member {
   id: number;

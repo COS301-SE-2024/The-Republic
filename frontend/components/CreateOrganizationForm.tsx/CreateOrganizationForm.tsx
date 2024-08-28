@@ -4,18 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import { Organization } from '../../lib/types'; // Import Organization type
+import { CreateOrganizationData } from '../../lib/types';
 
 interface CreateOrganizationFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreate: (newOrg: Organization) => void; // Add onCreate prop
 }
 
-const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen, onClose }) => {
+const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen, onClose, onCreate }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [logo, setLogo] = useState<File | null>(null);
   const [website, setWebsite] = useState('');
-  const [joinPolicy, setJoinPolicy] = useState('open');
+  const [joinPolicy, setJoinPolicy] = useState<'open' | 'request'>('open');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [wordCount, setWordCount] = useState(0);
@@ -46,27 +49,34 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
     e.preventDefault();
     setError('');
     setSuccess('');
-
+  
     if (!name) {
       setError('Please enter an organization name.');
       return;
     }
-
+  
+    const newOrg: Organization = {
+      id: Date.now(), // Use a timestamp as a temporary ID
+      name,
+      description,
+      members: 1, // Start with 1 member (the creator)
+      userIsMember: true,
+      logo: logo ? URL.createObjectURL(logo) : 'https://via.placeholder.com/64?text=' + name.charAt(0),
+      website,
+    };
+  
     try {
       // Here you would typically make an API call to create the organization
-      console.log('Creating organization:', { name, description, joinPolicy, website, logo });
+      // For now, we'll just simulate it by calling onCreate
+      onCreate(newOrg);
       setSuccess('Organization created successfully!');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirect to the new organization's page (you'll need to implement this route)
-      router.push(`/organization/${Math.floor(Math.random() * 1000)}`);
       onClose();
     } catch (err) {
       setError('Failed to create organization. Please try again.');
     }
   };
+  
+  
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -76,93 +86,82 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
           <Dialog.Title className="text-xl font-bold mb-4">Create New Organization</Dialog.Title>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Organization Name *
-              </label>
+              <label htmlFor="name" className="block text-sm font-medium">Name</label>
               <input
-                type="text"
                 id="name"
+                type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                 required
               />
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description 
-                {wordCount >= MAX_WORDS && (
-                  <span className="text-red-500 ml-1">
-                    (Word limit reached: {wordCount}/{MAX_WORDS})
-                  </span>
-                )}
-              </label>
+              <label htmlFor="description" className="block text-sm font-medium">Description</label>
               <textarea
                 id="description"
                 value={description}
                 onChange={handleDescriptionChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
-                rows={3}
-              ></textarea>
-            </div>
-            <div>
-              <label htmlFor="logo" className="block text-sm font-medium text-gray-700">
-                Logo
-              </label>
-              <input
-                type="file"
-                id="logo"
-                onChange={handleLogoChange}
-                accept="image/*"
-                className="mt-1 block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-green-50 file:text-green-700
-                hover:file:bg-green-100"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                rows={4}
+                maxLength={250}
+                required
               />
             </div>
             <div>
-              <label htmlFor="website" className="block text-sm font-medium text-gray-700">
-                Website 
-              </label>
+              <label htmlFor="logo" className="block text-sm font-medium">Logo</label>
               <input
-                type="url"
+                id="logo"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md cursor-pointer"
+              />
+            </div>
+            <div>
+              <label htmlFor="website" className="block text-sm font-medium">Website URL</label>
+              <input
                 id="website"
+                type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
-                pattern="https?://.*"
-                placeholder="https://example.com"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
               />
             </div>
             <div>
-              <label htmlFor="joinPolicy" className="block text-sm font-medium text-gray-700">
-                Join Policy
-              </label>
+              <label htmlFor="joinPolicy" className="block text-sm font-medium">Join Policy</label>
               <select
-                id="joinPolicy"
-                value={joinPolicy}
-                onChange={(e) => setJoinPolicy(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
-              >
-                <option value="open">Open</option>
-                <option value="request">Request to Join</option>
-                <option value="invite">Invite Only</option>
-              </select>
+  id="joinPolicy"
+  value={joinPolicy}
+  onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request')}
+  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+>
+  <option value="open">Open</option>
+  <option value="request">Request to Join</option>
+  <option value="invite">Invite Only</option>
+</select>
             </div>
             {error && <p className="text-red-500">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Create Organization
-            </button>
+            <div className="flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Create
+              </button>
+            </div>
           </form>
           <Dialog.Close asChild>
-            <button className="absolute top-2 right-2 p-1" onClick={onClose}>
-              <X className="w-4 h-4" />
+            <button className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600">
+              <X />
             </button>
           </Dialog.Close>
         </Dialog.Content>

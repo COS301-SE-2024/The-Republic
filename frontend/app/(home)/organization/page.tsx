@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Organizations from '@/components/Organization/Organization';
 import CreateOrganizationForm from '../../../components/CreateOrganizationForm.tsx/CreateOrganizationForm';
+import { Organization } from '../../../lib/types';
+import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
 
 type Tab = 'All' | 'My';
 
 function OrganizationPage() {
   const [activeTab, setActiveTab] = useState<Tab>('All');
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const { organizations, addOrganization } = useOrganizations();
   const router = useRouter();
 
   useEffect(() => {
@@ -30,6 +33,11 @@ function OrganizationPage() {
 
   const handleAddOrganization = () => {
     setShowCreateForm(true);
+  };
+
+  const handleCreateOrganization = (newOrg: Organization) => {
+    addOrganization(newOrg);
+    setShowCreateForm(false);
   };
 
   return (
@@ -60,17 +68,17 @@ function OrganizationPage() {
 
       {/* Tab Content */}
       <div className="mb-4">
-       
         <Organizations 
           onOrganizationClick={handleOrganizationClick} 
           filter={activeTab === 'My' ? 'userOnly' : 'all'}
+          organizations={organizations}
         />
       </div>
-      
+
       {/* Create New Organization section only visible in 'My' tab */}
       {activeTab === 'My' && (
         <div className="mt-6">
-          <button 
+          <button
             onClick={handleAddOrganization}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
           >
@@ -78,9 +86,13 @@ function OrganizationPage() {
           </button>
         </div>
       )}
-      
+
       {/* Create Organization Form */}
-      <CreateOrganizationForm isOpen={showCreateForm} onClose={() => setShowCreateForm(false)} />
+      <CreateOrganizationForm
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        onCreate={handleCreateOrganization}
+      />
     </div>
   );
 }

@@ -6,10 +6,11 @@ import { FaEllipsisH } from "react-icons/fa";
 
 interface OrganizationProps {
   onOrganizationClick: (id: number) => void;
-  filter: 'all' | 'userOnly';
+  filter: 'userOnly' | 'all';
+  organizations: Organization[];
 }
 
-// In Organizations component
+
 const organizations: Organization[] = [
   { id: 1, name: 'ZCC', description: "A powerful organization about blah blah blah", members: 1500, userIsMember: true, logo: 'https://via.placeholder.com/64?text=ZCC', website: 'https://zcc.com' },
   { id: 2, name: 'ArsenalRecruiters', description: "A powerful organization about blah blah blah", members: 9051, userIsMember: false, logo: 'https://via.placeholder.com/64?text=Arsenal', website: 'https://arsenalrecruiters.com' },
@@ -17,8 +18,7 @@ const organizations: Organization[] = [
   { id: 4, name: 'ANC', description: "A powerful organization about blah blah blah", members: 5494, userIsMember: false, logo: 'https://via.placeholder.com/64?text=ANC', website: 'https://anc.com' },
 ];
 
-
-const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter }) => {
+const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter, organizations }) => {
   const [showMenu, setShowMenu] = useState<number | null>(null);
   
   const filteredOrganizations = filter === 'all'
@@ -48,13 +48,18 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
           className="relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded"
           onClick={() => onOrganizationClick(org.id)}
         >
-          <h2 className="font-bold text-black dark:text-white">{org.name}</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{org.members} members</p>
+          <div className="flex items-center space-x-4">
+            {/* Displaying only the name and description, not the logo and website */}
+            <div>
+              <h2 className="font-bold text-black dark:text-white">{org.name}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{org.members} members</p>
+            </div>
+          </div>
           {!org.userIsMember && (
             <div className="absolute top-2 right-2 flex space-x-2">
               <FaEllipsisH
                 className="text-gray-500 cursor-pointer w-5 h-5"
-                onClick={(e) => handleMenuClick(e, org.id)} 
+                onClick={(e) => handleMenuClick(e, org.id)}
               />
               {showMenu === org.id && (
                 <div className="absolute top-8 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10">

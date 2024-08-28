@@ -1,16 +1,10 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import OrganizationDetail from '../../../../components/OrganizationDetail/OrganizationDetail';
 import { Organization, AnalyticsData } from '../../../../lib/types';
-
-const organizations: Organization[] = [
-  { id: 1, name: 'ZCC', description: "A powerful organization about blah blah blah", members: 1500, userIsMember: true },
-  { id: 2, name: 'ArsenalRecruiters', description: "A powerful organization about blah blah blah", members: 9051, userIsMember: false },
-  { id: 3, name: 'Betway', description: "A powerful organization about blah blah blah", members: 4368, userIsMember: true },
-  { id: 4, name: 'ANC', description: "A powerful organization about blah blah blah", members: 5494, userIsMember: false },
-];
+import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
 
 const mockAnalytics: AnalyticsData[] = [
   { date: '2024-01-01', issuesResolved: 10, interactions: 50 },
@@ -20,6 +14,7 @@ const mockAnalytics: AnalyticsData[] = [
 
 export default function OrganizationPage() {
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const { organizations } = useOrganizations();
   const params = useParams();
   const id = params.id as string;
 
@@ -28,7 +23,7 @@ export default function OrganizationPage() {
       const org = organizations.find(org => org.id === Number(id));
       setOrganization(org || null);
     }
-  }, [id]);
+  }, [id, organizations]);
 
   if (!organization) {
     return <div className="p-5">Organization not found</div>;
