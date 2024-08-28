@@ -6,6 +6,7 @@ import Organizations from '@/components/Organization/Organization';
 import CreateOrganizationForm from '../../../components/CreateOrganizationForm.tsx/CreateOrganizationForm';
 import { Organization } from '../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
+import AdminDashboard from '@/components/AdminDashboard/AdminDashboard';
 
 type Tab = 'All' | 'My';
 
@@ -28,7 +29,14 @@ function OrganizationPage() {
   };
 
   const handleOrganizationClick = (id: number) => {
-    router.push(`/organization/${id}`);
+    const org = organizations.find((o) => o.id === id);
+    if (org) {
+      if (org.isAdmin) {
+        router.push(`/organization/${id}/admin`);
+      } else {
+        router.push(`/organization/${id}`);
+      }
+    }
   };
 
   const handleAddOrganization = () => {

@@ -8,10 +8,12 @@ const OrganizationContext = createContext<{
   organizations: Organization[];
   setOrganizations: React.Dispatch<React.SetStateAction<Organization[]>>;
   addOrganization: (org: Organization) => void;
+  deleteOrganization: (id: number) => void;
 }>({
   organizations: [],
   setOrganizations: () => {},
   addOrganization: () => {},
+  deleteOrganization: () => {},
 });
 
 // Provider Component
@@ -19,7 +21,6 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
 
   useEffect(() => {
-    // Set mock organizations
     const mockOrganizations: Organization[] = [
       {
         id: 1,
@@ -29,6 +30,7 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         userIsMember: true,
         logo: 'https://via.placeholder.com/64?text=ZCC',
         website: 'https://zcc.com',
+        isAdmin: true, // User is an admin of this org
       },
       {
         id: 2,
@@ -38,18 +40,25 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         userIsMember: false,
         logo: 'https://via.placeholder.com/64?text=Arsenal',
         website: 'https://arsenalrecruiters.com',
+        isAdmin: false, // User is not an admin
       },
+      // Add more organizations as needed
     ];
-
+  
     setOrganizations(mockOrganizations);
   }, []);
+  
 
   const addOrganization = (org: Organization) => {
     setOrganizations((prevOrgs) => [...prevOrgs, org]);
   };
 
+  const deleteOrganization = (id: number) => {
+    setOrganizations((prevOrgs) => prevOrgs.filter(org => org.id !== id));
+  };
+
   return (
-    <OrganizationContext.Provider value={{ organizations, setOrganizations, addOrganization }}>
+    <OrganizationContext.Provider value={{ organizations, setOrganizations, addOrganization, deleteOrganization }}>
       {children}
     </OrganizationContext.Provider>
   );

@@ -20,9 +20,11 @@ export interface Organization {
   description: string;
   members: number;
   userIsMember: boolean;
-  logo?: string; 
-  website?: string; 
+  logo: string;
+  website: string;
+  isAdmin: boolean;
 }
+
 
 export interface CreateOrganizationData {
   name: string;

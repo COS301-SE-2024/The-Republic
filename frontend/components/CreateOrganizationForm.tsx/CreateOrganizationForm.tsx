@@ -63,6 +63,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
       userIsMember: true,
       logo: logo ? URL.createObjectURL(logo) : 'https://via.placeholder.com/64?text=' + name.charAt(0),
       website,
+      isAdmin: true,
     };
   
     try {

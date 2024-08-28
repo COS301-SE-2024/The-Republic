@@ -6,7 +6,7 @@ import {
   ProfileIcon,
   LogoutIcon,
   ReportsIcon,
-  TrophyIcon,
+  OrganizationIcon,
   NotificationsIcon,
   SettingsIcon,
 } from "../icons";
@@ -235,8 +235,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </li>
             <li onClick={onClose}>
               <Link href="/organization">
-                <TrophyIcon />
-                Organization
+                <OrganizationIcon />
+                Organizations
               </Link>
             </li>
             {user ? (

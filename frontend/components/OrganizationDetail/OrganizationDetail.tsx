@@ -4,9 +4,11 @@ import BarChart from '../ReportCharts/BarChart/BarChart';
 import { FaEllipsisV } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import AdminDashboard from '../AdminDashboard/AdminDashboard';
 
 const OrganizationDetail: React.FC<{ organization: Organization; analytics: AnalyticsData[] }> = ({ organization, analytics }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
 
   // Calculate total issues resolved and interactions
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
@@ -54,6 +56,21 @@ const OrganizationDetail: React.FC<{ organization: Organization; analytics: Anal
         <h2 className="text-xl font-semibold mb-2">About</h2>
         <p className="text-gray-700 mb-2">{organization.description}</p>
       </div>
+
+      {/* Admin Dashboard Toggle */}
+      {organization.isAdmin && (
+        <button
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => setShowAdminDashboard(!showAdminDashboard)}
+        >
+          {showAdminDashboard ? 'Hide Admin Dashboard' : 'Show Admin Dashboard'}
+        </button>
+      )}
+
+       {/* Admin Dashboard */}
+       {organization.isAdmin && showAdminDashboard && (
+        <AdminDashboard organization={organization} />
+      )}
 
       {/* Members Summary and Analytics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
