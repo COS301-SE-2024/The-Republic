@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTheme } from 'next-themes';
