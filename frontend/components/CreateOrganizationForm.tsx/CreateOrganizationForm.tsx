@@ -141,12 +141,11 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
               <select
                 id="joinPolicy"
                 value={joinPolicy}
-                onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request' | 'invite')}
+                onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request')}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
               >
                 <option value="open">Open</option>
                 <option value="request">Request to Join</option>
-                <option value="invite">Invite Only</option>
               </select>
             </div>
             {error && <p className="text-red-500">{error}</p>}

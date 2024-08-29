@@ -48,7 +48,7 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         name: 'ArsenalRecruiters',
         description: 'A powerful organization about blah blah blah',
         memberCount: 9051,
-        userIsMember: true,
+        userIsMember: false,
         logo: 'https://via.placeholder.com/64?text=Arsenal',
         website: 'https://arsenalrecruiters.com',
         isPrivate: true,
