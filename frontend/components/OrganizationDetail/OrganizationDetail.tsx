@@ -16,14 +16,13 @@ const OrganizationDetail: React.FC<{
   const isMember = organization.userIsMember;
   const canJoin = !isMember && organization.joinPolicy === 'open';
   const canRequestToJoin = !isMember && organization.joinPolicy === 'closed';
+  const manageOrg = isMember && isAdmin;
+  const leaveOrg = isMember && !isAdmin;
 
   // Calculate total issues resolved and interactions
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
   const totalInteractions = analytics.reduce((sum, data) => sum + data.interactions, 0);
 
-  console.log('Organization:', organization);
-  console.log('User isMember:', isMember);
-  console.log('User isAdmin:', isAdmin);
 
   const handleJoinClick = () => {
     console.log('Join organization clicked');
@@ -31,6 +30,11 @@ const OrganizationDetail: React.FC<{
 
   const handleRequestClick = () => {
     console.log('Request to join organization clicked');
+  };
+
+  const handleLeaveClick = () => {
+    console.log('Leave organization clicked');
+    // Add your logic to handle leaving the organization here
   };
 
   return (
@@ -68,40 +72,49 @@ const OrganizationDetail: React.FC<{
             </div>
           </div>
           <div className="relative">
-            <FaEllipsisH
-              className="text-gray-500 cursor-pointer"
-              onClick={() => setShowMenu(!showMenu)}
-            />
-            {showMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                {isAdmin && isMember && (
-                  <Link href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Manage Organization
-                  </Link>
-                )}
-                {canJoin && (
-                  <button
-                    onClick={handleJoinClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Join Organization
-                  </button>
-                )}
-                {canRequestToJoin && (
-                  <button
-                    onClick={handleRequestClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Request to Join
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+  <FaEllipsisH size={25}
+    className="text-gray-500 cursor-pointer"
+    onClick={() => setShowMenu(!showMenu)}
+  />
+  {showMenu && (
+    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+      {manageOrg && (
+        <Link href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          Manage Organization
+        </Link>
+      )}
+      {leaveOrg && (
+        <button
+          onClick={handleLeaveClick}
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Leave Organization
+        </button>
+      )}
+      {canJoin && (
+        <button
+          onClick={handleJoinClick}
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Join Organization
+        </button>
+      )}
+      {canRequestToJoin && (
+        <button
+          onClick={handleRequestClick}
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >
+          Request to Join
+        </button>
+      )}
+    </div>
+  )}
+</div>
+</div>
+
 
         {/* Back Button */}
-        <div className="absolute top-[-40px] right-0">
+        <div className="absolute top-[-20px] right-0">
           <Link
             href={`/organization`}
             className="px-5 py-2 bg-green-200 rounded-full text-sm"

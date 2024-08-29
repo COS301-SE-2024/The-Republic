@@ -48,14 +48,14 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         name: 'ArsenalRecruiters',
         description: 'A powerful organization about blah blah blah',
         memberCount: 9051,
-        userIsMember: false,
+        userIsMember: true,
         logo: 'https://via.placeholder.com/64?text=Arsenal',
         website: 'https://arsenalrecruiters.com',
         isPrivate: true,
         isAdmin: false,
         members: [
           { id: 3, name: 'Jack Smith', email: 'jacksmith@example.com', isAdmin: true },
-          { id: 4, name: 'Emily White', email: 'emilywhite@example.com', isAdmin: false },
+          { id: 5, name: 'Emily White', email: 'emilywhite@example.com', isAdmin: false },
         ],
         joinRequests: [
           { id: 3, userId: 103, userName: 'Charlie', requestDate: '2024-08-03' },
