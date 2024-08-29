@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, expect } from "@jest/globals";
+import { describe, expect, it, jest, beforeEach, afterEach } from "@jest/globals";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Signup from "@/app/(auth)/signup/page";
 import { useRouter } from "next/navigation";
@@ -37,6 +37,17 @@ jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
 }));
 
+jest.mock("framer-motion", () => ({
+  motion: {
+    h1: jest.fn().mockImplementation(({ children, ...props }) => (
+      <h1 {...props}>{children}</h1>
+    )),
+    div: jest.fn().mockImplementation(({ children, ...props }) => (
+      <div {...props}>{children}</div>
+    )),
+  },
+}));
+
 describe("Signup", () => {
   const mockPush = jest.fn();
   const mockToast = jest.fn();
@@ -49,11 +60,6 @@ describe("Signup", () => {
       toast: mockToast,
     });
     jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation((message) => {
-      if (!message.includes("specific error message to ignore")) {
-        // No action taken for the specific message
-      }
-    });
   });
 
   afterEach(() => {
@@ -62,51 +68,49 @@ describe("Signup", () => {
 
   it("renders Signup form", () => {
     render(<Signup />);
-    expect(screen.getByLabelText(/fullname/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByText(/signup/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter your full name/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter your email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Choose a username/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Create a strong password/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Create Account/i })).toBeInTheDocument();
   });
 
   it("allows user to type into the form fields", () => {
     render(<Signup />);
 
-    fireEvent.change(screen.getByLabelText(/fullname/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Enter your full name/i), {
       target: { value: "John Doe" },
     });
-    fireEvent.change(screen.getByLabelText(/email/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Enter your email/i), {
       target: { value: "john@example.com" },
     });
-    fireEvent.change(screen.getByLabelText(/username/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Choose a username/i), {
       target: { value: "johndoe" },
     });
-    fireEvent.change(screen.getByLabelText(/password/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Create a strong password/i), {
       target: { value: "password123" },
     });
 
-    expect(screen.getByLabelText(/fullname/i)).toHaveValue("John Doe");
-    expect(screen.getByLabelText(/email/i)).toHaveValue("john@example.com");
-    expect(screen.getByLabelText(/username/i)).toHaveValue("johndoe");
-    expect(screen.getByLabelText(/password/i)).toHaveValue("password123");
+    expect(screen.getByPlaceholderText(/Enter your full name/i)).toHaveValue("John Doe");
+    expect(screen.getByPlaceholderText(/Enter your email/i)).toHaveValue("john@example.com");
+    expect(screen.getByPlaceholderText(/Choose a username/i)).toHaveValue("johndoe");
+    expect(screen.getByPlaceholderText(/Create a strong password/i)).toHaveValue("password123");
   });
 
-  it('shows password when "Show" is clicked and hides it when "Hide" is clicked', () => {
+  it('toggles password visibility when the eye icon is clicked', () => {
     render(<Signup />);
 
-    const passwordInput = screen.getByLabelText(/password/i);
-    const showHideButton = screen.getByText(/show/i);
+    const passwordInput = screen.getByPlaceholderText(/Create a strong password/i);
+    const toggleButton = screen.getByRole('button', { name: /toggle password visibility/i });
 
     expect(passwordInput).toHaveAttribute("type", "password");
 
-    fireEvent.click(showHideButton);
+    fireEvent.click(toggleButton);
 
     expect(passwordInput).toHaveAttribute("type", "text");
-    expect(showHideButton).toHaveTextContent("Hide");
 
-    fireEvent.click(showHideButton);
+    fireEvent.click(toggleButton);
 
     expect(passwordInput).toHaveAttribute("type", "password");
-    expect(showHideButton).toHaveTextContent("Show");
   });
 });
