@@ -5,9 +5,11 @@ import { TiTick } from "react-icons/ti";
 import { PiCirclesFourLight } from 'react-icons/pi';
 import { FaRegUser } from "react-icons/fa6";
 import { VscMegaphone } from "react-icons/vsc";
+import { LuPenLine } from "react-icons/lu";
 import { TbTrash } from "react-icons/tb";
 import { LiaFileDownloadSolid } from "react-icons/lia";
 import { X } from 'lucide-react';
+import Link from 'next/link'; // Import Link
 
 const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization }) => {
   const [activeTab, setActiveTab] = useState('members');
@@ -36,63 +38,102 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   return (
     <div className="bg-white p-14 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center">
-          <div className="w-24 h-24 bg-gray-300 rounded-full mr-8"></div>
+        <div className="flex items-center space-x-4">
+          {organization.logo ? (
+            <img
+              src={organization.logo}
+              alt={`${organization.name} logo`}
+              width={64}
+              height={64}
+              className="rounded-full"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+              <span className="text-gray-500">No Logo</span>
+            </div>
+          )}
           <div>
-            <h1 className="text-3xl font-bold mb-1">{organization.name}</h1>
-            <a href={organization.website} className="text-green-600 text-sm">{organization.website}</a>
+            <h1 className="text-3xl font-bold flex items-center space-x-2">
+              <span>{organization.name}</span>
+              <button
+                className="p-2 rounded-full text-gray-500"
+                onClick={() => console.log("Edit clicked")} // Replace with actual handler
+              >
+                <LuPenLine className="w-5 h-5" />
+              </button>
+            </h1>
+            {organization.website ? (
+              <a
+                href={organization.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-600 hover:text-green-800 flex items-center mt-2"
+              >
+                {organization.website}
+              </a>
+            ) : (
+              <p className="text-gray-500 mt-2">No website provided</p>
+            )}
           </div>
         </div>
-        <button className="px-5 py-2 bg-gray-200 rounded-full text-sm">
+
+        <Link
+          href={`/organization/${organization.id}`}
+          className="px-5 py-2 bg-green-200 rounded-full text-sm"
+        >
           Back
-        </button>
+        </Link>
       </div>
-      
+
       <p className="text-sm font-bold mb-3">About</p>
       <p className="text-sm font-light mb-6">{organization.description}</p>
       
       <div className="bg-gray-100 rounded-lg mb-6">
-  <div className="flex justify-between items-center px-12 py-2 relative">
-    <button
-      className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white ' : ''}`}
-      onClick={() => setActiveTab('members')}
-    >
-      <PiCirclesFourLight className="w-6 h-6 text-gray-500" />
-      Members
-      {activeTab === 'members' && (
-        <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
-      )}
-    </button>
-    <button
-      className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'requests' ? 'bg-white shadow-md' : ''}`}
-      onClick={() => setActiveTab('requests')}
-    >
-      <FaRegUser className="w-6 h-6 mr-2 text-gray-500" />
-      Requests
-      {activeTab === 'requests' && (
-        <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
-      )}
-    </button>
-    <button
-      className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'broadcast' ? 'bg-white shadow-md' : ''}`}
-      onClick={() => setActiveTab('broadcast')}
-    >
-      <VscMegaphone className="w-6 h-6 mr-2 text-gray-500" />
-      Broadcast
-      {activeTab === 'broadcast' && (
-        <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
-      )}
-    </button>
-    <LiaFileDownloadSolid className="w-6 h-6 mr-2 text-black" />
-  </div>
-</div>
+        <div className="flex justify-between items-center px-12 py-2 relative">
+          <button
+            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white ' : ''}`}
+            onClick={() => setActiveTab('members')}
+          >
+            <PiCirclesFourLight className="w-6 h-6 text-gray-500" />
+            Members
+            {activeTab === 'members' && (
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+            )}
+          </button>
+          <button
+            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'requests' ? 'bg-white shadow-md' : ''}`}
+            onClick={() => setActiveTab('requests')}
+          >
+            <FaRegUser className="w-6 h-6 mr-2 text-gray-500" />
+            Requests
+            {activeTab === 'requests' && (
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+            )}
+          </button>
+          <button
+            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'broadcast' ? 'bg-white shadow-md' : ''}`}
+            onClick={() => setActiveTab('broadcast')}
+          >
+            <VscMegaphone className="w-6 h-6 mr-2 text-gray-500" />
+            Broadcast
+            {activeTab === 'broadcast' && (
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+            )}
+          </button>
 
+          <button
+            className="p-2 rounded-full bg-gray-100 text-black"
+            onClick={() => console.log("Icon button clicked")} // Replace with your actual handler
+          >
+            <LiaFileDownloadSolid className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-      
       {activeTab === 'members' && (
         <div>
           <div className="flex items-center mb-4 border rounded-full">
-          <FaSearch className="text-gray-400 ml-2 mr-1" />
+            <FaSearch className="text-gray-400 ml-2 mr-1" />
             <input
               type="text"
               placeholder="Search"
@@ -161,12 +202,12 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
                     {request.userName}
                   </td>
                   <td className="py-3 text-right">
-                  <button
-  className="text-red-500 mr-16"
-  onClick={() => handleRejectRequest(request.id)}
->
-  <TbTrash size={20} />
-</button>
+                    <button
+                      className="text-red-500 mr-16"
+                      onClick={() => handleRejectRequest(request.id)}
+                    >
+                      <TbTrash size={20} />
+                    </button>
                     <button
                       className="text-green-500 mr-10"
                       onClick={() => handleAcceptRequest(request.id)}
@@ -195,8 +236,6 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
           </button>
         </div>
       )}
-      
-      <button className="mt-8 bg-red-100 text-balck-800 px-4 py-2 rounded-full">Delete Organization</button>
     </div>
   );
 };

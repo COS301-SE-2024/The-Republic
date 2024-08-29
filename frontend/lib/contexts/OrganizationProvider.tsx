@@ -33,13 +33,15 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         isPrivate: false,
         isAdmin: true,
         members: [
-          { id: 1, name: 'John Doe', email:'johndoe', isAdmin: true },
-          { id: 2, name: 'Jane Doe', email:'johndoe', isAdmin: false },
+          { id: 1, name: 'John Doe', email: 'johndoe@example.com', isAdmin: true },
+          { id: 2, name: 'Timothy Tester', email: 'Shamakamina@icloud.com', isAdmin: true },
+          { id: 3, name: 'Jane Doe', email: 'janedoe@example.com', isAdmin: false },
         ],
         joinRequests: [
           { id: 1, userId: 101, userName: 'Alice', requestDate: '2024-08-01' },
           { id: 2, userId: 102, userName: 'Bob', requestDate: '2024-08-02' },
         ],
+        joinPolicy: 'open', 
       },
       {
         id: 2,
@@ -52,15 +54,17 @@ export const OrganizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         isPrivate: true,
         isAdmin: false,
         members: [
-          { id: 3, name: 'Jack Smith', email:'johndoe', isAdmin: true },
-          { id: 4, name: 'Emily White',email:'johndoe', isAdmin: false },
+          { id: 3, name: 'Jack Smith', email: 'jacksmith@example.com', isAdmin: true },
+          { id: 4, name: 'Emily White', email: 'emilywhite@example.com', isAdmin: false },
         ],
         joinRequests: [
           { id: 3, userId: 103, userName: 'Charlie', requestDate: '2024-08-03' },
           { id: 4, userId: 104, userName: 'Diana', requestDate: '2024-08-04' },
         ],
+        joinPolicy: 'closed',
       },
     ];
+    
 
     setOrganizations(mockOrganizations);
   }, []);

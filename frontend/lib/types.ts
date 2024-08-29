@@ -22,11 +22,13 @@ export interface Organization {
   userIsMember: boolean;
   logo: string;
   website: string;
-  isPrivate: boolean; 
-  isAdmin: boolean;
-  members: Member[]; 
+  isPrivate: boolean;  
+  isAdmin: boolean;  
+  members: Member[];  
   joinRequests: JoinRequest[];  
+  joinPolicy: 'open' | 'closed';  
 }
+
 
 export interface JoinRequest {
   id: number;

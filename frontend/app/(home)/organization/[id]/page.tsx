@@ -16,7 +16,7 @@ const mockAnalytics: AnalyticsData[] = [
 export default function OrganizationPage() {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const { organizations } = useOrganizations();
-  const { user } = useUser(); // Get the user data from the UserProvider
+  const { user } = useUser();
   const params = useParams();
   const id = params.id as string;
 
@@ -33,9 +33,8 @@ export default function OrganizationPage() {
 
   // Check if the user is an admin of the organization
   const isAdmin = user
-  ? organization.members.some(member => member.id === Number(user.user_id) && member.isAdmin)
-  : false;
-
+    ? organization.members.some(member => member.id === Number(user.user_id) && member.isAdmin)
+    : false;
 
   return <OrganizationDetail organization={organization} analytics={mockAnalytics} isAdmin={true} />;
 }

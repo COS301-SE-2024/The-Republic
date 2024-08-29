@@ -4,13 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { Organization } from '../../lib/types'; // Import Organization type
+import { Organization } from '../../lib/types';
 import { CreateOrganizationData } from '../../lib/types';
 
 interface CreateOrganizationFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (newOrg: Organization) => void; // Add onCreate prop
+  onCreate: (newOrg: Organization) => void;
 }
 
 const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen, onClose, onCreate }) => {
@@ -18,7 +18,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
   const [description, setDescription] = useState('');
   const [logo, setLogo] = useState<File | null>(null);
   const [website, setWebsite] = useState('');
-  const [joinPolicy, setJoinPolicy] = useState<'open' | 'request'>('open');
+  const [joinPolicy, setJoinPolicy] = useState<'open' | 'request' | 'invite'>('open');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [wordCount, setWordCount] = useState(0);
@@ -49,12 +49,12 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
     e.preventDefault();
     setError('');
     setSuccess('');
-  
+
     if (!name) {
       setError('Please enter an organization name.');
       return;
     }
-  
+
     const newOrg: Organization = {
       id: Date.now(), // Use a timestamp as a temporary ID
       name,
@@ -63,40 +63,40 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
         {
           id: Date.now(), // Temporary ID for the creator
           name: 'Creator Name', // Set the creator's name or get from user context
-          email:'johndoe',
+          email: 'johndoe',
           isAdmin: true,
-        },],
+        },
+      ],
       userIsMember: true,
       logo: logo ? URL.createObjectURL(logo) : 'https://via.placeholder.com/64?text=' + name.charAt(0),
       website,
       isAdmin: true,
       memberCount: 1,
-      isPrivate: joinPolicy === 'request', 
+      isPrivate: joinPolicy === 'request',
       joinRequests: [],
+      joinPolicy: 'open' 
     };
-  
+
     try {
-      // Here you would typically make an API call to create the organization
-      // For now, we'll just simulate it by calling onCreate
+      // Simulate API call
       onCreate(newOrg);
       setSuccess('Organization created successfully!');
       onClose();
+      router.push(`/organization/${newOrg.id}`); // Redirect to the new organization's page
     } catch (err) {
       setError('Failed to create organization. Please try again.');
     }
   };
-  
-  
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black/50 fixed inset-0" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
-          <Dialog.Title className="text-xl font-bold mb-4">Create New Organization</Dialog.Title>
+          <Dialog.Title className="text-2xl font-bold mb-4 border-b pb-2">Create New Organization</Dialog.Title>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium">Name</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
               <input
                 id="name"
                 type="text"
@@ -107,19 +107,17 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
               />
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium">Description</label>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
               <textarea
                 id="description"
                 value={description}
                 onChange={handleDescriptionChange}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                 rows={4}
-                maxLength={250}
-                required
               />
             </div>
             <div>
-              <label htmlFor="logo" className="block text-sm font-medium">Logo</label>
+              <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Logo</label>
               <input
                 id="logo"
                 type="file"
@@ -129,7 +127,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
               />
             </div>
             <div>
-              <label htmlFor="website" className="block text-sm font-medium">Website URL</label>
+              <label htmlFor="website" className="block text-sm font-medium text-gray-700">Website URL</label>
               <input
                 id="website"
                 type="url"
@@ -139,17 +137,17 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
               />
             </div>
             <div>
-              <label htmlFor="joinPolicy" className="block text-sm font-medium">Join Policy</label>
+              <label htmlFor="joinPolicy" className="block text-sm font-medium text-gray-700">Join Policy</label>
               <select
-  id="joinPolicy"
-  value={joinPolicy}
-  onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request')}
-  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
->
-  <option value="open">Open</option>
-  <option value="request">Request to Join</option>
-  <option value="invite">Invite Only</option>
-</select>
+                id="joinPolicy"
+                value={joinPolicy}
+                onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request' | 'invite')}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+              >
+                <option value="open">Open</option>
+                <option value="request">Request to Join</option>
+                <option value="invite">Invite Only</option>
+              </select>
             </div>
             {error && <p className="text-red-500">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}

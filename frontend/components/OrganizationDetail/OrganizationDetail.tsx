@@ -4,26 +4,49 @@ import BarChart from '../ReportCharts/BarChart/BarChart';
 import { FaEllipsisH } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const OrganizationDetail: React.FC<{ 
   organization: Organization; 
-  analytics: AnalyticsData[]; 
-  isAdmin?: boolean 
-}> = ({ organization, analytics, isAdmin = true }) => {
+  analytics: AnalyticsData[];
+  isAdmin: boolean; 
+}> = ({ organization, analytics, isAdmin }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
-  console.log("isAdmin:", isAdmin); // Debugging isAdmin
-  console.log("showMenu:", showMenu); // Debugging showMenu
+  const router = useRouter();
+  
+  const isMember = organization.userIsMember;
+  const canJoin = !isMember && organization.joinPolicy === 'open';
+  const canRequestToJoin = !isMember && organization.joinPolicy === 'closed';
 
   // Calculate total issues resolved and interactions
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
   const totalInteractions = analytics.reduce((sum, data) => sum + data.interactions, 0);
 
+  const handleJoinClick = () => {
+    console.log('Join organization clicked');
+  };
+
+  const handleRequestClick = () => {
+    console.log('Request to join organization clicked');
+  };
+
+  // Function to handle back button click
+  const handleBackClick = () => {
+    router.back(); // Navigate to the previous page
+  };
+
   return (
-    <div className="p-5 bg-gray-100">
+    <div className="p-14 min-h-screen bg-white">
       <div className="flex justify-between items-center mb-6">
+        {/* Back Button */}
+        <button
+          onClick={handleBackClick}
+          className="text-green-500 hover:text-gray-700"
+        >
+          &larr; Back
+        </button>
+        
         <div className="flex items-center space-x-4">
           {organization.logo ? (
             <img
@@ -57,20 +80,31 @@ const OrganizationDetail: React.FC<{
         <div className="relative">
           <FaEllipsisH
             className="text-gray-500 cursor-pointer"
-            onClick={() => {
-              setShowMenu(!showMenu);
-              console.log("showMenu toggled to:", !showMenu); // Debugging toggle
-            }}
+            onClick={() => setShowMenu(!showMenu)}
           />
           {showMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-              {isAdmin && (
-                <Link href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Manage Organization
-              </Link>
-              
+              {isAdmin && isMember && (
+                <a href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  Manage Organization
+                </a>
               )}
-              {/* Add other menu items here */}
+              {canJoin && (
+                <button
+                  onClick={() => console.log('Join organization clicked')}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Join Organization
+                </button>
+              )}
+              {canRequestToJoin && (
+                <button
+                  onClick={() => console.log('Request to join organization clicked')}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Request to Join
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -84,7 +118,7 @@ const OrganizationDetail: React.FC<{
 
       {/* Members Summary and Analytics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Dialog.Root open={modalIsOpen} onOpenChange={setModalIsOpen}>
+        <Dialog.Root>
           <Dialog.Trigger asChild>
             <div className="bg-white p-4 rounded-lg shadow cursor-pointer">
               <h3 className="text-sm text-gray-500 mb-1">Total Members</h3>
@@ -121,15 +155,6 @@ const OrganizationDetail: React.FC<{
         <BarChart />
       </div>
 
-      {/* Join Request Button (for private organizations) */}
-      {organization.isPrivate && !organization.userIsMember && (
-        <button
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          onClick={() => {/* Handle join request */}}
-        >
-          Request to Join
-        </button>
-      )}
     </div>
   );
 };

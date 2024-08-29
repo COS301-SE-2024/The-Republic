@@ -23,13 +23,7 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
     setShowMenu(showMenu === id ? null : id);
   };
 
-  const handleJoinClick = (id: number) => {
-    console.log(`Join organization ${id}`);
-  };
 
-  const handleRequestToJoinClick = (id: number) => {
-    console.log(`Request to join organization ${id}`);
-  };
 
   const handleManageClick = (id: number) => {
     console.log(`Manage organization ${id}`);
@@ -52,24 +46,10 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
           </div>
           {!org.userIsMember && (
             <div className="absolute top-2 right-2 flex space-x-2">
-              <FaEllipsisH
-                className="text-gray-500 cursor-pointer w-5 h-5"
-                onClick={(e) => handleMenuClick(e, org.id)}
-              />
+              
               {showMenu === org.id && (
                 <div className="absolute top-8 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10">
-                  <button
-                    className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    onClick={() => handleJoinClick(org.id)}
-                  >
-                    Join
-                  </button>
-                  <button
-                    className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
-                    onClick={() => handleRequestToJoinClick(org.id)}
-                  >
-                    Request to Join
-                  </button>
+                  
                   {userRole === 'admin' && (
                     <button
                       className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
