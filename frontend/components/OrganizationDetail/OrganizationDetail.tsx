@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Organization, AnalyticsData, Member } from '../../lib/types';
-import BarChart from '../ReportCharts/BarChart/BarChart'; 
+import BarChart from '../ReportCharts/BarChart/BarChart';
 import { FaEllipsisH } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { useRouter } from 'next/router';
+import Link from 'next/link'; // Import Link
 
 const OrganizationDetail: React.FC<{ 
   organization: Organization; 
@@ -13,8 +13,6 @@ const OrganizationDetail: React.FC<{
 }> = ({ organization, analytics, isAdmin }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const router = useRouter();
-  
   const isMember = organization.userIsMember;
   const canJoin = !isMember && organization.joinPolicy === 'open';
   const canRequestToJoin = !isMember && organization.joinPolicy === 'closed';
@@ -22,6 +20,10 @@ const OrganizationDetail: React.FC<{
   // Calculate total issues resolved and interactions
   const totalIssuesResolved = analytics.reduce((sum, data) => sum + data.issuesResolved, 0);
   const totalInteractions = analytics.reduce((sum, data) => sum + data.interactions, 0);
+
+  console.log('Organization:', organization);
+  console.log('User isMember:', isMember);
+  console.log('User isAdmin:', isAdmin);
 
   const handleJoinClick = () => {
     console.log('Join organization clicked');
@@ -31,85 +33,84 @@ const OrganizationDetail: React.FC<{
     console.log('Request to join organization clicked');
   };
 
-  // Function to handle back button click
-  const handleBackClick = () => {
-    router.back(); // Navigate to the previous page
-  };
-
   return (
     <div className="p-14 min-h-screen bg-white">
-      <div className="flex justify-between items-center mb-6">
-        {/* Back Button */}
-        <button
-          onClick={handleBackClick}
-          className="text-green-500 hover:text-gray-700"
-        >
-          &larr; Back
-        </button>
-        
-        <div className="flex items-center space-x-4">
-          {organization.logo ? (
-            <img
-              src={organization.logo}
-              alt={`${organization.name} logo`}
-              width={64}
-              height={64}
-              className="rounded-full"
-            />
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-              <span className="text-gray-500">No Logo</span>
-            </div>
-          )}
-          <div>
-            <h1 className="text-3xl font-bold">{organization.name}</h1>
-            {organization.website ? (
-              <a
-                href={organization.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-green-600 hover:text-green-800 flex items-center mt-2"
-              >
-                {organization.website}
-              </a>
+      <div className="relative mb-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            {organization.logo ? (
+              <img
+                src={organization.logo}
+                alt={`${organization.name} logo`}
+                width={64}
+                height={64}
+                className="rounded-full"
+              />
             ) : (
-              <p className="text-gray-500 mt-2">No website provided</p>
+              <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-500">No Logo</span>
+              </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold">{organization.name}</h1>
+              {organization.website ? (
+                <a
+                  href={organization.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-600 hover:text-green-800 flex items-center mt-2"
+                >
+                  {organization.website}
+                </a>
+              ) : (
+                <p className="text-gray-500 mt-2">No website provided</p>
+              )}
+            </div>
+          </div>
+          <div className="relative">
+            <FaEllipsisH
+              className="text-gray-500 cursor-pointer"
+              onClick={() => setShowMenu(!showMenu)}
+            />
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                {isAdmin && isMember && (
+                  <Link href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Manage Organization
+                  </Link>
+                )}
+                {canJoin && (
+                  <button
+                    onClick={handleJoinClick}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Join Organization
+                  </button>
+                )}
+                {canRequestToJoin && (
+                  <button
+                    onClick={handleRequestClick}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Request to Join
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>
-        <div className="relative">
-          <FaEllipsisH
-            className="text-gray-500 cursor-pointer"
-            onClick={() => setShowMenu(!showMenu)}
-          />
-          {showMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-              {isAdmin && isMember && (
-                <a href={`/organization/${organization.id}/admin`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Manage Organization
-                </a>
-              )}
-              {canJoin && (
-                <button
-                  onClick={() => console.log('Join organization clicked')}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Join Organization
-                </button>
-              )}
-              {canRequestToJoin && (
-                <button
-                  onClick={() => console.log('Request to join organization clicked')}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Request to Join
-                </button>
-              )}
-            </div>
-          )}
+
+        {/* Back Button */}
+        <div className="absolute top-[-40px] right-0">
+          <Link
+            href={`/organization`}
+            className="px-5 py-2 bg-green-200 rounded-full text-sm"
+          >
+            Back
+          </Link>
         </div>
       </div>
-      
+
       {/* About Section */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">About</h2>
@@ -154,7 +155,6 @@ const OrganizationDetail: React.FC<{
         <h2 className="text-xl font-semibold mb-4">Issues Resolved vs Unresolved</h2>
         <BarChart />
       </div>
-
     </div>
   );
 };
