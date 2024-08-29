@@ -18,11 +18,21 @@ export interface Organization {
   id: number;
   name: string;
   description: string;
-  members: number;
+  memberCount: number;
   userIsMember: boolean;
   logo: string;
   website: string;
+  isPrivate: boolean; 
   isAdmin: boolean;
+  members: Member[]; 
+  joinRequests: JoinRequest[];  
+}
+
+export interface JoinRequest {
+  id: number;
+  userId: number;
+  userName: string;
+  requestDate: string;
 }
 
 
@@ -38,7 +48,8 @@ export interface CreateOrganizationData {
 export interface Member {
   id: number;
   name: string;
-  role: string;
+  email:string;
+  isAdmin: boolean;
 }
 
 export interface AnalyticsData {
@@ -82,6 +93,7 @@ interface UserAlt {
   user_score: number;
   bio: string;
   is_owner: boolean;
+  isAdmin: boolean; 
   total_issues: number;
   resolved_issues: number;
   access_token: string;

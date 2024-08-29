@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 export default function OrganizationLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   const params = useParams();
   const { organizations } = useOrganizations();
@@ -23,7 +23,7 @@ export default function OrganizationLayout({
       if (isAdminPage && !organization.isAdmin) {
         router.push(`/organization/${id}`);
       } else if (!isAdminPage && organization.isAdmin) {
-        router.push(`/organization/${id}/admin`);
+        // Remove this line to avoid auto-redirecting to admin page
       }
     }
   }, [id, organizations, pathname, router]);

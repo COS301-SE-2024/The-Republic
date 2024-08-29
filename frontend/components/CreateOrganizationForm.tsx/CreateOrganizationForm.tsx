@@ -59,11 +59,20 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
       id: Date.now(), // Use a timestamp as a temporary ID
       name,
       description,
-      members: 1, // Start with 1 member (the creator)
+      members: [
+        {
+          id: Date.now(), // Temporary ID for the creator
+          name: 'Creator Name', // Set the creator's name or get from user context
+          email:'johndoe',
+          isAdmin: true,
+        },],
       userIsMember: true,
       logo: logo ? URL.createObjectURL(logo) : 'https://via.placeholder.com/64?text=' + name.charAt(0),
       website,
       isAdmin: true,
+      memberCount: 1,
+      isPrivate: joinPolicy === 'request', 
+      joinRequests: [],
     };
   
     try {

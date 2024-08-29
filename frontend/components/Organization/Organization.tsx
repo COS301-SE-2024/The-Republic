@@ -8,12 +8,10 @@ interface OrganizationProps {
   onOrganizationClick: (id: number) => void;
   filter: 'userOnly' | 'all';
   organizations: Organization[];
+  userRole: 'admin' | 'member';
 }
 
-
-
-
-const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter, organizations }) => {
+const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter, organizations, userRole }) => {
   const [showMenu, setShowMenu] = useState<number | null>(null);
   
   const filteredOrganizations = filter === 'all'
@@ -21,18 +19,21 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
     : organizations.filter(org => org.userIsMember);
 
   const handleMenuClick = (e: MouseEvent, id: number) => {
-    e.stopPropagation(); // Prevent the click from bubbling up and triggering navigation
-    setShowMenu(showMenu === id ? null : id); // Toggle the menu
+    e.stopPropagation();
+    setShowMenu(showMenu === id ? null : id);
   };
 
   const handleJoinClick = (id: number) => {
     console.log(`Join organization ${id}`);
-    // Add join logic here
   };
 
   const handleRequestToJoinClick = (id: number) => {
     console.log(`Request to join organization ${id}`);
-    // Add request-to-join logic here
+  };
+
+  const handleManageClick = (id: number) => {
+    console.log(`Manage organization ${id}`);
+    window.location.href = `/organization/${id}/admin`;
   };
 
   return (
@@ -44,10 +45,9 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
           onClick={() => onOrganizationClick(org.id)}
         >
           <div className="flex items-center space-x-4">
-            {/* Displaying only the name and description, not the logo and website */}
             <div>
               <h2 className="font-bold text-black dark:text-white">{org.name}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{org.members} members</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{org.memberCount} members</p>
             </div>
           </div>
           {!org.userIsMember && (
@@ -70,6 +70,14 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
                   >
                     Request to Join
                   </button>
+                  {userRole === 'admin' && (
+                    <button
+                      className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      onClick={() => handleManageClick(org.id)}
+                    >
+                      Manage Organization
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import OrganizationDetail from '../../../../components/OrganizationDetail/OrganizationDetail';
 import { Organization, AnalyticsData } from '../../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
+import { useUser } from '../../../../lib/contexts/UserContext';
 
 const mockAnalytics: AnalyticsData[] = [
   { date: '2024-01-01', issuesResolved: 10, interactions: 50 },
@@ -15,6 +16,7 @@ const mockAnalytics: AnalyticsData[] = [
 export default function OrganizationPage() {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const { organizations } = useOrganizations();
+  const { user } = useUser(); // Get the user data from the UserProvider
   const params = useParams();
   const id = params.id as string;
 
@@ -29,5 +31,11 @@ export default function OrganizationPage() {
     return <div className="p-5">Organization not found</div>;
   }
 
-  return <OrganizationDetail organization={organization} analytics={mockAnalytics} />;
+  // Check if the user is an admin of the organization
+  const isAdmin = user
+  ? organization.members.some(member => member.id === Number(user.user_id) && member.isAdmin)
+  : false;
+
+
+  return <OrganizationDetail organization={organization} analytics={mockAnalytics} isAdmin={true} />;
 }

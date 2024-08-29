@@ -6,7 +6,7 @@ import Organizations from '@/components/Organization/Organization';
 import CreateOrganizationForm from '../../../components/CreateOrganizationForm.tsx/CreateOrganizationForm';
 import { Organization } from '../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
-import AdminDashboard from '@/components/AdminDashboard/AdminDashboard';
+import { useUser } from '../../../lib/contexts/UserContext';
 
 type Tab = 'All' | 'My';
 
@@ -14,6 +14,7 @@ function OrganizationPage() {
   const [activeTab, setActiveTab] = useState<Tab>('All');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const { organizations, addOrganization } = useOrganizations();
+  const { user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,14 +30,7 @@ function OrganizationPage() {
   };
 
   const handleOrganizationClick = (id: number) => {
-    const org = organizations.find((o) => o.id === id);
-    if (org) {
-      if (org.isAdmin) {
-        router.push(`/organization/${id}/admin`);
-      } else {
-        router.push(`/organization/${id}`);
-      }
-    }
+    router.push(`/organization/${id}`);
   };
 
   const handleAddOrganization = () => {
@@ -47,6 +41,9 @@ function OrganizationPage() {
     addOrganization(newOrg);
     setShowCreateForm(false);
   };
+
+  // Determine the userRole based on user context
+  const userRole = user?.isAdmin ? 'admin' : 'member';
 
   return (
     <div className="bg-white dark:bg-black text-black dark:text-white min-h-screen p-4">
@@ -80,6 +77,7 @@ function OrganizationPage() {
           onOrganizationClick={handleOrganizationClick} 
           filter={activeTab === 'My' ? 'userOnly' : 'all'}
           organizations={organizations}
+          userRole={userRole}
         />
       </div>
 
