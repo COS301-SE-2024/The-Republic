@@ -9,6 +9,7 @@ import locationRoutes from "@/modules/locations/routes/locationRoutes";
 import subscriptionsRoutes from "@/modules/subscriptions/routes/subscriptionsRoutes";
 import pointsRoutes from "@/modules/points/routes/pointsRoutes";
 import clusterRoutes from "@/modules/clusters/routes/clusterRoutes";
+import organizationRoutes from "@/modules/organizations/routes/organizationRoutes";
 import { serverMiddleare } from "@/middleware/middleware";
 
 const app = express();
@@ -44,6 +45,7 @@ app.use("/api/locations", locationRoutes);
 app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/points", pointsRoutes);
 app.use('/api/clusters', clusterRoutes);
+app.use("/api/organizations", organizationRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
