@@ -100,7 +100,7 @@ interface UserAlt {
   user_score: number;
   bio: string;
   is_owner: boolean;
-  isAdmin: boolean; 
+  isAdmin?: boolean; 
   total_issues: number;
   resolved_issues: number;
   access_token: string;
