@@ -130,26 +130,43 @@ export const getJoinRequests = async (req: Request, res: Response) => {
     }
   };
 
-export const handleJoinRequest = async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.user_id;
-    const organizationId = req.params.id;
-    const requestId = req.params.requestId;
-    const { accept } = req.body;
-    if (!userId) {
-      return sendResponse(res, APIError({
-        code: 401,
-        success: false,
-        error: "Unauthorized: User ID is missing",
-      }));
+  export const handleJoinRequest = async (req: Request, res: Response) => {
+    try {
+      const userId = req.body.user_id;
+      const organizationId = req.params.id;
+      const requestId = parseInt(req.params.requestId, 10);
+      const { accept } = req.body;
+  
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      if (isNaN(requestId)) {
+        return sendResponse(res, APIError({
+          code: 400,
+          success: false,
+          error: "Invalid request ID",
+        }));
+      }
+  
+      if (typeof accept !== 'boolean') {
+        return sendResponse(res, APIError({
+          code: 400,
+          success: false,
+          error: "Accept must be a boolean value",
+        }));
+      }
+  
+      const response = await organizationService.handleJoinRequest(organizationId, requestId, accept, userId);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
     }
-
-    const response = await organizationService.handleJoinRequest(organizationId, Number(requestId), accept, userId);
-    sendResponse(res, response);
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+  };
 
 export const removeMember = async (req: Request, res: Response) => {
   try {

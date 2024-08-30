@@ -360,36 +360,56 @@ export class OrganizationService {
     }
   }
 
-  async handleJoinRequest(organizationId: string, memberId: number, accept: boolean, userId: string): Promise<APIResponse<null>> {
+  async handleJoinRequest(organizationId: string, requestId: number, accept: boolean, userId: string): Promise<APIResponse<null>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
-      if (!isAdmin) {
-        throw APIError({
+      if (isAdmin !== true) {
+        return APIData({
           code: 403,
           success: false,
           error: "You do not have permission to handle join requests.",
         });
       }
   
-      if (accept) {
-        // First, get the user_id associated with the join request
-        const joinRequest = await this.organizationRepository.getJoinRequestById(memberId);
-        if (!joinRequest) {
-          throw APIError({
-            code: 404,
-            success: false,
-            error: "Join request not found.",
-          });
-        }
+      const joinRequest = await this.organizationRepository.getJoinRequestById(requestId);
+      if (!joinRequest) {
+        return APIData({
+          code: 404,
+          success: false,
+          error: "Join request not found.",
+        });
+      }
   
-        // Update the member role
-        await this.organizationRepository.updateMemberRole(organizationId, joinRequest.user_id, 'member');
-        
+      if (joinRequest.organization_id !== organizationId) {
+        return APIData({
+          code: 400,
+          success: false,
+          error: "Join request does not belong to this organization.",
+        });
+      }
+  
+      if (joinRequest.status !== 'pending') {
+        return APIData({
+          code: 400,
+          success: false,
+          error: "This join request has already been processed.",
+        });
+      }
+  
+      if (accept) {
         // Update the join request status
-        await this.organizationRepository.updateJoinRequestStatus(memberId, "accepted");
+        await this.organizationRepository.updateJoinRequestStatus(requestId, "accepted");
+        
+        // Add the user to the organization_members table
+        await this.organizationRepository.addOrganizationMember({
+          organization_id: organizationId,
+          user_id: joinRequest.user_id,
+          role: 'member',
+          joined_at: new Date().toISOString()
+        });
       } else {
         // If not accepting, just update the join request status to rejected
-        await this.organizationRepository.updateJoinRequestStatus(memberId, "rejected");
+        await this.organizationRepository.updateJoinRequestStatus(requestId, "rejected");
       }
   
       return APIData({
@@ -398,10 +418,15 @@ export class OrganizationService {
         data: null,
       });
     } catch (error) {
+      console.error("Error in handleJoinRequest:", error);
       if (error instanceof APIError) {
-        throw error;
+        return APIData({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred while handling the join request.",
+        });
       }
-      throw APIError({
+      return APIData({
         code: 500,
         success: false,
         error: "An unexpected error occurred while handling the join request.",

@@ -329,12 +329,14 @@ export class OrganizationRepository {
     return data as JoinRequest | null;
   }
 
-  async updateJoinRequestStatus(requestId: number, status: "accepted" | "rejected"): Promise<void> {
-    const { error } = await supabase
+  async updateJoinRequestStatus(requestId: number, status: "accepted" | "rejected"): Promise<JoinRequest> {
+    const { data, error } = await supabase
       .from("join_requests")
       .update({ status, updated_at: new Date().toISOString() })
-      .eq("id", requestId);
-
+      .eq("id", requestId)
+      .select()
+      .single();
+  
     if (error) {
       throw APIError({
         code: 500,
@@ -342,6 +344,8 @@ export class OrganizationRepository {
         error: "An error occurred while updating the join request status.",
       });
     }
+  
+    return data as JoinRequest;
   }
 
   async deleteJoinRequest(requestId: number, userId: string): Promise<void> {
