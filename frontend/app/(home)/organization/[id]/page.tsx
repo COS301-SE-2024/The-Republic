@@ -32,9 +32,9 @@ export default function OrganizationPage() {
   }
 
   // Check if the user is an admin of the organization
-  const isAdmin = user
-    ? organization.members.some(member => member.id === Number(user.user_id) && member.isAdmin)
-    : false;
+  //const isAdmin = user
+   // ? organization.members.some(member => member.id === Number(user.user_id) && member.isAdmin)
+   // : false;
 
   return <OrganizationDetail organization={organization} analytics={mockAnalytics} isAdmin={true} />;
 }

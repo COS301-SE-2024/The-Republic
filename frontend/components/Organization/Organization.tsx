@@ -17,10 +17,7 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
     ? organizations
     : organizations.filter(org => org.userIsMember);
 
-  const handleMenuClick = (e: MouseEvent, id: number) => {
-    e.stopPropagation();
-    setShowMenu(showMenu === id ? null : id);
-  };
+  
 
 
 

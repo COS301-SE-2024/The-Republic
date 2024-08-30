@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
@@ -22,18 +22,8 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
   const [success, setSuccess] = useState('');
   const router = useRouter();
 
-  const MAX_WORDS = 250;
-
-  useEffect(() => {
-    const words = description.trim().split(/\s+/);
-  }, [description]);
-
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newDescription = e.target.value;
-    const words = newDescription.trim().split(/\s+/);
-    if (words.length <= MAX_WORDS) {
-      setDescription(newDescription);
-    }
+    setDescription(e.target.value);
   };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

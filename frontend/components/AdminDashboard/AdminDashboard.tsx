@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Organization, Member, JoinRequest } from '../../lib/types';
-import { FaEllipsisV, FaSearch } from 'react-icons/fa';
+import {  FaSearch } from 'react-icons/fa';
 import { TiTick } from "react-icons/ti";
 import { PiCirclesFourLight } from 'react-icons/pi';
 import { FaRegUser } from "react-icons/fa6";
@@ -10,6 +10,7 @@ import { TbTrash } from "react-icons/tb";
 import { LiaFileDownloadSolid } from "react-icons/lia";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import EditOrganizationForm from '../EditOrganizationForm/EditOrganizationForm';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 
@@ -77,7 +78,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
           {organization.logo ? (
-            <img
+            <Image
               src={organization.logo}
               alt={`${organization.name} logo`}
               width={64}

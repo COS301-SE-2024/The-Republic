@@ -7,6 +7,7 @@ import { FaEllipsisH } from 'react-icons/fa';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { useTheme } from 'next-themes'; // Import useTheme hook
 
@@ -15,7 +16,6 @@ const OrganizationDetail: React.FC<{
   analytics: AnalyticsData[];
   isAdmin: boolean; 
 }> = ({ organization, analytics, isAdmin }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { theme } = useTheme(); // Get the current theme
 
@@ -48,7 +48,7 @@ const OrganizationDetail: React.FC<{
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             {organization.logo ? (
-              <img
+              <Image
                 src={organization.logo}
                 alt={`${organization.name} logo`}
                 width={64}
