@@ -49,7 +49,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
       members: [
         {
           id: Date.now(), // Temporary ID for the creator
-          name: 'Creator Name', // Set the creator's name or get from user context
+          name: 'Creator Name', 
           email: 'johndoe',
           username: 'johndoe',
           imageUrl: '/path-to-avatar.jpg',

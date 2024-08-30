@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Organization, Member, JoinRequest } from '../../lib/types';
-import {  FaSearch } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { TiTick } from "react-icons/ti";
 import { PiCirclesFourLight } from 'react-icons/pi';
 import { FaRegUser } from "react-icons/fa6";
@@ -68,7 +68,6 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
     setIsDropdownOpen(prevState => !prevState);
   };
 
-
   const handleDownloadReport = () => {
     console.log("Download Report clicked");
   };
@@ -126,56 +125,56 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
       <p className="text-sm font-bold mb-3">About</p>
       <p className="text-sm font-light mb-6">{organization.description}</p>
       
-      <div className="bg-green-100 dark:bg-green-500 rounded-lg mb-6">
-        <div className="flex justify-between items-center px-12 py-2 relative">
-          <button
-            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white dark:bg-[#0C0A09]' : ''}`}
-            onClick={() => setActiveTab('members')}
-          >
-            <PiCirclesFourLight className="w-6 h-6 text-gray-500" />
-            Members
-            {activeTab === 'members' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
-            )}
-          </button>
-          <button
-            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'requests' ? 'bg-white dark:bg-[#0C0A09] shadow-md' : ''}`}
-            onClick={() => setActiveTab('requests')}
-          >
-            <FaRegUser className="w-6 h-6 mr-2 text-gray-500" />
-            Requests
-            {activeTab === 'requests' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
-            )}
-          </button>
-          <button
-            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'broadcast' ? 'bg-white dark:bg-[#0C0A09] shadow-md' : ''}`}
-            onClick={() => setActiveTab('broadcast')}
-          >
-            <VscMegaphone className="w-6 h-6 mr-2 text-gray-500" />
-            Broadcast
-            {activeTab === 'broadcast' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
-            )}
-          </button>
-
-          <button
-            className="p-2 rounded-full text-black relative"
-            onClick={toggleDropdown}
-          >
-            <LiaFileDownloadSolid className="w-6 h-6" />
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
-                <button
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 "
-                  onClick={handleDownloadReport}
-                >
-                  Download Report
-                </button>
-              </div>
-            )}
-          </button>
-        </div>
+      <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
+        <button
+          className={`flex items-center space-x-2 flex-1 py-2 px-4 text-sm font-medium text-center ${
+            activeTab === 'members'
+              ? 'text-green-600 border-b-2 border-green-600 dark:text-green-500 dark:border-green-500'
+              : 'text-gray-500 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+          onClick={() => setActiveTab('members')}
+        >
+          <FaRegUser className="w-5 h-5" />
+          <span>Members</span>
+        </button>
+        <button
+          className={`flex items-center space-x-2 flex-1 py-2 px-4 text-sm font-medium text-center ${
+            activeTab === 'requests'
+              ? 'text-green-600 border-b-2 border-green-600 dark:text-green-500 dark:border-green-500'
+              : 'text-gray-500 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+          onClick={() => setActiveTab('requests')}
+        >
+          <PiCirclesFourLight className="w-5 h-5" />
+          <span>Requests</span>
+        </button>
+        <button
+          className={`flex items-center space-x-2 flex-1 py-2 px-4 text-sm font-medium text-center ${
+            activeTab === 'broadcast'
+              ? 'text-green-600 border-b-2 border-green-600 dark:text-green-500 dark:border-green-500'
+              : 'text-gray-500 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+          onClick={() => setActiveTab('broadcast')}
+        >
+          <VscMegaphone className="w-5 h-5" />
+          <span>Broadcast</span>
+        </button>
+        <button
+          className="p-2 rounded-full text-black relative"
+          onClick={toggleDropdown}
+        >
+          <LiaFileDownloadSolid className="w-6 h-6" />
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
+              <button
+                className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                onClick={handleDownloadReport}
+              >
+                Download Report
+              </button>
+            </div>
+          )}
+        </button>
       </div>
 
       {activeTab === 'members' && (

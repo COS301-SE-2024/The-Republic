@@ -9,7 +9,7 @@ import { X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import { useTheme } from 'next-themes'; // Import useTheme hook
+import { useTheme } from 'next-themes'; 
 
 const OrganizationDetail: React.FC<{ 
   organization: Organization; 
@@ -17,7 +17,7 @@ const OrganizationDetail: React.FC<{
   isAdmin: boolean; 
 }> = ({ organization, analytics, isAdmin }) => {
   const [showMenu, setShowMenu] = useState(false);
-  const { theme } = useTheme(); // Get the current theme
+  const { theme } = useTheme(); 
 
   const isMember = organization.userIsMember;
   const canJoin = !isMember && organization.joinPolicy === 'open';
@@ -188,7 +188,7 @@ const OrganizationDetail: React.FC<{
 };
 
 const AnalyticsCard: React.FC<{ title: string; value: number }> = ({ title, value }) => {
-  const { theme } = useTheme(); // Get the current theme
+  const { theme } = useTheme(); 
 
   return (
     <div className={`p-4 rounded-lg shadow border cursor-pointer ${theme === 'dark' ? 'bg-[#0C0A09] text-gray-300' : 'bg-white text-gray-900'}`}>
