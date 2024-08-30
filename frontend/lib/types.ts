@@ -12,6 +12,7 @@ interface User {
   location?: LocationType | null;
   location_id?: number | null;
   suspended_until?: number | null;
+  isAdmin?: boolean;
 }
 
 export interface Organization {
