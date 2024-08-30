@@ -390,8 +390,8 @@ export class OrganizationRepository {
         error: "An error occurred while fetching user organizations.",
       });
     }
-  
-    const organizations: Organization[] = data.map(item => item.organizations[0]);
+
+    const organizations: Organization[] = data.flatMap(item => item.organizations);
   
     return organizations;
   }

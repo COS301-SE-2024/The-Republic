@@ -192,24 +192,39 @@ export class OrganizationService {
   }
 
   async getUserOrganizations(userId: string): Promise<APIResponse<Organization[]>> {
-    try {
-      const organizations = await this.organizationRepository.getUserOrganizations(userId);
+  try {
+    const organizations = await this.organizationRepository.getUserOrganizations(userId);
+    
+    if (organizations.length === 0) {
       return APIData({
         code: 200,
         success: true,
-        data: organizations,
+        data: [],
+        error: "User is not a member of any organizations."
       });
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
+    }
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: organizations,
+    });
+  } catch (error) {
+    console.error("Error in getUserOrganizations:", error);
+    if (error instanceof APIError) {
       throw APIError({
         code: 500,
         success: false,
         error: "An unexpected error occurred while fetching user organizations.",
       });
     }
+    return APIData({
+      code: 500,
+      success: false,
+      error: "An unexpected error occurred while fetching user organizations.",
+    });
   }
+}
 
   async leaveOrganization(organizationId: string, userId: string): Promise<APIResponse<null>> {
     try {
