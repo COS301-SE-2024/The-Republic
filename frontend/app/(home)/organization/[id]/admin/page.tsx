@@ -1,14 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation'; // Import useRouter
+import { useParams } from 'next/navigation'; // Import useRouter
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
 import AdminDashboard from '@/components/AdminDashboard/AdminDashboard';
 
 
 export default function AdminOrganizationPage() {
   const params = useParams();
-  const router = useRouter(); // Get router instance
   const { organizations } = useOrganizations();
   const id = Number(params.id);
 

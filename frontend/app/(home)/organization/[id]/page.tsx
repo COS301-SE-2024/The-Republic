@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import OrganizationDetail from '../../../../components/OrganizationDetail/OrganizationDetail';
 import { Organization, AnalyticsData } from '../../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
-import { useUser } from '../../../../lib/contexts/UserContext';
+//import { useUser } from '../../../../lib/contexts/UserContext';
 
 const mockAnalytics: AnalyticsData[] = [
   { date: '2024-01-01', issuesResolved: 10, interactions: 50 },
