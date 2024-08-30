@@ -3,8 +3,10 @@ import { OrganizationService } from "../services/organizationService";
 import { sendResponse } from "@/utilities/response";
 import { APIData, APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";
+import multer from "multer";
 
 const organizationService = new OrganizationService();
+const upload = multer({ storage: multer.memoryStorage() });
 
 export const createOrganization = async (req: Request, res: Response) => {
   try {
@@ -24,27 +26,27 @@ export const createOrganization = async (req: Request, res: Response) => {
   }
 };
 
-export const updateOrganization = async (req: Request, res: Response) => {
-    try {
-      const userId = req.body.user_id;
-      const organizationId = req.params.id;
-      if (!userId) {
-        return sendResponse(res, APIError({
-          code: 401,
-          success: false,
-          error: "Unauthorized: User ID is missing",
-        }));
+export const updateOrganization = [
+    upload.single("profilePhoto"),
+    async (req: Request, res: Response) => {
+      try {
+        const userId = req.body.user_id;
+        const organizationId = req.params.id;
+        if (!userId) {
+          return sendResponse(res, APIError({
+            code: 401,
+            success: false,
+            error: "Unauthorized: User ID is missing",
+          }));
+        }
+  
+        const response = await organizationService.updateOrganization(organizationId, req.body, userId, req.file);
+        sendResponse(res, response);
+      } catch (err) {
+        handleError(res, err);
       }
-  
-      const updates = { ...req.body };
-      delete updates.user_id;
-  
-      const response = await organizationService.updateOrganization(organizationId, updates, userId);
-      sendResponse(res, response);
-    } catch (err) {
-      handleError(res, err);
     }
-  };
+  ];
 
 export const deleteOrganization = async (req: Request, res: Response) => {
   try {

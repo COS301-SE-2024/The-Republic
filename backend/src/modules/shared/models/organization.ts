@@ -8,6 +8,7 @@ export interface Organization {
     verified_status: boolean;
     join_policy: string;
     points: number;
+    profile_photo?: string;
   }
   
   export interface OrganizationMember {

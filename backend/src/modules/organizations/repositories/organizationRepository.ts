@@ -2,6 +2,7 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { Organization, OrganizationMember, JoinRequest } from "@/modules/shared/models/organization";
 import { APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";
+import { MulterFile } from "@/types/users";
 
 export class OrganizationRepository {
     async createOrganization(organization: Partial<Organization>): Promise<Organization> {
@@ -32,12 +33,34 @@ export class OrganizationRepository {
         return data as Organization;
       }
 
-      async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
+      async updateOrganization(id: string, updates: Partial<Organization>, profilePhoto?: MulterFile): Promise<Organization> {
         const safeUpdates = { ...updates };
         delete safeUpdates.id;
         delete safeUpdates.created_at;
         delete safeUpdates.verified_status;
         delete safeUpdates.points;
+    
+        if (profilePhoto) {
+          const fileName = `${id}_${Date.now()}-${profilePhoto.originalname}`;
+          const { error: uploadError } = await supabase.storage
+            .from("organizations")
+            .upload(fileName, profilePhoto.buffer);
+    
+          if (uploadError) {
+            console.error("Error uploading profile photo:", uploadError);
+            throw APIError({
+              code: 500,
+              success: false,
+              error: "An error occurred while uploading the profile photo.",
+            });
+          }
+    
+          const { data: urlData } = supabase.storage
+            .from("organizations")
+            .getPublicUrl(fileName);
+    
+          safeUpdates.profile_photo = urlData.publicUrl;
+        }
     
         const { data, error } = await supabase
           .from("organizations")
@@ -377,7 +400,8 @@ export class OrganizationRepository {
           website_url,
           verified_status,
           join_policy,
-          points
+          points,
+          profile_photo
         )
       `)
       .eq("user_id", userId);

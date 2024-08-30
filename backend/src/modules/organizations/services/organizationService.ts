@@ -3,6 +3,7 @@ import { Organization, OrganizationMember, JoinRequest } from "@/modules/shared/
 import { APIResponse, APIData, APIError } from "@/types/response";
 import { validateOrganizationName, validateOrganizationUsername } from "@/utilities/validators";
 import { PaginationParams } from "@/types/pagination";
+import { MulterFile } from "@/types/users";
 
 export class OrganizationService {
   private organizationRepository: OrganizationRepository;
@@ -81,7 +82,7 @@ export class OrganizationService {
     }
   }
 
-  async updateOrganization(id: string, updates: Partial<Organization>, userId: string): Promise<APIResponse<Organization>> {
+  async updateOrganization(id: string, updates: Partial<Organization>, userId: string, profilePhoto?: MulterFile): Promise<APIResponse<Organization>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(id, userId);
       if (!isAdmin) {
@@ -92,7 +93,7 @@ export class OrganizationService {
         });
       }
 
-      const updatedOrganization = await this.organizationRepository.updateOrganization(id, updates);
+      const updatedOrganization = await this.organizationRepository.updateOrganization(id, updates, profilePhoto);
       return APIData({
         code: 200,
         success: true,
