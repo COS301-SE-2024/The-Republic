@@ -67,49 +67,49 @@ const EditOrganizationForm: React.FC<EditOrganizationFormProps> = ({
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
-        <Dialog.Overlay className="bg-black/50 fixed inset-0" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
-          <Dialog.Title className="text-2xl font-bold mb-4 border-b pb-2">Edit Organization</Dialog.Title>
+      <Dialog.Overlay className="fixed inset-0 bg-black/50 dark:bg-black/75" />
+      <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#0C0A09] rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
+      <Dialog.Title className="text-2xl font-bold mb-4 border-b pb-2 text-gray-900 dark:text-gray-100">Edit Organization</Dialog.Title>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
               <input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
+               className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
                 required
               />
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
               <textarea
                 id="description"
                 value={description}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
+                className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
                 rows={4}
               />
 
             </div>
             <div>
-              <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Logo</label>
+            <label htmlFor="logo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Logo</label>
               <input
                 id="logo"
                 type="file"
                 accept="image/*"
                 onChange={handleLogoChange}
-                className="mt-1 block w-full text-sm text-gray-500 border shadow-sm border-gray-300 rounded-md cursor-pointer sm:text-sm px-3 py-2"
+                className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer dark:bg-[#0C0A09] dark:text-gray-300 cursoer-pointer"
               />
             </div>
             <div>
-              <label htmlFor="website" className="block text-sm font-medium text-gray-700">Website URL</label>
+            <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Website URL</label>
               <input
                 id="website"
                 type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
+                className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}

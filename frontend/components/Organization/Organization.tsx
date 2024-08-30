@@ -2,7 +2,6 @@
 
 import React, { useState, MouseEvent } from 'react';
 import { Organization } from '../../lib/types';
-import { FaEllipsisH } from "react-icons/fa";
 
 interface OrganizationProps {
   onOrganizationClick: (id: number) => void;
@@ -35,7 +34,7 @@ const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filte
       {filteredOrganizations.map((org) => (
         <div
           key={org.id}
-          className="relative cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded"
+          className="relative cursor-pointer hover:bg-gray-100 dark:hover:bg-grey p-2 rounded"
           onClick={() => onOrganizationClick(org.id)}
         >
           <div className="flex items-center space-x-4">

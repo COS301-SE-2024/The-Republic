@@ -7,6 +7,7 @@ import CreateOrganizationForm from '../../../components/CreateOrganizationForm.t
 import { Organization } from '../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
 import { useUser } from '../../../lib/contexts/UserContext';
+import { useTheme } from 'next-themes'; // Import useTheme hook
 
 type Tab = 'All' | 'My';
 
@@ -16,6 +17,7 @@ function OrganizationPage() {
   const { organizations, addOrganization } = useOrganizations();
   const { user } = useUser();
   const router = useRouter();
+  const { theme } = useTheme(); // Get the current theme
 
   useEffect(() => {
     const savedTab = sessionStorage.getItem('organizationTab') as Tab | null;
@@ -46,7 +48,7 @@ function OrganizationPage() {
   const userRole = user?.isAdmin ? 'admin' : 'member';
 
   return (
-    <div className="bg-white dark:bg-black text-black dark:text-white min-h-screen p-4">
+    <div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-[#0C0A09] text-white' : 'bg-white text-black'}`}>
       {/* Tabs */}
       <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
         <button

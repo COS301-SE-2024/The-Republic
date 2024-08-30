@@ -11,6 +11,7 @@ import { LiaFileDownloadSolid } from "react-icons/lia";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import EditOrganizationForm from '../EditOrganizationForm/EditOrganizationForm';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 
 const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization }) => {
   const [activeTab, setActiveTab] = useState('members');
@@ -19,6 +20,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orgData, setOrgData] = useState<Organization>(organization);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const results = organization.members.filter(member =>
@@ -71,7 +73,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   };
 
   return (
-    <div className="bg-white p-14 min-h-screen">
+    <div className={`p-14 min-h-screen ${theme === 'dark' ? 'bg-[#0C0A09]' : 'bg-white'}`}>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
           {organization.logo ? (
@@ -114,45 +116,45 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
 
         <Link
           href={`/organization/${organization.id}`}
-          className="px-5 py-2 bg-green-200 rounded-full text-sm"
-        >
-          Back
-        </Link>
+          className={`px-5 py-2 rounded-full text-sm ${theme === 'dark' ? 'bg-green-400 text-gray-900 font-bold' : 'bg-green-200 text-gray-900'}`}
+          >
+            Back
+          </Link>
       </div>
 
       <p className="text-sm font-bold mb-3">About</p>
       <p className="text-sm font-light mb-6">{organization.description}</p>
       
-      <div className="bg-green-100 rounded-lg mb-6">
+      <div className="bg-green-100 dark:bg-green-500 rounded-lg mb-6">
         <div className="flex justify-between items-center px-12 py-2 relative">
           <button
-            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white' : ''}`}
+            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white dark:bg-[#0C0A09]' : ''}`}
             onClick={() => setActiveTab('members')}
           >
             <PiCirclesFourLight className="w-6 h-6 text-gray-500" />
             Members
             {activeTab === 'members' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
             )}
           </button>
           <button
-            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'requests' ? 'bg-white shadow-md' : ''}`}
+            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'requests' ? 'bg-white dark:bg-[#0C0A09] shadow-md' : ''}`}
             onClick={() => setActiveTab('requests')}
           >
             <FaRegUser className="w-6 h-6 mr-2 text-gray-500" />
             Requests
             {activeTab === 'requests' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
             )}
           </button>
           <button
-            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'broadcast' ? 'bg-white shadow-md' : ''}`}
+            className={`flex items-center px-4 py-2 rounded-lg relative ${activeTab === 'broadcast' ? 'bg-white dark:bg-[#0C0A09] shadow-md' : ''}`}
             onClick={() => setActiveTab('broadcast')}
           >
             <VscMegaphone className="w-6 h-6 mr-2 text-gray-500" />
             Broadcast
             {activeTab === 'broadcast' && (
-              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white rounded-b-lg"></div>
+              <div className="absolute bottom-[-20px] left-0 w-full h-[25px] bg-white dark:bg-[#0C0A09] rounded-b-lg"></div>
             )}
           </button>
 
@@ -164,7 +166,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
                 <button
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100 "
                   onClick={handleDownloadReport}
                 >
                   Download Report
