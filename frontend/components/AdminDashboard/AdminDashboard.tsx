@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Organization, Member, JoinRequest } from '../../lib/types';
 import { FaEllipsisV, FaSearch } from 'react-icons/fa';
 import { TiTick } from "react-icons/ti";
@@ -8,12 +8,25 @@ import { VscMegaphone } from "react-icons/vsc";
 import { LuPenLine } from "react-icons/lu";
 import { TbTrash } from "react-icons/tb";
 import { LiaFileDownloadSolid } from "react-icons/lia";
-import { X } from 'lucide-react';
-import Link from 'next/link'; // Import Link
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import EditOrganizationForm from '../EditOrganizationForm/EditOrganizationForm';
+import Link from 'next/link';
 
 const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization }) => {
   const [activeTab, setActiveTab] = useState('members');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredMembers, setFilteredMembers] = useState<Member[]>(organization.members);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [orgData, setOrgData] = useState<Organization>(organization);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const results = organization.members.filter(member =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredMembers(results);
+  }, [searchTerm, organization.members]);
 
   const handleAppointAdmin = (memberId: number) => {
     console.log(`Appoint admin: ${memberId}`);
@@ -33,6 +46,28 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
 
   const handleBroadcast = (message: string) => {
     console.log(`Broadcast message: ${message}`);
+  };
+
+  const openEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleSave = (updatedOrganization: Organization) => {
+    setOrgData(updatedOrganization); 
+    closeEditModal(); 
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(prevState => !prevState);
+  };
+
+
+  const handleDownloadReport = () => {
+    console.log("Download Report clicked");
   };
 
   return (
@@ -55,9 +90,9 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
           <div>
             <h1 className="text-3xl font-bold flex items-center space-x-2">
               <span>{organization.name}</span>
-              <button
+              <button 
                 className="p-2 rounded-full text-gray-500"
-                onClick={() => console.log("Edit clicked")} // Replace with actual handler
+                onClick={openEditModal} 
               >
                 <LuPenLine className="w-5 h-5" />
               </button>
@@ -88,10 +123,10 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
       <p className="text-sm font-bold mb-3">About</p>
       <p className="text-sm font-light mb-6">{organization.description}</p>
       
-      <div className="bg-gray-100 rounded-lg mb-6">
+      <div className="bg-green-100 rounded-lg mb-6">
         <div className="flex justify-between items-center px-12 py-2 relative">
           <button
-            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white ' : ''}`}
+            className={`flex items-center px-3 py-2 mr-1 rounded-lg relative ${activeTab === 'members' ? 'bg-white' : ''}`}
             onClick={() => setActiveTab('members')}
           >
             <PiCirclesFourLight className="w-6 h-6 text-gray-500" />
@@ -122,10 +157,20 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
           </button>
 
           <button
-            className="p-2 rounded-full bg-gray-100 text-black"
-            onClick={() => console.log("Icon button clicked")} // Replace with your actual handler
+            className="p-2 rounded-full text-black relative"
+            onClick={toggleDropdown}
           >
             <LiaFileDownloadSolid className="w-6 h-6" />
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <button
+                  className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                  onClick={handleDownloadReport}
+                >
+                  Download Report
+                </button>
+              </div>
+            )}
           </button>
         </div>
       </div>
@@ -142,46 +187,55 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <table className="w-full">
-            <thead>
-              <tr className="text-left text-sm text-gray-500">
-                <th className="pb-2">Name</th>
-                <th className="pb-2">Email</th>
-                <th className="pb-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {organization.members.map((member: Member) => (
-                <tr key={member.id} className="border-b last:border-b-0">
-                  <td className="py-3 flex items-center">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full mr-2"></div>
-                    {member.name}
-                  </td>
-                  <td className="py-3">{member.email}</td>
-                  <td className="py-3">
-                    {member.isAdmin ? (
-                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded text-sm">Admin</span>
-                    ) : (
-                      <button
-                        className="bg-green-100 text-green-800 px-3 py-1 rounded text-sm"
-                        onClick={() => handleAppointAdmin(member.id)}
-                      >
-                        Make Admin
-                      </button>
-                    )}
-                  </td>
-                  <td className="py-3">
-                    <button
-                      className="bg-red-100 text-red-800 px-3 py-1 rounded text-sm"
-                      onClick={() => handleRemoveMember(member.id)}
-                    >
-                      Remove
-                    </button>
-                  </td>
+          {filteredMembers.length > 0 ? (
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-sm text-gray-500">
+                  <th className="pb-2">Member</th>
+                  <th className="pb-2">Role</th>
+                  <th className="pb-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredMembers.map((member: Member) => (
+                  <tr key={member.id} className="border-b last:border-b-0">
+                    <td className="py-3 flex items-center">
+                      <Avatar className="w-10 h-10 rounded-full mr-3">
+                        <AvatarImage src={member.imageUrl || undefined} alt={member.name} />
+                        <AvatarFallback>{member.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{member.name}</p>
+                        <p className="text-sm text-gray-500">@{member.username}</p>
+                      </div>
+                    </td>
+                    <td className="py-3">
+                      {member.isAdmin ? (
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded text-sm">Admin</span>
+                      ) : (
+                        <button
+                          className="bg-green-100 text-green-800 px-3 py-1 rounded text-sm"
+                          onClick={() => handleAppointAdmin(member.id)}
+                        >
+                          Make Admin
+                        </button>
+                      )}
+                    </td>
+                    <td className="py-3">
+                      <button
+                        className="bg-red-100 text-red-800 px-3 py-1 rounded text-sm"
+                        onClick={() => handleRemoveMember(member.id)}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center text-gray-500 mt-6">No users found</p>
+          )}
         </div>
       )}
       
@@ -190,7 +244,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
           <table className="w-full">
             <thead>
               <tr className="text-left text-sm text-gray-500">
-                <th className="pb-2">Name</th>
+                <th className="pb-2">Request</th>
                 <th className="pb-2"></th>
               </tr>
             </thead>
@@ -198,8 +252,14 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
               {organization.joinRequests.map((request: JoinRequest) => (
                 <tr key={request.id} className="border-b last:border-b-0">
                   <td className="py-3 flex items-center">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full mr-2"></div>
-                    {request.userName}
+                    <Avatar className="w-10 h-10 rounded-full mr-3">
+                    <AvatarImage src={request.imageUrl || undefined} alt={request.name} />
+                      <AvatarFallback>{request.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                    <p className="font-semibold">{request.name}</p>
+                    <p className="text-sm text-gray-500">@{request.username}</p>
+                    </div>
                   </td>
                   <td className="py-3 text-right">
                     <button
@@ -212,7 +272,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
                       className="text-green-500 mr-10"
                       onClick={() => handleAcceptRequest(request.id)}
                     >
-                      <TiTick size={25}/>
+                      <TiTick size={30} />
                     </button>
                   </td>
                 </tr>
@@ -225,17 +285,23 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
       {activeTab === 'broadcast' && (
         <div>
           <textarea
-            className="w-full p-4 border rounded-lg mb-4 h-40 focus:outline-none focus:ring-0"
-            placeholder="Write an announcement..."
+            className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Enter broadcast message"
+            rows={4}
+            onChange={(e) => handleBroadcast(e.target.value)}
           ></textarea>
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded-full"
-            onClick={() => handleBroadcast("Sample message")}
-          >
-            Send
-          </button>
+          <button className="mt-3 px-5 py-2 bg-green-500 text-white rounded-full">Send</button>
         </div>
       )}
+
+{isEditModalOpen && (
+  <EditOrganizationForm
+    isOpen={isEditModalOpen}
+    initialOrganization={orgData}
+    onSave={handleSave}
+    onClose={closeEditModal}
+  />
+)}
     </div>
   );
 };

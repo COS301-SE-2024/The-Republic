@@ -33,7 +33,9 @@ export interface Organization {
 export interface JoinRequest {
   id: number;
   userId: number;
-  userName: string;
+  name: string;
+  username: string;
+  imageUrl?: string;
   requestDate: string;
 }
 
@@ -50,7 +52,9 @@ export interface CreateOrganizationData {
 export interface Member {
   id: number;
   name: string;
-  email:string;
+  email: string;
+  username: string;
+  imageUrl?: string;
   isAdmin: boolean;
 }
 

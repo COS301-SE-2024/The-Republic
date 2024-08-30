@@ -64,6 +64,8 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
           id: Date.now(), // Temporary ID for the creator
           name: 'Creator Name', // Set the creator's name or get from user context
           email: 'johndoe',
+          username: 'johndoe',
+          imageUrl: '/path-to-avatar.jpg',
           isAdmin: true,
         },
       ],
@@ -102,7 +104,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
                 required
               />
             </div>
@@ -112,7 +114,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
                 id="description"
                 value={description}
                 onChange={handleDescriptionChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
                 rows={4}
               />
             </div>
@@ -133,7 +135,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
                 type="url"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2"
               />
             </div>
             <div>
@@ -142,7 +144,7 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
                 id="joinPolicy"
                 value={joinPolicy}
                 onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request')}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 focus:ring-opacity-50 sm:text-sm px-3 py-2"
               >
                 <option value="open">Open</option>
                 <option value="request">Request to Join</option>
