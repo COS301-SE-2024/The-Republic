@@ -23,7 +23,7 @@ export default function OrganizationLayout({
       if (isAdminPage && !organization.isAdmin) {
         router.push(`/organization/${id}`);
       } else if (!isAdminPage && organization.isAdmin) {
-        
+        // Remove this line to avoid auto-redirecting to admin page
       }
     }
   }, [id, organizations, pathname, router]);
