@@ -12,6 +12,57 @@ interface User {
   location?: LocationType | null;
   location_id?: number | null;
   suspended_until?: number | null;
+  isAdmin?: boolean;
+}
+
+export interface Organization {
+  id: number;
+  name: string;
+  description: string;
+  memberCount: number;
+  userIsMember: boolean;
+  logo: string;
+  website: string;
+  isPrivate: boolean;  
+  isAdmin: boolean;  
+  members: Member[];  
+  joinRequests: JoinRequest[];  
+  joinPolicy: 'open' | 'closed';  
+}
+
+
+export interface JoinRequest {
+  id: number;
+  userId: number;
+  name: string;
+  username: string;
+  imageUrl?: string;
+  requestDate: string;
+}
+
+
+export interface CreateOrganizationData {
+  name: string;
+  description: string;
+  logo: File | null;
+  website: string;
+  joinPolicy: 'open' | 'request';
+}
+
+
+export interface Member {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+  imageUrl?: string;
+  isAdmin: boolean;
+}
+
+export interface AnalyticsData {
+  date: string;
+  issuesResolved: number;
+  interactions: number;
 }
 
 interface UserData {
@@ -49,6 +100,7 @@ interface UserAlt {
   user_score: number;
   bio: string;
   is_owner: boolean;
+  isAdmin?: boolean; 
   total_issues: number;
   resolved_issues: number;
   access_token: string;

@@ -115,6 +115,7 @@
 .userDetail {
   margin-left: 23px;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .logoutOverlay {
