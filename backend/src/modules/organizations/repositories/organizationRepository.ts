@@ -544,4 +544,23 @@ export class OrganizationRepository {
 
     return count || 0;
   }
+
+  async searchOrganizations(searchTerm: string, params: PaginationParams): Promise<{ data: Organization[], total: number }> {
+    const { data, error, count } = await supabase
+      .from("organizations")
+      .select("*", { count: "exact" })
+      .or(`name.ilike.%${searchTerm}%,username.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`)
+      .range(params.offset, params.offset + params.limit - 1);
+
+    if (error) {
+      console.error("Error searching organizations:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while searching organizations.",
+      });
+    }
+
+    return { data: data as Organization[], total: count || 0 };
+  }
 }

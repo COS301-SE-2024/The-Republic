@@ -306,3 +306,27 @@ export const getUserOrganizations = async (req: Request, res: Response) => {
       }));
     }
   };
+
+  export const searchOrganizations = async (req: Request, res: Response) => {
+    try {
+      const { searchTerm, offset, limit } = req.query;
+      
+      if (typeof searchTerm !== 'string') {
+        return sendResponse(res, APIError({
+          code: 400,
+          success: false,
+          error: "Search term is required and must be a string",
+        }));
+      }
+  
+      const paginationParams: PaginationParams = {
+        offset: Number(offset) || 0,
+        limit: Number(limit) || 10
+      };
+  
+      const response = await organizationService.searchOrganizations(searchTerm, paginationParams);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };

@@ -20,5 +20,6 @@ router.delete("/join-requests/:requestId", organizationController.deleteJoinRequ
 router.delete("/:id/members/:userId", organizationController.removeMember);
 router.get("/:id/report", organizationController.generateReport);
 router.get("/user/organizations", organizationController.getUserOrganizations);
+router.get("/search", organizationController.searchOrganizations);
 
 export default router;

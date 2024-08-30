@@ -600,4 +600,24 @@ export class OrganizationService {
       });
     }
   }
+
+  async searchOrganizations(searchTerm: string, params: PaginationParams): Promise<APIResponse<{ data: Organization[], total: number }>> {
+    try {
+      const result = await this.organizationRepository.searchOrganizations(searchTerm, params);
+      return APIData({
+        code: 200,
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while searching organizations.",
+      });
+    }
+  }
 }
