@@ -16,7 +16,7 @@ const mockAnalytics: AnalyticsData[] = [
 export default function OrganizationPage() {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const { organizations } = useOrganizations();
-  const { user } = useUser();
+  //const { user } = useUser();
   const params = useParams();
   const id = params.id as string;
 

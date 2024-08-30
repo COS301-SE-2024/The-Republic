@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, MouseEvent } from 'react';
+import React, { useState } from 'react';
 import { Organization } from '../../lib/types';
 
 interface OrganizationProps {
@@ -11,7 +11,7 @@ interface OrganizationProps {
 }
 
 const Organizations: React.FC<OrganizationProps> = ({ onOrganizationClick, filter, organizations, userRole }) => {
-  const [showMenu, setShowMenu] = useState<number | null>(null);
+  const [showMenu] = useState<number | null>(null);
   
   const filteredOrganizations = filter === 'all'
     ? organizations
