@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OrganizationService } from "../services/organizationService";
 import { sendResponse } from "@/utilities/response";
-import { APIError } from "@/types/response";
+import { APIData, APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";
 
 const organizationService = new OrganizationService();
@@ -25,23 +25,26 @@ export const createOrganization = async (req: Request, res: Response) => {
 };
 
 export const updateOrganization = async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.user_id;
-    const organizationId = req.params.id;
-    if (!userId) {
-      return sendResponse(res, APIError({
-        code: 401,
-        success: false,
-        error: "Unauthorized: User ID is missing",
-      }));
+    try {
+      const userId = req.body.user_id;
+      const organizationId = req.params.id;
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const updates = { ...req.body };
+      delete updates.user_id;
+  
+      const response = await organizationService.updateOrganization(organizationId, updates, userId);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
     }
-
-    const response = await organizationService.updateOrganization(organizationId, req.body, userId);
-    sendResponse(res, response);
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+  };
 
 export const deleteOrganization = async (req: Request, res: Response) => {
   try {
@@ -63,23 +66,24 @@ export const deleteOrganization = async (req: Request, res: Response) => {
 };
 
 export const joinOrganization = async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.user_id;
-    const organizationId = req.params.id;
-    if (!userId) {
-      return sendResponse(res, APIError({
-        code: 401,
-        success: false,
-        error: "Unauthorized: User ID is missing",
-      }));
+    try {
+      const userId = req.body.user_id;
+      const organizationId = req.params.id;
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const response = await organizationService.joinOrganization(organizationId, userId);
+      sendResponse(res, response);
+    } catch (err) {
+      console.error("Error in joinOrganization controller:", err);
+      handleError(res, err);
     }
-
-    const response = await organizationService.joinOrganization(organizationId, userId);
-    sendResponse(res, response);
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+  };
 
 export const setJoinPolicy = async (req: Request, res: Response) => {
   try {
@@ -267,19 +271,19 @@ export const getUserOrganizations = async (req: Request, res: Response) => {
     }
   };
 
-const handleError = (res: Response, err: unknown) => {
-  console.error(err);
-  if (err instanceof APIError) {
-    sendResponse(res, APIError({
-      code: 500,
-      success: false,
-      error: err instanceof Error ? err.message : "An unexpected error occurred",
-    }));
-  } else {
-    sendResponse(res, APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred",
-    }));
-  }
-};
+  const handleError = (res: Response, err: unknown) => {
+    console.error("Handling error:", err);
+    if (err instanceof Error) {
+      sendResponse(res, APIData({
+        code: 500,
+        success: false,
+        error: err.message || "An unexpected error occurred",
+      }));
+    } else {
+      sendResponse(res, APIData({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred",
+      }));
+    }
+  };

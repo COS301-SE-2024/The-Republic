@@ -32,25 +32,31 @@ export class OrganizationRepository {
         return data as Organization;
       }
 
-  async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
-    const { data, error } = await supabase
-      .from("organizations")
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error updating organization:", error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An error occurred while updating the organization.",
-      });
-    }
-
-    return data as Organization;
-  }
+      async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
+        const safeUpdates = { ...updates };
+        delete safeUpdates.id;
+        delete safeUpdates.created_at;
+        delete safeUpdates.verified_status;
+        delete safeUpdates.points;
+    
+        const { data, error } = await supabase
+          .from("organizations")
+          .update(safeUpdates)
+          .eq('id', id)
+          .select()
+          .single();
+    
+        if (error) {
+          console.error("Error updating organization:", error);
+          throw APIError({
+            code: 500,
+            success: false,
+            error: "An error occurred while updating the organization.",
+          });
+        }
+    
+        return data as Organization;
+      }
 
   async deleteOrganization(id: string): Promise<void> {
     const { error } = await supabase
@@ -68,15 +74,18 @@ export class OrganizationRepository {
     }
   }
 
-  async isUserAdmin(organizationId: string, userId: string): Promise<boolean> {
+  async isUserAdmin(organizationId: string, userId: string): Promise<boolean | null> {
     const { data, error } = await supabase
       .from("organization_members")
       .select('role')
       .eq('organization_id', organizationId)
       .eq('user_id', userId)
       .single();
-
+  
     if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
       console.error("Error checking user role:", error);
       throw APIError({
         code: 500,
@@ -84,7 +93,7 @@ export class OrganizationRepository {
         error: "An error occurred while checking user role.",
       });
     }
-
+  
     return data?.role === 'admin';
   }
 

@@ -92,11 +92,6 @@ export class OrganizationService {
         });
       }
 
-      delete updates.id;
-      delete updates.created_at;
-      delete updates.verified_status;
-      delete updates.points;
-
       const updatedOrganization = await this.organizationRepository.updateOrganization(id, updates);
       return APIData({
         code: 200,
@@ -146,17 +141,19 @@ export class OrganizationService {
 
   async joinOrganization(organizationId: string, userId: string): Promise<APIResponse<JoinRequest | OrganizationMember>> {
     try {
-      const joinPolicy = await this.organizationRepository.getOrganizationJoinPolicy(organizationId);
+  
       const isMember = await this.organizationRepository.isMember(organizationId, userId);
-
+  
       if (isMember) {
-        throw APIError({
+        return APIData({
           code: 400,
           success: false,
           error: "You are already a member of this organization.",
         });
       }
-
+  
+      const joinPolicy = await this.organizationRepository.getOrganizationJoinPolicy(organizationId);
+  
       if (joinPolicy === 'open') {
         const member = await this.organizationRepository.addOrganizationMember({
           organization_id: organizationId,
@@ -178,10 +175,15 @@ export class OrganizationService {
         });
       }
     } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
+      console.error("Error in joinOrganization:", error);
+      if (error instanceof Error) {
+        return APIData({
+          code: 500,
+          success: false,
+          error: error.message || "An unexpected error occurred while joining the organization.",
+        });
       }
-      throw APIError({
+      return APIData({
         code: 500,
         success: false,
         error: "An unexpected error occurred while joining the organization.",
@@ -212,25 +214,34 @@ export class OrganizationService {
   async leaveOrganization(organizationId: string, userId: string): Promise<APIResponse<null>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      
+      if (isAdmin === null) {
+        return APIData({
+          code: 400,
+          success: false,
+          error: "You are not a member of this organization.",
+        });
+      }
+  
       const memberCount = await this.organizationRepository.getOrganizationMemberCount(organizationId);
       const adminCount = await this.organizationRepository.getOrganizationAdminCount(organizationId);
-
+  
       if (memberCount === 1) {
-        throw APIError({
+        return APIData({
           code: 400,
           success: false,
           error: "You are the last member. Please delete the organization instead.",
         });
       }
-
+  
       if (isAdmin && adminCount === 1) {
-        throw APIError({
+        return APIData({
           code: 400,
           success: false,
           error: "You are the only admin. Please appoint another admin before leaving.",
         });
       }
-
+  
       await this.organizationRepository.removeMember(organizationId, userId);
       return APIData({
         code: 200,
@@ -238,10 +249,15 @@ export class OrganizationService {
         data: null,
       });
     } catch (error) {
+      console.error("Error in leaveOrganization:", error);
       if (error instanceof APIError) {
-        throw error;
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred.",
+        });
       }
-      throw APIError({
+      return APIData({
         code: 500,
         success: false,
         error: "An unexpected error occurred while leaving the organization.",
@@ -472,7 +488,7 @@ export class OrganizationService {
 
   async generateReport(organizationId: string, userId: string): Promise<APIResponse<null>> {
     try {
-      const isAdmin: boolean = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin: boolean = await this.organizationRepository.isUserAdmin(organizationId, userId) as boolean;
       if (!isAdmin) {
         throw APIError({
           code: 403,
