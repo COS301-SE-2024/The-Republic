@@ -21,50 +21,54 @@ import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
 const FETCH_SIZE = 5;
 
+let lastLocation: Location | null = null;
+
 const Feed: React.FC = () => {
   const { user } = useUser();
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [location, setLocation] = useState<Location | null>(lastLocation);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(!lastLocation);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
 
   useEffect(() => {
+    const locationString = searchParams.get("location");
+    if (locationString) {
+      const locationParts = locationString.split(", ").slice(1);
+      const locationObject: Location = {
+        location_id: "",
+        province: locationParts[0],
+        city: "",
+        suburb: "",
+        district: locationParts.slice(-1)[0],
+      };
+
+      if (locationParts.length >= 3) {
+        locationObject.city = locationParts[1];
+      }
+
+      if (locationParts.length === 4) {
+        locationObject.suburb = locationParts[2];
+      }
+
+      setLocation(locationObject);
+      setIsLoadingLocation(false);
+      return;
+    }
+
     const loadLocation = async () => {
       setIsLoadingLocation(true);
 
-      const locationString = searchParams.get("location");
-      if (locationString) {
-        const locationParts = locationString.split(", ").slice(1);
-        const locationObject: Location = {
-          location_id: "",
-          province: locationParts[0],
-          city: "",
-          suburb: "",
-          district: locationParts.slice(-1)[0],
-        };
-
-        if (locationParts.length >= 3) {
-          locationObject.city = locationParts[1];
-        }
-
-        if (locationParts.length === 4) {
-          locationObject.suburb = locationParts[2];
-        }
-
-        setLocation(locationObject);
-        setIsLoadingLocation(false);
-      } else if (user && user.location_id) {
+      if (user && user.location_id) {
         try {
           const userLocation = await fetchUserLocation(user.location_id);
           if (userLocation) {
-            setLocation(() => {
-              return { ...userLocation.value, location_id: "" };
-            });
+            lastLocation = { ...userLocation.value, location_id: "" };
+            setLocation({...lastLocation});
           }
         } catch (error) {
           console.error("Error fetching user location:", error);
@@ -74,7 +78,9 @@ const Feed: React.FC = () => {
       setIsLoadingLocation(false);
     };
 
-    loadLocation();
+    if (!lastLocation) {
+      loadLocation();
+    }
   }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
@@ -249,7 +255,10 @@ const Feed: React.FC = () => {
           filter={filter}
           setFilter={setFilter}
           location={location}
-          setLocation={setLocation}
+          setLocation={(location) => {
+            lastLocation = location!;
+            setLocation({...lastLocation});
+          }}
         />
       )}
       {!isDesktop && (
