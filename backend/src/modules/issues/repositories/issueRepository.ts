@@ -290,7 +290,28 @@ export default class IssueRepository {
           image_url: issue.image_url || null,
           updated_at: new Date().toISOString()
         })
-        .select()
+        .select(`
+          *,
+          user: user_id (
+            user_id,
+            email_address,
+            username,
+            fullname,
+            image_url,
+            user_score
+          ),
+          category: category_id (
+            name
+          ),
+          location: location_id (
+            suburb,
+            city,
+            province,
+            latitude,
+            longitude
+          ),
+          cluster_id
+        `)
         .single();
   
       if (error) {
@@ -301,14 +322,12 @@ export default class IssueRepository {
           error: `An error occurred while inserting the issue: ${error.message}`,
         });
       }
-  
-      const reactions = await reactionRepository.getReactionCountsByIssueId(
-        data.issue_id
-      );
-  
+
       return {
         ...data,
-        reactions,
+        reactions: [],
+        user_reaction: null,
+        comment_count: 0,
         is_owner: true,
         user: data.is_anonymous
           ? {
@@ -317,8 +336,15 @@ export default class IssueRepository {
               username: "Anonymous",
               fullname: "Anonymous",
               image_url: null,
+              total_issues: null,
+              resolved_issues: null,
+              user_score: 0,
+              location_id: null,
+              location: null
             }
           : data.user,
+        hasPendingResolution: false,
+        pendingResolutionId: null,
       } as Issue;
     } catch (error) {
       console.error("Unexpected error in createIssue:", error);

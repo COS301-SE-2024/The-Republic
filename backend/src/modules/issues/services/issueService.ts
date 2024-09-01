@@ -220,9 +220,10 @@ export default class IssueService {
     const points = isFirstIssue ? 50 : 20;
     await this.pointsService.awardPoints(issue.user_id!, points, isFirstIssue ? "created first issue" : "created an issue");
 
-    return await this.getIssueById({
-      issue_id: createdIssue.issue_id,
-      user_id: issue.user_id
+    return APIData({
+      code: 200,
+      success: true,
+      data: createdIssue,
     });
   }
 
