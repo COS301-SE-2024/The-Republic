@@ -214,7 +214,7 @@ export default class IssueService {
       image_url: imageUrl,
     });
 
-    this.processIssueAsync(createdIssue.issue_id);
+    this.processIssueAsync(createdIssue);
 
     const isFirstIssue = await this.pointsService.getFirstTimeAction(issue.user_id!, "created first issue");
     const points = isFirstIssue ? 50 : 20;
@@ -227,35 +227,15 @@ export default class IssueService {
     });
   }
 
-  public async processIssueAsync(issueId: number) {
+  public async processIssueAsync(issue: Issue) {
     try {
-      //console.log(`Starting to process issue ${issueId}`);
-      const issue = await this.issueRepository.getIssueById(issueId);
-      //console.log(`Retrieved issue:`, issue);
-  
-      if (!issue) {
-        console.error(`Issue ${issueId} not found`);
-        return;
-      }
-  
-      if (!issue.content) {
-        console.error(`Issue ${issueId} has no content`);
-        return;
-      }
-  
       const embedding = await this.openAIService.getEmbedding(issue.content);
-      //console.log(`Generated embedding for issue ${issueId}`);
+      await this.issueRepository.updateIssueEmbedding(issue.issue_id, embedding);
+      issue.content_embedding = embedding;
   
-      await this.issueRepository.updateIssueEmbedding(issueId, embedding);
-      //console.log(`Updated embedding for issue ${issueId}`);
-  
-      const clusterId = await this.clusterService.assignClusterToIssue(issueId);
-      //console.log(`Assigned cluster ${clusterId} to issue ${issueId}`);
-  
-      await this.issueRepository.updateIssueCluster(issueId, clusterId);
-      //console.log(`Updated cluster for issue ${issueId}`);
+      await this.clusterService.assignClusterToIssue(issue);
     } catch (error) {
-      console.error(`Error processing issue ${issueId}:`, error);
+      console.error(`Error processing issue ${issue}:`, error);
     }
   }
 

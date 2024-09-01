@@ -37,49 +37,28 @@ export class ClusterService {
     return cluster;
   }
 
-  async assignClusterToIssue(issueId: number): Promise<string> {
-    const issue = await this.issueRepository.getIssueById(issueId);
-    if (!issue) {
-      throw APIError({
-        code: 404,
-        success: false,
-        error: "Issue not found",
-      });
-    }
-  
+  async assignClusterToIssue(issue: Issue): Promise<string> {
     if (!issue.content_embedding) {
       issue.content_embedding = await this.openAIService.getEmbedding(issue.content);
-      await this.issueRepository.updateIssueEmbedding(issueId, issue.content_embedding);
+      await this.issueRepository.updateIssueEmbedding(issue.issue_id, issue.content_embedding);
     }
   
     const similarClusters = await this.clusterRepository.findSimilarClusters(issue, 0.9);
+    let assignedCluster: Cluster;
   
     if (similarClusters.length > 0) {
-      const mostSimilarCluster = similarClusters[0];
+      assignedCluster = similarClusters[0];
       const newEmbedding = Array.isArray(issue.content_embedding) ? issue.content_embedding : JSON.parse(issue.content_embedding);
-      await this.updateCluster(mostSimilarCluster.cluster_id, newEmbedding);
-      await this.issueRepository.updateIssueCluster(issueId, mostSimilarCluster.cluster_id);
-      return mostSimilarCluster.cluster_id;
+      await this.updateCluster(assignedCluster, newEmbedding);
     } else {
-      const newCluster = await this.clusterRepository.createCluster(issue);
-      await this.issueRepository.updateIssueCluster(issueId, newCluster.cluster_id);
-      return newCluster.cluster_id;
+      assignedCluster = await this.clusterRepository.createCluster(issue);
     }
+
+    await this.issueRepository.updateIssueCluster(issue.issue_id, assignedCluster.cluster_id);
+    return assignedCluster.cluster_id;
   }
 
-  private async updateCluster(clusterId: string, newEmbedding: number[]): Promise<void> {
-    const cluster = await this.clusterRepository.getClusterById(clusterId);
-    if (!cluster) {
-      throw APIError({
-        code: 404,
-        success: false,
-        error: "Cluster not found",
-      });
-    }
-  
-    // console.log('Cluster data:', cluster);
-    // console.log('Centroid embedding type:', typeof cluster.centroid_embedding);
-  
+  private async updateCluster(cluster: Cluster, newEmbedding: number[]): Promise<void> {
     let centroidEmbedding: number[];
     if (typeof cluster.centroid_embedding === 'string') {
       try {
@@ -108,7 +87,7 @@ export class ClusterService {
       (val * cluster.issue_count + newEmbedding[i]) / newIssueCount
     );
   
-    await this.clusterRepository.updateCluster(clusterId, JSON.stringify(newCentroid), newIssueCount);
+    await this.clusterRepository.updateCluster(cluster.cluster_id, JSON.stringify(newCentroid), newIssueCount);
   }
 
   async removeIssueFromCluster(issueId: number, clusterId: string): Promise<void> {
