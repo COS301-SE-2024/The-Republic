@@ -239,6 +239,7 @@ const Feed: React.FC = () => {
           Empty={EmptyIndicator}
           parentId={scrollId}
           controlRef={lazyRef}
+          uniqueId="feed-issues"
         />
       </div>
       {isDesktop && (

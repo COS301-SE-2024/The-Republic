@@ -85,6 +85,11 @@ const CommentList: React.FC<CommentListProps2> = ({
           Empty={EmptyIndicator}
           controlRef={lazyRef}
           parentId={scrollId}
+          uniqueId={`
+            issue-${issueId}
+            -parent-${parentCommentId}
+            -comments`
+          }
         />
       )}
     </div>
