@@ -324,7 +324,8 @@ export default class IssueService {
     }
 
     if (issueToDelete.cluster_id) {
-      await this.clusterService.removeIssueFromCluster(issue_id, issueToDelete.cluster_id);
+      // No await so it runs without blocking
+      this.clusterService.removeIssueFromCluster(issue_id, issueToDelete.cluster_id);
     }
 
     await this.issueRepository.deleteIssue(issue_id, user_id);
