@@ -40,7 +40,7 @@ export class ClusterService {
   async assignClusterToIssue(issue: Issue): Promise<string> {
     if (!issue.content_embedding) {
       issue.content_embedding = await this.openAIService.getEmbedding(issue.content);
-      await this.issueRepository.updateIssueEmbedding(issue.issue_id, issue.content_embedding);
+      await this.issueRepository.setIssueEmbedding(issue.issue_id, issue.content_embedding);
     }
   
     const similarClusters = await this.clusterRepository.findSimilarClusters(issue, 0.9);
@@ -107,8 +107,7 @@ export class ClusterService {
         await this.clusterRepository.deleteCluster(clusterId);
       } else {
         const updatedIssueCount = cluster.issue_count - 1;
-        const issues = await this.clusterRepository.getIssuesInCluster(clusterId);
-        //console.log('Issues in cluster:', issues);
+        const issues = await this.clusterRepository.getIssueEmbeddingsInCluster(clusterId);
         const updatedCentroid = this.recalculateCentroid(issues, issueId);
         const formattedCentroid = this.formatCentroidForDatabase(updatedCentroid);
         
@@ -124,7 +123,7 @@ export class ClusterService {
     }
   }
 
-  private recalculateCentroid(issues: Issue[], excludeIssueId: number): number[] {
+  private recalculateCentroid(issues: Partial<Issue>[], excludeIssueId: number): number[] {
     const relevantIssues = issues.filter(issue => issue.issue_id !== excludeIssueId);
     if (relevantIssues.length === 0) {
       throw new Error("No issues left in cluster after exclusion");
@@ -178,7 +177,7 @@ export class ClusterService {
     return sumEmbedding.map(val => val / validEmbeddingsCount);
   }
   
-  private getDefaultEmbedding(issues: Issue[]): number[] {
+  private getDefaultEmbedding(issues: Partial<Issue>[]): number[] {
     for (const issue of issues) {
       if (issue.cluster && typeof issue.cluster.centroid_embedding === 'string') {
         try {

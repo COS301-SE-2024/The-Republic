@@ -287,6 +287,30 @@ export class ClusterRepository {
     return data;
   }
 
+  async getIssueEmbeddingsInCluster(clusterId: string): Promise<Partial<Issue>[]> {
+    const { data, error } = await supabase
+      .from('issue_embeddings')
+      .select(`
+        issue_id,
+        content_embedding,
+        ...issue!inner (
+          cluster_id
+        )
+      `)
+      .eq("issue.cluster_id", clusterId);
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching issue embeddings for cluster.",
+      });
+    }
+  
+    return data;
+  }
+
   async updateIssueCluster(issueId: number, newClusterId: string): Promise<void> {
     const { error } = await supabase
       .from('issue')

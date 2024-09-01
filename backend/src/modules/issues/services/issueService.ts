@@ -230,7 +230,7 @@ export default class IssueService {
   public async processIssueAsync(issue: Issue) {
     try {
       const embedding = await this.openAIService.getEmbedding(issue.content);
-      await this.issueRepository.updateIssueEmbedding(issue.issue_id, embedding);
+      await this.issueRepository.setIssueEmbedding(issue.issue_id, embedding);
       issue.content_embedding = embedding;
   
       await this.clusterService.assignClusterToIssue(issue);

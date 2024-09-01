@@ -375,14 +375,13 @@ export default class IssueRepository {
     }
   }
 
-  async updateIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
+  async setIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
     const { error } = await supabase
-      .from('issue')
-      .update({ 
+      .from('issue_embeddings')
+      .insert({ 
+        issue_id: issueId,
         content_embedding: embedding,
-        updated_at: new Date().toISOString()
-      })
-      .eq('issue_id', issueId);
+      });
 
     if (error) {
       console.error(error);
