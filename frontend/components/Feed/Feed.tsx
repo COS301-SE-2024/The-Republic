@@ -19,9 +19,9 @@ import { Button } from "@/components/ui/button";
 import FilterModal from "@/components/FilterModal/FilterModal";
 import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
-const FETCH_SIZE = 5;
+const FETCH_SIZE = 10;
 
-let lastLocation: Location | null = null;
+let lastLocation: Location | null;
 
 const Feed: React.FC = () => {
   const { user } = useUser();
@@ -29,8 +29,12 @@ const Feed: React.FC = () => {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState("newest");
   const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(lastLocation);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(!lastLocation);
+  const [location, setLocation] = useState<Location | null>(
+    lastLocation ?? null
+  );
+  const [isLoadingLocation, setIsLoadingLocation] = useState(
+    lastLocation === undefined
+  );
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
@@ -78,7 +82,9 @@ const Feed: React.FC = () => {
       setIsLoadingLocation(false);
     };
 
-    if (!lastLocation) {
+    console.log(lastLocation);
+
+    if (lastLocation === undefined) {
       loadLocation();
     }
   }, [user, searchParams]);
@@ -256,8 +262,8 @@ const Feed: React.FC = () => {
           setFilter={setFilter}
           location={location}
           setLocation={(location) => {
-            lastLocation = location!;
-            setLocation({...lastLocation});
+            lastLocation = location;
+            setLocation(lastLocation && {...lastLocation});
           }}
         />
       )}
