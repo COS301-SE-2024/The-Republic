@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProfileSettings from "./ProfileSettings";
 import RequestVerifications from "./RequestVerification";
 import NotificationSettings from "./NotificationSettings";
+import AccountManagement from "./AccountManagement";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
