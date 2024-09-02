@@ -49,6 +49,9 @@ const SettingsPage = () => {
       <SettingsDropdown title="Notification Settings">
         <NotificationSettings />
       </SettingsDropdown>
+      <SettingsDropdown title="Account Management">
+        <AccountManagement />
+      </SettingsDropdown>
     </div>
   );
 };
