@@ -37,7 +37,6 @@ def get_random_server(servers):
     return servers[server_index]
 
 def proxy_request(request, server, retries):
-    print("Servers Information: ", server.url)
     
     while retries < MAX_RETRIES:
         try:
@@ -69,7 +68,7 @@ def proxy_request(request, server, retries):
                 return Response(response.content, response.status_code, headers)
         
         except requests.exceptions.RequestException as e:
-            print(f"Error proxying request: {e}")
+            # print(f"Error proxying request: {e}")
             retries += 1
                 
         if retries >= MAX_RETRIES:
