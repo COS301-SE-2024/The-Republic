@@ -44,12 +44,12 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
 
-      - name: Build and push reverse proxy Docker image
-        run: |
-          echo "--------- Building reverse proxy Docker image -----------"
-          docker build -t infiniteloopers-reverseproxy ./reverseproxy
-          docker tag infiniteloopers-reverseproxy ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
-          docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
+      # - name: Build and push reverse proxy Docker image
+      #   run: |
+      #     echo "--------- Building reverse proxy Docker image -----------"
+      #     docker build -t infiniteloopers-reverseproxy ./reverseproxy
+      #     docker tag infiniteloopers-reverseproxy ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
+      #     docker push ${{ secrets.DOCKERUSSER }}/infiniteloopers-reverseproxy:v1
 
   deploy-backend:
     runs-on: ubuntu-latest
