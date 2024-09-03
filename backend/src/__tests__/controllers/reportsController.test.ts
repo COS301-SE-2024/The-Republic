@@ -57,7 +57,11 @@ describe("Reports Controller", () => {
         }
       }
     } else if (typeof controllerMethod === 'function') {
-      await (controllerMethod as Function)(mockRequest as Request, mockResponse as Response, mockNext);
+      await (controllerMethod as (req: Request, res: Response, next: NextFunction) => Promise<void>)(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
     } else {
       throw new Error(`Controller method ${methodName} not found or not a function`);
     }

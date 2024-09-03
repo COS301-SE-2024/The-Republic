@@ -4,6 +4,7 @@ import { LocationService } from "@/modules/locations/services/locationService";
 import { sendResponse } from "@/utilities/response";
 import { APIResponse } from "@/types/response";
 import { cacheMiddleware } from "@/middleware/cacheMiddleware";
+import { Location } from "@/modules/locations/repositories/locationRepository"; // Adjust the import path as necessary
 
 jest.mock("@/modules/locations/services/locationService");
 jest.mock("@/utilities/response");
@@ -53,7 +54,11 @@ describe("Location Controller", () => {
         }
       }
     } else if (typeof controllerMethod === 'function') {
-      await (controllerMethod as Function)(mockRequest as Request, mockResponse as Response, mockNext);
+      await (controllerMethod as (req: Request, res: Response, next: NextFunction) => Promise<void>)(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
     } else {
       throw new Error(`Controller method ${methodName} not found or not a function`);
     }
@@ -71,10 +76,19 @@ describe("Location Controller", () => {
   });
 
   it("should handle getLocationById", async () => {
-    const mockAPIResponse: APIResponse<any> = {
+    const mockAPIResponse: APIResponse<Location> = {
       success: true,
       code: 200,
-      data: { id: 1, name: "Test Location" },
+      data: {
+        location_id: 1,
+        province: "Test Province",
+        city: "Test City",
+        suburb: "Test Suburb",
+        district: "Test",
+        place_id: "4",
+        latitude: "0", 
+        longitude: "0", 
+      },
     };
     mockLocationService.getLocationById.mockResolvedValue(mockAPIResponse);
     mockRequest.params = { id: "1" };
