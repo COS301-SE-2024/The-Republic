@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Infinite Loopers Load Balancer Page</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header>
+			<h1>Infinite Loopers Load Balancer Service</h1>
+		</header>
+		<main>
+			<form id="proxy-form" action="/proxy" method="POST">
+				<label for="url">Enter URL:</label>
+				<input type="text" id="url" name="url" required>
+				<button type="submit">Go</button>
+			</form>
+			<div id="response">
+				<!-- Response Here -->
+			</div>
+		</main>
+		<footer>
+			<p>&copy; 2024 Infinite Loopers Load Balancer Service. All rights reserved.</p>
+		</footer>
+		<script src="scripts.js"></script>
+	</body>
+</html>
