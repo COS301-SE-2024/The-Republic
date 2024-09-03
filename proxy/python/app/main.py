@@ -1,10 +1,8 @@
 from flask import Flask, request, Response
 from dotenv import load_dotenv
 from flask_cors import CORS
-import threading
 import requests
 import random
-import time
 import os
 
 load_dotenv()
@@ -13,7 +11,7 @@ app = Flask(__name__)
 # CORS Origin Configuration
 cors = CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:3000", "https://the-republic-six.vercel.app"],
+        "origins": ["http://localhost:3000", os.getenv('FRONTEND_URL')],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
         "supports_credentials": True
@@ -24,9 +22,6 @@ cors = CORS(app, resources={
 class Server:
     def __init__(self, url):
         self.url = url
-        self.connections = 0
-        self.last_used = 0
-        self.lock = threading.Lock()
 
 servers = [
     Server(os.getenv('SERVER_1')),
@@ -37,20 +32,15 @@ servers = [
 
 MAX_RETRIES = int(os.getenv('MAX_RETRIES', len(servers)))
 
-def get_least_connected_server(servers):
-    servers = sorted(servers, key=lambda x: x.connections)
-    
-    return servers[0]
+def get_random_server(servers):
+    server_index = random.sample(range(len(servers)), 1)[0]
+    return servers[server_index]
 
 def proxy_request(request, server, retries):
-    print("Servers Information: ", (server.url, server.connections, server.last_used))
+    print("Servers Information: ", server.url)
     
     while retries < MAX_RETRIES:
         try:
-            with server.lock:
-                server.connections += 1
-                server.last_used = time.time()
-
             final_url = f"{server.url}{request.full_path}"
             
             response = requests.request(
@@ -81,10 +71,6 @@ def proxy_request(request, server, retries):
         except requests.exceptions.RequestException as e:
             print(f"Error proxying request: {e}")
             retries += 1
-        
-        finally:
-            with server.lock:
-                server.connections = max(0, server.connections - 1)
                 
         if retries >= MAX_RETRIES:
             break
@@ -107,7 +93,7 @@ def process_root():
 
 @app.route('/<path:path>', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def process_request(path):
-    server = get_least_connected_server(servers)
+    server = get_random_server(servers)
     return proxy_request(request, server, 0)
 
 if __name__ == "__main__":
