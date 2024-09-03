@@ -4,9 +4,7 @@ import {
   Ref,
   useEffect,
   useImperativeHandle,
-  useState,
 } from "react";
-import { v4 as uuidv4 } from "uuid";
 import equal from "fast-deep-equal";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -28,7 +26,7 @@ interface LazyListProps<D> {
   pageSize: number;
   parentId?: string;
   controlRef?: Ref<LazyListRef<D>>;
-  uniqueId?: string;
+  uniqueId: string;
 }
 
 export function LazyList<D>({
@@ -41,7 +39,7 @@ export function LazyList<D>({
   pageSize,
   parentId,
   controlRef,
-  uniqueId = uuidv4()
+  uniqueId
 }: LazyListProps<D>) {
   const queryClient = useQueryClient();
   const {
@@ -49,6 +47,7 @@ export function LazyList<D>({
     error,
     fetchNextPage,
     hasNextPage,
+    isFetching,
   } = useInfiniteQuery({
     queryKey: fetchKey,
     queryFn: ({ pageParam }) => fetcher(pageParam, pageSize),
@@ -60,16 +59,8 @@ export function LazyList<D>({
 
       return pages.length * pageSize;
     },
-    notifyOnChangeProps: () => {
-      if (data?.pages) {
-        return [];
-      } else {
-        return 'all';
-      }
-    },
     staleTime: Number.POSITIVE_INFINITY,
   });
-  const [, updateList] = useState({});
 
   useImperativeHandle(controlRef, () => ({
     add: (newData) => {
@@ -84,7 +75,6 @@ export function LazyList<D>({
         ],
         pageParams: data.pageParams,
       });
-      updateList({});
     },
 
     remove: (newData, compare = equal) => {
@@ -100,7 +90,6 @@ export function LazyList<D>({
         pages: newPages,
         pageParams: data.pageParams,
       });
-      updateList({});
     },
 
     update: (oldData, newData, compare = equal) => {
@@ -126,7 +115,6 @@ export function LazyList<D>({
         pages: newPages,
         pageParams: data.pageParams,
       });
-      updateList({});
     },
   }), [data, queryClient]);
 
@@ -168,51 +156,6 @@ export function LazyList<D>({
     }
   });
 
-  useEffect(() => {
-    if (data?.pages[0] && hasNextPage) {
-      const handleIntersection = async (
-        [entry]: IntersectionObserverEntry[],
-        observer: IntersectionObserver
-      )  => {
-        if (!entry.isIntersecting) return;
-
-        observer.unobserve(entry.target);
-
-        while (queryClient
-          .getQueryState(fetchKey)
-          ?.fetchStatus == 'fetching'
-        ) {
-          await new Promise(resolve =>
-            setTimeout(resolve, 500)
-          );
-        }
-        updateList({});
-      };
-
-      let updateFrom = 0;
-      data.pages.forEach((page) =>
-        updateFrom += page.length
-      );
-
-      const updateFromElement = document.querySelector(
-        `#item-${updateFrom - 1}-${uniqueId}`
-      );
-      const rootElement = document.querySelector(
-        parentId ?? `#items-scroll-${uniqueId}`
-      );
-
-      const observer = new IntersectionObserver(handleIntersection, {
-        root: rootElement,
-      });
-
-      observer.observe(updateFromElement!);
-
-      return () => {
-        observer.disconnect();
-      };
-    }
-  });
-
   let itemIndex = 0;
 
   return (
@@ -238,7 +181,7 @@ export function LazyList<D>({
 
       {error && <Failed error={error}/>}
 
-      {(!error && !data?.pages || hasNextPage) && (
+      {isFetching && (
         <div key={`loading-${uniqueId}`}>
           <Loading/>
         </div>

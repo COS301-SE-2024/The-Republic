@@ -5,26 +5,33 @@ import { Cluster } from '@/modules/shared/models/cluster';
 
 export class ClusterRepository {
   async createCluster(issue: Issue): Promise<Cluster> {
-    const { data: locationData, error: locationError } = await supabase
-      .from('location')
-      .select('suburb')
-      .eq('location_id', issue.location_id)
-      .single();
-  
-    if (locationError) {
-      console.error('Error fetching location:', locationError);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while fetching location data.",
-      });
+    let suburb: string;
+    if (!issue.location) {
+      const { data: locationData, error: locationError } = await supabase
+        .from('location')
+        .select('suburb')
+        .eq('location_id', issue.location_id)
+        .single();
+
+      if (locationError) {
+        console.error('Error fetching location:', locationError);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred while fetching location data.",
+        });
+      }
+
+      suburb = locationData.suburb;
+    } else {
+      suburb = issue.location.suburb;
     }
-  
+ 
     const { data, error } = await supabase
       .from('cluster')
       .insert({
         category_id: issue.category_id,
-        suburb: locationData.suburb,
+        suburb: suburb,
         issue_count: 1,
         centroid_embedding: issue.content_embedding
       })
@@ -67,37 +74,37 @@ export class ClusterRepository {
     issue: Issue, 
     threshold: number = 0.7
   ): Promise<Cluster[]> {
-    // console.log('Finding similar clusters for issue:', {
-    //   issue_id: issue.issue_id,
-    //   category_id: issue.category_id,
-    //   location_id: issue.location_id,
-    //   threshold
-    // });
+    let suburb: string;
+    if (!issue.location) {
+      const { data: locationData, error: locationError } = await supabase
+        .from('location')
+        .select('suburb')
+        .eq('location_id', issue.location_id)
+        .single();
 
-    const { data: locationData, error: locationError } = await supabase
-    .from('location')
-    .select('suburb')
-    .eq('location_id', issue.location_id)
-    .single();
+      if (locationError) {
+        console.error('Error fetching location:', locationError);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred while fetching location data.",
+        });
+      }
 
-  if (locationError) {
-    console.error('Error fetching location:', locationError);
-    throw APIError({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred while fetching location data.",
-    });
-  }
-  
+      suburb = locationData.suburb;
+    } else {
+      suburb = issue.location.suburb;
+    }
+
     const { data, error } = await supabase
       .rpc('find_similar_clusters', { 
         query_embedding: issue.content_embedding,
         similarity_threshold: threshold,
         category_id_param: issue.category_id,
-        suburb_param: locationData.suburb,
+        suburb_param: suburb,
         current_time_param: new Date().toISOString()
       });
-  
+
     if (error) {
       console.error('Error finding similar clusters:', error);
       throw APIError({
@@ -106,9 +113,7 @@ export class ClusterRepository {
         error: "An unexpected error occurred while finding similar clusters.",
       });
     }
-  
-    // console.log('Similar clusters found:', data);
-  
+
     return data;
   }
 
@@ -276,6 +281,30 @@ export class ClusterRepository {
         code: 500,
         success: false,
         error: "An unexpected error occurred while fetching issues in the cluster.",
+      });
+    }
+  
+    return data;
+  }
+
+  async getIssueEmbeddingsInCluster(clusterId: string): Promise<Partial<Issue>[]> {
+    const { data, error } = await supabase
+      .from('issue_embeddings')
+      .select(`
+        issue_id,
+        content_embedding,
+        ...issue!inner (
+          cluster_id
+        )
+      `)
+      .eq("issue.cluster_id", clusterId);
+  
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching issue embeddings for cluster.",
       });
     }
   
