@@ -217,9 +217,13 @@ interface Issue {
   is_owner: boolean;
   profile_user_id: string;
   user_reaction: string;
-  hasPendingResolution?: boolean;
-  pendingResolutionId?: string | null;
-  cluster_id?: string
+  hasPendingResolution: boolean;
+  pendingResolutionId: string | null;
+  cluster_id?: string;
+  resolutions: Resolution[];
+  relatedIssues?: Issue[];
+  relatedIssuesCount: number;
+  userHasIssueInCluster: boolean;
 }
 
 interface IssueProps {
