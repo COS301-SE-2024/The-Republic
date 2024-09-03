@@ -81,9 +81,12 @@ jobs:
           echo "machine api.heroku.com login ${{ secrets.HEROKU_EMAIL }} password ${{ secrets.HEROKU_API_KEY }}" > ~/.netrc
           echo "machine git.heroku.com login ${{ secrets.HEROKU_EMAIL }} password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
 
-      - name: Pushing Backend Directory to Heroku
+      - name: Pushing Backend Directory to Multiple Heroku Servers
         run: |
           git clone https://github.com/COS301-SE-2024/The-Republic.git
           cd The-Republic
-          heroku git:remote -a "${{ secrets.HEROKU_BACKEND }}"
-          git subtree push --prefix backend heroku master
+          for i in 1 2 3 4; do
+            heroku git:remote -a "${{ secrets.BACKEND_SERVER }}-${i}"
+            git subtree push --prefix backend heroku master
+          done
+        
