@@ -7,15 +7,15 @@ export interface RelatedIssuesModalProps {
   isOpen: boolean;
   onClose: () => void;
   issues: IssueType[];
-  totalCount: number;
+
 }
 
-const RelatedIssuesModal: React.FC<RelatedIssuesModalProps> = ({ isOpen, onClose, issues, totalCount }) => {
+const RelatedIssuesModal: React.FC<RelatedIssuesModalProps> = ({ isOpen, onClose, issues }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Related Issues ({totalCount})</DialogTitle>
+          <DialogTitle>Related Issues</DialogTitle>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-y-auto">
           {issues.map((issue, index) => (

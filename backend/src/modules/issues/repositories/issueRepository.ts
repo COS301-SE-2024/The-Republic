@@ -131,7 +131,7 @@ export default class IssueRepository {
         const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
         const resolutions = await this.getResolutionsForIssue(issue.issue_id);
         const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
-        const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null);
+        const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
 
         return {
           ...issue,
@@ -219,9 +219,8 @@ export default class IssueRepository {
     const commentCount = await commentRepository.getNumComments(data.issue_id);
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
     const resolutions = await this.getResolutionsForIssue(data.issue_id);
-    const relatedIssuesCount = await this.getRelatedIssuesCount(data.cluster_id);
+    const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
     const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
-    const relatedIssues = await this.getRelatedIssues(data.cluster_id);
 
     return {
       ...data,
@@ -247,7 +246,7 @@ export default class IssueRepository {
     } as Issue;
   }
 
-  async getRelatedIssues(clusterId: string | null): Promise<{ issues: Issue[]; totalCount: number }> {
+  async getRelatedIssues(clusterId: string | null, currentIssueId: number): Promise<{ issues: Issue[]; totalCount: number }> {
     if (!clusterId) return { issues: [], totalCount: 0 };
     
     const { data, error, count } = await supabase
@@ -274,7 +273,8 @@ export default class IssueRepository {
         )
       `, { count: 'exact' })
       .eq('cluster_id', clusterId)
-      .limit(3); // Limit to 3 related issues
+      .neq('issue_id', currentIssueId)
+      .limit(3);
 
     if (error) {
       console.error(error);
@@ -285,7 +285,7 @@ export default class IssueRepository {
       });
     }
 
-    return { issues: data as Issue[], totalCount: count || 0 };
+    return { issues: data as Issue[], totalCount: (count || 0) - 1 };
   }
 
   async createIssue(issue: Partial<Issue>) {
@@ -778,15 +778,6 @@ export default class IssueRepository {
     }
   
     return data as Resolution[];
-  }
-
-  async getRelatedIssuesCount(clusterId: string | null): Promise<number> {
-    if (!clusterId) return 0;
-    const { count } = await supabase
-      .from('issue')
-      .select('*', { count: 'exact', head: true })
-      .eq('cluster_id', clusterId);
-    return count || 0;
   }
 
   async userHasIssueInCluster(userId: string, clusterId: string | null): Promise<boolean> {

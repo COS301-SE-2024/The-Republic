@@ -52,7 +52,7 @@ const Issue: React.FC<IssueProps> = ({
 
   const isOwner = user ? user.user_id === issue.user_id : false;
   const canRespond = isOwner || issue.userHasIssueInCluster;
-  const hasRelatedIssues = issue.relatedIssuesCount > 0;
+  const hasRelatedIssues = issue.relatedIssues && issue.relatedIssues.length > 0;
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -477,7 +477,6 @@ const Issue: React.FC<IssueProps> = ({
         isOpen={isRelatedIssuesModalOpen}
         onClose={() => setIsRelatedIssuesModalOpen(false)}
         issues={issue.relatedIssues || []}
-        totalCount={issue.relatedIssuesCount || 0}
       />
     </>
   );
