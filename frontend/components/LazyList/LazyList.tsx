@@ -27,6 +27,7 @@ interface LazyListProps<D> {
   parentId?: string;
   controlRef?: Ref<LazyListRef<D>>;
   uniqueId: string;
+  adFrequency?: number;
 }
 
 export function LazyList<D>({
@@ -39,7 +40,8 @@ export function LazyList<D>({
   pageSize,
   parentId,
   controlRef,
-  uniqueId
+  uniqueId,
+  adFrequency = 0
 }: LazyListProps<D>) {
   const queryClient = useQueryClient();
   const {
@@ -156,7 +158,13 @@ export function LazyList<D>({
     }
   });
 
+
+  if (adFrequency < 0) {
+    adFrequency = 0;
+  }
+
   let itemIndex = 0;
+  let untilAd = adFrequency;
 
   return (
     <div
@@ -170,9 +178,22 @@ export function LazyList<D>({
           {page.map((item) => {
             const id = `item-${itemIndex++}-${uniqueId}`;
 
+            let ad: ReactNode | null = null;
+            if (adFrequency && --untilAd == 0) {
+              ad = (
+                <div className="my-8 w-full text-muted-foreground flex items-center justify-center">
+                  Advertisement
+                </div>
+              );
+
+              untilAd = adFrequency;
+            }
+
+
             return (
               <div id={id} key={id}>
                 <Item data={item}/>
+                {ad}
               </div>
             );
           })}
