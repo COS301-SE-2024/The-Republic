@@ -1,14 +1,26 @@
 from flask import Flask, request, Response
-import os
-import random
-import requests
-import threading
-import time
 from dotenv import load_dotenv
+from flask_cors import CORS
+import threading
+import requests
+import random
+import time
+import os
 
 load_dotenv()
 app = Flask(__name__)
 
+# CORS Origin Configuration
+cors = CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000", "https://the-republic-six.vercel.app"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+        "supports_credentials": True
+    }
+})
+
+# Load Balancer Configuration
 class Server:
     def __init__(self, url):
         self.url = url
