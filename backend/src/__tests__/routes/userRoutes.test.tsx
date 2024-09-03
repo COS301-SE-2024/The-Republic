@@ -1,14 +1,15 @@
 import request from "supertest";
 import express from "express";
 import userRouter from "@/modules/users/routes/userRoutes";
-import {
-  getUserById,
-  updateUserProfile,
-} from "@/modules/users/controllers/userController";
 import { verifyAndGetUser } from "@/middleware/middleware";
 
+import * as userController from "@/modules/users/controllers/userController";
+
 jest.mock("@/middleware/middleware");
-jest.mock("@/modules/users/controllers/userController");
+jest.mock("@/modules/users/controllers/userController", () => ({
+  getUserById: [jest.fn()],
+  updateUserProfile: jest.fn(),
+}));
 
 const app = express();
 app.use(express.json());
@@ -24,14 +25,14 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (getUserById as jest.Mock).mockImplementation((req, res) =>
+      (userController.getUserById[0] as jest.Mock).mockImplementation((req, res) =>
         res.status(200).json({}),
       );
 
-      const response = await request(app).get("/users/1").send();
+      const response = await request(app).post("/users/1").send();
 
-      expect(response.status).toBe(404);
-      expect(getUserById).not.toHaveBeenCalled();
+      expect(response.status).toBe(200);
+      expect(userController.getUserById[0]).toHaveBeenCalled();
     });
   });
 
@@ -40,14 +41,14 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (updateUserProfile as jest.Mock).mockImplementation((req, res) =>
+      (userController.updateUserProfile as jest.Mock).mockImplementation((req, res) =>
         res.status(200).json({}),
       );
 
       const response = await request(app).put("/users/1").send();
 
       expect(response.status).toBe(200);
-      expect(updateUserProfile).toHaveBeenCalled();
+      expect(userController.updateUserProfile).toHaveBeenCalled();
     });
   });
 });

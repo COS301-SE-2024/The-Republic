@@ -1,9 +1,9 @@
-// src/modules/clusters/controllers/clusterController.ts
-
 import { Request, Response } from "express";
 import { ClusterService } from "../services/clusterService";
 import { sendResponse } from "@/utilities/response";
 import { APIResponse, APIError } from "@/types/response";
+import { cacheMiddleware } from "@/middleware/cacheMiddleware";
+import { clearCachePattern } from "@/utilities/cacheUtils";
 
 export class ClusterController {
   private clusterService: ClusterService;
@@ -12,62 +12,68 @@ export class ClusterController {
     this.clusterService = new ClusterService();
   }
 
-  getClusters = async (req: Request, res: Response) => {
-    try {
-      const { categoryId, suburb, fromDate, toDate } = req.query;
+  getClusters = [
+    cacheMiddleware(300),
+    async (req: Request, res: Response) => {
+      try {
+        const { categoryId, suburb, fromDate, toDate } = req.query;
 
-      if (!categoryId || !suburb) {
-        throw APIError({
-          code: 400,
-          success: false,
-          error: "Category ID and Suburb are required",
+        if (!categoryId || !suburb) {
+          throw APIError({
+            code: 400,
+            success: false,
+            error: "Category ID and Suburb are required",
+          });
+        }
+
+        const clusters = await this.clusterService.getClusters({
+          categoryId: Number(categoryId),
+          suburb: String(suburb),
+          fromDate: fromDate ? new Date(fromDate as string) : undefined,
+          toDate: toDate ? new Date(toDate as string) : undefined,
         });
+
+        const response = {
+          code: 200,
+          success: true,
+          data: clusters,
+        };
+
+        sendResponse(res, response);
+      } catch (err) {
+        sendResponse(res, err as APIResponse);
       }
-
-      const clusters = await this.clusterService.getClusters({
-        categoryId: Number(categoryId),
-        suburb: String(suburb),
-        fromDate: fromDate ? new Date(fromDate as string) : undefined,
-        toDate: toDate ? new Date(toDate as string) : undefined,
-      });
-
-      const response = {
-        code: 200,
-        success: true,
-        data: clusters,
-      };
-
-      sendResponse(res, response);
-    } catch (err) {
-      sendResponse(res, err as APIResponse);
     }
-  };
+  ];
 
-  getClusterById = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
+  getClusterById = [
+    cacheMiddleware(300),
+    async (req: Request, res: Response) => {
+      try {
+        const { id } = req.params;
 
-      if (!id) {
-        throw APIError({
-          code: 400,
-          success: false,
-          error: "Cluster ID is required",
-        });
+        if (!id) {
+          throw APIError({
+            code: 400,
+            success: false,
+            error: "Cluster ID is required",
+          });
+        }
+
+        const cluster = await this.clusterService.getClusterById(id);
+
+        const response = {
+          code: 200,
+          success: true,
+          data: cluster,
+        };
+
+        sendResponse(res, response);
+      } catch (err) {
+        sendResponse(res, err as APIResponse);
       }
-
-      const cluster = await this.clusterService.getClusterById(id);
-
-      const response = {
-        code: 200,
-        success: true,
-        data: cluster,
-      };
-
-      sendResponse(res, response);
-    } catch (err) {
-      sendResponse(res, err as APIResponse);
     }
-  };
+  ];
 
   assignCluster = async (req: Request, res: Response) => {
     try {
@@ -82,6 +88,8 @@ export class ClusterController {
       }
 
       const clusterId = await this.clusterService.assignClusterToIssue(issueId);
+
+      clearCachePattern('__express__/api/clusters*');
 
       const response = {
         code: 200,

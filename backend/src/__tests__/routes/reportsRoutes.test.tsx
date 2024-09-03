@@ -5,7 +5,15 @@ import * as reportsController from "@/modules/reports/controllers/reportsControl
 import { verifyAndGetUser } from "@/middleware/middleware";
 
 jest.mock("@/middleware/middleware");
-jest.mock("@/modules/reports/controllers/reportsController");
+jest.mock("@/modules/reports/controllers/reportsController", () => ({
+  getAllIssuesGroupedByResolutionStatus: [jest.fn()],
+  getIssueCountsGroupedByResolutionStatus: [jest.fn()],
+  getIssueCountsGroupedByResolutionAndCategory: [jest.fn()],
+  getIssuesGroupedByCreatedAt: [jest.fn()],
+  getIssuesGroupedByCategory: [jest.fn()],
+  getIssuesCountGroupedByCategoryAndCreatedAt: [jest.fn()],
+  groupedByPoliticalAssociation: [jest.fn()],
+}));
 
 const app = express();
 app.use(express.json());
@@ -14,25 +22,15 @@ app.use("/reports", reportsRouter);
 describe("Reports Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
   });
 
-  describe("POST /reports/groupedResolutionStatus", () => {
-    it("should call getAllIssuesGroupedByResolutionStatus controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
-        next(),
-      );
-      (
-        reportsController.getAllIssuesGroupedByResolutionStatus as jest.Mock
-      ).mockImplementation((req, res) => res.status(200).json({}));
+  it("should call getAllIssuesGroupedByResolutionStatus controller", async () => {
+    (reportsController.getAllIssuesGroupedByResolutionStatus[0] as jest.Mock).mockImplementation((req, res) => res.status(200).json({}));
 
-      const response = await request(app)
-        .post("/reports/groupedResolutionStatus")
-        .send();
+    const response = await request(app).post("/reports/groupedResolutionStatus");
 
-      expect(response.status).toBe(200);
-      expect(
-        reportsController.getAllIssuesGroupedByResolutionStatus,
-      ).toHaveBeenCalled();
-    });
+    expect(response.status).toBe(200);
+    expect(reportsController.getAllIssuesGroupedByResolutionStatus[0]).toHaveBeenCalled();
   });
 });
