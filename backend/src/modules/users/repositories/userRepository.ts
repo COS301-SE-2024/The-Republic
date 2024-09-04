@@ -22,11 +22,6 @@ export default class UserRepository {
     if (!data) {
       console.error("User not found in database - userId:", userId);
       return null;
-      throw APIError({
-        code: 404,
-        success: false,
-        error: "User does not exist",
-      });
     }
 
     const [{ count: totalIssues }, { count: resolvedIssues }] =
