@@ -7,7 +7,6 @@ import {
 } from "react";
 import equal from "fast-deep-equal";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 
 type Compare<D> = (one: D, two: D) => boolean;
@@ -160,8 +159,6 @@ export function LazyList<D>({
     }
   });
 
-  const { resolvedTheme } = useTheme();
-
   if (adFrequency < 0) {
     adFrequency = 0;
   }
@@ -184,14 +181,22 @@ export function LazyList<D>({
             let ad: ReactNode | null = null;
             if (adFrequency && --untilAd == 0) {
               ad = (
-                <div className="h-16 relative"> 
+                <div className="h-16 relative mb-4"> 
                   <Image 
-                    src={`/banner_ad_${resolvedTheme}.png`}
+                    src={`/banner_gumball.png`}
                     alt="Banner Ad"
                     objectFit="contain"
                     fill
                   />
-                  <div className="absolute top-4 left-4 text-muted-foreground">Ad</div>
+                  <div className={`
+                    absolute 
+                    left-2
+                    top-[50%] -translate-y-[50%]
+                    px-1 border-gray-400 border rounded 
+                    text-muted-foreground text-sm
+                  `}>
+                    Ad
+                  </div>
                 </div>
               );
 
