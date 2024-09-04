@@ -55,6 +55,7 @@ const renderWithClient = (ui: React.ReactNode) => {
 describe("RightSidebar", () => {
   beforeEach(() => {
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
     (useUser as jest.Mock).mockReturnValue({
       user: { access_token: "test-token" },
     });
@@ -63,6 +64,7 @@ describe("RightSidebar", () => {
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
+    (console.warn as jest.Mock).mockRestore();
   });
 
   const setSortBy = jest.fn();

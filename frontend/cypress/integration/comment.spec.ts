@@ -10,7 +10,6 @@ describe("Comment System", () => {
 //     cy.get('[data-testid="issue-item"]').first().click();
 //     cy.wait('@getIssues', { timeout: 200000 }).then((interception) => {
 //       if (interception.response && interception.response.body) {
-//         console.log('Issue response:', interception.response.body);
 //         expect(interception.response.body).to.be.an('array').and.have.length.at.least(1);
 //         expect(interception.response.body[0]).to.have.property('comments');
 //       } else {

@@ -55,9 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         },
         async (payload) => {
           const { new: notification } = payload;
-          // console.log("New Comment notification:", notification);
           if (notification && Object.keys(notification).length > 0) {
-            // console.log("Comments Flooding for a Reported Issue: ", notification);
             const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
             
             // Fetch the issue to check if it belongs to the current user
@@ -189,9 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           }
         },
       )
-      .subscribe((status) => {
-        console.log("Subscription Result: ", status);
-      });
+      .subscribe();
 
     return () => {
       channelA.unsubscribe();

@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
 import { IssueProps } from "@/lib/types";
 
@@ -80,7 +80,7 @@ describe("Feed", () => {
 
   it("renders without crashing", () => {
     render(<Feed />);
-    expect(screen.getByText("No issues")).toBeInTheDocument();
+    expect(screen.getByText("No issues found.")).toBeInTheDocument();
   });
 
   // it("shows loading indicator while fetching data", async () => {

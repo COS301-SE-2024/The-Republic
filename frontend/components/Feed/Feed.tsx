@@ -83,8 +83,6 @@ const Feed: React.FC = () => {
       setIsLoadingLocation(false);
     };
 
-    console.log(lastLocation);
-
     if (lastLocation === undefined) {
       loadLocation();
     }
