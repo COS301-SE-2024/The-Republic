@@ -6,6 +6,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Location } from "@/lib/types";
 import { dotVisualization } from "@/lib/api/dotVisualization";
+import Image from "next/image";
 
 const sortOptions = {
   group: "Sort",
@@ -121,6 +122,17 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
              placeholder="Select location..."
            />
          )}
+        </div>
+      </div>
+      <div className="h-[50vh] relative mt-4">
+        <Image 
+          src={`/display_1.png`} 
+          alt="Display Ad"
+          objectFit="contain" 
+          fill
+        />
+        <div className="absolute top-2 right-2 px-1 border-gray-400 border rounded text-muted-foreground text-sm">
+          Ad
         </div>
       </div>
     </div>
