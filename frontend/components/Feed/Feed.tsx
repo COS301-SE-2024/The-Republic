@@ -7,17 +7,18 @@ import {
   Issue as IssueType,
   RequestBody,
   Resolution,
+  Location
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
 import { Filter, Loader2, Plus } from "lucide-react";
 import { LazyList, LazyListRef } from "../LazyList/LazyList";
-import { Location } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import FilterModal from "@/components/FilterModal/FilterModal";
 import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
+import ErrorPage from "@/components/ui/error_page";
 
 const FETCH_SIZE = 10;
 
@@ -167,15 +168,19 @@ const Feed: React.FC = () => {
   );
 
   const EmptyIndicator = () => (
-    <div className="flex justify-center items-center h-32">
-      <h3 className="text-lg">No issues</h3>
-    </div>
+    <ErrorPage
+      message="No issues found."
+      error="It seems there are no issues to display. Please check back later."
+      showReloadButton={true}
+    />
   );
-
+  
   const FailedIndicator = () => (
-    <div className="flex justify-center items-center h-32">
-      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
-    </div>
+    <ErrorPage
+      message="Failed to fetch issues."
+      error="We encountered a problem while trying to fetch issues. Please check your connection and try reloading the page."
+      showReloadButton={true}
+    />
   );
 
   const scrollId = "issues_scroll";
