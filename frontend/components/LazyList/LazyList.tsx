@@ -7,6 +7,7 @@ import {
 } from "react";
 import equal from "fast-deep-equal";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 
 type Compare<D> = (one: D, two: D) => boolean;
 
@@ -27,6 +28,7 @@ interface LazyListProps<D> {
   parentId?: string;
   controlRef?: Ref<LazyListRef<D>>;
   uniqueId: string;
+  adFrequency?: number;
 }
 
 export function LazyList<D>({
@@ -39,7 +41,8 @@ export function LazyList<D>({
   pageSize,
   parentId,
   controlRef,
-  uniqueId
+  uniqueId,
+  adFrequency = 0
 }: LazyListProps<D>) {
   const queryClient = useQueryClient();
   const {
@@ -156,7 +159,12 @@ export function LazyList<D>({
     }
   });
 
+  if (adFrequency < 0) {
+    adFrequency = 0;
+  }
+
   let itemIndex = 0;
+  let untilAd = adFrequency;
 
   return (
     <div
@@ -170,9 +178,36 @@ export function LazyList<D>({
           {page.map((item) => {
             const id = `item-${itemIndex++}-${uniqueId}`;
 
+            let ad: ReactNode | null = null;
+            if (adFrequency && --untilAd == 0) {
+              ad = (
+                <div className="h-16 relative mb-4"> 
+                  <Image 
+                    src={`/banner_gumball.png`}
+                    alt="Banner Ad"
+                    objectFit="contain"
+                    fill
+                  />
+                  <div className={`
+                    absolute 
+                    left-2
+                    top-[50%] -translate-y-[50%]
+                    px-1 border-gray-400 border rounded 
+                    text-muted-foreground text-sm
+                  `}>
+                    Ad
+                  </div>
+                </div>
+              );
+
+              untilAd = adFrequency;
+            }
+
+
             return (
               <div id={id} key={id}>
                 <Item data={item}/>
+                {ad}
               </div>
             );
           })}

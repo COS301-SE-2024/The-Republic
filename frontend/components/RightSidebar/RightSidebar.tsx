@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Location } from "@/lib/types";
 import { dotVisualization } from "@/lib/api/dotVisualization";
+import Image from "next/image";
 
 const sortOptions = {
   group: "Sort",
@@ -87,6 +88,16 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     location.location_id = matchingLocation?.value ?? '';
   }
 
+  const [ad, setAd] = useState(1);
+  
+  useEffect(() => {
+    const adUpdate = setInterval(() => {
+      setAd(Math.floor(Math.random() * 4) + 1);
+    }, 10000);
+
+    return () => clearInterval(adUpdate);
+  }, []);
+
   return (
     <div className="w-[250px] border-l h-full overflow-y-auto">
       <div className="sticky top-0 p-4">
@@ -121,6 +132,17 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
              placeholder="Select location..."
            />
          )}
+        </div>
+      </div>
+      <div className="h-[50vh] relative mt-4">
+        <Image 
+          src={`/display_${ad}.png`} 
+          alt="Display Ad"
+          objectFit="contain" 
+          fill
+        />
+        <div className="absolute top-2 right-2 px-1 border-gray-400 border rounded text-muted-foreground text-sm">
+          Ad
         </div>
       </div>
     </div>
