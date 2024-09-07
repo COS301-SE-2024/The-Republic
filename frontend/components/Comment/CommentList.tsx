@@ -8,7 +8,7 @@ import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";
 import { fetchMoreComments } from "@/lib/api/fetchMoreComments";
 
-const FETCH_SIZE = 10;
+const FETCH_SIZE = 20;
 
 const CommentList: React.FC<CommentListProps2> = ({
   issueId,
@@ -85,6 +85,7 @@ const CommentList: React.FC<CommentListProps2> = ({
           Empty={EmptyIndicator}
           controlRef={lazyRef}
           parentId={scrollId}
+          uniqueId={`issue-${issueId}-parent-${parentCommentId}-comments` }
         />
       )}
     </div>

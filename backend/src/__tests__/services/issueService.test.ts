@@ -203,7 +203,7 @@ describe("IssueService", () => {
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
 
       // Check that processIssueAsync was called
-      expect(issueService.processIssueAsync).toHaveBeenCalledWith(createdIssue.issue_id);
+      expect(issueService.processIssueAsync).toHaveBeenCalledWith(createdIssue);
 
       // Wait for any pending promises to resolve
       await new Promise(process.nextTick);

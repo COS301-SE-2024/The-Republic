@@ -128,24 +128,32 @@ export default class IssueRepository {
               user_id,
             )
           : null;
-          const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
-          return {
-            ...issue,
-            reactions,
-            user_reaction: userReaction?.emoji || null,
-            is_owner: issue.user_id === user_id,
-            user: issue.is_anonymous
-              ? {
-                  user_id: null,
-                  email_address: null,
-                  username: "Anonymous",
-                  fullname: "Anonymous",
-                  image_url: null,
-                }
-              : issue.user,
-            hasPendingResolution: !!pendingResolution,
-            pendingResolutionId: pendingResolution?.resolution_id || null,
-          };
+        const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
+        const resolutions = await this.getResolutionsForIssue(issue.issue_id);
+        const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
+        const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
+
+        return {
+          ...issue,
+          reactions,
+          user_reaction: userReaction?.emoji || null,
+          is_owner: issue.user_id === user_id,
+          user: issue.is_anonymous
+            ? {
+                user_id: null,
+                email_address: null,
+                username: "Anonymous",
+                fullname: "Anonymous",
+                image_url: null,
+              }
+            : issue.user,
+          hasPendingResolution: !!pendingResolution,
+          pendingResolutionId: pendingResolution?.resolution_id || null,
+          resolutions,
+          relatedIssuesCount,
+          userHasIssueInCluster,
+          relatedIssues,
+        };
       }),
     );
 
@@ -210,6 +218,9 @@ export default class IssueRepository {
       : null;
     const commentCount = await commentRepository.getNumComments(data.issue_id);
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
+    const resolutions = await this.getResolutionsForIssue(data.issue_id);
+    const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
+    const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
 
     return {
       ...data,
@@ -228,7 +239,53 @@ export default class IssueRepository {
         : data.user,
       hasPendingResolution: !!pendingResolution,
       pendingResolutionId: pendingResolution?.resolution_id || null,
+      resolutions,
+      relatedIssuesCount,
+      userHasIssueInCluster,
+      relatedIssues,
     } as Issue;
+  }
+
+  async getRelatedIssues(clusterId: string | null, currentIssueId: number): Promise<{ issues: Issue[]; totalCount: number }> {
+    if (!clusterId) return { issues: [], totalCount: 0 };
+    
+    const { data, error, count } = await supabase
+      .from('issue')
+      .select(`
+        *,
+        user: user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url,
+          user_score
+        ),
+        category: category_id (
+          name
+        ),
+        location: location_id (
+          suburb,
+          city,
+          province,
+          latitude,
+          longitude
+        )
+      `, { count: 'exact' })
+      .eq('cluster_id', clusterId)
+      .neq('issue_id', currentIssueId)
+      .limit(3);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching related issues.",
+      });
+    }
+
+    return { issues: data as Issue[], totalCount: (count || 0) - 1 };
   }
 
   async createIssue(issue: Partial<Issue>) {
@@ -290,7 +347,28 @@ export default class IssueRepository {
           image_url: issue.image_url || null,
           updated_at: new Date().toISOString()
         })
-        .select()
+        .select(`
+          *,
+          user: user_id (
+            user_id,
+            email_address,
+            username,
+            fullname,
+            image_url,
+            user_score
+          ),
+          category: category_id (
+            name
+          ),
+          location: location_id (
+            suburb,
+            city,
+            province,
+            latitude,
+            longitude
+          ),
+          cluster_id
+        `)
         .single();
   
       if (error) {
@@ -301,14 +379,12 @@ export default class IssueRepository {
           error: `An error occurred while inserting the issue: ${error.message}`,
         });
       }
-  
-      const reactions = await reactionRepository.getReactionCountsByIssueId(
-        data.issue_id
-      );
-  
+
       return {
         ...data,
-        reactions,
+        reactions: [],
+        user_reaction: null,
+        comment_count: 0,
         is_owner: true,
         user: data.is_anonymous
           ? {
@@ -317,8 +393,18 @@ export default class IssueRepository {
               username: "Anonymous",
               fullname: "Anonymous",
               image_url: null,
+              total_issues: null,
+              resolved_issues: null,
+              user_score: 0,
+              location_id: null,
+              location: null
             }
           : data.user,
+        hasPendingResolution: false,
+        pendingResolutionId: null,
+        resolutions: [],
+        relatedIssuesCount: 0,
+        userHasIssueInCluster: false,
       } as Issue;
     } catch (error) {
       console.error("Unexpected error in createIssue:", error);
@@ -349,14 +435,13 @@ export default class IssueRepository {
     }
   }
 
-  async updateIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
+  async setIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
     const { error } = await supabase
-      .from('issue')
-      .update({ 
+      .from('issue_embeddings')
+      .insert({ 
+        issue_id: issueId,
         content_embedding: embedding,
-        updated_at: new Date().toISOString()
-      })
-      .eq('issue_id', issueId);
+      });
 
     if (error) {
       console.error(error);
@@ -693,6 +778,16 @@ export default class IssueRepository {
     }
   
     return data as Resolution[];
+  }
+
+  async userHasIssueInCluster(userId: string, clusterId: string | null): Promise<boolean> {
+    if (!clusterId) return false;
+    const { count } = await supabase
+      .from('issue')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('cluster_id', clusterId);
+    return (count || 0) > 0;
   }
 
   async hasUserIssuesInCluster(userId: string, clusterId: string): Promise<boolean> {

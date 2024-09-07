@@ -5,6 +5,16 @@ import * as subscriptionsController from "@/modules/subscriptions/controllers/su
 
 jest.mock("@/utilities/response");
 jest.mock("@/modules/subscriptions/services/subscriptionsService");
+jest.mock("@/modules/shared/services/redisClient", () => ({
+  __esModule: true,
+  default: {
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn().mockResolvedValue([]),
+  },
+}));
 
 const mockSubscriptionsService = SubscriptionsService as jest.MockedClass<typeof SubscriptionsService>;
 

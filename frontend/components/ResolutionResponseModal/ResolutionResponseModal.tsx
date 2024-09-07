@@ -11,8 +11,8 @@ import { Loader2 } from "lucide-react";
 interface ResolutionResponseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onRespond: (accept: boolean) => Promise<void>;
-  resolution: Resolution;
+  onRespond: (accept: boolean) => void;
+  resolution: Resolution | null;
   canRespond: boolean;
   isLoading: boolean;
 }
@@ -25,6 +25,10 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
   canRespond,
   isLoading
 }) => {
+  if (!resolution) {
+    return null; // or return some placeholder content
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={cn("bg-card")}>

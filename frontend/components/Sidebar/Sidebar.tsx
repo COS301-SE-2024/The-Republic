@@ -9,6 +9,7 @@ import {
   OrganizationIcon,
   NotificationsIcon,
   SettingsIcon,
+  TrophyIcon,
 } from "../icons";
 
 import { supabase } from "@/lib/globals";
@@ -237,6 +238,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <Link href="/organization">
                 <OrganizationIcon />
                 Organizations
+              </Link>
+            </li>
+            <li onClick={onClose}>
+              <Link href="/leaderboard">
+                <TrophyIcon />
+                Leaderboard
               </Link>
             </li>
             {user ? (
