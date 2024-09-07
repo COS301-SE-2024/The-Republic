@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import AccountManagement from '../../../components/settings/AccountManagement';
+import AccountManagement from '@/components/Settings/AccountManagement';
 
 // Mock the useToast hook
 jest.mock("@/components/ui/use-toast", () => ({
