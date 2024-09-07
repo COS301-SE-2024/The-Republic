@@ -41,4 +41,15 @@ describe('AccountManagement', () => {
     expect(screen.getByText('Account Management')).toBeInTheDocument();
   });
 
+  it('toggles anonymous mode', () => {
+    render(<AccountManagement />);
+    const toggleSwitch = screen.getByRole('switch');
+    
+    expect(screen.getByText('Default to Public')).toBeInTheDocument();
+    
+    fireEvent.click(toggleSwitch);
+    
+    expect(screen.getByText('Default to Anonymous')).toBeInTheDocument();
+  });
+
 });
