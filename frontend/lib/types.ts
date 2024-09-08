@@ -16,20 +16,28 @@ interface User {
 }
 
 export interface Organization {
-  id: number;
+  id: string;
+  created_at: string;
   name: string;
-  description: string;
-  memberCount: number;
-  userIsMember: boolean;
-  logo: string;
-  website: string;
-  isPrivate: boolean;  
-  isAdmin: boolean;  
-  members: Member[];  
-  joinRequests: JoinRequest[];  
-  joinPolicy: 'open' | 'closed';  
+  username: string;
+  bio: string | null;
+  website_url: string | null;
+  verified_status: boolean;
+  join_policy: string;
+  points: number;
+  profile_photo?: string;
+  org_type: string;
+  totalMembers: number;
+  location?: {
+      suburb?: string;
+      city?: string;
+      province?: string;
+      latitude?: number | string;
+      longitude?: number | string;
+      place_id?: string;
+  };
+  admins_ids?: string[];
 }
-
 
 export interface JoinRequest {
   id: number;
@@ -40,7 +48,6 @@ export interface JoinRequest {
   requestDate: string;
 }
 
-
 export interface CreateOrganizationData {
   name: string;
   description: string;
@@ -49,6 +56,16 @@ export interface CreateOrganizationData {
   joinPolicy: 'open' | 'request';
 }
 
+export interface OrganizationPost{
+  post_id: string;
+  organization_id: string;
+  author_id: string;
+  user_id: string;
+  image_url: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Member {
   id: number;
@@ -334,7 +351,6 @@ interface AnalysisResult {
   category: string;
   severity: number;
 }
-
 
 interface Location {
   location_id: string;
