@@ -5,7 +5,7 @@ import NotificationSettings from "./NotificationSettings";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
-import { fetchUserData } from "@/lib/api/fetchUserData"; // Adjust the import path as needed
+import { fetchUserData } from "@/lib/api/fetchUserData"; 
 import { UserAlt } from "@/lib/types";
 
 interface SettingsDropdownProps {

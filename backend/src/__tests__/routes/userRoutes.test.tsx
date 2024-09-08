@@ -9,6 +9,7 @@ jest.mock("@/middleware/middleware");
 jest.mock("@/modules/users/controllers/userController", () => ({
   getUserById: [jest.fn()],
   updateUserProfile: jest.fn(),
+  updateUsername: jest.fn(), 
 }));
 
 const app = express();
@@ -49,6 +50,22 @@ describe("User Routes", () => {
 
       expect(response.status).toBe(200);
       expect(userController.updateUserProfile).toHaveBeenCalled();
+    });
+  });
+
+  describe("PUT /users/:id/username", () => {
+    it("should call updateUsername controller", async () => {
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (userController.updateUsername as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
+      );
+
+      const response = await request(app).put("/users/1/username").send({ username: "newUsername" });
+
+      expect(response.status).toBe(200);
+      expect(userController.updateUsername).toHaveBeenCalled();
     });
   });
 });

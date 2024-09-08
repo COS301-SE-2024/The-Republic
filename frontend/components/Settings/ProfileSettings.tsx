@@ -14,7 +14,7 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
 
   const mutation = useMutation({
     mutationFn: updateUsername,
-    onSuccess: (data) => {
+    onSuccess: () => {
       setSuccessMessage("Username changed successfully!");
       setErrorMessage("");
     },
