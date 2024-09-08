@@ -1,9 +1,10 @@
 import { OrganizationRepository } from "../repositories/organizationRepository";
-import { Organization, OrganizationMember, JoinRequest } from "@/modules/shared/models/organization";
+import { Organization, OrganizationMember, JoinRequest, OrganizationPost } from "@/modules/shared/models/organization";
 import { APIResponse, APIData, APIError } from "@/types/response";
 import { validateOrganizationName, validateOrganizationUsername } from "@/utilities/validators";
 import { PaginationParams } from "@/types/pagination";
 import { MulterFile } from "@/types/users";
+import supabase from "@/modules/shared/services/supabaseClient";
 
 export class OrganizationService {
   private organizationRepository: OrganizationRepository;
@@ -14,63 +15,70 @@ export class OrganizationService {
 
   async createOrganization(organization: Partial<Organization>, userId: string): Promise<APIResponse<Organization>> {
     try {
+
       if (!organization.name || !organization.username || !organization.join_policy) {
+        console.log("Missing required fields");
         throw APIError({
           code: 400,
           success: false,
           error: "Name, username, and join policy are required fields.",
         });
       }
-  
+
       if (!validateOrganizationName(organization.name)) {
+        console.log("Invalid organization name");
         throw APIError({
           code: 400,
           success: false,
           error: "Invalid organization name format.",
         });
       }
-  
+
       if (!validateOrganizationUsername(organization.username)) {
+        console.log("Invalid organization username");
         throw APIError({
           code: 400,
           success: false,
           error: "Invalid organization username format.",
         });
       }
-  
+
       const isNameUnique = await this.organizationRepository.isOrganizationNameUnique(organization.name);
       if (!isNameUnique) {
+        console.log("Organization name is not unique");
         throw APIError({
           code: 400,
           success: false,
           error: "Organization name is already taken.",
         });
       }
-  
+
       const isUsernameUnique = await this.organizationRepository.isOrganizationUsernameUnique(organization.username);
       if (!isUsernameUnique) {
+        console.log("Organization username is not unique");
         throw APIError({
           code: 400,
           success: false,
           error: "Organization username is already taken.",
         });
       }
-  
+
       const createdOrganization = await this.organizationRepository.createOrganization(organization);
-  
+
       await this.organizationRepository.addOrganizationMember({
         organization_id: createdOrganization.id,
         user_id: userId,
         role: 'admin',
         joined_at: new Date().toISOString()
       });
-  
+
       return APIData({
         code: 201,
         success: true,
         data: createdOrganization,
       });
     } catch (error) {
+      console.error("Error in createOrganization service:", error);
       if (error instanceof APIError) {
         throw error;
       }
@@ -92,8 +100,11 @@ export class OrganizationService {
           error: "You do not have permission to update this organization.",
         });
       }
-
-      const updatedOrganization = await this.organizationRepository.updateOrganization(id, updates, profilePhoto);
+  
+      // Remove user_id from updates
+      const { user_id, ...updatesToSend } = updates;
+  
+      const updatedOrganization = await this.organizationRepository.updateOrganization(id, updatesToSend, profilePhoto);
       return APIData({
         code: 200,
         success: true,
@@ -193,39 +204,35 @@ export class OrganizationService {
   }
 
   async getUserOrganizations(userId: string): Promise<APIResponse<Organization[]>> {
-  try {
-    const organizations = await this.organizationRepository.getUserOrganizations(userId);
-    
-    if (organizations.length === 0) {
+    try {
+      const organizations = await this.organizationRepository.getUserOrganizations(userId);
+      
+      if (organizations.length === 0) {
+        return APIData({
+          code: 200,
+          success: true,
+          data: [],
+          error: "User is not a member of any organizations."
+        });
+      }
+
       return APIData({
         code: 200,
         success: true,
-        data: [],
-        error: "User is not a member of any organizations."
+        data: organizations,
       });
-    }
-
-    return APIData({
-      code: 200,
-      success: true,
-      data: organizations,
-    });
-  } catch (error) {
-    console.error("Error in getUserOrganizations:", error);
-    if (error instanceof APIError) {
+    } catch (error) {
+      console.error("Error in getUserOrganizations:", error);
+      if (error instanceof APIError) {
+        throw error;
+      }
       throw APIError({
         code: 500,
         success: false,
         error: "An unexpected error occurred while fetching user organizations.",
       });
     }
-    return APIData({
-      code: 500,
-      success: false,
-      error: "An unexpected error occurred while fetching user organizations.",
-    });
   }
-}
 
   async leaveOrganization(organizationId: string, userId: string): Promise<APIResponse<null>> {
     try {
@@ -450,6 +457,26 @@ export class OrganizationService {
     }
   }
 
+  async getJoinRequestByUser(organizationId: string, userId: string): Promise<APIResponse<JoinRequest | null>> {
+    try {
+      const joinRequest = await this.organizationRepository.getJoinRequestByUser(organizationId, userId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: joinRequest,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching the join request.",
+      });
+    }
+  }
+
   async removeMember(organizationId: string, memberUserId: string, adminUserId: string): Promise<APIResponse<null>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, adminUserId);
@@ -487,9 +514,13 @@ export class OrganizationService {
     }
   }
 
-  async getOrganizations(params: PaginationParams): Promise<APIResponse<{ data: Organization[], total: number }>> {
+  async getOrganizations(
+    params: PaginationParams,
+    orgType: string | null = null,
+    locationId: string | null = null
+  ): Promise<APIResponse<{ data: Organization[]; total: number }>> {
     try {
-      const organizations = await this.organizationRepository.getOrganizations(params);
+      const organizations = await this.organizationRepository.getOrganizations(params, orgType, locationId);
       return APIData({
         code: 200,
         success: true,
@@ -601,9 +632,14 @@ export class OrganizationService {
     }
   }
 
-  async searchOrganizations(searchTerm: string, params: PaginationParams): Promise<APIResponse<{ data: Organization[], total: number }>> {
+  async searchOrganizations(
+    searchTerm: string,
+    orgType: string | null,
+    locationId: string | null,
+    params: PaginationParams
+  ): Promise<APIResponse<{ data: Organization[]; total: number }>> {
     try {
-      const result = await this.organizationRepository.searchOrganizations(searchTerm, params);
+      const result = await this.organizationRepository.searchOrganizations(searchTerm, orgType, locationId, params);
       return APIData({
         code: 200,
         success: true,
@@ -617,6 +653,161 @@ export class OrganizationService {
         code: 500,
         success: false,
         error: "An unexpected error occurred while searching organizations.",
+      });
+    }
+  }
+
+  async getOrganizationPosts(organizationId: string, params: PaginationParams): Promise<APIResponse<{ data: OrganizationPost[], total: number }>> {
+    try {
+      const posts = await this.organizationRepository.getOrganizationPosts(organizationId, params);
+      return APIData({
+        code: 200,
+        success: true,
+        data: posts,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching organization posts.",
+      });
+    }
+  }
+
+  async createOrganizationPost(post: Partial<OrganizationPost>, image?: MulterFile): Promise<APIResponse<OrganizationPost>> {
+    try {
+      let imageUrl: string | null = null;
+
+      if (image) {
+        imageUrl = await this.uploadImage(post.organization_id!, image);
+      }
+
+      const newPost = await this.organizationRepository.createOrganizationPost({
+        ...post,
+        image_url: imageUrl
+      });
+
+      return APIData({
+        code: 201,
+        success: true,
+        data: newPost,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while creating the organization post.",
+      });
+    }
+  }
+
+  async deleteOrganizationPost(postId: string): Promise<APIResponse<null>> {
+    try {
+      const post = await this.organizationRepository.getOrganizationPostById(postId);
+      
+      if (post.image_url) {
+        await this.deleteImage(post.image_url);
+      }
+
+      await this.organizationRepository.deleteOrganizationPost(postId);
+      return APIData({
+        code: 204,
+        success: true,
+        data: null,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while deleting the organization post.",
+      });
+    }
+  }
+
+  async getTopActiveMembers(organizationId: string): Promise<APIResponse<OrganizationMember[]>> {
+    try {
+      const members = await this.organizationRepository.getTopActiveMembers(organizationId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: members,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching top active members.",
+      });
+    }
+  }
+
+  private async uploadImage(organizationId: string, image: MulterFile): Promise<string> {
+    const fileName = `${organizationId}_${Date.now()}-${image.originalname}`;
+    const { error: uploadError } = await supabase.storage
+      .from("organization_posts")
+      .upload(fileName, image.buffer);
+
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while uploading the image. Please try again.",
+      });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("organization_posts")
+      .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
+  }
+
+  private async deleteImage(imageUrl: string): Promise<void> {
+    const imageName = imageUrl.split("/").slice(-1)[0];
+    const { error: deleteError } = await supabase.storage
+      .from("organization_posts")
+      .remove([imageName]);
+
+    if (deleteError) {
+      console.error("Failed to delete image from storage:", deleteError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while deleting the image. Please try again.",
+      });
+    }
+  }
+
+  async getOrganizationMembers(organizationId: string, userId: string, params: PaginationParams): Promise<APIResponse<{ data: OrganizationMember[], total: number }>> {
+    try {
+
+      const members = await this.organizationRepository.getOrganizationMembers(organizationId, params);
+      return APIData({
+        code: 200,
+        success: true,
+        data: members,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching organization members.",
       });
     }
   }

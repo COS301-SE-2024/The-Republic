@@ -12,6 +12,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 export const createOrganization = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const userId = req.body.user_id;
     if (!userId) {
       return sendResponse(res, APIError({
@@ -20,6 +21,8 @@ export const createOrganization = async (req: Request, res: Response) => {
         error: "Unauthorized: User ID is missing",
       }));
     }
+
+    
 
     const response = await organizationService.createOrganization(req.body, userId);
     clearCachePattern('__express__/api/organizations*');
@@ -115,7 +118,7 @@ export const setJoinPolicy = async (req: Request, res: Response) => {
 };
 
 export const getJoinRequests = [
-    cacheMiddleware(300),
+    //cacheMiddleware(300),
     async (req: Request, res: Response) => {
       try {
         const userId = req.body.user_id;
@@ -141,6 +144,25 @@ export const getJoinRequests = [
       }
     }
   ];
+
+  export const getJoinRequestByUser = async (req: Request, res: Response) => {
+    try {
+      const userId = req.body.user_id;
+      const organizationId = req.params.id;
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const response = await organizationService.getJoinRequestByUser(organizationId, userId);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };
 
   export const handleJoinRequest = async (req: Request, res: Response) => {
     try {
@@ -203,25 +225,28 @@ export const removeMember = async (req: Request, res: Response) => {
 };
 
 export const getOrganizations = [
-    cacheMiddleware(300),
-    async (req: Request, res: Response) => {
-      try {
-        const { offset, limit } = req.query;
-        const paginationParams: PaginationParams = {
-          offset: Number(offset) || 0,
-          limit: Number(limit) || 10
-        };
-  
-        const response = await organizationService.getOrganizations(paginationParams);
-        sendResponse(res, response);
-      } catch (err) {
-        handleError(res, err);
-      }
+  async (req: Request, res: Response) => {
+    try {
+      const { offset, limit, orgType, locationId } = req.query;
+      const paginationParams: PaginationParams = {
+        offset: Number(offset) || 0,
+        limit: Number(limit) || 10
+      };
+
+      const response = await organizationService.getOrganizations(
+        paginationParams,
+        orgType as string | null,
+        locationId as string | null
+      );
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
     }
-  ];
+  }
+];
 
 export const getOrganizationById = [
-    cacheMiddleware(300),
+    //cacheMiddleware(300),
     async (req: Request, res: Response) => {
       try {
         const organizationId = req.params.id;
@@ -253,7 +278,7 @@ export const generateReport = async (req: Request, res: Response) => {
 };
 
 export const getUserOrganizations = [
-    cacheMiddleware(300),
+    //cacheMiddleware(300),
     async (req: Request, res: Response) => {
       try {
         const userId = req.body.user_id;
@@ -330,29 +355,163 @@ export const getUserOrganizations = [
     }
   };
 
-  export const searchOrganizations = [
-    cacheMiddleware(300),
+  export const searchOrganizations = async (req: Request, res: Response) => {
+    try {
+      const { searchTerm, orgType, locationId, offset, limit } = req.query;
+      
+      if (typeof searchTerm !== 'string') {
+        return sendResponse(res, APIError({
+          code: 400,
+          success: false,
+          error: "Search term is required and must be a string",
+        }));
+      }
+  
+      const paginationParams: PaginationParams = {
+        offset: Number(offset) || 0,
+        limit: Number(limit) || 10
+      };
+  
+      const response = await organizationService.searchOrganizations(
+        searchTerm,
+        orgType as string | null,
+        locationId as string | null,
+        paginationParams
+      );
+      sendResponse(res, response);
+    } catch (err) {
+      console.error("Error in searchOrganizations:", err);
+      handleError(res, err);
+    }
+  };
+
+  export const getOrganizationPosts = [
+    //cacheMiddleware(300),
     async (req: Request, res: Response) => {
       try {
-        const { searchTerm, offset, limit } = req.query;
-        
-        if (typeof searchTerm !== 'string') {
-          return sendResponse(res, APIError({
-            code: 400,
-            success: false,
-            error: "Search term is required and must be a string",
-          }));
-        }
-  
+        const organizationId = req.params.id;
+        const { offset, limit } = req.query;
         const paginationParams: PaginationParams = {
           offset: Number(offset) || 0,
           limit: Number(limit) || 10
         };
   
-        const response = await organizationService.searchOrganizations(searchTerm, paginationParams);
+        const response = await organizationService.getOrganizationPosts(organizationId, paginationParams);
         sendResponse(res, response);
       } catch (err) {
         handleError(res, err);
       }
     }
   ];
+  
+  export const createOrganizationPost = [
+    upload.single("image"),
+    async (req: Request, res: Response) => {
+      try {
+        const organizationId = req.params.id;
+        const userId = req.body.user_id;
+        const { content } = req.body;
+  
+        if (!userId) {
+          return sendResponse(res, APIError({
+            code: 401,
+            success: false,
+            error: "Unauthorized: User ID is missing",
+          }));
+        }
+  
+        const post = {
+          organization_id: organizationId,
+          author_id: userId,
+          content
+        };
+  
+        const response = await organizationService.createOrganizationPost(post, req.file);
+        clearCachePattern(`__express__/api/organizations/${organizationId}/posts*`);
+        sendResponse(res, response);
+      } catch (err) {
+        handleError(res, err);
+      }
+    }
+  ];
+  
+  export const deleteOrganizationPost = async (req: Request, res: Response) => {
+    try {
+      const postId = req.params.postId;
+      const organizationId = req.params.id;
+      const userId = req.body.user_id;
+  
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const response = await organizationService.deleteOrganizationPost(postId);
+      clearCachePattern(`__express__/api/organizations/${organizationId}/posts*`);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };
+  
+  export const getTopActiveMembers = [
+    //cacheMiddleware(300),
+    async (req: Request, res: Response) => {
+      try {
+        const organizationId = req.params.id;
+        const response = await organizationService.getTopActiveMembers(organizationId);
+        sendResponse(res, response);
+      } catch (err) {
+        handleError(res, err);
+      }
+    }
+  ];
+
+  export const getOrganizationMembers = async (req: Request, res: Response) => {
+    try {
+      const userId = req.body.user_id;
+      const organizationId = req.params.id;
+      const { offset, limit } = req.query;
+      if (!userId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const paginationParams: PaginationParams = {
+        offset: Number(offset) || 0,
+        limit: Number(limit) || 10
+      };
+  
+      const response = await organizationService.getOrganizationMembers(organizationId, userId, paginationParams);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };
+
+  export const promoteToAdmin = async (req: Request, res: Response) => {
+    try {
+      const adminId = req.body.user_id;
+      const organizationId = req.params.id;
+      const memberUserId = req.params.userId;
+      if (!adminId) {
+        return sendResponse(res, APIError({
+          code: 401,
+          success: false,
+          error: "Unauthorized: User ID is missing",
+        }));
+      }
+  
+      const response = await organizationService.addAdmin(organizationId, adminId, memberUserId);
+      clearCachePattern(`__express__/api/organizations/${organizationId}`);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };

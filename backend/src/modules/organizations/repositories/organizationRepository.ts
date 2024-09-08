@@ -1,5 +1,5 @@
 import supabase from "@/modules/shared/services/supabaseClient";
-import { Organization, OrganizationMember, JoinRequest } from "@/modules/shared/models/organization";
+import { Organization, OrganizationMember, JoinRequest, OrganizationPost } from "@/modules/shared/models/organization";
 import { APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";
 import { MulterFile } from "@/types/users";
@@ -16,7 +16,8 @@ export class OrganizationRepository {
             join_policy: organization.join_policy,
             created_at: new Date().toISOString(),
             verified_status: false,
-            points: 0
+            points: 0,
+            org_type: organization.org_type
           })
           .select()
           .single();
@@ -33,53 +34,137 @@ export class OrganizationRepository {
         return data as Organization;
       }
 
-      async updateOrganization(id: string, updates: Partial<Organization>, profilePhoto?: MulterFile): Promise<Organization> {
-        const safeUpdates = { ...updates };
-        delete safeUpdates.id;
-        delete safeUpdates.created_at;
-        delete safeUpdates.verified_status;
-        delete safeUpdates.points;
-    
-        if (profilePhoto) {
-          const fileName = `${id}_${Date.now()}-${profilePhoto.originalname}`;
-          const { error: uploadError } = await supabase.storage
+async updateOrganization(id: string, updates: Partial<Organization>, profilePhoto?: MulterFile): Promise<Organization> {
+    const safeUpdates = { ...updates };
+    delete safeUpdates.id;
+    delete safeUpdates.created_at;
+    delete safeUpdates.verified_status;
+    delete safeUpdates.points;
+
+    // Handle profile photo upload
+    if (profilePhoto) {
+        const fileName = `${id}_${Date.now()}-${profilePhoto.originalname}`;
+        const { error: uploadError } = await supabase.storage
             .from("organizations")
             .upload(fileName, profilePhoto.buffer);
-    
-          if (uploadError) {
+
+        if (uploadError) {
             console.error("Error uploading profile photo:", uploadError);
             throw APIError({
-              code: 500,
-              success: false,
-              error: "An error occurred while uploading the profile photo.",
+                code: 500,
+                success: false,
+                error: "An error occurred while uploading the profile photo.",
             });
-          }
-    
-          const { data: urlData } = supabase.storage
+        }
+
+        const { data: urlData } = supabase.storage
             .from("organizations")
             .getPublicUrl(fileName);
-    
-          safeUpdates.profile_photo = urlData.publicUrl;
+
+        safeUpdates.profile_photo = urlData.publicUrl;
+    }
+
+    // Handle location parsing and updating
+    if (typeof safeUpdates.location === 'string') {
+        safeUpdates.location = JSON.parse(safeUpdates.location);
+    }
+
+    if (safeUpdates.location) {
+        const { data: locationData, error: locationError } = await supabase
+            .from("location")
+            .select("location_id")
+            .eq("province", safeUpdates.location.province)
+            .eq("city", safeUpdates.location.city)
+            .eq("suburb", safeUpdates.location.suburb)
+            .single();
+
+        if (locationError && locationError.code !== 'PGRST116') {
+            console.error("Error checking location:", locationError);
+            throw APIError({
+                code: 500,
+                success: false,
+                error: "An error occurred while checking location.",
+            });
         }
-    
-        const { data, error } = await supabase
-          .from("organizations")
-          .update(safeUpdates)
-          .eq('id', id)
-          .select()
-          .single();
-    
-        if (error) {
-          console.error("Error updating organization:", error);
-          throw APIError({
+
+        if (locationData) {
+            // Update existing location
+            const { error: updateError } = await supabase
+                .from("location")
+                .update({
+                    latitude: safeUpdates.location.latitude,
+                    longitude: safeUpdates.location.longitude,
+                    place_id: safeUpdates.location.place_id || ""
+                })
+                .eq("location_id", locationData.location_id);
+
+            if (updateError) {
+                console.error("Error updating location:", updateError);
+                throw APIError({
+                    code: 500,
+                    success: false,
+                    error: "An error occurred while updating location.",
+                });
+            }
+
+            safeUpdates.location_id = locationData.location_id;
+        } else {
+            const { data: newLocation, error: insertError } = await supabase
+                .from("location")
+                .insert({
+                    province: safeUpdates.location.province,
+                    city: safeUpdates.location.city,
+                    suburb: safeUpdates.location.suburb,
+                    latitude: safeUpdates.location.latitude,
+                    longitude: safeUpdates.location.longitude,
+                    district: "",
+                    place_id: safeUpdates.location.place_id || ""
+                })
+                .select()
+                .single();
+
+            if (insertError) {
+                console.error("Error inserting new location:", insertError);
+                throw APIError({
+                    code: 500,
+                    success: false,
+                    error: "An error occurred while creating new location.",
+                });
+            }
+
+            safeUpdates.location_id = newLocation.location_id;
+        }
+    }
+
+    delete safeUpdates.location;  // Remove location as it's now handled by location_id
+
+    const { data, error } = await supabase
+        .from("organizations")
+        .update(safeUpdates)
+        .eq('id', id)
+        .select(`
+            *,
+            location:location_id (
+                suburb,
+                city,
+                province
+            )
+        `)
+        .single();
+
+    if (error) {
+        console.error("Error updating organization:", error);
+        throw APIError({
             code: 500,
             success: false,
             error: "An error occurred while updating the organization.",
-          });
-        }
+        });
+    }
+
+    return data as Organization;
+}
     
-        return data as Organization;
-      }
+    
 
   async deleteOrganization(id: string): Promise<void> {
     const { error } = await supabase
@@ -215,7 +300,17 @@ export class OrganizationRepository {
   async getOrganizationById(id: string): Promise<Organization> {
     const { data, error } = await supabase
       .from("organizations")
-      .select('*')
+      .select(`
+        *,
+        total_members:organization_members(count),
+        location:location_id (
+          suburb,
+          city,
+          province,
+          latitude,
+          longitude
+        )
+      `)
       .eq('id', id)
       .single();
 
@@ -228,25 +323,52 @@ export class OrganizationRepository {
       });
     }
 
-    return data as Organization;
+    const organization = {
+      ...data,
+      totalMembers: data.total_members[0].count
+    };
+
+    delete organization.total_members;
+
+    return organization as Organization;
   }
 
-  async getOrganizationMembers(organizationId: string): Promise<OrganizationMember[]> {
-    const { data, error } = await supabase
-      .from("organization_members")
-      .select('*')
-      .eq('organization_id', organizationId);
-
+  async getOrganizationMembers(organizationId: string, params: PaginationParams): Promise<{ data: OrganizationMember[], total: number }> {
+    const { data, error, count } = await supabase
+      .from('organization_members')
+      .select('*, user:user_id(*)', { count: 'exact' })
+      .eq('organization_id', organizationId)
+      .order('joined_at', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+  
     if (error) {
-      console.error("Error getting organization members:", error);
+      console.error("Error fetching organization members:", error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An error occurred while getting organization members.",
+        error: "An error occurred while fetching organization members.",
       });
     }
-
-    return data as OrganizationMember[];
+  
+    const members: OrganizationMember[] = data?.map(member => ({
+      id: member.id,
+      organization_id: member.organization_id,
+      user_id: member.user_id,
+      role: member.role,
+      joined_at: member.joined_at,
+      user: {
+        user_id: member.user.user_id,
+        email_address: member.user.email_address,
+        username: member.user.username,
+        fullname: member.user.fullname,
+        image_url: member.user.image_url,
+        bio: member.user.bio,
+        user_score: member.user.user_score,
+        isAdmin: member.role === 'admin'
+      }
+    })) || [];
+  
+    return { data: members, total: count || 0 };
   }
 
   async isMember(organizationId: string, userId: string): Promise<boolean> {
@@ -317,12 +439,24 @@ export class OrganizationRepository {
   async getJoinRequests(organizationId: string, params: PaginationParams): Promise<{ data: JoinRequest[], total: number }> {
     const { data, error, count } = await supabase
       .from("join_requests")
-      .select("*", { count: "exact" })
+      .select(`
+        *,
+        user:user_id (
+          user_id,
+          email_address,
+          username,
+          fullname,
+          image_url,
+          bio,
+          user_score
+        )
+      `, { count: "exact" })
       .eq("organization_id", organizationId)
       .eq("status", "pending")
       .range(params.offset, params.offset + params.limit - 1);
 
     if (error) {
+      console.error("Error fetching join requests:", error);
       throw APIError({
         code: 500,
         success: false,
@@ -330,7 +464,10 @@ export class OrganizationRepository {
       });
     }
 
-    return { data: data as JoinRequest[], total: count || 0 };
+    return { 
+      data: data as JoinRequest[], 
+      total: count || 0 
+    };
   }
 
   async getJoinRequestById(requestId: number): Promise<JoinRequest | null> {
@@ -387,6 +524,31 @@ export class OrganizationRepository {
     }
   }
 
+  async getJoinRequestByUser(organizationId: string, userId: string): Promise<JoinRequest | null> {
+    const { data, error } = await supabase
+      .from("join_requests")
+      .select('*')
+      .eq('organization_id', organizationId)
+      .eq('user_id', userId)
+      .eq('status', 'pending')
+      .single();
+  
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No results found
+        return null;
+      }
+      console.error("Error getting join request:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while getting the join request.",
+      });
+    }
+  
+    return data as JoinRequest | null;
+  }
+
   async getUserOrganizations(userId: string): Promise<Organization[]> {
     const { data, error } = await supabase
       .from("organization_members")
@@ -401,8 +563,10 @@ export class OrganizationRepository {
           verified_status,
           join_policy,
           points,
-          profile_photo
-        )
+          profile_photo,
+          org_type
+        ),
+        role
       `)
       .eq("user_id", userId);
   
@@ -414,16 +578,53 @@ export class OrganizationRepository {
         error: "An error occurred while fetching user organizations.",
       });
     }
-
-    const organizations: Organization[] = data.flatMap(item => item.organizations);
+  
+    if (!data) {
+      return [];
+    }
+  
+    const organizations: Organization[] = await Promise.all(data.map(async (item: any) => {
+      const { count } = await supabase
+        .from("organization_members")
+        .select("*", { count: "exact", head: true })
+        .eq("organization_id", item.organizations.id);
+  
+      return {
+        ...item.organizations,
+        totalMembers: count || 0,
+        userRole: item.role
+      } as Organization;
+    }));
   
     return organizations;
   }
 
-  async getOrganizations(params: PaginationParams): Promise<{ data: Organization[], total: number }> {
-    const { data, error, count } = await supabase
+  async getOrganizations(
+    params: PaginationParams,
+    orgType: string | null = null,
+    locationId: string | null = null
+  ): Promise<{ data: Organization[]; total: number }> {
+    let query = supabase
       .from("organizations")
-      .select("*", { count: "exact" })
+      .select(`
+        *,
+        total_members:organization_members(count),
+        location:location_id (
+          suburb,
+          city,
+          province
+        )
+      `, { count: "exact" });
+
+    if (orgType) {
+      query = query.eq('org_type', orgType);
+    }
+
+    if (locationId) {
+      query = query.eq('location_id', locationId);
+    }
+
+    const { data, error, count } = await query
       .range(params.offset, params.offset + params.limit - 1);
 
     if (error) {
@@ -434,7 +635,12 @@ export class OrganizationRepository {
       });
     }
 
-    return { data: data as Organization[], total: count || 0 };
+    const organizations = data?.map(org => ({
+      ...org,
+      totalMembers: org.total_members[0].count,
+    }));
+
+    return { data: organizations as Organization[], total: count || 0 };
   }
 
   async isOrganizationNameUnique(name: string): Promise<boolean> {
@@ -545,11 +751,34 @@ export class OrganizationRepository {
     return count || 0;
   }
 
-  async searchOrganizations(searchTerm: string, params: PaginationParams): Promise<{ data: Organization[], total: number }> {
-    const { data, error, count } = await supabase
+  async searchOrganizations(
+    searchTerm: string,
+    orgType: string | null,
+    locationId: string | null,
+    params: PaginationParams
+  ): Promise<{ data: Organization[]; total: number }> {
+    let query = supabase
       .from("organizations")
-      .select("*", { count: "exact" })
-      .or(`name.ilike.%${searchTerm}%,username.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`)
+      .select(`
+        *,
+        total_members:organization_members(count),
+        location:location_id (
+          suburb,
+          city,
+          province
+        )
+      `, { count: "exact" })
+      .or(`name.ilike.%${searchTerm}%,username.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
+
+    if (orgType) {
+      query = query.eq('org_type', orgType);
+    }
+
+    if (locationId) {
+      query = query.eq('location_id', locationId);
+    }
+
+    const { data, error, count } = await query
       .range(params.offset, params.offset + params.limit - 1);
 
     if (error) {
@@ -561,6 +790,105 @@ export class OrganizationRepository {
       });
     }
 
-    return { data: data as Organization[], total: count || 0 };
+    const organizations = data?.map(org => ({
+      ...org,
+      totalMembers: org.total_members[0].count,
+    }));
+
+    return { data: organizations as Organization[], total: count || 0 };
+  }
+
+  async getOrganizationPosts(organizationId: string, params: PaginationParams): Promise<{ data: OrganizationPost[], total: number }> {
+    const { data, error, count } = await supabase
+      .from('organization_posts')
+      .select('*, author:author_id(*)', { count: 'exact' })
+      .eq('organization_id', organizationId)
+      .order('created_at', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+
+    if (error) {
+      console.error("Error fetching organization posts:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while fetching organization posts.",
+      });
+    }
+
+    return { data: data as OrganizationPost[], total: count || 0 };
+  }
+
+  async createOrganizationPost(post: Partial<OrganizationPost>): Promise<OrganizationPost> {
+    const { data, error } = await supabase
+      .from('organization_posts')
+      .insert(post)
+      .select('*, author:author_id(*)')
+      .single();
+
+    if (error) {
+      console.error("Error creating organization post:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while creating the organization post.",
+      });
+    }
+
+    return data as OrganizationPost;
+  }
+
+  async getOrganizationPostById(postId: string): Promise<OrganizationPost> {
+    const { data, error } = await supabase
+      .from('organization_posts')
+      .select('*, author:author_id(*)')
+      .eq('post_id', postId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching organization post:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while fetching the organization post.",
+      });
+    }
+
+    return data as OrganizationPost;
+  }
+
+  async deleteOrganizationPost(postId: string): Promise<void> {
+    const { error } = await supabase
+      .from('organization_posts')
+      .delete()
+      .eq('post_id', postId);
+
+    if (error) {
+      console.error("Error deleting organization post:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while deleting the organization post.",
+      });
+    }
+  }
+
+  async getTopActiveMembers(organizationId: string, limit: number = 5): Promise<OrganizationMember[]> {
+    const { data, error } = await supabase
+      .from('organization_members')
+      .select('*, user:user_id(*)')
+      .eq('organization_id', organizationId)
+      .order('joined_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("Error fetching top active members:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while fetching top active members.",
+      });
+    }
+
+    return data as OrganizationMember[];
   }
 }
