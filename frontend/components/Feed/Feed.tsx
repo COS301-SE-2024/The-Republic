@@ -11,7 +11,7 @@ import {
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
 import { Filter, Loader2, Plus } from "lucide-react";
-import { LazyList, LazyListRef } from "../LazyList/LazyList";
+import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
@@ -174,11 +174,9 @@ const Feed: React.FC = () => {
   );
   
   const FailedIndicator = () => (
-    <ErrorPage
-      message="Failed to fetch issues."
-      error="We encountered a problem while trying to fetch issues. Please check your connection and try reloading the page."
-      showReloadButton={true}
-    />
+    <div className="flex justify-center items-center h-32">
+      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
+    </div>
   );
 
   const scrollId = "issues_scroll";

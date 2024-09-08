@@ -2,7 +2,7 @@ import { Comment as CommentType, CommentListProps2 } from "@/lib/types";
 import Comment from "./Comment";
 import { useUser } from "@/lib/contexts/UserContext";
 import AddCommentForm from "./AddCommentForm";
-import { LazyList, LazyListRef } from "../LazyList/LazyList";
+import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
 import { Loader2 } from "lucide-react";
 import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";
@@ -49,7 +49,7 @@ const CommentList: React.FC<CommentListProps2> = ({
 
   const FailedIndicator = () => (
     <div className="flex justify-center items-center h-32">
-      <h3 className="text-muted-foreground">Failed to fetch comments</h3>
+      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
     </div>
   );
 
