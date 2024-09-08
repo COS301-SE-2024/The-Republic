@@ -51,3 +51,19 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     sendResponse(res, error as APIResponse);
   }
 };
+
+export const updateUsername = async (req: Request, res: Response) => {
+  try {
+    const response = await userService.updateUsername(
+      req.params.id,
+      req.body.username
+    );
+
+    clearCache(`/api/users/${req.params.id}`);
+    clearCachePattern('__express__/api/users*');
+
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
+  }
+};

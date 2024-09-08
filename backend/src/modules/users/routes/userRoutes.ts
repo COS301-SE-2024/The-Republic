@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { getUserById, updateUserProfile } from "@/modules/users/controllers/userController";
+import { getUserById, updateUserProfile, updateUsername } from "@/modules/users/controllers/userController";
 import { verifyAndGetUser } from "@/middleware/middleware";
 
 const router = express.Router();
@@ -12,6 +12,12 @@ router.put(
   verifyAndGetUser,
   upload.single("profile_picture"),
   updateUserProfile,
+);
+
+router.put(
+  "/:id/username",
+  verifyAndGetUser,
+  updateUsername
 );
 
 export default router;

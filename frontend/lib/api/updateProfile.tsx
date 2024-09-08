@@ -49,3 +49,30 @@ const updateUserProfile = async (
 };
 
 export { updateUserProfile };
+
+const updateUsername = async (newUsername: string) => {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const session = sessionData?.session;
+
+  if (!session || !session.user) {
+    throw new Error("User ID not found in session");
+  }
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${session.user.id}/username`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username: newUsername }),
+  });
+
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData.error || "Failed to update username");
+  }
+
+  return response.json();
+};
+
+export { updateUsername };

@@ -1,49 +1,62 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { User, Lock } from "lucide-react";
+import { User } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { updateUsername } from "@/lib/api/updateProfile";
 
-const ProfileSettings: React.FC = () => {
-  const [role, setRole] = useState("");
+const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsername }) => {
+  const [newUsername, setNewUsername] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRole(e.target.value);
-  };
+  const mutation = useMutation({
+    mutationFn: updateUsername,
+    onSuccess: (data) => {
+      setSuccessMessage("Username changed successfully!");
+      setErrorMessage("");
+    },
+    onError: (error: Error) => {
+      setErrorMessage(error.message || "An error occurred.");
+    },
+  });
 
-  const handleSaveProfile = () => {
-    // Logic to save profile changes
+  const handleSaveUsername = () => {
+    if (newUsername.length < 3 || newUsername.length > 20) {
+      setErrorMessage("Username must be between 3 and 20 characters.");
+      return;
+    }
+
+    mutation.mutate(newUsername);
   };
 
   return (
     <Card className="mb-4">
       <CardHeader>
         <CardTitle className="flex items-center">
-          <User className="mr-2" /> Profile Settings
+          <User className="mr-2" /> Change Username
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="role">Your Role</Label>
-            <Input
-              id="role"
-              value={role}
-              onChange={handleRoleChange}
-              placeholder="e.g., City Planner"
-            />
+            <Label htmlFor="currentUsername">Current Username</Label>
+            <Input id="currentUsername" value={currentUsername} readOnly />
           </div>
           <div>
-            <Label htmlFor="password">Change Password</Label>
-            <div className="flex items-center space-x-2">
-              <Input id="password" type="password" placeholder="New Password" />
-              <Button variant="outline">
-                <Lock className="mr-2 h-4 w-4" /> Change
-              </Button>
-            </div>
+            <Label htmlFor="newUsername">New Username</Label>
+            <Input
+              id="newUsername"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              placeholder="Enter new username"
+            />
+            {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+            {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
           </div>
-          <Button onClick={handleSaveProfile}>Save Changes</Button>
+          <Button onClick={handleSaveUsername}>Save Username</Button>
         </div>
       </CardContent>
     </Card>

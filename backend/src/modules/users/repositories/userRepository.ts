@@ -127,4 +127,25 @@ export default class UserRepository {
 
     return data;
   }
+
+  async updateUsername(userId: string, newUsername: string) {
+    const { data, error } = await supabase
+      .from("user")
+      .update({ username: newUsername })
+      .eq("user_id", userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating username.",
+      });
+    }
+
+    return data;
+  }
+
 }

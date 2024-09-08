@@ -184,4 +184,23 @@ export class UserService {
       data: user,
     };
   }
+
+  async updateUsername(userId: string, newUsername: string): Promise<APIResponse<User>> {
+    const updatedUser = await this.userRepository.updateUsername(userId, newUsername);
+    if (!updatedUser) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    return {
+      code: 200,
+      success: true,
+      data: updatedUser,
+    };
+  }
+
+  
 }
