@@ -1,9 +1,10 @@
 import React from "react";
-import { describe, expect } from "@jest/globals";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { describe, expect, beforeEach } from "@jest/globals";
+import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import SettingsPage from "@/components/Settings/Settings";
 import { useToast } from "@/components/ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
+import { fetchUserData } from "@/lib/api/fetchUserData";
 
 jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
@@ -31,36 +32,42 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+jest.mock("@/lib/api/fetchUserData", () => ({
+  fetchUserData: jest.fn(),
+}));
+
 describe("SettingsPage", () => {
   beforeEach(() => {
     useToast.mockImplementation(() => ({ toast: jest.fn() }));
+    (fetchUserData as jest.Mock).mockResolvedValue({ username: "testuser" });
   });
 
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     render(<SettingsPage />);
-    expect(screen.getByText("Account Settings")).toBeInTheDocument();
-    expect(screen.getAllByText("Profile Settings")).not.toBe(null);
-    expect(screen.getByText("Request Verifications")).toBeInTheDocument();
-    expect(screen.getByText("Notification Settings")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Account Settings")).toBeInTheDocument();
+      expect(screen.getByText("Profile Settings")).toBeInTheDocument();
+      expect(screen.getByText("Request Verifications")).toBeInTheDocument();
+      expect(screen.getByText("Notification Settings")).toBeInTheDocument();
+    });
   });
 
   it("toggles dropdowns", () => {
     render(<SettingsPage />);
     const profileSettingsButton = screen.getByText("Profile Settings");
     fireEvent.click(profileSettingsButton);
+    expect(screen.getByText("Current Username")).toBeInTheDocument();
 
     fireEvent.click(profileSettingsButton);
-    expect(
-      screen
-        .getByText("Profile Settings")
-        .parentNode.querySelector(".dropdown-content"),
-    ).toBeNull();
+    expect(screen.queryByText("Current Username")).not.toBeInTheDocument();
   });
 
-  it("calls signOutWithToast on sign out click", () => {
+  it("calls signOutWithToast on sign out click", async () => {
     render(<SettingsPage />);
-    const signOutButton = screen.getByText("Sign out");
-    fireEvent.click(signOutButton);
-    expect(signOutWithToast).toHaveBeenCalled();
+    await waitFor(() => {
+      const signOutButton = screen.getByText("Sign out");
+      fireEvent.click(signOutButton);
+      expect(signOutWithToast).toHaveBeenCalled();
+    });
   });
 });

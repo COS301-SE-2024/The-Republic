@@ -1,7 +1,9 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, screen } from "@testing-library/react";
 import ProfileSettings from "@/components/Settings/ProfileSettings";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 
 jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
@@ -29,34 +31,62 @@ jest.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
+
+jest.mock("@/lib/api/updateProfile", () => ({
+  updateUsername: jest.fn(),
+}));
+
+const queryClient = new QueryClient();
+
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <QueryClientProvider client={queryClient}>
+    {children}
+  </QueryClientProvider>
+);
+
 describe("ProfileSettings", () => {
   it("renders profile fields correctly", () => {
-    const { getByLabelText, getByText } = render(<ProfileSettings />);
-
-    expect(getByLabelText(/Your Role/i)).toBeInTheDocument();
-    expect(getByLabelText(/Change Password/i)).toBeInTheDocument();
-    expect(getByText(/Save Changes/i)).toBeInTheDocument();
+    render(
+      <TestWrapper>
+        <ProfileSettings currentUsername="testuser" />
+      </TestWrapper>
+    );
+    expect(screen.getByText("Change Username")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Current Username/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/New Username/i)).toBeInTheDocument();
+    expect(screen.getByText(/Save Username/i)).toBeInTheDocument();
   });
 
   it("handles role input change", () => {
-    const { getByLabelText } = render(<ProfileSettings />);
-
-    const roleInput = getByLabelText(/Your Role/i);
-    fireEvent.change(roleInput, { target: { value: "City Planner" } });
-    expect(roleInput.value).toBe("City Planner");
+    render(
+      <TestWrapper>
+        <ProfileSettings currentUsername="testuser" />
+      </TestWrapper>
+    );
+    const usernameInput = screen.getByLabelText(/New Username/i);
+    fireEvent.change(usernameInput, { target: { value: "newusername" } });
+    expect(usernameInput).toHaveValue("newusername");
   });
 
   it("handles password input change", () => {
-    const { getByLabelText } = render(<ProfileSettings />);
+    render(
+      <TestWrapper>
+        <ProfileSettings currentUsername="testuser" />
+      </TestWrapper>
+    );
 
-    const passwordInput = getByLabelText(/Change Password/i);
+    const passwordInput = screen.getByLabelText(/Change Password/i);
     fireEvent.change(passwordInput, { target: { value: "newpassword" } });
     expect(passwordInput.value).toBe("newpassword");
   });
 
   it("saves profile changes", () => {
-    const { getByText } = render(<ProfileSettings />);
-    const saveButton = getByText(/Save Changes/i);
+    render(
+      <TestWrapper>
+        <ProfileSettings currentUsername="testuser" />
+      </TestWrapper>
+    );
+    const saveButton = screen.getByText(/Save Username/i);
     fireEvent.click(saveButton);
   });
 });
