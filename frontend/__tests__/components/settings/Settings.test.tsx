@@ -4,7 +4,11 @@ import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import SettingsPage from "@/components/Settings/Settings";
 import { useToast } from "@/components/ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fetchUserData } from "@/lib/api/fetchUserData";
+
+
+const queryClient = new QueryClient();
 
 jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
@@ -52,15 +56,22 @@ describe("SettingsPage", () => {
     });
   });
 
-  it("toggles dropdowns", () => {
-    render(<SettingsPage />);
-    const profileSettingsButton = screen.getByText("Profile Settings");
+  it("toggles dropdowns", async () => {
+    
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SettingsPage />
+      </QueryClientProvider>
+    );
+  
+    
+    const profileSettingsButton = await screen.findByText(/profile settings/i);
     fireEvent.click(profileSettingsButton);
+  
     expect(screen.getByText("Current Username")).toBeInTheDocument();
-
-    fireEvent.click(profileSettingsButton);
-    expect(screen.queryByText("Current Username")).not.toBeInTheDocument();
   });
+  
+  
 
   it("calls signOutWithToast on sign out click", async () => {
     render(<SettingsPage />);

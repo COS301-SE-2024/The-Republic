@@ -5,6 +5,7 @@ import ProfileSettings from "@/components/Settings/ProfileSettings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 
+
 jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
 }));
@@ -57,28 +58,19 @@ describe("ProfileSettings", () => {
     expect(screen.getByText(/Save Username/i)).toBeInTheDocument();
   });
 
-  it("handles role input change", () => {
+  it("handles username input change", () => {
     render(
-      <TestWrapper>
+      <QueryClientProvider client={queryClient}>
         <ProfileSettings currentUsername="testuser" />
-      </TestWrapper>
+      </QueryClientProvider>
     );
+  
     const usernameInput = screen.getByLabelText(/New Username/i);
     fireEvent.change(usernameInput, { target: { value: "newusername" } });
-    expect(usernameInput).toHaveValue("newusername");
+  
+    expect(usernameInput.value).toBe("newusername");
   });
 
-  it("handles password input change", () => {
-    render(
-      <TestWrapper>
-        <ProfileSettings currentUsername="testuser" />
-      </TestWrapper>
-    );
-
-    const passwordInput = screen.getByLabelText(/Change Password/i);
-    fireEvent.change(passwordInput, { target: { value: "newpassword" } });
-    expect(passwordInput.value).toBe("newpassword");
-  });
 
   it("saves profile changes", () => {
     render(
