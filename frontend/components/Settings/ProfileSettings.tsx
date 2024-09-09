@@ -19,7 +19,11 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
       setErrorMessage("");
     },
     onError: (error: Error) => {
-      setErrorMessage(error.message || "An error occurred.");
+      if (error.message === "Username already taken.") {
+        setErrorMessage("Username already taken.");
+      } else {
+        setErrorMessage(error.message || "An unexpected error occurred.");
+      }
     },
   });
 

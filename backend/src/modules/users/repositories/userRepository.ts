@@ -138,6 +138,16 @@ export default class UserRepository {
 
     if (error) {
       console.error("Supabase error:", error);
+
+      
+      if (error.message.includes("duplicate key value violates unique constraint")) {
+        throw APIError({
+          code: 409,
+          success: false,
+          error: "Username already taken.",
+        });
+      }
+
       throw APIError({
         code: 500,
         success: false,
