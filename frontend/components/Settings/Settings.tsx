@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import ProfileSettings from "./ProfileSettings";
-import RequestVerifications from "./RequestVerification";
 import NotificationSettings from "./NotificationSettings";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
@@ -75,9 +74,6 @@ const SettingsPage = () => {
         ) : (
           <p>User data not available</p>
         )}
-      </SettingsDropdown>
-      <SettingsDropdown title="Request Verifications">
-        <RequestVerifications />
       </SettingsDropdown>
       <SettingsDropdown title="Notification Settings">
         <NotificationSettings />
