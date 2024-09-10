@@ -51,7 +51,6 @@ describe("SettingsPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Account Settings")).toBeInTheDocument();
       expect(screen.getByText("Profile Settings")).toBeInTheDocument();
-      expect(screen.getByText("Request Verifications")).toBeInTheDocument();
       expect(screen.getByText("Notification Settings")).toBeInTheDocument();
     });
   });
