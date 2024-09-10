@@ -34,39 +34,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const { user } = useUser();
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
-  // This should be intergrated as described in the comment for mutations in Issue.tsx
-  /* const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await createIssue(user as UserAlt, ...otherParamaters);
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
-      }
-    },
-    onSuccess: (issue) => {
-      setContent("");
-      setCategory("");
-      setMood("");
-      setIsAnonymous(false);
-      setLocation(null);
-      setImage(null);
-
-      toast({
-        description: "Post successful",
-      });
-
-      onAddIssue(issue);
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    },
-  }); */
-
   useEffect(() => {
     const loadUserLocation = async () => {
       if (user && user.location_id) {
