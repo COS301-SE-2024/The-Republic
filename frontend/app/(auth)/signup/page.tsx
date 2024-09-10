@@ -19,8 +19,30 @@ export default function Signup() {
   const { toast } = useToast();
   const router = useRouter();
 
+  // Check if username already exists
+  const checkUsernameAvailability = async (username: string) => {
+    try {
+      const response = await fetch(`/api/users/check-username/${username}`);
+      const data = await response.json();
+      if (response.ok) {
+        return data.available; // Adjust based on API response structure
+      } else {
+        toast({ variant: "destructive", description: data.error || "Failed to check username" });
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking username availability:", error);
+      toast({ variant: "destructive", description: "Username already exists" });
+      return false;
+    }
+  };
+
   const signup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const isUsernameAvailable = await checkUsernameAvailability(username);
+    if (!isUsernameAvailable) return; // Stop the signup process if username is not available
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -59,6 +81,7 @@ export default function Signup() {
           transition={{ duration: 0.5 }}
           className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-500"
         >
+          Create Your Account
         </motion.h1>
       </div>
       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto bg-white dark:bg-transparent rounded-xl overflow-hidden shadow-lg">

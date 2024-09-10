@@ -158,4 +158,24 @@ export default class UserRepository {
     return data;
   }
 
+
+  async isUsernameTaken(username: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from("user")
+      .select("username")
+      .eq("username", username)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking username availability.",
+      });
+    }
+
+    return !!data;
+  }
+
 }

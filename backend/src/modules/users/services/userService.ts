@@ -202,5 +202,23 @@ export class UserService {
     };
   }
 
+  async checkUsernameAvailability(username: string): Promise<APIResponse<boolean>> {
+    try {
+      const isUsernameTaken = await this.userRepository.isUsernameTaken(username);
+      
+      return {
+        code: 200,
+        success: true,
+        data: !isUsernameTaken
+      };
+    } catch (error) {
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking username availability.",
+      });
+    }
+  }
+
   
 }
