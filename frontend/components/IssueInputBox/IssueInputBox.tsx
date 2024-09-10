@@ -18,6 +18,7 @@ import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriatene
 import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useQuery } from "@tanstack/react-query";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -33,23 +34,20 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const { data: userLocation } = useQuery({
+    queryKey: ["user-location"],
+    queryFn: async () => {
+      if (user?.location_id) {
+        return await fetchUserLocation(user.location_id);
+      }
+    }
+  });
 
   useEffect(() => {
-    const loadUserLocation = async () => {
-      if (user && user.location_id) {
-        try {
-          const userLocation = await fetchUserLocation(user.location_id);
-          if (userLocation) {
-            setLocation(userLocation);
-          }
-        } catch (error) {
-          console.error("Failed to fetch user location:", error);
-        }
-      }
-    };
-
-    loadUserLocation();
-  }, [user]);
+    if (userLocation) {
+      setLocation(userLocation);
+    }
+  }, [userLocation]);
 
   const handleLocationSet = (newLocation: LocationType) => {
     setLocation(newLocation);
@@ -152,7 +150,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       setCategory("");
       setMood("");
       setIsAnonymous(false);
-      setLocation(null);
+      setLocation(userLocation ?? null);
       setImage(null);
 
       const apiResponse = await res.json();
@@ -244,7 +242,10 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             onClick={() => setIsLocationModalOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-1" />
-            {location ? location.value.suburb : 'Set Location'}
+            {location 
+              ? location.value.suburb || location.value.city
+              : 'Set Location'
+            }
           </Button>
           <Button
             variant="ghost"
