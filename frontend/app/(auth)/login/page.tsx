@@ -27,7 +27,7 @@ export default function Login() {
     if (error) {
       toast({
         variant: "destructive",
-        description: "Failed to sign in, please try again",
+        description: "Incorrect username or password. Please try again",
       });
     } else {
       router.push("/");

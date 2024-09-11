@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { getUserById, updateUserProfile, updateUsername } from "@/modules/users/controllers/userController";
+import { getUserById, updateUserProfile, updateUsername, changePassword } from "@/modules/users/controllers/userController";
 import { verifyAndGetUser } from "@/middleware/middleware";
 
 const router = express.Router();
@@ -18,6 +18,12 @@ router.put(
   "/:id/username",
   verifyAndGetUser,
   updateUsername
+);
+
+router.put(
+  "/:id/password",
+  verifyAndGetUser,
+  changePassword
 );
 
 export default router;

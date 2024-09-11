@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Organizations from '@/components/Organization/Organization';
-import CreateOrganizationForm from '../../../components/CreateOrganizationForm.tsx/CreateOrganizationForm';
+import CreateOrganizationForm from '../../../components/CreateOrganizationForm/CreateOrganizationForm';
 import { Organization } from '../../../lib/types';
 import { useOrganizations } from '@/lib/contexts/OrganizationProvider';
 import { useUser } from '../../../lib/contexts/UserContext';

@@ -76,3 +76,29 @@ const updateUsername = async (newUsername: string) => {
 };
 
 export { updateUsername };
+
+
+export const changePassword = async ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) => {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const session = sessionData?.session;
+
+  if (!session || !session.user) {
+    throw new Error("User ID not found in session");
+  }
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${session.user.id}/password`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(responseData.error || "Failed to change password");
+  }
+
+  return response.json();
+};

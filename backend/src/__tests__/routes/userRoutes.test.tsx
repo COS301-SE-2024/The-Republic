@@ -2,14 +2,15 @@ import request from "supertest";
 import express from "express";
 import userRouter from "@/modules/users/routes/userRoutes";
 import { verifyAndGetUser } from "@/middleware/middleware";
-
 import * as userController from "@/modules/users/controllers/userController";
 
+// Mock the middleware and controllers
 jest.mock("@/middleware/middleware");
 jest.mock("@/modules/users/controllers/userController", () => ({
   getUserById: [jest.fn()],
   updateUserProfile: jest.fn(),
   updateUsername: jest.fn(), 
+  changePassword: jest.fn(), 
 }));
 
 const app = express();
@@ -66,6 +67,22 @@ describe("User Routes", () => {
 
       expect(response.status).toBe(200);
       expect(userController.updateUsername).toHaveBeenCalled();
+    });
+  });
+
+  describe("PUT /users/:id/password", () => {
+    it("should call changePassword controller", async () => {
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (userController.changePassword as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
+      );
+
+      const response = await request(app).put("/users/1/password").send({ password: "newPassword" });
+
+      expect(response.status).toBe(200);
+      expect(userController.changePassword).toHaveBeenCalled();
     });
   });
 });

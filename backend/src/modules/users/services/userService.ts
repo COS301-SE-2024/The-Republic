@@ -4,6 +4,8 @@ import { APIResponse, APIError } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { MulterFile } from "@/types/users";
 
+
+
 export class UserService {
   private userRepository: UserRepository;
 
@@ -220,5 +222,89 @@ export class UserService {
     }
   }
 
+
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<APIResponse<void>> {
+    try {
+      console.log("Starting password change process for user:", userId);
   
+      const { data: userData, error: userError } = await supabase
+        .from('user')
+        .select('email_address')
+        .eq('user_id', userId)
+        .single();
+  
+      if (userError) {
+        console.error("Error fetching user data:", userError);
+        throw APIError({
+          code: 404,
+          success: false,
+          error: "User not found",
+        });
+      }
+  
+      if (!userData) {
+        console.error("User data is null for userId:", userId);
+        throw APIError({
+          code: 404,
+          success: false,
+          error: "User not found",
+        });
+      }
+  
+      console.log("User email fetched successfully");
+  
+     
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: userData.email_address,
+        password: currentPassword,
+      });
+  
+      if (signInError) {
+        console.error("Sign-in error:", signInError);
+        throw APIError({
+          code: 401,
+          success: false,
+          error: "Current password is incorrect",
+        });
+      }
+  
+      console.log("Current password verified successfully");
+  
+      // If sign-in was successful, update the password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+  
+      if (updateError) {
+        console.error("Password update error:", updateError);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "Failed to update password",
+        });
+      }
+  
+      console.log("Password updated successfully");
+  
+      return {
+        code: 200,
+        success: true,
+        data: undefined,
+      };
+    } catch (error) {
+      console.error("Caught error in changePassword:", error);
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred",
+      });
+    }
+  }
 }
