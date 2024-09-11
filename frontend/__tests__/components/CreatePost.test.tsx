@@ -30,6 +30,11 @@ jest.mock("next-themes", () => ({
   useTheme: jest.fn(),
 }));
 
+const mockOrganization = {
+  name: "Test Organization",
+  profile_photo: "http://example.com/org-image.jpg",
+};
+
 const renderWithClient = (ui: React.ReactNode) => {
   const testQueryClient = new QueryClient({
     defaultOptions: {
@@ -68,14 +73,16 @@ describe("CreatePost", () => {
     (console.error as jest.Mock).mockRestore();
   });
 
-  it("renders CreatePost button", () => {
-    const { getByText } = renderWithClient(<CreatePost />);
-    expect(getByText("Create a post")).toBeInTheDocument();
+  it("renders CreatePost component", () => {
+    const { getByPlaceholderText, getByText } = renderWithClient(<CreatePost organization={mockOrganization} />);
+    expect(getByPlaceholderText("What's new with the organization?")).toBeInTheDocument();
+    expect(getByText("Post")).toBeInTheDocument();
   });
 
-  it("opens the dialog on button click", () => {
-    const { getByText, getByRole } = renderWithClient(<CreatePost />);
-    fireEvent.click(getByText("Create a post"));
-    expect(getByRole("dialog")).toBeInTheDocument();
+  it("enables Post button when text is entered", () => {
+    const { getByPlaceholderText, getByText } = renderWithClient(<CreatePost organization={mockOrganization} />);
+    const textarea = getByPlaceholderText("What's new with the organization?");
+    fireEvent.change(textarea, { target: { value: "New post content" } });
+    expect(getByText("Post")).not.toBeDisabled();
   });
 });
