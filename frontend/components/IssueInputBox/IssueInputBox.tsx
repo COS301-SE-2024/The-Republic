@@ -18,6 +18,7 @@ import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriatene
 import CircularProgress from "../CircularProgressBar/CircularProgressBar";
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useQuery } from "@tanstack/react-query";
 
 const MAX_CHAR_COUNT = 500;
 
@@ -33,56 +34,20 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-
-  // This should be intergrated as described in the comment for mutations in Issue.tsx
-  /* const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await createIssue(user as UserAlt, ...otherParamaters);
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
+  const { data: userLocation } = useQuery({
+    queryKey: ["user-location"],
+    queryFn: async () => {
+      if (user?.location_id) {
+        return await fetchUserLocation(user.location_id);
       }
-    },
-    onSuccess: (issue) => {
-      setContent("");
-      setCategory("");
-      setMood("");
-      setIsAnonymous(false);
-      setLocation(null);
-      setImage(null);
-
-      toast({
-        description: "Post successful",
-      });
-
-      onAddIssue(issue);
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    },
-  }); */
+    }
+  });
 
   useEffect(() => {
-    const loadUserLocation = async () => {
-      if (user && user.location_id) {
-        try {
-          const userLocation = await fetchUserLocation(user.location_id);
-          if (userLocation) {
-            setLocation(userLocation);
-          }
-        } catch (error) {
-          console.error("Failed to fetch user location:", error);
-        }
-      }
-    };
-
-    loadUserLocation();
-  }, [user]);
+    if (userLocation) {
+      setLocation(userLocation);
+    }
+  }, [userLocation]);
 
   const handleLocationSet = (newLocation: LocationType) => {
     setLocation(newLocation);
@@ -185,7 +150,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       setCategory("");
       setMood("");
       setIsAnonymous(false);
-      setLocation(null);
+      setLocation(userLocation ?? null);
       setImage(null);
 
       const apiResponse = await res.json();
@@ -277,7 +242,10 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             onClick={() => setIsLocationModalOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-1" />
-            {location ? location.value.suburb : 'Set Location'}
+            {location 
+              ? location.value.suburb || location.value.city
+              : 'Set Location'
+            }
           </Button>
           <Button
             variant="ghost"
