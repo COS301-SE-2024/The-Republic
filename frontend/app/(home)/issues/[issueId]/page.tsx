@@ -49,8 +49,10 @@ const IssuePage = () => {
     <div className="container mx-auto p-2">
       <Issue issue={data!} />
       <CommentList
-        issueId={issueId}
-        parentCommentId={null}
+          itemId={issueId.toString()}
+          itemType="issue"
+          parentCommentId={null}
+          showAddComment={true}
       />
     </div>
   );
