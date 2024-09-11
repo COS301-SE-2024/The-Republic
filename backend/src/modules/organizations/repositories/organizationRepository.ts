@@ -1,10 +1,20 @@
 import supabase from "@/modules/shared/services/supabaseClient";
-import { Organization, OrganizationMember, JoinRequest, OrganizationPost } from "@/modules/shared/models/organization";
+import { Organization, OrganizationMember, JoinRequest, OrganizationPost, ActivityLog, ActionType, ActionDetails } from "@/modules/shared/models/organization";
 import { APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";
 import { MulterFile } from "@/types/users";
+import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
+import { ResolutionResponseRepository } from "@/modules/resolutions/repositories/resolutionResponseRepository";
 
 export class OrganizationRepository {
+  public reactionRepository: ReactionRepository;
+  public resolutionResponseRepository: ResolutionResponseRepository;
+
+  constructor() {
+    this.reactionRepository = new ReactionRepository();
+    this.resolutionResponseRepository = new ResolutionResponseRepository();
+  }
+  
     async createOrganization(organization: Partial<Organization>): Promise<Organization> {
         const { data, error } = await supabase
           .from("organizations")
@@ -40,6 +50,7 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
     delete safeUpdates.created_at;
     delete safeUpdates.verified_status;
     delete safeUpdates.points;
+    delete safeUpdates.user_id;
 
     // Handle profile photo upload
     if (profilePhoto) {
@@ -163,8 +174,6 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
 
     return data as Organization;
 }
-    
-    
 
   async deleteOrganization(id: string): Promise<void> {
     const { error } = await supabase
@@ -330,7 +339,42 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
 
     delete organization.total_members;
 
+    // Fetch average satisfaction rating
+    const averageRating = await this.getAverageSatisfactionRating(id);
+    organization.averageSatisfactionRating = averageRating;
+
     return organization as Organization;
+  }
+
+  async getAverageSatisfactionRating(organizationId: string): Promise<number | null> {
+    const { data: resolutions, error: resolutionsError } = await supabase
+      .from('resolution')
+      .select('resolution_id')
+      .eq('organization_id', organizationId);
+
+    if (resolutionsError) {
+      console.error("Error fetching resolutions:", resolutionsError);
+      return null;
+    }
+
+    if (resolutions.length === 0) {
+      return null;
+    }
+
+    const resolutionIds = resolutions.map(r => r.resolution_id);
+    
+    let totalRating = 0;
+    let totalResponses = 0;
+
+    for (const resolutionId of resolutionIds) {
+      const rating = await this.resolutionResponseRepository.getAverageSatisfactionRating(resolutionId);
+      if (rating !== null) {
+        totalRating += rating;
+        totalResponses++;
+      }
+    }
+
+    return totalResponses > 0 ? totalRating / totalResponses : null;
   }
 
   async getOrganizationMembers(organizationId: string, params: PaginationParams): Promise<{ data: OrganizationMember[], total: number }> {
@@ -549,60 +593,11 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
     return data as JoinRequest | null;
   }
 
-  async getUserOrganizations(userId: string): Promise<Organization[]> {
-    const { data, error } = await supabase
-      .from("organization_members")
-      .select(`
-        organizations (
-          id,
-          created_at,
-          name,
-          username,
-          bio,
-          website_url,
-          verified_status,
-          join_policy,
-          points,
-          profile_photo,
-          org_type
-        ),
-        role
-      `)
-      .eq("user_id", userId);
-  
-    if (error) {
-      console.error("Error fetching user organizations:", error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An error occurred while fetching user organizations.",
-      });
-    }
-  
-    if (!data) {
-      return [];
-    }
-  
-    const organizations: Organization[] = await Promise.all(data.map(async (item: any) => {
-      const { count } = await supabase
-        .from("organization_members")
-        .select("*", { count: "exact", head: true })
-        .eq("organization_id", item.organizations.id);
-  
-      return {
-        ...item.organizations[0],
-        totalMembers: count || 0,
-        userRole: item.role
-      } as Organization;
-    }));
-  
-    return organizations;
-  }
-
   async getOrganizations(
     params: PaginationParams,
     orgType: string | null = null,
-    locationId: string | null = null
+    locationId: string | null = null,
+    userId: string
   ): Promise<{ data: Organization[]; total: number }> {
     let query = supabase
       .from("organizations")
@@ -613,7 +608,8 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
           suburb,
           city,
           province
-        )
+        ),
+        is_member:organization_members!inner(user_id)
       `, { count: "exact" });
 
     if (orgType) {
@@ -638,6 +634,7 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
     const organizations = data?.map(org => ({
       ...org,
       totalMembers: org.total_members[0].count,
+      isMember: org.is_member.some((member: { user_id: string }) => member.user_id === userId),
     }));
 
     return { data: organizations as Organization[], total: count || 0 };
@@ -798,31 +795,62 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
     return { data: organizations as Organization[], total: count || 0 };
   }
 
-  async getOrganizationPosts(organizationId: string, params: PaginationParams): Promise<{ data: OrganizationPost[], total: number }> {
-    const { data, error, count } = await supabase
-      .from('organization_posts')
-      .select('*, author:author_id(*)', { count: 'exact' })
-      .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false })
-      .range(params.offset, params.offset + params.limit - 1);
-
-    if (error) {
-      console.error("Error fetching organization posts:", error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An error occurred while fetching organization posts.",
-      });
+  async getOrganizationPosts(organizationId: string, userId: string, params: PaginationParams): Promise<{ data: OrganizationPost[], total: number }> {
+    try {
+      const { data, error, count } = await supabase
+        .from('organization_posts')
+        .select('*, author:author_id(*)', { count: 'exact' })
+        .eq('organization_id', organizationId)
+        .order('created_at', { ascending: false })
+        .range(params.offset, params.offset + params.limit - 1);
+  
+      if (error) {
+        console.error("Repository: Error fetching organization posts:", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while fetching organization posts.",
+        });
+      }
+  
+      const postsWithReactions = await Promise.all(data.map(async (post) => {
+        try {
+          const reactions = await this.reactionRepository.getReactionCountsByItemId(post.post_id, 'post');
+          const userReaction = userId ? await this.reactionRepository.getReactionByUserAndItem(post.post_id, 'post', userId) : null;    
+  
+          return {
+            ...post,
+            reactions: {
+              counts: {
+                "😠": reactions.find((r: { emoji: string }) => r.emoji === "😠")?.count || 0,
+                "😃": reactions.find((r: { emoji: string }) => r.emoji === "😃")?.count || 0,
+                "😢": reactions.find((r: { emoji: string }) => r.emoji === "😢")?.count || 0,
+                "😟": reactions.find((r: { emoji: string }) => r.emoji === "😟")?.count || 0,
+              },
+              userReaction: userReaction?.emoji || null,
+            },
+          };
+        } catch (error) {
+          console.error('Repository: Error processing post reactions', { postId: post.post_id, error });
+          return post; // Return the post without reactions if there's an error
+        }
+      }));
+  
+      return { data: postsWithReactions as OrganizationPost[], total: count || 0 };
+    } catch (error) {
+      console.error('Repository: Unexpected error in getOrganizationPosts', error);
+      throw error;
     }
-
-    return { data: data as OrganizationPost[], total: count || 0 };
   }
 
   async createOrganizationPost(post: Partial<OrganizationPost>): Promise<OrganizationPost> {
     const { data, error } = await supabase
       .from('organization_posts')
       .insert(post)
-      .select('*, author:author_id(*)')
+      .select(`
+        *,
+        author:author_id(*)
+      `)
       .single();
 
     if (error) {
@@ -834,7 +862,17 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
       });
     }
 
-    return data as OrganizationPost;
+    const reactions = {
+      counts: {
+        "😠": 0,
+        "😃": 0,
+        "😢": 0,
+        "😟": 0,
+      },
+      userReaction: null,
+    };
+
+    return { ...data, reactions } as OrganizationPost;
   }
 
   async getOrganizationPostById(postId: string): Promise<OrganizationPost> {
@@ -890,5 +928,90 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
     }
 
     return data as OrganizationMember[];
+  }
+
+  async getOrganizationPost(organizationId: string, postId: string): Promise<OrganizationPost> {
+    const { data, error } = await supabase
+      .from('organization_posts')
+      .select('*, author:author_id(*)')
+      .eq('organization_id', organizationId)
+      .eq('post_id', postId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching organization post:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while fetching the organization post.",
+      });
+    }
+
+    // Fetch reactions for the post
+    const reactions = await this.reactionRepository.getReactionCountsByItemId(postId, 'post');
+
+    // Transform reactions into the expected format
+    const reactionCounts = {
+      "😠": reactions.find((r: { emoji: string }) => r.emoji === "😠")?.count || 0,
+      "😃": reactions.find((r: { emoji: string }) => r.emoji === "😃")?.count || 0,
+      "😢": reactions.find((r: { emoji: string }) => r.emoji === "😢")?.count || 0,
+      "😟": reactions.find((r: { emoji: string }) => r.emoji === "😟")?.count || 0,
+    };
+
+    return {
+      ...data,
+      reactions: {
+        counts: reactionCounts,
+        userReaction: null, // We'll set this to null for now, as we don't have the user ID here
+      },
+    } as OrganizationPost;
+  }
+
+  async logActivity(organizationId: string, adminId: string, actionType: ActionType, actionDetails: ActionDetails): Promise<void> {
+    const { error } = await supabase
+      .from('organization_activity_logs')
+      .insert({
+        organization_id: organizationId,
+        admin_id: adminId,
+        action_type: actionType,
+        action_details: actionDetails
+      });
+
+    if (error) {
+      console.error("Error logging activity:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while logging the activity.",
+      });
+    }
+  }
+
+  async getActivityLogs(organizationId: string, params: PaginationParams): Promise<{ data: ActivityLog[], total: number }> {
+    const { data, error, count } = await supabase
+      .from('organization_activity_logs')
+      .select(`
+        *,
+        admin:admin_id(
+          user_id,
+          username,
+          fullname,
+          image_url
+        )
+      `, { count: 'exact' })
+      .eq('organization_id', organizationId)
+      .order('created_at', { ascending: false })
+      .range(params.offset, params.offset + params.limit - 1);
+
+    if (error) {
+      console.error("Error fetching activity logs:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while fetching activity logs.",
+      });
+    }
+
+    return { data: data as ActivityLog[], total: count || 0 };
   }
 }
