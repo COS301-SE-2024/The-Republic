@@ -22,7 +22,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orgData, setOrgData] = useState<Organization>(organization);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [broadcastMessage, setBroadcastMessage] = useState('');
+  //const [broadcastMessage, setBroadcastMessage] = useState('');
   const [broadcastError, setBroadcastError] = useState('');
   const { theme } = useTheme();
 
@@ -61,7 +61,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
     }
 
     console.log(`Broadcast message: ${message}`);
-    setBroadcastMessage('');
+    //setBroadcastMessage('');
   };
 
   const openEditModal = () => {
