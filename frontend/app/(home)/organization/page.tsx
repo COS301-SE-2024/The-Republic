@@ -11,14 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, Search, Loader2 } from "lucide-react";
 import CreateOrganizationForm from '@/components/CreateOrganizationForm/CreateOrganizationForm';
 import OrganizationCard from '@/components/OrganizationCard/OrganizationCard';
-import { Organization, Location, LocationType } from '@/lib/types';
+import { Organization, Location } from '@/lib/types';
 import { getOrganizations } from '@/lib/api/getOrganizations';
 import { searchOrganizations } from '@/lib/api/searchOrganizations';
 import { createOrganization } from '@/lib/api/createOrganization';
-import { getUserOrganizations } from '@/lib/api/getUserOrganizations';
 import { dotVisualization } from "@/lib/api/dotVisualization";
 import CompactDropdown from '@/components/Dropdown/CompactDropdown';
-import { fetchUserLocation } from '@/lib/api/fetchUserLocation';
 import { useToast } from "@/components/ui/use-toast";
 
 export default function OrganizationPage() {
@@ -32,12 +30,9 @@ export default function OrganizationPage() {
   const router = useRouter();
   const [orgTypeFilter, setOrgTypeFilter] = useState<string>("all");
   const [locationFilter, setLocationFilter] = useState<string | null>(null);
-  const [totalResults, setTotalResults] = useState(0);
   const [hasSearched, setHasSearched] = useState(false);
-  const [myOrganizations, setMyOrganizations] = useState<Organization[]>([]);
-  const [discoverOrganizations, setDiscoverOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [nearMeActive, setNearMeActive] = useState(false);
-  const [userLocation, setUserLocation] = useState<string | null>(null);
   const { toast } = useToast();
 
   const url: string = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/locations`;
@@ -57,16 +52,11 @@ export default function OrganizationPage() {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [myOrgs, discoverOrgs] = await Promise.all([
-        getUserOrganizations(user!),
-        getOrganizations(user!, { 
-          orgType: orgTypeFilter === "all" ? null : orgTypeFilter,
-          locationId: locationFilter
-        })
-      ]);
-      setMyOrganizations(myOrgs);
-      setDiscoverOrganizations(discoverOrgs.data.filter(org => !myOrgs.some(myOrg => myOrg.id === org.id)));
-      setTotalResults(discoverOrgs.total);
+      const result = await getOrganizations(user!, { 
+        orgType: orgTypeFilter === "all" ? null : orgTypeFilter,
+        locationId: locationFilter
+      });
+      setOrganizations(result.data);
       setError(null);
     } catch (err) {
       console.error("Error fetching initial data:", err);
@@ -118,14 +108,12 @@ export default function OrganizationPage() {
         locationId: locationFilter
       });
       setSearchResults(result.data);
-      setTotalResults(result.total);
       setError(null);
       setHasSearched(true);
     } catch (err) {
       console.error("Error searching organizations:", err);
       setError('Failed to search organizations');
       setSearchResults([]);
-      setTotalResults(0);
     } finally {
       setSearching(false);
     }
@@ -138,8 +126,7 @@ export default function OrganizationPage() {
         orgType: orgTypeFilter === "all" ? null : orgTypeFilter,
         locationId: locationFilter
       });
-      setDiscoverOrganizations(result.data.filter(org => !myOrganizations.some(myOrg => myOrg.id === org.id)));
-      setTotalResults(result.total);
+      setOrganizations(result.data);
       setError(null);
       setHasSearched(false);
     } catch (err) {
@@ -168,6 +155,8 @@ export default function OrganizationPage() {
     throw new Error('Failed to create organization');
   };
 
+  const myOrganizations = organizations.filter(org => org.isMember);
+  const discoverOrganizations = organizations.filter(org => !org.isMember);
   const displayedOrganizations = hasSearched ? searchResults : discoverOrganizations;
 
   const orgTypeOptions = {

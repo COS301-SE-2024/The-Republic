@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
@@ -46,31 +46,50 @@ export default function OrganizationPage() {
     try {
       setLoading(true);
       const [orgData, postsData, membersData, joinRequest] = await Promise.all([
-        getOrganizationById(user, id as string),
-        getOrganizationPosts(user, id as string),
-        getOrganizationMembers(user, id as string),
-        getJoinRequestByUser(user, id as string),
+        getOrganizationById(user, id as string).catch((err) => {
+          console.error("Error fetching organization data:", err);
+          return null;
+        }),
+        getOrganizationPosts(user, id as string).catch((err) => {
+          console.error("Error fetching organization posts:", err);
+          return { data: [] };
+        }),
+        getOrganizationMembers(user, id as string).catch((err) => {
+          console.error("Error fetching organization members:", err);
+          return { data: [], total: 0 };
+        }),
+        getJoinRequestByUser(user, id as string).catch((err) => {
+          console.error("Error fetching join request:", err);
+          return null;
+        }),
       ]);
-      setOrganization(orgData);
+  
+      if (orgData) {
+        setOrganization(orgData);
+      } else {
+        setError('Failed to fetch organization data');
+      }
+  
       setOrgPosts(postsData.data || []);
-
+  
       const userMember = membersData.data.find(member => member.user_id === user.user_id);
       setIsUserMember(!!userMember);
       setIsUserAdmin(userMember?.role === 'admin');
       setHasUserRequested(!!joinRequest);
-
+  
       if (userMember) {
         const [topMembersData] = await Promise.all([
-          getTopOrganizationMembers(user, id as string),
+          getTopOrganizationMembers(user, id as string).catch((err) => {
+            console.error("Error fetching top members:", err);
+            return [];
+          }),
         ]);
         setMembers(membersData);
         setTopActiveMembers(Array.isArray(topMembersData) ? topMembersData : []);
       }
-
-      setError(null);
     } catch (err) {
       console.error("Error fetching data:", err);
-      setError('Failed to fetch organization data');
+      setError('An error occurred while fetching data');
     } finally {
       setLoading(false);
     }
@@ -98,7 +117,7 @@ export default function OrganizationPage() {
     }
   };
 
-  const handleOrganizationUpdate = (updatedOrg: Organization) => {
+  const handleOrganizationUpdate = async () => {
     fetchData();
   };
 
@@ -139,6 +158,7 @@ export default function OrganizationPage() {
               orgPosts={orgPosts} 
               topActiveMembers={topActiveMembers}
               setOrgPosts={setOrgPosts}
+              isUserAdmin={isUserAdmin}
             />
           </TabsContent>
           <TabsContent value="members">
@@ -172,6 +192,7 @@ export default function OrganizationPage() {
             orgPosts={orgPosts} 
             topActiveMembers={[]}
             setOrgPosts={setOrgPosts}
+            isUserAdmin={false}
           />
         </div>
       )}
