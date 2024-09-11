@@ -49,7 +49,12 @@ export class ResolutionService {
       status = 'accepted';
       await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
       await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, [resolution.resolver_id]);
-      await this.pointsService.awardPoints(resolution.resolver_id, 70, "self-resolution logged and accepted");
+      await this.pointsService.awardPoints(resolution.resolver_id, 70, "self-resolution logged");
+      
+      // Award points to the organization if it's a self-resolution
+      if (resolution.organization_id) {
+        await this.pointsService.awardOrganizationPoints(resolution.organization_id, 2, "self-resolution logged");
+      }
     }
 
     const clusterIssues = clusterId ? await this.issueRepository.getIssuesInCluster(clusterId) : [issue];
@@ -83,7 +88,7 @@ export class ResolutionService {
     await this.notifyClusterMembers(createdResolution, clusterIssues);
 
     return createdResolution;
-}
+  }
 
 private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[]): Promise<void> {
   // Implement logic to notify cluster members about the new resolution
@@ -97,7 +102,7 @@ private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[
   }
 }
 
-async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string): Promise<Resolution> {
+async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string, satisfactionRating?: number): Promise<Resolution> {
   const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
   
   if (resolution.status !== 'pending') {
@@ -117,7 +122,7 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
     });
   }
 
-  await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
+  await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status, satisfactionRating);
 
   const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
     num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
@@ -145,26 +150,32 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
   return updatedResolution;
 }
 
-  private async finalizeResolution(resolution: Resolution): Promise<void> {
-    await this.resolutionRepository.updateResolution(resolution.resolution_id, { 
-      status: 'accepted',
-    });
+private async finalizeResolution(resolution: Resolution): Promise<void> {
+  await this.resolutionRepository.updateResolution(resolution.resolution_id, { 
+    status: 'accepted',
+  });
 
-    await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
+  await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
 
-    if (resolution.resolution_source === 'self') {
-      await this.pointsService.awardPoints(resolution.resolver_id, 50, "self-resolution accepted");
-    } else {
-      await this.pointsService.awardPoints(resolution.resolver_id, 100, "external resolution accepted");
+  if (resolution.resolution_source === 'self') {
+    await this.pointsService.awardPoints(resolution.resolver_id, 50, "self-resolution accepted");
+  } else {
+    if (resolution.organization_id) {
+      await this.pointsService.awardOrganizationPoints(resolution.organization_id, 75, "External resolution accepted for Organization member");
     }
-
-    await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
-
-    const acceptedUsers = await this.getAcceptedUsers(resolution.resolution_id);
-
-    // Move cluster members who ACCEPTED to a NEW CLUSTER
-    await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, acceptedUsers);
+    await this.pointsService.awardPoints(resolution.resolver_id, 100, "external resolution accepted");
   }
+
+  // Award points to the organization
+  
+
+  await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
+
+  const acceptedUsers = await this.getAcceptedUsers(resolution.resolution_id);
+
+  // Move cluster members who ACCEPTED to a NEW CLUSTER
+  await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, acceptedUsers);
+}
 
   private async rejectResolution(resolution: Resolution): Promise<void> {
     await this.resolutionRepository.updateResolution(resolution.resolution_id, { 
@@ -189,11 +200,29 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
   }
 
   private async getAcceptedUsers(resolutionId: string): Promise<string[]> {
-    return this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
+    const acceptedUsers = await this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
+    return acceptedUsers.map(user => user.userId);
   }
 
   async getUserResolutions(userId: string): Promise<Resolution[]> {
     return this.resolutionRepository.getUserResolutions(userId);
+  }
+
+  async getOrganizationResolutions(organizationId: string): Promise<Resolution[]> {
+    return this.resolutionRepository.getOrganizationResolutions(organizationId);
+  }
+
+  async getResolutionsByIssueId(issueId: number): Promise<Resolution[]> {
+    try {
+      return await this.resolutionRepository.getResolutionsByIssueId(issueId);
+    } catch (error) {
+      console.error(`Error fetching resolutions for issue ${issueId}:`, error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching resolutions for the issue.",
+      });
+    }
   }
   
   async deleteResolution(resolutionId: string, userId: string): Promise<void> {
