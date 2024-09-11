@@ -248,7 +248,7 @@ const Feed: React.FC = () => {
           parentId={scrollId}
           controlRef={lazyRef}
           uniqueId="feed-issues"
-          adFrequency={5}
+          adFrequency={10}
         />
       </div>
       {isDesktop && (
