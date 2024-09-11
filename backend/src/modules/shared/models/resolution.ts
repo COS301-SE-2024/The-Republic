@@ -14,4 +14,5 @@ export interface Resolution {
     state_entity_association: string | null;
     resolution_source: 'self' | 'unknown' | 'other';
     resolved_by: string | null;
+    organization_id?: string | null;
   }
