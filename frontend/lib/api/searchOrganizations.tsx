@@ -26,8 +26,6 @@ export const searchOrganizations = async (
   if (params.orgType) queryParams.append('orgType', params.orgType);
   if (params.locationId) queryParams.append('locationId', params.locationId);
 
-  console.log(`Searching organizations with params: ${queryParams.toString()}`);
-
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organizations/search?${queryParams}`, {
     headers: {
       Authorization: `Bearer ${user.access_token}`,
@@ -41,6 +39,6 @@ export const searchOrganizations = async (
   }
 
   const result = await response.json();
-  console.log("Search organizations result:", result);
+
   return result.data as SearchOrganizationsResponse;
 };

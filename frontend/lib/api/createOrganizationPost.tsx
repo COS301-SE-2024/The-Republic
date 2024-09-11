@@ -8,6 +8,8 @@ export const createOrganizationPost = async (
 ): Promise<OrganizationPost> => {
   const formData = new FormData();
   formData.append('content', content);
+  formData.append('organization_id', organizationId);
+  formData.append('author_id', user.user_id);
   if (image) {
     formData.append('image', image);
   }

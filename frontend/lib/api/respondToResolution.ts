@@ -3,7 +3,8 @@ import { Resolution, UserAlt as User } from "@/lib/types";
 const respondToResolution = async (
   user: User,
   resolutionId: string,
-  accept: boolean
+  accept: boolean,
+  rating?: number
 ): Promise<Resolution> => {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -13,7 +14,8 @@ const respondToResolution = async (
   const body = {
     resolutionId,
     userId: user.user_id,
-    accept
+    accept,
+    satisfactionRating: rating
   };
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/respond-resolution`;
