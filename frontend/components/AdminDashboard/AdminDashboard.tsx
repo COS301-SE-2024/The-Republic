@@ -23,7 +23,7 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   const [orgData, setOrgData] = useState<Organization>(organization);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   //const [broadcastMessage, setBroadcastMessage] = useState('');
-  const [broadcastError, setBroadcastError] = useState('');
+  //const [broadcastError, setBroadcastError] = useState('');
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -52,11 +52,11 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   };
 
   const handleBroadcast = (message: string) => {
-    setBroadcastError(''); 
+    //setBroadcastError(''); 
     const isAppropriate = checkContentAppropriateness(message);
 
     if (!isAppropriate) {
-      setBroadcastError('Broadcast message contains inappropriate content. Please modify the message.');
+      //setBroadcastError('Broadcast message contains inappropriate content. Please modify the message.');
       return;
     }
 
