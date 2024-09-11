@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Organization, UserAlt } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,7 +32,6 @@ interface MembersTabProps {
 }
 
 export default function MembersTab({ organization, members, setMembers }: MembersTabProps) {
-  const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
   const { toast } = useToast();
   const router = useRouter();
@@ -72,7 +71,6 @@ export default function MembersTab({ organization, members, setMembers }: Member
       router.push('/');
     } catch (err) {
       console.error("Error leaving organization:", err);
-      setError('Failed to leave organization');
       toast({
         title: "Error",
         description: "Failed to leave organization",
@@ -94,7 +92,6 @@ export default function MembersTab({ organization, members, setMembers }: Member
       }));
     } catch (err) {
       console.error("Error promoting member to admin:", err);
-      setError('Failed to promote member to admin');
       toast({
         title: "Error",
         description: "Failed to promote member to admin",
