@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { Organization } from '../../lib/types';
+import { checkContentAppropriateness } from '@/lib/api/checkContentAppropriateness'; 
 
 interface CreateOrganizationFormProps {
   isOpen: boolean;
@@ -37,8 +38,21 @@ const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen,
     setError('');
     setSuccess('');
 
+    const isNameAppropriate = await checkContentAppropriateness(name);
+    const isDescriptionAppropriate = await checkContentAppropriateness(description);
+
     if (!name) {
       setError('Please enter an organization name.');
+      return;
+    }
+
+    if (!isNameAppropriate) {
+      setError('Organization name contains inappropriate content.');
+      return;
+    }
+
+    if (!isDescriptionAppropriate) {
+      setError('Organization description contains inappropriate content.');
       return;
     }
 

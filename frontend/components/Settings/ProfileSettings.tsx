@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { User } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { updateUsername } from "@/lib/api/updateProfile";
-import ChangePasswordForm from "../ChangePasswordForm/ChangePasswordForm" 
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import ChangePasswordForm from "../ChangePasswordForm/ChangePasswordForm";
 
 const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsername }) => {
   const [newUsername, setNewUsername] = useState("");
@@ -14,7 +15,13 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
   const [successMessage, setSuccessMessage] = useState("");
 
   const mutation = useMutation({
-    mutationFn: updateUsername,
+    mutationFn: async () => {
+      const isUsernameAppropriate = await checkContentAppropriateness(newUsername);
+      if (!isUsernameAppropriate) {
+        throw new Error("Username contains inappropriate content.");
+      }
+      return updateUsername(newUsername);
+    },
     onSuccess: () => {
       setSuccessMessage("Username changed successfully!");
       setErrorMessage("");
@@ -22,6 +29,8 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
     onError: (error: Error) => {
       if (error.message === "Username already taken.") {
         setErrorMessage("Username already taken.");
+      } else if (error.message === "Username contains inappropriate content.") {
+        setErrorMessage("Please choose an appropriate username.");
       } else {
         setErrorMessage(error.message || "An unexpected error occurred.");
       }
@@ -34,7 +43,7 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
       return;
     }
 
-    mutation.mutate(newUsername);
+    mutation.mutate();
   };
 
   return (

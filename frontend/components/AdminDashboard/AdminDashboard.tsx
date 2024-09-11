@@ -10,6 +10,7 @@ import { TbTrash } from "react-icons/tb";
 import { LiaFileDownloadSolid } from "react-icons/lia";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import EditOrganizationForm from '../EditOrganizationForm/EditOrganizationForm';
+import { checkContentAppropriateness } from '@/lib/api/checkContentAppropriateness'; 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
@@ -21,12 +22,15 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [orgData, setOrgData] = useState<Organization>(organization);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastError, setBroadcastError] = useState('');
   const { theme } = useTheme();
 
   useEffect(() => {
+    const sanitizedTerm = searchTerm.replace(/[^\w\s]/gi, '');
     const results = organization.members.filter(member =>
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.username.toLowerCase().includes(searchTerm.toLowerCase())
+      member.name.toLowerCase().includes(sanitizedTerm.toLowerCase()) ||
+      member.username.toLowerCase().includes(sanitizedTerm.toLowerCase())
     );
     setFilteredMembers(results);
   }, [searchTerm, organization.members]);
@@ -48,7 +52,16 @@ const AdminDashboard: React.FC<{ organization: Organization }> = ({ organization
   };
 
   const handleBroadcast = (message: string) => {
+    setBroadcastError(''); 
+    const isAppropriate = checkContentAppropriateness(message);
+
+    if (!isAppropriate) {
+      setBroadcastError('Broadcast message contains inappropriate content. Please modify the message.');
+      return;
+    }
+
     console.log(`Broadcast message: ${message}`);
+    setBroadcastMessage('');
   };
 
   const openEditModal = () => {

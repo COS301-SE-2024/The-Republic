@@ -229,14 +229,12 @@ export class UserService {
     newPassword: string
   ): Promise<APIResponse<void>> {
     try {
-      console.log("Starting password change process for user:", userId);
-  
       const { data: userData, error: userError } = await supabase
         .from('user')
         .select('email_address')
         .eq('user_id', userId)
         .single();
-  
+
       if (userError) {
         console.error("Error fetching user data:", userError);
         throw APIError({
@@ -245,7 +243,7 @@ export class UserService {
           error: "User not found",
         });
       }
-  
+
       if (!userData) {
         console.error("User data is null for userId:", userId);
         throw APIError({
@@ -254,15 +252,13 @@ export class UserService {
           error: "User not found",
         });
       }
-  
-      console.log("User email fetched successfully");
-  
-     
+
+      // Verify the current password
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: userData.email_address,
         password: currentPassword,
       });
-  
+
       if (signInError) {
         console.error("Sign-in error:", signInError);
         throw APIError({
@@ -271,14 +267,12 @@ export class UserService {
           error: "Current password is incorrect",
         });
       }
-  
-      console.log("Current password verified successfully");
-  
+
       // If sign-in was successful, update the password
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });
-  
+
       if (updateError) {
         console.error("Password update error:", updateError);
         throw APIError({
@@ -287,9 +281,7 @@ export class UserService {
           error: "Failed to update password",
         });
       }
-  
-      console.log("Password updated successfully");
-  
+
       return {
         code: 200,
         success: true,

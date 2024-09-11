@@ -17,18 +17,26 @@ const ChangePasswordForm: React.FC = () => {
   const mutation = useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      setSuccessMessage("Password changed successfully!");
+      setSuccessMessage("Password changed successfully! You will need to log in again.");
       setErrorMessage("");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     },
-    onError: (error: Error) => {
-      setErrorMessage(error.message || "An unexpected error occurred.");
+    onError: (error: any) => {
+      console.error("Password change error:", error);
+      if (error.message === "Current password is incorrect") {
+        setErrorMessage("Current password is incorrect");
+      } else {
+        setErrorMessage(error.message || "An error occurred while changing the password");
+      }
     },
   });
 
   const handleChangePassword = () => {
+    setErrorMessage(""); 
+    setSuccessMessage("");
+
     if (newPassword !== confirmPassword) {
       setErrorMessage("New passwords do not match.");
       return;
@@ -51,6 +59,7 @@ const ChangePasswordForm: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+
           <div>
             <Label htmlFor="currentPassword">Current Password</Label>
             <Input

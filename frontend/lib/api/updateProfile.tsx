@@ -95,10 +95,12 @@ export const changePassword = async ({ currentPassword, newPassword }: { current
     body: JSON.stringify({ currentPassword, newPassword }),
   });
 
+  const responseData = await response.json();
+
   if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData.error || "Failed to change password");
+    console.error("Password change error:", responseData);
+    throw new Error(responseData.error || "An error occurred while changing the password");
   }
 
-  return response.json();
+  return responseData;
 };

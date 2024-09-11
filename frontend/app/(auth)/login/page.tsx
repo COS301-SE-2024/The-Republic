@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 import { Eye, EyeOff, Share2, AlertTriangle, MessageCircle, Shield, TrendingUp, Mail, Lock } from "lucide-react";
 import { motion } from "framer-motion";
+import DOMPurify from "dompurify";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +20,14 @@ export default function Login() {
 
   const login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    
+    const sanitizedEmail = DOMPurify.sanitize(email);
+    const sanitizedPassword = DOMPurify.sanitize(password);
+    
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: sanitizedEmail,
+      password: sanitizedPassword,
     });
 
     if (error) {
@@ -51,7 +57,6 @@ export default function Login() {
           transition={{ duration: 0.5 }}
           className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-500"
         >
-
         </motion.h1>
       </div>
       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto bg-white dark:bg-transparent rounded-xl overflow-hidden shadow-lg">
