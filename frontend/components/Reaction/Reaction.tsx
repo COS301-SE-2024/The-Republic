@@ -6,7 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { handleReaction } from "@/lib/api/handleReaction";
 
 const Reaction: React.FC<ReactionProps> = ({
-  issueId,
+  itemId,
+  itemType,
   initialReactions,
   userReaction,
 }) => {
@@ -14,20 +15,26 @@ const Reaction: React.FC<ReactionProps> = ({
   const [activeReaction, setActiveReaction] = useState<string | null>(
     userReaction,
   );
-  const [reactions, setReactions] = useState<{ [key: string]: number }>(() =>
-    initialReactions?.reduce(
-      (acc, reaction) => {
-        acc[reaction.emoji] = reaction.count;
-        return acc;
-      },
-      {} as { [key: string]: number },
-    ),
-  );
+  const [reactions, setReactions] = useState<{ [key: string]: number }>(() => {
+    if (Array.isArray(initialReactions)) {
+      return initialReactions.reduce(
+        (acc, reaction) => {
+          acc[reaction.emoji] = reaction.count;
+          return acc;
+        },
+        {} as { [key: string]: number },
+      );
+    } else if (typeof initialReactions === 'object' && initialReactions !== null) {
+      return initialReactions;
+    } else {
+      return {};
+    }
+  });
 
   const mutation = useMutation({
     mutationFn: async (emoji: string) => {
       if (user) {
-        return await handleReaction(user, issueId, emoji);
+        return await handleReaction(user, itemId, itemType, emoji);
       } else {
         console.error("You need to be logged in to react");
       }

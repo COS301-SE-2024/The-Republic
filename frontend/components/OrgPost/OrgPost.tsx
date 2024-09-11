@@ -1,35 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, MoreVertical } from 'lucide-react';
-import { useUser } from "@/lib/contexts/UserContext";
+import { MessageCircle } from 'lucide-react';
 import { timeSince } from "@/lib/utils";
 import Reaction from "../Reaction/Reaction";
 import Image from "next/image";
 import MoreMenu from "../MoreMenu/MoreMenu";
-import CommentList from "../Comment/CommentList";
+import { Organization, OrganizationPost } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
 
 interface OrgPostProps {
-  post: {
-    id: string;
-    content: string;
-    created_at: string;
-    image_url?: string;
-    organization: {
-      id: string;
-      name: string;
-      profile_photo?: string;
-    };
-    reactions: any; // Replace with proper type
-    comment_count: number;
-  };
-  onDeletePost?: (post: OrgPostProps['post']) => void;
+  organization: Organization;
+  post: OrganizationPost;
+  onDeletePost?: (post: OrganizationPost) => void;
   isAdmin: boolean;
+  isMember: boolean;
 }
 
-const OrgPost: React.FC<OrgPostProps> = ({ post, onDeletePost, isAdmin }) => {
-  const { user } = useUser();
-  const [showComments, setShowComments] = useState(false);
+const OrgPost: React.FC<OrgPostProps> = ({ organization, post, onDeletePost, isAdmin, isMember }) => {
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleAction = (action: string) => {
     if (action === 'Delete' && onDeletePost) {
@@ -39,16 +30,40 @@ const OrgPost: React.FC<OrgPostProps> = ({ post, onDeletePost, isAdmin }) => {
 
   const menuItems = isAdmin ? ['Delete'] : [];
 
+  // Safely transform post.reactions.counts object to an array
+  const initialReactions = React.useMemo(() => {
+    const counts = post.reactions?.counts || {};
+    return Object.entries(counts).map(([emoji, count]) => ({
+      emoji,
+      count: typeof count === 'number' ? count : 0,
+    }));
+  }, [post.reactions]);
+
+  const handleCommentClick = () => {
+    if (isMember) {
+      router.push(`/organization/${organization.id}/posts/${post.post_id}`);
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Only members can view and add comments.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 rounded">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center space-x-2">
           <Avatar className="w-10 h-10">
-            <AvatarImage src={post.organization.profile_photo} alt={post.organization.name} />
-            <AvatarFallback>{post.organization.name ? post.organization.name.charAt(0) : '?'}</AvatarFallback>
+            <AvatarImage src={organization.profile_photo} alt={organization.name} />
+            <AvatarFallback>{organization.name ? organization.name.charAt(0) : '?'}</AvatarFallback>
           </Avatar>
           <div>
-            <div className="font-semibold">{post.organization.name}</div>
+            <div className="font-semibold">{organization.name}</div>
+            {organization.username && (
+              <div className="text-sm text-muted-foreground">@{organization.username}</div>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -79,24 +94,19 @@ const OrgPost: React.FC<OrgPostProps> = ({ post, onDeletePost, isAdmin }) => {
         )}
       </CardContent>
       <CardFooter className="flex flex-wrap gap-4 items-center">
-        <div className="flex items-center cursor-pointer" onClick={() => setShowComments(!showComments)}>
+        <div className="flex items-center cursor-pointer" onClick={handleCommentClick}>
           <MessageCircle className="mr-1" />
-          <span>{post.comment_count}</span>
+          <span>{post.comment_count ?? 0}</span>
         </div>
-        <Reaction
-          issueId={post.id}
-          initialReactions={post.reactions}
-          userReaction={post.reactions.find((r: any) => r.user_id === user?.user_id)}
-        />
+        {isMember && (
+          <Reaction
+            itemId={post.post_id}
+            itemType="post"
+            initialReactions={initialReactions}
+            userReaction={post.reactions?.userReaction}
+          />
+        )}
       </CardFooter>
-      {showComments && (
-        <CommentList
-          issueId={parseInt(post.id, 10)}
-          parentCommentId={null}
-          showAddComment={true}
-          showComments={true}
-        />
-      )}
     </Card>
   );
 };
