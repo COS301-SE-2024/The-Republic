@@ -590,7 +590,7 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
         .eq("organization_id", item.organizations.id);
   
       return {
-        ...item.organizations,
+        ...item.organizations[0],
         totalMembers: count || 0,
         userRole: item.role
       } as Organization;
