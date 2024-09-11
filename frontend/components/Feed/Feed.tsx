@@ -21,20 +21,18 @@ import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
 const FETCH_SIZE = 10;
 
+let lastSortBy: string;
+let lastFilter: string;
 let lastLocation: Location | null;
 
 const Feed: React.FC = () => {
   const { user } = useUser();
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
   const searchParams = useSearchParams();
-  const [sortBy, setSortBy] = useState("newest");
-  const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(
-    lastLocation ?? null
-  );
-  const [isLoadingLocation, setIsLoadingLocation] = useState(
-    lastLocation === undefined
-  );
+  const [sortBy, setSortBy] = useState(lastSortBy ?? "newest");
+  const [filter, setFilter] = useState(lastFilter ?? searchParams.get("category") ?? "All");
+  const [location, setLocation] = useState<Location | null>(lastLocation ?? null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(lastLocation === undefined);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
@@ -250,15 +248,21 @@ const Feed: React.FC = () => {
           parentId={scrollId}
           controlRef={lazyRef}
           uniqueId="feed-issues"
-          adFrequency={5}
+          adFrequency={10}
         />
       </div>
       {isDesktop && (
         <RightSidebar
           sortBy={sortBy}
-          setSortBy={setSortBy}
+          setSortBy={(sortBy) => {
+            lastSortBy = sortBy;
+            setSortBy(lastSortBy);
+          }}
           filter={filter}
-          setFilter={setFilter}
+          setFilter={(filter) => {
+            lastFilter = filter;
+            setFilter(lastFilter);
+          }}
           location={location}
           setLocation={(location) => {
             lastLocation = location;
@@ -283,11 +287,20 @@ const Feed: React.FC = () => {
           {isFilterModalOpen && (
             <FilterModal
               sortBy={sortBy}
-              setSortBy={setSortBy}
+              setSortBy={(sortBy) => {
+                lastSortBy = sortBy;
+                setSortBy(lastSortBy);
+              }}
               filter={filter}
-              setFilter={setFilter}
+              setFilter={(filter) => {
+                lastFilter = filter;
+                setFilter(lastFilter);
+              }}
               location={location}
-              setLocation={setLocation}
+              setLocation={(location) => {
+                lastLocation = location;
+                setLocation(lastLocation && {...lastLocation});
+              }}
               onClose={() => setIsFilterModalOpen(false)}
             />
           )}

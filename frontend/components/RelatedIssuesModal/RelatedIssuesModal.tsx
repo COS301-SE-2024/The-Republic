@@ -13,7 +13,7 @@ export interface RelatedIssuesModalProps {
 const RelatedIssuesModal: React.FC<RelatedIssuesModalProps> = ({ isOpen, onClose, issues }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[50vw]">
         <DialogHeader>
           <DialogTitle>Related Issues</DialogTitle>
         </DialogHeader>
