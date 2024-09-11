@@ -175,6 +175,7 @@ export default function Signup() {
                   required
                   className="w-full mt-1 sm:mt-2 text-base sm:text-lg pl-10 pr-10 border-green-300 dark:border-green-700 rounded-md focus:border-green-500 focus:ring focus:ring-green-200 dark:bg-transparent dark:text-white"
                   placeholder="Create a strong password"
+                  autoComplete="new-password"
                 />
                 <Lock className="absolute top-1/2 left-3 transform -translate-y-1/2 text-green-500" size={18} />
                 <button

@@ -6,12 +6,12 @@ import { useTheme } from 'next-themes';
 import { Loader2 } from "lucide-react";
 import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
-import { UserAlt, LeaderboardEntry } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ErrorDisplay from '@/components/ui/error_display';
+import { useQuery } from '@tanstack/react-query';
 
 type RankingType = 'country' | 'province' |'city' | 'suburb';
 
@@ -25,36 +25,27 @@ const Leaderboard: React.FC = () => {
   const { user } = useUser();
   const [rankingType, setRankingType] = useState<RankingType>('country');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
-  const [userData, setUserData] = useState<UserAlt | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const { theme } = useTheme();
   const router = useRouter();
-  const [userHasLocation, setUserHasLocation] = useState(false);
-
-  const handleUsernameClick = (userId: string) => {
-    router.push(`/profile/${userId}`);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
+  const { data: locationData } = useQuery({
+    queryKey: ["user-location"],
+    queryFn: async () => {
+      if (user?.location_id) {
+        return await fetchUserLocation(user.location_id);
+      } else {
+        return null;
+      }
+    }
+  });
+  const { data, error, isPending, isFetching } = useQuery({
+    queryKey: ["leaderboard", rankingType],
+    queryFn: async () => {
       if (!user) {
-        setError('No user data available');
-        setIsLoading(false);
-        return;
+        throw 'No user data available';
       }
   
       try {
-        setIsLoading(true);
-        setError(null);
-  
-        const locationData = user.location_id ? await fetchUserLocation(user.location_id) : null;
-        setUserHasLocation(!!locationData);
-  
         let filterData = {};
         if (locationData && locationData.value) {
           filterData = {
@@ -65,21 +56,22 @@ const Leaderboard: React.FC = () => {
         }
   
         const data = await fetchLeaderboard(user.user_id, rankingType, filterData);
-  
-        setLeaderboardData(data.leaderboard);
-        setUserData(data.user);
-        setIsLoading(false);
+
+        return {
+          leaderboardData: data.leaderboard,
+          userData: data.user
+        };
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
-        setError('Failed to load leaderboard data');
-        setIsLoading(false);
-      } finally {
-        setIsLoading(false); 
+        throw 'Failed to load leaderboard data';
       }
-    };
-  
-    fetchData();
-  }, [user, rankingType]);
+    },
+    enabled: locationData !== undefined
+  });
+
+  const handleUsernameClick = (userId: string) => {
+    router.push(`/profile/${userId}`);
+  };
 
   useEffect(() => {
     if (userRowRef.current) {
@@ -87,7 +79,7 @@ const Leaderboard: React.FC = () => {
     }
   }, [rankingType]);
 
-  if (isLoading) {
+  if (isPending || isFetching) {
     return <LoadingIndicator />;
   }
 
@@ -101,6 +93,8 @@ const Leaderboard: React.FC = () => {
       />
     );
   }
+
+  const { leaderboardData, userData } = data!;
   
   if (!userData) {
     return (
@@ -112,6 +106,8 @@ const Leaderboard: React.FC = () => {
       />
     );
   }  
+
+  const userHasLocation = !!locationData;
 
   return (
     <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
