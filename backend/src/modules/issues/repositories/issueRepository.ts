@@ -119,12 +119,14 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByIssueId(
-          issue.issue_id,
+        const reactions = await reactionRepository.getReactionCountsByItemId(
+          issue.issue_id.toString(),
+          "issue"
         );
         const userReaction = user_id
-          ? await reactionRepository.getReactionByUserAndIssue(
-              issue.issue_id,
+          ? await reactionRepository.getReactionByUserAndItem(
+              issue.issue_id.toString(),
+              "issue",
               user_id,
             )
           : null;
@@ -207,16 +209,18 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByIssueId(
-      data.issue_id,
+    const reactions = await reactionRepository.getReactionCountsByItemId(
+      data.issue_id.toString(),
+      "issue"
     );
     const userReaction = user_id
-      ? await reactionRepository.getReactionByUserAndIssue(
-          data.issue_id,
+      ? await reactionRepository.getReactionByUserAndItem(
+          data.issue_id.toString(),
+          "issue",
           user_id,
         )
       : null;
-    const commentCount = await commentRepository.getNumComments(data.issue_id);
+    const commentCount = await commentRepository.getNumComments(data.issue_id, "issue");
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
     const resolutions = await this.getResolutionsForIssue(data.issue_id);
     const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
@@ -480,8 +484,9 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByIssueId(
-      data.issue_id,
+    const reactions = await reactionRepository.getReactionCountsByItemId(
+      data.issue_id.toString(),
+      "issue"
     );
 
     return {
@@ -597,15 +602,17 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByIssueId(
-          issue.issue_id,
+        const reactions = await reactionRepository.getReactionCountsByItemId(
+          issue.issue_id.toString(),
+          "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndIssue(
-          issue.issue_id,
+        const userReaction = await reactionRepository.getReactionByUserAndItem(
+          issue.issue_id.toString() ,
+          "issue",
           userId,
         );
         const commentCount = await commentRepository.getNumComments(
-          issue.issue_id,
+          issue.issue_id.toString(), "issue"
         );
         return {
           ...issue,
@@ -670,15 +677,18 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByIssueId(
-          issue.issue_id,
+        const reactions = await reactionRepository.getReactionCountsByItemId(
+          issue.issue_id.toString(),
+          "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndIssue(
-          issue.issue_id,
+        const userReaction = await reactionRepository.getReactionByUserAndItem(
+          issue.issue_id.toString(),
+          "issue",
           userId,
         );
         const commentCount = await commentRepository.getNumComments(
-          issue.issue_id,
+          issue.issue_id.toString(),
+          "issue"
         );
         return {
           ...issue,
@@ -837,6 +847,33 @@ export default class IssueRepository {
         code: 500,
         success: false,
         error: "An unexpected error occurred while fetching issues in the cluster.",
+      });
+    }
+  
+    return data;
+  }
+
+  async getIssueEmbedding(issueId: number): Promise<Issue> {
+    const { data, error } = await supabase
+      .from('issue_embeddings')
+      .select('*')
+      .eq('issue_id', issueId)
+      .single();
+  
+    if (error) {
+      console.error('Error fetching issue embedding:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching the issue embedding.",
+      });
+    }
+  
+    if (!data) {
+      throw APIError({
+        code: 404,
+        success: false,
+        error: "Issue embedding not found",
       });
     }
   

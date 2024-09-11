@@ -6,6 +6,19 @@ import { verifyAndGetUser } from "@/middleware/middleware";
 
 jest.mock("@/middleware/middleware");
 jest.mock("@/modules/reactions/controllers/reactionController");
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+
+jest.mock("@/modules/shared/services/redisClient", () => ({
+  __esModule: true,
+  default: {
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn().mockResolvedValue([]),
+  },
+}));
 
 const app = express();
 app.use(express.json());

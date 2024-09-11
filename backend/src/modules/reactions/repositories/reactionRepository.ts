@@ -3,17 +3,18 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
 export default class ReactionRepository {
-  async addReaction(reaction: Partial<Reaction>) {
-    reaction.created_at = new Date().toISOString();
+  async addReaction(reaction: Partial<Reaction> & { itemType: 'issue' | 'post' }) {
+    const reactionData = reaction;
+    reactionData.created_at = new Date().toISOString();
+
     const { data, error } = await supabase
       .from("reaction")
-      .insert(reaction)
+      .insert(reactionData)
       .select()
       .single();
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -24,18 +25,17 @@ export default class ReactionRepository {
     return data as Reaction;
   }
 
-  async deleteReaction(issueId: number, userId: string) {
+  async deleteReaction(itemId: string, itemType: 'issue' | 'post', userId: string) {
     const { data, error } = await supabase
       .from("reaction")
       .delete()
-      .eq("issue_id", issueId)
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
       .eq("user_id", userId)
       .select()
       .maybeSingle();
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -54,17 +54,16 @@ export default class ReactionRepository {
     return data as Reaction;
   }
 
-  async getReactionByUserAndIssue(issueId: number, userId: string) {
+  async getReactionByUserAndItem(itemId: string, itemType: 'issue' | 'post', userId: string) {
     const { data, error } = await supabase
       .from("reaction")
       .select("*")
-      .eq("issue_id", issueId)
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
       .eq("user_id", userId)
       .maybeSingle();
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -75,15 +74,14 @@ export default class ReactionRepository {
     return data as Reaction | null;
   }
 
-  async getReactionCountsByIssueId(issueId: number) {
+  async getReactionCountsByItemId(itemId: string, itemType: 'issue' | 'post') {
     const { data, error } = await supabase
       .from("reaction")
       .select("emoji")
-      .eq("issue_id", issueId);
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId);
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,

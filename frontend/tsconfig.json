@@ -30,6 +30,6 @@
     ".next/types/**/*.ts",
     "cypress/**/*.ts",
     "global.d.ts"
-  ],
+, "components/CreateOrganizationForm"  ],
   "exclude": ["node_modules"]
 }

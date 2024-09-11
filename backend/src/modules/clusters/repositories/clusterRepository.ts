@@ -269,6 +269,7 @@ export class ClusterRepository {
       .from('issue')
       .select(`
         *,
+        issue_embeddings (content_embedding),
         cluster:cluster_id (
           centroid_embedding
         )
@@ -276,7 +277,7 @@ export class ClusterRepository {
       .eq('cluster_id', clusterId);
   
     if (error) {
-      console.error(error);
+      console.error('Error fetching issues in cluster:', error);
       throw APIError({
         code: 500,
         success: false,
@@ -284,7 +285,15 @@ export class ClusterRepository {
       });
     }
   
-    return data;
+    if (!data || !Array.isArray(data)) {
+      console.warn('No issues found in cluster or invalid data format');
+      return [];
+    }
+  
+    return data.map(issue => ({
+      ...issue,
+      content_embedding: issue.issue_embeddings?.[0]?.content_embedding || null
+    }));
   }
 
   async getIssueEmbeddingsInCluster(clusterId: string): Promise<Partial<Issue>[]> {
