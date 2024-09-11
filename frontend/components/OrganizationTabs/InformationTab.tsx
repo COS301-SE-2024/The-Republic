@@ -1,50 +1,59 @@
 import { useState, useEffect } from 'react';
 import { Organization, OrganizationPost, UserAlt as User } from '@/lib/types';
+import { deleteOrganizationPost } from '@/lib/api/deleteOrganizationPost';
+import { checkUserMembership } from '@/lib/api/checkUserMembership';
+import { useUser } from '@/lib/contexts/UserContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, MapPin, Clock, Tag } from 'lucide-react';
+import { Users, MapPin, Tag, PenSquare, Star } from 'lucide-react';
 import OrgPost from '@/components/OrgPost/OrgPost';
-import { useUser } from '@/lib/contexts/UserContext';
-import { getOrganizationPosts } from '@/lib/api/getOrganizationPosts';
-import { getTopOrganizationMembers } from '@/lib/api/getTopOrganizationMembers';
-import { createOrganizationPost } from '@/lib/api/createOrganizationPost';
-import { deleteOrganizationPost } from '@/lib/api/deleteOrganizationPost';
-import { Loader2 } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import CreateOrgPost from '@/components/CreatePost/CreatePost';
 import { useToast } from '../ui/use-toast';
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface InformationTabProps {
   organization: Organization;
   orgPosts: OrganizationPost[];
   topActiveMembers: User[];
   setOrgPosts: React.Dispatch<React.SetStateAction<OrganizationPost[]>>;
+  isUserAdmin: boolean;
 }
 
-export default function InformationTab({ organization, orgPosts, topActiveMembers, setOrgPosts }: InformationTabProps) {
+export default function InformationTab({ 
+  organization, 
+  orgPosts, 
+  topActiveMembers, 
+  setOrgPosts,
+  isUserAdmin
+}: InformationTabProps) {
     const { user } = useUser();
-    const [newPostContent, setNewPostContent] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
+    const [showCreatePost, setShowCreatePost] = useState(false);
+    const [isMember, setIsMember] = useState(false);
 
-    const handleCreatePost = async () => {
-      if (!user || !newPostContent.trim()) return;
-      try {
-        const newPost = await createOrganizationPost(user, organization.id, newPostContent);
-        setOrgPosts(prevPosts => [newPost, ...prevPosts]);
-        setNewPostContent('');
-        toast({
-          title: "Success",
-          description: "Post created successfully",
-        });
-      } catch (err) {
-        console.error("Error creating post:", err);
-        toast({
-          title: "Error",
-          description: "Failed to create post",
-          variant: "destructive",
-        });
-      }
+    useEffect(() => {
+      const fetchMembershipStatus = async () => {
+        if (user && organization) {
+          try {
+            const membershipStatus = await checkUserMembership(user, organization.id);
+            setIsMember(membershipStatus);
+          } catch (error) {
+            console.error("Error checking membership status:", error);
+          }
+        }
+      };
+
+      fetchMembershipStatus();
+    }, [user, organization]);
+
+    const handlePostCreated = (newPost: OrganizationPost) => {
+      setOrgPosts(prevPosts => [newPost, ...prevPosts]);
+      setShowCreatePost(false);
+      toast({
+        title: "Success",
+        description: "Post created successfully",
+      });
     };
   
     const handleDeletePost = async (postId: string) => {
@@ -73,52 +82,56 @@ export default function InformationTab({ organization, orgPosts, topActiveMember
     issueResolutionTime: '3.5 days',
   };
 
-
   return (
     <div className="grid grid-cols-4 gap-6">
       {/* Organization Posts - Spans 2 columns and full height */}
       <Card className="col-span-2 row-span-3 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-blue-500">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-green-800">Organization Posts</CardTitle>
+          {isUserAdmin && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCreatePost(!showCreatePost)}
+            >
+              <PenSquare className="w-5 h-5" />
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Textarea
-              value={newPostContent}
-              onChange={(e) => setNewPostContent(e.target.value)}
-              placeholder="Write a new post..."
-              className="w-full mb-2"
-            />
-            <Button onClick={handleCreatePost}>Create Post</Button>
-          </div>
-          <div className="overflow-auto max-h-[calc(100vh-300px)]">
-            {orgPosts && orgPosts.length > 0 ? (
-              orgPosts.map((post: OrganizationPost) => (
-                <OrgPost 
-                  key={post.post_id} 
-                  post={{
-                    id: post.post_id,
-                    content: post.content,
-                    created_at: post.created_at,
-                    image_url: post.image_url || '',
-                    organization: {
-                      id: organization.id,
-                      name: organization.name,
-                      profile_photo: organization.profile_photo
-                    },
-                    reactions: [], // Add proper reactions data if available
-                    comment_count: 0 // Add proper comment count if available
-                  }}
-                  onDeletePost={() => handleDeletePost(post.post_id)}
-                  isAdmin={organization.admins_ids?.includes(user?.user_id || '') || false}
+          <AnimatePresence>
+            {showCreatePost && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <CreateOrgPost 
+                  organization={organization}
+                  onPostCreated={handlePostCreated}
                 />
-              ))
-            ) : (
-              <p>No posts available.</p>
+              </motion.div>
             )}
+          </AnimatePresence>
+          <div className="overflow-auto max-h-[calc(100vh-300px)]">
+          {orgPosts && orgPosts.length > 0 ? (
+                orgPosts.map((post: OrganizationPost) => (
+                  <OrgPost
+                    key={post.post_id}
+                    post={post}
+                    onDeletePost={() => handleDeletePost(post.post_id)}
+                    isAdmin={isUserAdmin}
+                    organization={organization} 
+                    isMember={isMember}                  />
+                ))
+              ) : (
+                <p>No posts available.</p>
+              )}
           </div>
         </CardContent>
       </Card>
+
 
       {/* Top Active Members - Spans 2 columns */}
       <Card className="col-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-yellow-500">
@@ -184,18 +197,22 @@ export default function InformationTab({ organization, orgPosts, topActiveMember
         </CardContent>
       </Card>
 
-      {/* Average Issue Resolution Time */}
+      {/* Average Satisfaction Rating */}
       <Card className="col-span-1 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-yellow-500">
-        <CardHeader>
-          <CardTitle className="flex items-center text-green-800">
-            <Clock className="mr-2 h-5 w-5" />
-            Typical Resolution Time
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">{analyticsData.issueResolutionTime}</p>
-        </CardContent>
-      </Card>
+          <CardHeader>
+            <CardTitle className="flex items-center text-green-800">
+              <Star className="mr-2 h-5 w-5" />
+              Satisfaction Rating
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {organization.averageSatisfactionRating !== null && organization.averageSatisfactionRating !== undefined ? (
+              <p className="text-2xl font-bold">{organization.averageSatisfactionRating.toFixed(1)} / 5</p>
+            ) : (
+              <p className="text-sm text-gray-500">Not enough data</p>
+            )}
+          </CardContent>
+        </Card>
     </div>
   );
 }
