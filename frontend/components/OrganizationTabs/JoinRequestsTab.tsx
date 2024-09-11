@@ -9,6 +9,7 @@ import { handleJoinRequest } from '@/lib/api/handleJoinRequest';
 import { useToast } from '@/components/ui/use-toast';
 import { timeSince } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 interface JoinRequest {
   id: number;
@@ -76,7 +77,14 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
     router.push(`/profile/${userId}`);
   };
 
-  if (loading) return <div>Loading join requests...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48">
+        <Loader2 className="h-8 w-8 animate-spin text-green-400" />
+      </div>
+    );
+  }
+  
   if (error) return <div>Error: {error}</div>;
 
   return (
