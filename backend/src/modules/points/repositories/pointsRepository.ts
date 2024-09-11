@@ -227,6 +227,83 @@ export class PointsRepository {
     };
   }
 
+  async updateOrganizationScore(organizationId: string, points: number) {
+    // First, get the current score
+    const { data: currentData, error: fetchError } = await supabase
+      .from('organizations')
+      .select('points')
+      .eq('id', organizationId)
+      .single();
+  
+    if (fetchError) {
+      console.error('Error fetching organization score:', fetchError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching organization score.",
+      });
+    }
+  
+    const currentPoints = currentData?.points || 0;
+    const newPoints = currentPoints + points;
+  
+    // Now, update the score
+    const { data, error } = await supabase
+      .from('organizations')
+      .update({ points: newPoints })
+      .eq('id', organizationId)
+      .select('points')
+      .single();
+  
+    if (error) {
+      console.error('Error updating organization score:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating organization score.",
+      });
+    }
+  
+    return data?.points;
+  }
+
+  async logOrganizationPointsTransaction(organizationId: string, points: number, reason: string) {
+    const { error } = await supabase.from("points_history").insert({
+      organization_id: organizationId,
+      points: points,
+      action: reason,
+      created_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while logging organization points transaction.",
+      });
+    }
+  }
+
+  async getOrganizationScore(organizationId: string) {
+    const { data, error } = await supabase
+      .from("organizations")
+      .select("points")
+      .eq("id", organizationId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching organization score.",
+      });
+    }
+
+    return data.points;
+  }
+
   private userMatchesLocationFilter(user: DatabaseUser, locationFilter: { province?: string, city?: string, suburb?: string }): boolean {
     if (!user.location) return false;
     if (locationFilter.province && user.location.province !== locationFilter.province) return false;
