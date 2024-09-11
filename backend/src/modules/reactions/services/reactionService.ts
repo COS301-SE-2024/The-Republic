@@ -20,7 +20,7 @@ export default class ReactionService {
     this.pointsService = pointsService;
   }
 
-  async addOrRemoveReaction(reaction: Partial<Reaction>) {
+  async addOrRemoveReaction(reaction: Partial<Reaction> & { itemType: 'issue' | 'post' }) {
     if (!reaction.user_id) {
       throw APIError({
         code: 401,
@@ -29,7 +29,7 @@ export default class ReactionService {
       });
     }
 
-    if (!reaction.issue_id || !reaction.emoji) {
+    if ((!reaction.issue_id && !reaction.post_id) || !reaction.emoji || !reaction.itemType) {
       throw APIError({
         code: 400,
         success: false,
@@ -37,18 +37,21 @@ export default class ReactionService {
       });
     }
 
+    const itemId = reaction.issue_id || reaction.post_id;
+    const itemType = reaction.itemType;
+
     let added: string | undefined;
     let removed: string | undefined;
-
-    const existingReaction =
-      await this.reactionRepository.getReactionByUserAndIssue(
-        reaction.issue_id,
-        reaction.user_id,
-      );
+    const existingReaction = await this.reactionRepository.getReactionByUserAndItem(
+      itemId!.toString(),
+      itemType,
+      reaction.user_id,
+    );
 
     if (existingReaction) {
       const removedReaction = await this.reactionRepository.deleteReaction(
-        reaction.issue_id,
+        itemId!.toString(),
+        itemType,
         reaction.user_id,
       );
 
@@ -59,7 +62,7 @@ export default class ReactionService {
       const addedReaction = await this.reactionRepository.addReaction(reaction);
       added = addedReaction.emoji;
 
-      await this.pointsService.awardPoints(reaction.user_id, 5, "reacted to an issue");
+      await this.pointsService.awardPoints(reaction.user_id, 5, `reacted to an ${itemType}`);
     }
 
     return APIData({
