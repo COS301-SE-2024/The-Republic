@@ -7,6 +7,10 @@ import { Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { changePassword } from "@/lib/api/updateProfile";
 
+interface ChangePasswordError {
+  message: string;
+}
+
 const ChangePasswordForm: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -23,7 +27,7 @@ const ChangePasswordForm: React.FC = () => {
       setNewPassword("");
       setConfirmPassword("");
     },
-    onError: (error: any) => {
+    onError: (error: ChangePasswordError) => {
       console.error("Password change error:", error);
       if (error.message === "Current password is incorrect") {
         setErrorMessage("Current password is incorrect");
@@ -59,7 +63,6 @@ const ChangePasswordForm: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-
           <div>
             <Label htmlFor="currentPassword">Current Password</Label>
             <Input
