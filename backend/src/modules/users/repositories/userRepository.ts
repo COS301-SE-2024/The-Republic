@@ -1,6 +1,6 @@
-import supabase from "@/modules/shared/services/supabaseClient";
-import { User } from "@/modules/shared/models/issue";
-import { APIError } from "@/types/response";
+import supabase from "../../shared/services/supabaseClient";
+import { User } from "../../shared/models/issue";
+import { APIError } from "../../../types/response";
 
 export default class UserRepository {
   async getUserById(userId: string) {
