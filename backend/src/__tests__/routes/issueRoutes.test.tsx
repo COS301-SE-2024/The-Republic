@@ -18,6 +18,7 @@ jest.mock("@/modules/issues/controllers/issueController", () => ({
   respondToResolution: [jest.fn()],
   getUserResolutions: [jest.fn()],
   deleteResolution: [jest.fn()],
+  getOrganizationResolutions: [jest.fn()],
 }));
 
 const app = express();

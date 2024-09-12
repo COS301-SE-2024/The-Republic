@@ -2,7 +2,8 @@ import { UserAlt as User } from "@/lib/types";
 
 const handleReaction = async (
   user: User | null,
-  issueId: string,
+  itemId: string,
+  itemType: 'issue' | 'post',
   emoji: string | null,
 ): Promise<{ [key: string]: string } | { [key: string]: number }> => {
   const headers: HeadersInit = {
@@ -10,7 +11,11 @@ const handleReaction = async (
     Authorization: `Bearer ${user?.access_token}`,
   };
 
-  const requestBody = JSON.stringify({ issue_id: issueId, emoji });
+  const requestBody = JSON.stringify({ 
+    [itemType === 'issue' ? 'issue_id' : 'post_id']: itemId, 
+    itemType,
+    emoji 
+  });
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reactions`;
   const response = await fetch(url, {
@@ -24,7 +29,7 @@ const handleReaction = async (
   if (apiResponse.success && apiResponse.data) {
     return apiResponse.data;
   } else {
-    throw new Error(apiResponse.error || "Failed to fetch issue details");
+    throw new Error(apiResponse.error || "Failed to update reaction");
   }
 };
 

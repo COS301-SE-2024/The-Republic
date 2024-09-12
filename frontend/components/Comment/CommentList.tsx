@@ -1,4 +1,4 @@
-import { Comment as CommentType, CommentListProps2 } from "@/lib/types";
+import { Comment as CommentType, CommentListProps } from "@/lib/types";
 import Comment from "./Comment";
 import { useUser } from "@/lib/contexts/UserContext";
 import AddCommentForm from "./AddCommentForm";
@@ -10,8 +10,9 @@ import { fetchMoreComments } from "@/lib/api/fetchMoreComments";
 
 const FETCH_SIZE = 20;
 
-const CommentList: React.FC<CommentListProps2> = ({
-  issueId,
+const CommentList: React.FC<CommentListProps> = ({
+  itemId,
+  itemType,
   parentCommentId,
   showAddComment = true,
   showComments = true,
@@ -24,7 +25,7 @@ const CommentList: React.FC<CommentListProps2> = ({
       return [];
     }
 
-    return fetchMoreComments(user, from, amount, issueId, parentCommentId);
+    return fetchMoreComments(user, from, amount, itemId, itemType, parentCommentId);
   };
 
   const handleCommentAdded = (comment: CommentType) => {
@@ -58,9 +59,10 @@ const CommentList: React.FC<CommentListProps2> = ({
   return (
     <div className="pt-4" id={scrollId}>
       {showAddComment && (
-          <AddCommentForm
-          issueId={issueId}
-          parentCommentId={parentCommentId}
+        <AddCommentForm
+          itemId={itemId}
+          itemType={itemType}
+          parentCommentId={parentCommentId || null}
           onCommentAdded={handleCommentAdded}
         />
       )}
@@ -71,13 +73,15 @@ const CommentList: React.FC<CommentListProps2> = ({
           fetchKey={[
             "fetch-comments",
             user,
-            issueId,
+            itemId,
+            itemType,
             parentCommentId
           ]}
           Item={({ data: comment }) => (
             <Comment
               comment={comment}
               onCommentDeleted={handleCommentDeleted}
+              itemType={itemType}
             />
           )}
           Failed={FailedIndicator}
@@ -85,7 +89,7 @@ const CommentList: React.FC<CommentListProps2> = ({
           Empty={EmptyIndicator}
           controlRef={lazyRef}
           parentId={scrollId}
-          uniqueId={`issue-${issueId}-parent-${parentCommentId}-comments` }
+          uniqueId={`${itemType}-${itemId}-parent-${parentCommentId}-comments`}
         />
       )}
     </div>

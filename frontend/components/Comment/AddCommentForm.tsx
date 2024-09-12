@@ -12,13 +12,15 @@ import { useMutation } from "@tanstack/react-query";
 import { AddComment } from "@/lib/api/AddComment";
 
 interface AddCommentFormProps {
-  issueId: number;
-  parentCommentId: number | null;
+  itemId: string;
+  itemType: 'issue' | 'post';
+  parentCommentId: string | null;
   onCommentAdded: (comment: Comment) => void;
 }
 
 const AddCommentForm: React.FC<AddCommentFormProps> = ({
-  issueId,
+  itemId,
+  itemType,
   parentCommentId = null,
   onCommentAdded,
 }) => {
@@ -40,7 +42,8 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 
       return await AddComment(
         user,
-        issueId,
+        itemId,
+        itemType,
         content,
         isAnonymous,
         parentCommentId,

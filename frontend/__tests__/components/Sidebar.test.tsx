@@ -1,80 +1,68 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { useUser } from "@/lib/contexts/UserContext";
 import Sidebar from "@/components/Sidebar/Sidebar";
-import { useRouter } from 'next/navigation';
 
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}));
-
-jest.mock("@supabase/supabase-js", () => ({
-  createClient: jest.fn().mockReturnValue({
-    auth: {
-      signIn: jest.fn().mockResolvedValue({
-        user: { id: "user-id" },
-        session: "session-token",
-        error: null,
-      }),
-    },
-    from: jest.fn(() => ({
-      select: jest.fn().mockResolvedValue({ data: [], error: null }),
-      insert: jest.fn().mockResolvedValue({ data: [], error: null }),
-    })),
+// Mock the entire globals module
+jest.mock("@/lib/globals", () => ({
+  supabase: {
     channel: jest.fn().mockReturnValue({
       on: jest.fn().mockReturnThis(),
-      subscribe: jest.fn().mockImplementation(() => ({
-        unsubscribe: jest.fn(),
-      })),
+      subscribe: jest.fn().mockReturnThis(),
+      unsubscribe: jest.fn(),
     }),
-  }),
+  },
 }));
 
 jest.mock("@/lib/contexts/UserContext", () => ({
   useUser: jest.fn(),
 }));
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
+
+jest.mock("@/components/ui/use-toast", () => ({
+  useToast: () => ({
+    toast: jest.fn(),
+  }),
+}));
+
+// Add this import for the toBeInTheDocument matcher
+import "@testing-library/jest-dom";
+
 describe("Sidebar", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
-    (useRouter as jest.Mock).mockReturnValue({
-      push: jest.fn(),
-    });
-  });
-  
+  it("renders all expected tabs", () => {
+    (useUser as jest.Mock).mockReturnValue({ user: null });
 
-  afterEach(() => {
-    (console.error as jest.Mock).mockRestore();
+    render(<Sidebar isOpen={true} onClose={() => {}} username="" fullname="" imageUrl="" />);
+    
+    // Check for the presence of each expected tab
+    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Analytics")).toBeInTheDocument();
+    expect(screen.getByText("Organizations")).toBeInTheDocument();
+    expect(screen.getByText("Leaderboard")).toBeInTheDocument();
+    expect(screen.getByText("Login")).toBeInTheDocument();
   });
 
-  it("renders correctly for logged-in users", () => {
+  it("renders user information when logged in", () => {
     (useUser as jest.Mock).mockReturnValue({
       user: {
-        user_id: "1",
-        email_address: "user@example.com",
-        username: "user1",
-        fullname: "User One",
-        image_url: "http://example.com/avatar.jpg",
-        bio: "This is a bio",
-        is_owner: true,
-        total_issues: 5,
-        resolved_issues: 3,
-        access_token: "access_token_example",
+        fullname: "Test User",
+        username: "testuser",
+        image_url: "https://example.com/avatar.jpg",
       },
     });
 
-    render(<Sidebar />);
-    expect(screen.getByText("User One")).toBeInTheDocument();
-  });
-
-  it("renders correctly for guests", () => {
-    (useUser as jest.Mock).mockReturnValue({ user: null });
-
-    render(<Sidebar />);
-    expect(screen.getByText("General")).toBeInTheDocument();
-    expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("Analytics")).toBeInTheDocument();
+    render(<Sidebar isOpen={true} onClose={() => {}} username="testuser" fullname="Test User" imageUrl="https://example.com/avatar.jpg" />);
+    
+    expect(screen.getByText("Test User")).toBeInTheDocument();
+    expect(screen.getByText("@testuser")).toBeInTheDocument();
+    expect(screen.getByText("Profile")).toBeInTheDocument();
+    expect(screen.getByText("Settings")).toBeInTheDocument();
+    expect(screen.getByText("Notifications")).toBeInTheDocument();
   });
 });

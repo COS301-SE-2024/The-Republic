@@ -127,12 +127,13 @@ export const createSelfResolution = [
   upload.single("proofImage"),
   async (req: Request, res: Response) => {
     try {
-      const { issueId, userId, resolutionText } = req.body;
+      const { issueId, userId, resolutionText, organizationId } = req.body;
       const response = await issueService.createSelfResolution(
         parseInt(issueId), 
         userId, 
         resolutionText, 
-        req.file
+        req.file,
+        organizationId
       );
       clearCachePattern('__express__/api/issues*');
       sendResponse(res, response);
@@ -146,7 +147,7 @@ export const createExternalResolution = [
   upload.single("proofImage"),
   async (req: Request, res: Response) => {
     try {
-      const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy } = req.body;
+      const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy, organizationId } = req.body;
       const response = await issueService.createExternalResolution(
         parseInt(issueId),
         userId, 
@@ -154,7 +155,8 @@ export const createExternalResolution = [
         req.file,
         politicalAssociation,
         stateEntityAssociation,
-        resolvedBy
+        resolvedBy,
+        organizationId
       );
       clearCachePattern('__express__/api/issues*');
       sendResponse(res, response);
@@ -164,10 +166,23 @@ export const createExternalResolution = [
   },
 ];
 
+export const getOrganizationResolutions = [
+  cacheMiddleware(300),
+  async (req: Request, res: Response) => {
+    try {
+      const { organizationId } = req.body;
+      const response = await issueService.getOrganizationResolutions(organizationId);
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+];
+
 export const respondToResolution = async (req: Request, res: Response) => {
   try {
-    const { resolutionId, userId, accept } = req.body;
-    const response = await issueService.respondToResolution(resolutionId, userId, accept);
+    const { resolutionId, userId, accept, satisfactionRating } = req.body;
+    const response = await issueService.respondToResolution(resolutionId, userId, accept, satisfactionRating);
     clearCachePattern('__express__/api/issues*');
     sendResponse(res, response);
   } catch (err) {

@@ -189,13 +189,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             }
           }
         },
-      )
-      .subscribe((status) => {
-        console.log("Subscription Result: ", status);
-      });
+      );
 
     return () => {
-      channelA.unsubscribe();
+      if (channelA && channelA.unsubscribe) {
+        channelA.unsubscribe();
+      }
     };
   }, [user]);
 

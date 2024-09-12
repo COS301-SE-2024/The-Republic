@@ -1,182 +1,194 @@
-'use client';
-
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import * as Dialog from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { Organization } from '../../lib/types';
-import { checkContentAppropriateness } from '@/lib/api/checkContentAppropriateness'; 
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Organization } from '@/lib/types';
+import Image from 'next/image';
 
 interface CreateOrganizationFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (newOrg: Organization) => void;
+  onCreate: (newOrg: FormData) => Promise<Organization>;
 }
 
 const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen, onClose, onCreate }) => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
-  const [logo, setLogo] = useState<File | null>(null);
   const [website, setWebsite] = useState('');
-  const [joinPolicy, setJoinPolicy] = useState<'open' | 'request' | 'invite'>('open');
+  const [joinPolicy, setJoinPolicy] = useState<'open' | 'request' | 'closed'>('open');
+  const [orgType, setOrgType] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setLogo(e.target.files[0]);
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset form state when dialog is closed
+      setName('');
+      setUsername('');
+      setDescription('');
+      setWebsite('');
+      setJoinPolicy('open');
+      setOrgType('');
+      setProfilePhoto(null);
+      setProfilePhotoPreview(null);
+      setError('');
     }
-  };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
+    setIsSubmitting(true);
 
-    const isNameAppropriate = await checkContentAppropriateness(name);
-    const isDescriptionAppropriate = await checkContentAppropriateness(description);
-
-    if (!name) {
-      setError('Please enter an organization name.');
+    if (!name || !username) {
+      setError('Please enter an organization name and username.');
+      setIsSubmitting(false);
       return;
     }
 
-    if (!isNameAppropriate) {
-      setError('Organization name contains inappropriate content.');
-      return;
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('username', username);
+    formData.append('bio', description);
+    formData.append('website_url', website);
+    formData.append('join_policy', joinPolicy);
+    formData.append('org_type', orgType);
+    if (profilePhoto) {
+      formData.append('profilePhoto', profilePhoto);
     }
-
-    if (!isDescriptionAppropriate) {
-      setError('Organization description contains inappropriate content.');
-      return;
-    }
-
-    const newOrg: Organization = {
-      id: Date.now(), // Use a timestamp as a temporary ID
-      name,
-      description,
-      members: [
-        {
-          id: Date.now(), // Temporary ID for the creator
-          name: 'Creator Name', 
-          email: 'johndoe',
-          username: 'johndoe',
-          imageUrl: '/path-to-avatar.jpg',
-          isAdmin: true,
-        },
-      ],
-      userIsMember: true,
-      logo: logo ? URL.createObjectURL(logo) : 'https://via.placeholder.com/64?text=' + name.charAt(0),
-      website,
-      isAdmin: true,
-      memberCount: 1,
-      isPrivate: joinPolicy === 'request',
-      joinRequests: [],
-      joinPolicy: 'open' 
-    };
 
     try {
-      // Simulate API call
-      onCreate(newOrg);
-      setSuccess('Organization created successfully!');
+      await onCreate(formData);
       onClose();
-      router.push(`/organization/${newOrg.id}`); // Redirect to the new organization's page
     } catch (err) {
       setError('Failed to create organization. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfilePhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setProfilePhoto(null);
+      setProfilePhotoPreview(null);
     }
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={onClose}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 dark:bg-black/75" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-[#0C0A09] rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-auto">
-          <Dialog.Title className="text-2xl font-bold mb-4 border-b pb-2 text-gray-900 dark:text-gray-100">Create New Organization</Dialog.Title>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={handleDescriptionChange}
-                className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
-                rows={4}
-              />
-            </div>
-            <div>
-              <label htmlFor="logo" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Logo</label>
-              <input
-                id="logo"
-                type="file"
-                accept="image/*"
-                onChange={handleLogoChange}
-                className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer dark:bg-[#0C0A09] dark:text-gray-300"
-              />
-            </div>
-            <div>
-              <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Website URL</label>
-              <input
-                id="website"
-                type="url"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <label htmlFor="joinPolicy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Join Policy</label>
-              <select
-                id="joinPolicy"
-                value={joinPolicy}
-                onChange={(e) => setJoinPolicy(e.target.value as 'open' | 'request')}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-400 focus:ring-1 focus:ring-green-100 focus:ring-opacity-50 sm:text-sm px-3 py-2 dark:bg-[#0C0A09] dark:text-gray-100"
-              >
-                <option value="open">Open</option>
-                <option value="request">Request to Join</option>
-              </select>
-            </div>
-            {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
-            {success && <p className="text-green-500 dark:text-green-400">{success}</p>}
-            <div className="flex justify-end space-x-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
-              >
-                Create
-              </button>
-            </div>
-          </form>
-          <Dialog.Close asChild>
-            <button className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400">
-              <X />
-            </button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create New Organization</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+            />
+          </div>
+          <div>
+            <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Website URL</label>
+            <Input
+              id="website"
+              type="url"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="joinPolicy" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Join Policy</label>
+            <Select value={joinPolicy} onValueChange={(value: 'open' | 'request' | 'closed') => setJoinPolicy(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select join policy" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="request">Request to Join</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label htmlFor="orgType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Organization Type</label>
+            <Select value={orgType} onValueChange={setOrgType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select organization type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="political">Political</SelectItem>
+                <SelectItem value="npo">Non-Profit</SelectItem>
+                <SelectItem value="governmental">Governmental</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label htmlFor="profilePhoto" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Photo</label>
+            <Input
+              id="profilePhoto"
+              type="file"
+              onChange={handleProfilePhotoChange}
+              accept="image/*"
+            />
+            {profilePhotoPreview && (
+              <div className="mt-2">
+                <Image
+                  src={profilePhotoPreview}
+                  alt="Profile photo preview"
+                  width={100}
+                  height={100}
+                  className="rounded-full object-cover"
+                />
+              </div>
+            )}
+          </div>
+          {error && <p className="text-red-500 dark:text-red-400">{error}</p>}
+          <div className="flex justify-end space-x-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
