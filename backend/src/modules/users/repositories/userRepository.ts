@@ -1,4 +1,4 @@
-import supabase from "../../../modules/shared/services/supabaseClient";
+import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
 
