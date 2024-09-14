@@ -188,25 +188,29 @@ export class UserService {
   }
 
   async updateUsername(userId: string, newUsername: string): Promise<APIResponse<User>> {
-    const updatedUser = await this.userRepository.updateUsername(userId, newUsername);
-    if (!updatedUser) {
+    try {
+      const updatedUser = await this.userRepository.updateUsername(userId, newUsername);
+      
+      return {
+        code: 200,
+        success: true,
+        data: updatedUser,
+      };
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
       throw APIError({
-        code: 404,
+        code: 500,
         success: false,
-        error: "User not found",
+        error: "Username exists",
       });
     }
-
-    return {
-      code: 200,
-      success: true,
-      data: updatedUser,
-    };
   }
 
-  async checkUsernameAvailability(username: string): Promise<APIResponse<boolean>> {
+  async checkUsernameAvailability(username: string, currentUserId?: string): Promise<APIResponse<boolean>> {
     try {
-      const isUsernameTaken = await this.userRepository.isUsernameTaken(username);
+      const isUsernameTaken = await this.userRepository.isUsernameTaken(username, currentUserId);
       
       return {
         code: 200,
@@ -221,6 +225,7 @@ export class UserService {
       });
     }
   }
+  
 
 
   async changePassword(
@@ -295,7 +300,7 @@ export class UserService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred",
+        error: "Current password is incorrect",
       });
     }
   }

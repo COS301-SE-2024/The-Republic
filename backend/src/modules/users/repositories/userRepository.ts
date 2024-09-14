@@ -128,24 +128,75 @@ export default class UserRepository {
     return data;
   }
 
-  async updateUsername(userId: string, newUsername: string) {
-    const { data, error } = await supabase
-      .from("user")
-      .update({ username: newUsername })
-      .eq("user_id", userId)
-      .select()
-      .single();
+  async isUsernameTaken(username: string, excludeUserId?: string): Promise<boolean> {
+    try {
 
-    if (error) {
-      console.error("Supabase error:", error);
+      const escapedUsername = username.replace(/[_%]/g, '\\$&');
 
+      let query = supabase
+        .from("user")
+        .select("username")
+        .ilike("username", escapedUsername);
       
-      if (error.message.includes("duplicate key value violates unique constraint")) {
+      if (excludeUserId) {
+        query = query.neq("user_id", excludeUserId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      return data.length > 0;
+    } catch (error) {
+      console.error("Error checking username availability:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking username availability.",
+      });
+    }
+  }
+
+  async updateUsername(userId: string, newUsername: string): Promise<User> {
+    try {
+
+      const isUsernameTaken = await this.isUsernameTaken(newUsername, userId);
+
+      if (isUsernameTaken) {
         throw APIError({
           code: 409,
           success: false,
-          error: "Username already taken.",
+          error: "Username already exists.",
         });
+      }
+
+      const { data, error } = await supabase
+        .from("user")
+        .update({ username: newUsername })
+        .eq("user_id", userId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        throw APIError({
+          code: 404,
+          success: false,
+          error: "User not found.",
+        });
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error updating username:", error);
+
+      if (error instanceof APIError) {
+        throw error;
       }
 
       throw APIError({
@@ -154,28 +205,6 @@ export default class UserRepository {
         error: "An unexpected error occurred while updating username.",
       });
     }
-
-    return data;
-  }
-
-
-  async isUsernameTaken(username: string): Promise<boolean> {
-    const { data, error } = await supabase
-      .from("user")
-      .select("username")
-      .eq("username", username)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Supabase error:", error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while checking username availability.",
-      });
-    }
-
-    return !!data;
   }
 
 }

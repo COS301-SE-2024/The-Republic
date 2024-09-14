@@ -20,15 +20,19 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
       if (!isUsernameAppropriate) {
         throw new Error("Username contains inappropriate content.");
       }
-      return updateUsername(newUsername);
+      const result = await updateUsername(newUsername);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result;
     },
     onSuccess: () => {
       setSuccessMessage("Username changed successfully!");
       setErrorMessage("");
     },
     onError: (error: Error) => {
-      if (error.message === "Username already taken.") {
-        setErrorMessage("Username already taken.");
+      if (error.message === "Username already exists.") {
+        setErrorMessage("Username already exists.");
       } else if (error.message === "Username contains inappropriate content.") {
         setErrorMessage("Please choose an appropriate username.");
       } else {
@@ -42,7 +46,7 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
       setErrorMessage("Username must be between 3 and 20 characters.");
       return;
     }
-
+    
     mutation.mutate();
   };
 
