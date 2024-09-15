@@ -16,20 +16,31 @@ interface User {
 }
 
 export interface Organization {
-  id: number;
+  id: string;
+  created_at: string;
   name: string;
-  description: string;
-  memberCount: number;
-  userIsMember: boolean;
-  logo: string;
-  website: string;
-  isPrivate: boolean;  
-  isAdmin: boolean;  
-  members: Member[];  
-  joinRequests: JoinRequest[];  
-  joinPolicy: 'open' | 'closed';  
+  username: string;
+  bio: string | null;
+  website_url: string | null;
+  verified_status: boolean;
+  join_policy: string;
+  points: number;
+  profile_photo?: string;
+  org_type: string;
+  totalMembers: number;
+  location?: {
+      suburb?: string;
+      city?: string;
+      province?: string;
+      latitude?: number | string;
+      longitude?: number | string;
+      place_id?: string;
+  };
+  admins_ids?: string[];
+  isAdmin?: boolean;
+  isMember?: boolean;
+  averageSatisfactionRating?: number | null;
 }
-
 
 export interface JoinRequest {
   id: number;
@@ -40,7 +51,6 @@ export interface JoinRequest {
   requestDate: string;
 }
 
-
 export interface CreateOrganizationData {
   name: string;
   description: string;
@@ -49,6 +59,102 @@ export interface CreateOrganizationData {
   joinPolicy: 'open' | 'request';
 }
 
+export interface OrganizationPost {
+  post_id: string;
+  organization_id: string;
+  author_id: string;
+  content: string;
+  image_url: string | null;
+  created_at: string;
+  updated_at?: string; // Make this optional if not always present
+  author: {
+    bio: string;
+    role_id: number;
+    user_id: string;
+    fullname: string;
+    username: string;
+    image_url: string;
+    is_blocked: boolean;
+    user_score: number;
+    location_id: number;
+    email_address: string;
+    suspended_until: string | null;
+  };
+  reactions: {
+    counts: {
+      [key: string]: number;
+    };
+    userReaction: string | null;
+  };
+  comment_count: number;
+}
+
+export type ActionType = 
+  | 'UPDATE_ORGANIZATION'
+  | 'CREATE_POST'
+  | 'DELETE_POST'
+  | 'ACCEPT_JOIN_REQUEST'
+  | 'REJECT_JOIN_REQUEST'
+  | 'REMOVE_MEMBER'
+  | 'ASSIGN_ADMIN';
+
+export type UpdateOrganizationDetails = {
+  name?: string;
+  username?: string;
+  bio?: string;
+  website_url?: string;
+  join_policy?: string;
+  org_type?: string;
+};
+
+export type CreatePostDetails = {
+  postId: string;
+};
+
+export type DeletePostDetails = {
+  postId: string;
+};
+
+export type HandleJoinRequestDetails = {
+  requestId: number;
+};
+
+export type RemoveMemberDetails = {
+  removedUserId: string;
+};
+
+export type AssignAdminDetails = {
+  newAdminId: string;
+};
+
+export type ActionDetails = 
+  | { type: 'UPDATE_ORGANIZATION', details: UpdateOrganizationDetails }
+  | { type: 'CREATE_POST', details: CreatePostDetails }
+  | { type: 'DELETE_POST', details: DeletePostDetails }
+  | { type: 'ACCEPT_JOIN_REQUEST', details: HandleJoinRequestDetails }
+  | { type: 'REJECT_JOIN_REQUEST', details: HandleJoinRequestDetails }
+  | { type: 'REMOVE_MEMBER', details: RemoveMemberDetails }
+  | { type: 'ASSIGN_ADMIN', details: AssignAdminDetails };
+
+export interface ActivityLog {
+  id: number;
+  organization_id: string;
+  admin_id: string;
+  action_type: ActionType;
+  action_details: string;
+  created_at: string;
+  admin: {
+    user_id: string;
+    username: string;
+    fullname: string;
+    image_url: string | null;
+  };
+}
+
+export interface ActivityLogResponse {
+  data: ActivityLog[];
+  total: number;
+}
 
 export interface Member {
   id: number;
@@ -235,14 +341,16 @@ interface IssueProps {
 }
 
 interface Comment {
-  comment_id: number;
-  issue_id: number;
+  comment_id: string;
+  issue_id?: string;
+  post_id?: string;
   user_id: string;
-  parent_id: number | null;
+  parent_id: string | null;
   content: string;
   created_at: string;
   user: User;
   is_owner: boolean;
+  is_anonymous: boolean;
 }
 
 interface HomeAvatarProps {
@@ -336,7 +444,6 @@ interface AnalysisResult {
   severity: number;
 }
 
-
 interface Location {
   location_id: string;
   province?: string;
@@ -366,12 +473,17 @@ interface AddCommentFormProps {
 }
 
 interface CommentListProps {
-  issueId: string;
+  itemId: string;
+  itemType: 'issue' | 'post';
+  parentCommentId?: string | null;
+  showAddComment?: boolean;
+  showComments?: boolean;
 }
 
 interface ReactionProps {
-  issueId: string;
-  initialReactions: { emoji: string; count: number }[];
+  itemId: string;
+  itemType: 'issue' | 'post';
+  initialReactions: Reaction[]; // Replace 'any[]' with 'Reaction[]'
   userReaction: string | null;
 }
 
@@ -429,6 +541,7 @@ interface Resolution {
   state_entity_association: string | null;
   resolution_source: 'self' | 'unknown' | 'other';
   resolved_by: string | null;
+  organization_id: string | null;
 }
 
 // TODO: Update extracted type to match this and use it

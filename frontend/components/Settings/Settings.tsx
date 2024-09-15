@@ -5,6 +5,7 @@ import NotificationSettings from "./NotificationSettings";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
+import AccountManagement from "./AccountManagement";
 
 interface SettingsDropdownProps {
   title: string;
@@ -48,6 +49,10 @@ const SettingsPage = () => {
       </SettingsDropdown>
       <SettingsDropdown title="Notification Settings">
         <NotificationSettings />
+      </SettingsDropdown>
+
+      <SettingsDropdown title="Account Management">
+        <AccountManagement />
       </SettingsDropdown>
     </div>
   );

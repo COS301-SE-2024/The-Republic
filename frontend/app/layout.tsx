@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { UserProvider } from "@/lib/contexts/UserContext";
 import QueryProvider from "@/components/ReactQuery/QueryProvider";
-import { OrganizationProvider } from "@/lib/contexts/OrganizationProvider"; 
 
 export default function RootLayout({
   children,
@@ -22,11 +21,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <UserProvider>
-              <OrganizationProvider>
-                {children}
+            <UserProvider>                {children}
                 <Toaster />
-              </OrganizationProvider>
             </UserProvider>
           </QueryProvider>
         </ThemeProvider>

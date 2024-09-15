@@ -9,14 +9,15 @@ const createExternalResolution = async (
   resolvedBy?: string,
   politicalAssociation?: string,
   stateEntityAssociation?: string,
-  proofImage?: File
+  proofImage?: File,
+  organizationId?: string
 ): Promise<Resolution | null> => {
   if (!user) {
     toast({
       variant: "destructive",
       description: "Please log in to create a resolution.",
     });
-    return null; // Return null if user is not logged in
+    return null;
   }
 
   const formData = new FormData();
@@ -28,6 +29,7 @@ const createExternalResolution = async (
   if (politicalAssociation) formData.append('politicalAssociation', politicalAssociation);
   if (stateEntityAssociation) formData.append('stateEntityAssociation', stateEntityAssociation);
   if (proofImage) formData.append('proofImage', proofImage);
+  if (organizationId) formData.append('organizationId', organizationId);
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/external-resolution`;
   const response = await fetch(url, {

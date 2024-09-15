@@ -14,13 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import CommentList from "./CommentList";
 import { Loader2 } from "lucide-react";
+import { deleteComment } from "@/lib/api/deleteComment";
 
 interface CommentProps {
   comment: CommentType;
   onCommentDeleted: (comment: CommentType) => void;
+  itemType: 'issue' | 'post';
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
+const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -38,36 +40,19 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
 
     try {
       setIsLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/comments/delete`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.access_token}`,
-          },
-          body: JSON.stringify({ comment_id: comment.comment_id }),
-        },
-      );
-
-      if (response.ok) {
-        onCommentDeleted(comment);
-      } else {
-        const responseData = await response.json();
-        console.error("Failed to delete comment:", responseData.error);
-        toast({
-          variant: "destructive",
-          description: "Failed to delete comment",
-        });
-      }
-
-      setIsLoading(false);
+      await deleteComment(user, comment.comment_id.toString());
+      onCommentDeleted(comment);
+      toast({
+        description: "Comment deleted successfully",
+      });
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast({
-        description: "Error deleting comment",
+        variant: "destructive",
+        description: "Failed to delete comment",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,18 +63,17 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
   const isAnonymous = !comment.user || comment.user.username === "Anonymous";
   const isReply = comment.parent_id !== null;
 
-
   return (
     <>
       <div className="flex items-start space-x-4 space-y-4 mb-4" data-testid="comment">
         <div className="relative space-y-6">
-        <UserAvatarWithScore
-          imageUrl={userAvatar}
-          username={userFullname}
-          score={userScore}
-          className="w-12 h-12"
-          isAnonymous={isAnonymous}
-        />
+          <UserAvatarWithScore
+            imageUrl={userAvatar}
+            username={userFullname}
+            score={userScore}
+            className="w-12 h-12"
+            isAnonymous={isAnonymous}
+          />
         </div>
         <div className="flex-1">
           <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
@@ -113,10 +97,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
                 className="text-green-600 dark:text-green-400"
                 onClick={() => setShowReplies(!showReplies)}
               >
-                {showReplies
-                  ? "Hide replies"
-                  : "Show replies" // TODO: Get reply count from comment
-                }
+                {showReplies ? "Hide replies" : "Show replies"}
               </Button>
             )}
             {isOwner && (
@@ -133,8 +114,9 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted }) => {
           </div>
           {(isReplying || showReplies) && (
             <CommentList
-              issueId={comment.issue_id}
-              parentCommentId={comment.comment_id}
+              itemId={itemType === 'issue' ? comment.issue_id?.toString() ?? '' : comment?.post_id?.toString() ?? ''}
+              itemType={itemType}
+              parentCommentId={comment.comment_id.toString()}
               showAddComment={isReplying}
               showComments={showReplies}
             />

@@ -240,7 +240,21 @@ export class ClusterService {
       }
     } else {
       // Create a new cluster with the accepted issue
-      const newCluster = await this.clusterRepository.createCluster(issue);
+      const issueEmbedding = await this.issueRepository.getIssueEmbedding(issueId);
+      if (!issueEmbedding.content_embedding) {
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "Issue embedding not found",
+        });
+      }
+      // Combine the full issue data with the embedding
+      const fullIssueWithEmbedding = {
+        ...issue,
+        content_embedding: issueEmbedding.content_embedding
+      };
+
+      const newCluster = await this.clusterRepository.createCluster(fullIssueWithEmbedding);
       newClusterId = newCluster.cluster_id;
     }
   
@@ -265,17 +279,36 @@ export class ClusterService {
     if (issues.length === 0) {
       return; // Cluster is empty, no need to recalculate
     }
-
-    const newCentroid = this.calculateAverageEmbedding(issues);
+  
+    const issuesWithEmbeddings = await Promise.all(issues.map(async (issue) => {
+      if (!issue.content_embedding) {
+        const embedding = await this.issueRepository.getIssueEmbedding(issue.issue_id);
+        return { ...issue, content_embedding: embedding.content_embedding };
+      }
+      return issue;
+    }));
+  
+    const newCentroid = this.calculateAverageEmbedding(issuesWithEmbeddings);
+  
+    if (newCentroid.length === 0) {
+      console.error(`Failed to calculate new centroid for cluster ${clusterId}`);
+      return;
+    }
+  
     const formattedCentroid = this.formatCentroidForDatabase(newCentroid);
     await this.clusterRepository.updateCluster(clusterId, formattedCentroid, issues.length);
   }
-
+  
   private calculateAverageEmbedding(issues: Issue[]): number[] {
     let sumEmbedding: number[] = [];
     let validEmbeddingsCount = 0;
-
+  
     for (const issue of issues) {
+      if (!issue.content_embedding) {
+        console.warn(`Issue ${issue.issue_id} has no content_embedding`);
+        continue;
+      }
+  
       let embeddingArray: number[] = [];
       
       if (typeof issue.content_embedding === 'string') {
@@ -291,7 +324,7 @@ export class ClusterService {
         console.error(`Invalid embedding type for issue ${issue.issue_id}:`, typeof issue.content_embedding);
         continue;
       }
-
+  
       if (embeddingArray.length > 0) {
         if (sumEmbedding.length === 0) {
           sumEmbedding = new Array(embeddingArray.length).fill(0);
@@ -302,7 +335,12 @@ export class ClusterService {
         validEmbeddingsCount++;
       }
     }
-
+  
+    if (validEmbeddingsCount === 0) {
+      console.error('No valid embeddings found in cluster');
+      return [];
+    }
+  
     return sumEmbedding.map(val => val / validEmbeddingsCount);
   }
 

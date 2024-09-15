@@ -94,8 +94,8 @@ const Issue: React.FC<IssueProps> = ({
   });
 
   const selfResolutionMutation = useMutation({
-    mutationFn: (data: { resolutionText: string; proofImage?: File }) =>
-      createSelfResolution(user!, issue.issue_id, data.resolutionText, data.proofImage),
+    mutationFn: (data: { resolutionText: string; proofImage?: File; organizationId?: string }) =>
+      createSelfResolution(user!, issue.issue_id, data.resolutionText, data.proofImage, data.organizationId),
     onSuccess: (response) => {
       const resolvedIssue = response;
       queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
@@ -120,6 +120,7 @@ const Issue: React.FC<IssueProps> = ({
       politicalAssociation?: string;
       stateEntityAssociation?: string;
       proofImage?: File;
+      organizationId?: string;
     }) => createExternalResolution(
       user!,
       issue.issue_id,
@@ -128,7 +129,8 @@ const Issue: React.FC<IssueProps> = ({
       data.resolvedBy,
       data.politicalAssociation,
       data.stateEntityAssociation,
-      data.proofImage
+      data.proofImage,
+      data.organizationId
     ),
     onSuccess: (response) => {
       const resolvedIssue = response;
@@ -150,8 +152,7 @@ const Issue: React.FC<IssueProps> = ({
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
-    politicalAssociation?: string;
-    stateEntityAssociation?: string;
+    organizationIds?: string[];
   }) => {
     setIsResolutionSubmitLoading(true);
     try {
@@ -159,17 +160,17 @@ const Issue: React.FC<IssueProps> = ({
         await selfResolutionMutation.mutateAsync({
           resolutionText: resolutionData.resolutionText,
           proofImage: resolutionData.proofImage || undefined,
+          organizationId: resolutionData.organizationIds?.[0],
         });
       } else {
         await externalResolutionMutation.mutateAsync({
           resolutionText: resolutionData.resolutionText,
-          resolutionSource: resolutionData.resolutionSource as 'unknown' | 'other',
+          resolutionSource: resolutionData.resolutionSource,
           resolvedBy: resolutionData.resolvedBy,
-          politicalAssociation: resolutionData.politicalAssociation,
-          stateEntityAssociation: resolutionData.stateEntityAssociation,
           proofImage: resolutionData.proofImage || undefined,
+          organizationId: resolutionData.organizationIds?.[0],
         });
-      }
+      } 
       setIsResolutionModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -179,10 +180,10 @@ const Issue: React.FC<IssueProps> = ({
     }
   };
 
-  const handleResolutionResponse = async (accept: boolean) => {
+  const handleResolutionResponse = async (accept: boolean, rating?: number) => {
     setIsResolutionResponseLoading(true);
     try {
-      await respondToResolution(user!, issue.pendingResolutionId!, accept);
+      await respondToResolution(user!, issue.pendingResolutionId!, accept, rating);
 
       // Optimistically update the UI
       if (accept) {
@@ -433,7 +434,8 @@ const Issue: React.FC<IssueProps> = ({
             <span>{issue.comment_count}</span>
           </div>
           <Reaction
-            issueId={String(issue.issue_id)}
+            itemId={String(issue.issue_id)}
+            itemType={"issue"}
             initialReactions={issue.reactions}
             userReaction={issue.user_reaction} />
         </CardFooter>

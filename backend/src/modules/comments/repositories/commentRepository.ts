@@ -4,14 +4,14 @@ import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
 
 export class CommentRepository {
-  async getNumComments(issue_id: number, parent_id?: number) {
+  async getNumComments(itemId: string, itemType: 'issue' | 'post', parent_id?: number) {
     let query = supabase
       .from("comment")
       .select("*", {
         count: "exact",
         head: true,
       })
-      .eq("issue_id", issue_id);
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId);
 
     query = !parent_id
       ? query.is("parent_id", null)
@@ -21,7 +21,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -32,7 +31,7 @@ export class CommentRepository {
     return count!;
   }
 
-  async getComments({ issue_id, user_id, from, amount, parent_id }: GetCommentsParams) {
+  async getComments({ itemId, itemType, user_id, from, amount, parent_id }: GetCommentsParams) {
     let query = supabase
       .from("comment")
       .select(
@@ -48,7 +47,7 @@ export class CommentRepository {
         )
       `,
       )
-      .eq("issue_id", issue_id)
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
 
@@ -60,7 +59,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -111,7 +109,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -145,7 +142,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,

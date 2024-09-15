@@ -330,7 +330,7 @@ export default class IssueService {
     return this.createSelfResolution(issue_id, user_id, "Issue resolved by owner");
   }
 
-  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: MulterFile): Promise<APIResponse<Resolution>> {
+  async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: MulterFile, organizationId?: string): Promise<APIResponse<Resolution>> {
     try {
       const issue = await this.issueRepository.getIssueById(issueId);
       
@@ -364,7 +364,7 @@ export default class IssueService {
         const { error } = await supabase.storage
           .from("resolutions")
           .upload(fileName, proofImage.buffer);
-  
+
         if (error) {
           console.error("Image upload error:", error);
           throw APIError({
@@ -373,11 +373,11 @@ export default class IssueService {
             error: "An error occurred while uploading the image. Please try again.",
           });
         }
-  
+
         const { data: urlData } = supabase.storage
           .from("resolutions")
           .getPublicUrl(fileName);
-  
+
         imageUrl = urlData.publicUrl;
       }
     
@@ -390,7 +390,8 @@ export default class IssueService {
         num_cluster_members: numClusterMembers,
         political_association: null,
         state_entity_association: null,
-        resolved_by: null
+        resolved_by: null,
+        organization_id: organizationId
       });
   
       return APIData({
@@ -418,7 +419,8 @@ export default class IssueService {
     proofImage?: MulterFile,
     politicalAssociation?: string,
     stateEntityAssociation?: string,
-    resolvedBy?: string
+    resolvedBy?: string,
+    organizationId?: string
   ): Promise<APIResponse<Resolution>> {
     try {
       const issue = await this.issueRepository.getIssueById(issueId);
@@ -471,7 +473,8 @@ export default class IssueService {
         num_cluster_members: numClusterMembers,
         political_association: politicalAssociation || null,
         state_entity_association: stateEntityAssociation || null,
-        resolved_by: resolvedBy || null
+        resolved_by: resolvedBy || null,
+        organization_id: organizationId
       });
   
       return APIData({
@@ -491,9 +494,9 @@ export default class IssueService {
     }
   }
 
-  async respondToResolution(resolutionId: string, userId: string, accept: boolean): Promise<APIResponse<Resolution>> {
+  async respondToResolution(resolutionId: string, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
     try {
-      const resolution = await this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId);
+      const resolution = await this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId, satisfactionRating);
       return APIData({
         code: 200,
         success: true,
@@ -622,7 +625,7 @@ export default class IssueService {
 
   async getResolutionsForIssue(issueId: number): Promise<APIResponse<Resolution[]>> {
     try {
-      const resolutions = await this.issueRepository.getResolutionsForIssue(issueId);
+      const resolutions = await this.resolutionService.getResolutionsByIssueId(issueId);
       return APIData({
         code: 200,
         success: true,
@@ -636,6 +639,26 @@ export default class IssueService {
         code: 500,
         success: false,
         error: "An unexpected error occurred while fetching resolutions for the issue.",
+      });
+    }
+  }
+
+  async getOrganizationResolutions(organizationId: string): Promise<APIResponse<Resolution[]>> {
+    try {
+      const resolutions = await this.resolutionService.getOrganizationResolutions(organizationId);
+      return APIData({
+        code: 200,
+        success: true,
+        data: resolutions,
+      });
+    } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching resolutions for the organization.",
       });
     }
   }

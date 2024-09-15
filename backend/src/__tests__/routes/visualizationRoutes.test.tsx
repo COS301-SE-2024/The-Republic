@@ -3,6 +3,20 @@ import express from "express";
 import visualizationRouter from "@/modules/visualizations/routes/visualizationRoutes";
 import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
 
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+
+jest.mock("@/modules/shared/services/redisClient", () => ({
+  __esModule: true,
+  default: {
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn().mockResolvedValue([]),
+  },
+}));
+
 jest.mock("@/modules/visualizations/controllers/visualizationController");
 
 const app = express();

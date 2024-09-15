@@ -57,4 +57,22 @@ export class PointsService {
   async getUserPosition(userId: string, locationFilter: { province?: string, city?: string, suburb?: string }) {
     return this.pointsRepository.getUserPosition(userId, locationFilter);
   }
+
+  async awardOrganizationPoints(organizationId: string, points: number, reason: string) {
+    const newScore = await this.pointsRepository.updateOrganizationScore(organizationId, points) as number;
+    await this.pointsRepository.logOrganizationPointsTransaction(organizationId, points, reason);
+  
+    return newScore;
+  }
+
+  async awardPointsForResolution(userId: string, organizationId: string | null, isSelfResolution: boolean) {
+    const userPoints = isSelfResolution ? 5 : 10;
+    const orgPoints = 2;
+
+    await this.awardPoints(userId, userPoints, "Resolution accepted");
+
+    if (organizationId) {
+      await this.awardOrganizationPoints(organizationId, orgPoints, "Resolution accepted");
+    }
+  }
 }

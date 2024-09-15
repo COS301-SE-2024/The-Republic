@@ -9,5 +9,6 @@ export interface Comment {
   created_at: string;
   is_anonymous: boolean;
   is_owner: boolean;
+  post_id?: number;
   user: User;
 }

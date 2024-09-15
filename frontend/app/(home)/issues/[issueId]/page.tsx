@@ -20,12 +20,22 @@ const IssuePage = () => {
   } = useQuery({
     queryKey: ["issue", issueId],
     queryFn: () => fetchIssueDetails(user, issueId),
-    initialData: () => queryClient
-      .getQueriesData<{ pages: IssueType[][] }>({
-        queryKey: ["feed-issues"],
-      })[0]?.[1]?.pages
-      .flat()
-      .find((feedIssue) => feedIssue.issue_id === issueId),
+    initialData: () => {
+      const cachedFeeds = queryClient
+        .getQueriesData<{ pages: IssueType[][] }>({
+          queryKey: ["feed-issues"],
+        });
+
+      for (const feed of cachedFeeds) {
+        const issue = feed?.[1]?.pages
+          .flat()
+          .find((feedIssue) => feedIssue.issue_id === issueId);
+
+        if (issue) {
+          return issue;
+        }
+      }
+    },
     staleTime: Number.POSITIVE_INFINITY
   });
 
@@ -49,8 +59,10 @@ const IssuePage = () => {
     <div className="container mx-auto p-2">
       <Issue issue={data!} />
       <CommentList
-        issueId={issueId}
-        parentCommentId={null}
+          itemId={issueId.toString()}
+          itemType="issue"
+          parentCommentId={null}
+          showAddComment={true}
       />
     </div>
   );
