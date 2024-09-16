@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageCircle } from 'lucide-react';
 import { timeSince } from "@/lib/utils";
-import Reaction from "../Reaction/Reaction";
+import Reaction from "@/components/Reaction/Reaction";
 import Image from "next/image";
-import MoreMenu from "../MoreMenu/MoreMenu";
+import MoreMenu from "@/components/MoreMenu/MoreMenu";
 import { Organization, OrganizationPost } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/use-toast';

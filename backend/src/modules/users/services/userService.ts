@@ -1,10 +1,8 @@
-import UserRepository from "../repositories/userRepository";
-import { User } from "../../shared/models/issue";
-import { APIResponse, APIError } from "../../../types/response";
-import supabase from "../../shared/services/supabaseClient";
-import { MulterFile } from "../../../types/users";
-
-
+import UserRepository from "@/modules/users/repositories/userRepository";
+import { User } from "@/modules/shared/models/issue";
+import { APIResponse, APIError } from "@/types/response";
+import supabase from "@/modules/shared/services/supabaseClient";
+import { MulterFile } from "@/types/users";
 
 export class UserService {
   private userRepository: UserRepository;

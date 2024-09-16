@@ -4,7 +4,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import { useToast } from "@/components/ui/use-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import mockUser from "@/data/mockUser";
 
 jest.mock("@/lib/globals");
 jest.mock("@/components/ui/use-toast", () => ({
@@ -28,20 +27,27 @@ jest.mock("@supabase/supabase-js", () => ({
 }));
 
 const mockUseToast = useToast as jest.Mock;
-
-jest.mock("@/lib/contexts/UserContext", () => ({
-  useUser: jest.fn().mockReturnValue({
-    user_id: "1",
-    email_address: "test@example.com",
-    username: "testuser",
-    fullname: "Test User",
-    image_url: "https://via.placeholder.com/150",
-    bio: "",
-    is_owner: false,
-    total_issues: 0,
-    resolved_issues: 0,
-  }),
-}));
+const mockUser = {
+  user_id: "1",
+  email_address: "test@example.com",
+  username: "testuser",
+  fullname: "Test User",
+  image_url: "https://via.placeholder.com/150",
+  bio: "",
+  is_owner: false,
+  total_issues: 0,
+  resolved_issues: 0,
+  user_score: 9,
+  access_token: "fhfh",
+  location: null,
+  isAdmin: false,
+  location_id: null,
+  ranking: null,
+  countryRanking: null,
+  provinceRanking: null,
+  cityRanking: null,
+  suburbRanking: null,
+};
 
 const renderWithClient = (ui: React.ReactNode) => {
   const testQueryClient = new QueryClient({
@@ -66,9 +72,9 @@ describe("IssueInputBox Component", () => {
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
   });
-
+    
   test("renders IssueInputBox component", () => {
-    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+    renderWithClient(<IssueInputBox user={mockUser} onAddIssue={() => {}}/>);
 
     expect(
       screen.getByPlaceholderText("What's going on!?"),
@@ -76,7 +82,7 @@ describe("IssueInputBox Component", () => {
   });
 
   test("handles input change", () => {
-    renderWithClient(<IssueInputBox onAddIssue={() => {}}/>);
+    renderWithClient(<IssueInputBox user={mockUser} onAddIssue={() => {}}/>);
 
     const textarea = screen.getByPlaceholderText("What's going on!?");
     fireEvent.change(textarea, { target: { value: "New Issue Content" } });

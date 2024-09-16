@@ -1,4 +1,4 @@
-import { Issue } from "../../shared/models/issue";
+import { Issue } from "@/modules/shared/models/issue";
 import { Resolution } from "@/modules/shared/models/resolution";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { DateTime } from "luxon";
@@ -24,49 +24,10 @@ export default class IssueRepository {
     ascending = false,
     location,
   }: Partial<GetIssuesParams>) {
-    let locationIds: number[] = [];
-
-    if (location) {
-      let locationQuery = supabase.from("location").select("location_id");
-
-      if (location.province) {
-        locationQuery = locationQuery.ilike(
-          "province",
-          `%${location.province}%`,
-        );
-      }
-      if (location.city) {
-        locationQuery = locationQuery.ilike("city", `%${location.city}%`);
-      }
-      if (location.suburb) {
-        locationQuery = locationQuery.ilike("suburb", `%${location.suburb}%`);
-      }
-      if (location.district) {
-        locationQuery = locationQuery.ilike(
-          "district",
-          `%${location.district}%`,
-        );
-      }
-
-      const { data: locationData, error: locationError } = await locationQuery;
-
-      if (locationError) {
-        console.error("Error fetching locations:", locationError);
-        throw APIError({
-          code: 500,
-          success: false,
-          error: "An error occurred while fetching locations.",
-        });
-      }
-
-      locationIds = locationData.map((loc) => loc.location_id);
-    }
-
     let query = supabase
       .from("issue")
       .select(
-        `
-        *,
+        `*,
         user: user_id (
           user_id,
           email_address,
@@ -90,11 +51,14 @@ export default class IssueRepository {
       `,
       )
       .order(order_by, { ascending })
-      .order("created_at", { ascending })
       .range(from!, from! + amount! - 1);
 
-    if (locationIds.length > 0) {
-      query = query.in("location_id", locationIds);
+    if (location) {
+      query = query
+        .ilike("location.province", `%${location.province}%`)
+        .ilike("location.city", `%${location.city}%`)
+        .ilike("location.suburb", `%${location.suburb}%`)
+        .ilike("location.district", `%${location.district}%`);
     }
 
     if (category) {
@@ -117,6 +81,7 @@ export default class IssueRepository {
       });
     }
 
+    // I Might Fetch The Data In Parallel Instead of Mapping Through The List While Fetching
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
         const reactions = await reactionRepository.getReactionCountsByItemId(

@@ -15,7 +15,7 @@ import {
   RenderItemResult,
 } from "@/lib/types";
 import { colorFromCategory } from "@/lib/utils";
-import { LoadingSpinner } from "../Spinner/Spinner";
+import { LoadingSpinner } from "@/components/Spinner/Spinner";
 import { dotVisualization } from "@/lib/api/dotVisualization";
 import { useRouter } from "next/navigation";
 

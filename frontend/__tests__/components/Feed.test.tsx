@@ -1,8 +1,9 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Feed from "@/components/Feed/Feed";
-import { IssueProps } from "@/lib/types";
+import { IssueProps, UserAlt } from "@/lib/types";
+import { useUser } from "@/lib/contexts/UserContext";
 
 // Mock the necessary dependencies
 jest.mock('@/lib/globals', () => ({
@@ -74,13 +75,17 @@ jest.mock("@/components/MobileIssueInput/MobileIssueInput", () => () => (
 ));
 
 describe("Feed", () => {
+  const user = useUser() as unknown as UserAlt;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
+
   it("renders without crashing", () => {
-    render(<Feed />);
-    expect(screen.getByText("No issues")).toBeInTheDocument();
+    render(<Feed user={user}/>);
+    expect(screen.getByText("Spinner")).toBeInTheDocument();
   });
 
   // it("shows loading indicator while fetching data", async () => {

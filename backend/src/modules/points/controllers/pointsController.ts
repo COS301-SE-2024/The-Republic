@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { PointsService } from "../services/pointsService";
-import { LocationService } from "../../locations/services/locationService";
+import { PointsService } from "@/modules/points/services/pointsService";
+import { LocationService } from "@/modules/locations/services/locationService";
 import { sendResponse } from "@/utilities/response";
 import { APIResponse, APIError } from "@/types/response";
 import { cacheMiddleware } from "@/middleware/cacheMiddleware";

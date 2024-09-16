@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardFooter } from "../ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from '@/components/ui/use-toast';
@@ -10,7 +10,7 @@ import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { useUser } from "@/lib/contexts/UserContext";
 import { createOrganizationPost } from '@/lib/api/createOrganizationPost';
-import CircularProgress from "../CircularProgressBar/CircularProgressBar";
+import CircularProgress from "@/components/CircularProgressBar/CircularProgressBar";
 
 const MAX_CHAR_COUNT = 300;
 
