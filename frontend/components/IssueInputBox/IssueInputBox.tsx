@@ -13,7 +13,6 @@ import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
-import { useUser } from "@/lib/contexts/UserContext";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 import CircularProgress from "@/components/CircularProgressBar/CircularProgressBar";
 import LocationModal from "@/components/LocationModal/LocationModal";
@@ -22,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
@@ -32,7 +31,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useUser();
+
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const { data: userLocation } = useQuery({
     queryKey: ["user-location"],

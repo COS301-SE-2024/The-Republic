@@ -246,6 +246,7 @@ interface ProfileStatsProps {
 }
 
 interface IssueInputBoxProps {
+  user: UserAlt | null;
   onAddIssue: (issue: Issue) => void;
 }
 

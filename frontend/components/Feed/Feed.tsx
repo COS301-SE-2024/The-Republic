@@ -1,14 +1,16 @@
 import { useRef, useState, useEffect } from "react";
-import { useUser } from "@/lib/contexts/UserContext";
 import Issue from "@/components/Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
+import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import {
   Issue as IssueType,
   RequestBody,
   Resolution,
   Location,
+  UserContextType,
 } from "@/lib/types";
+
 import styles from '@/styles/Feed.module.css';
 import { Filter, Loader2, Plus } from "lucide-react";
 import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
@@ -17,7 +19,6 @@ import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import FilterModal from "@/components/FilterModal/FilterModal";
-import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
 const FETCH_SIZE = 10;
 
@@ -25,8 +26,7 @@ let lastSortBy: string;
 let lastFilter: string;
 let lastLocation: Location | null;
 
-const Feed: React.FC = () => {
-  const { user } = useUser();
+const Feed: React.FC<UserContextType> = ({ user }) => {
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState(lastSortBy ?? "newest");
@@ -225,7 +225,7 @@ const Feed: React.FC = () => {
             </Button>
           )}
         </div>
-        {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
+        {user && isDesktop && <IssueInputBox user={user} onAddIssue={handleAddIssue} />}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
@@ -279,7 +279,7 @@ const Feed: React.FC = () => {
             <Plus className="h-6 w-6" />
           </Button>
           {isMobileIssueInputOpen && (
-            <MobileIssueInput
+            <MobileIssueInput user={user}
               onClose={() => setIsMobileIssueInputOpen(false)}
               onAddIssue={handleAddIssue}
             />
