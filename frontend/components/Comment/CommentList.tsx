@@ -1,8 +1,8 @@
 import { Comment as CommentType, CommentListProps } from "@/lib/types";
-import Comment from "./Comment";
+import Comment from "@/components/Comment/Comment";
 import { useUser } from "@/lib/contexts/UserContext";
-import AddCommentForm from "./AddCommentForm";
-import { LazyList, LazyListRef } from "../LazyList/LazyList";
+import AddCommentForm from "@/components/Comment/AddCommentForm";
+import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
 import { Loader2 } from "lucide-react";
 import { v4 as v4uuid } from "uuid";
 import { useRef } from "react";

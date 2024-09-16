@@ -8,7 +8,7 @@ import { checkImageFileAndToast, cn } from "@/lib/utils";
 import { EditProfileProps, LocationType, ProfileUpdate } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { updateUserProfile } from "@/lib/api/updateProfile";

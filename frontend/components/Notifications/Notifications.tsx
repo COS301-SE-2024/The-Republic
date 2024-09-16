@@ -1,5 +1,5 @@
 import React from "react";
-import NotificationsList from "./NotificationsList";
+import NotificationsList from "@/components/Notifications/NotificationsList";
 
 const Notifications: React.FC = () => {
   return (

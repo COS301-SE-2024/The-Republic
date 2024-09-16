@@ -1,6 +1,5 @@
-import { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { supabase } from "./lib/globals";
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/globals";
 
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url);

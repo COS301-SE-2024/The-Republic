@@ -1,4 +1,4 @@
-import { capitalize } from "../../lib/helper";
+import { capitalize } from "@/lib/helper";
 import { describe, expect, test } from "@jest/globals";
 
 describe("capitalize function", () => {

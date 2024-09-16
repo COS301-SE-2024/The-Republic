@@ -1,4 +1,4 @@
-import UserRepository from "../repositories/userRepository";
+import UserRepository from "@/modules/users/repositories/userRepository";
 import { User } from "@/modules/shared/models/issue";
 import { APIResponse, APIError } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";

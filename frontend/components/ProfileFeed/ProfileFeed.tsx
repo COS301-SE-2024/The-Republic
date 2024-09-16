@@ -3,10 +3,10 @@
 import React from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Issue as IssueType, ProfileFeedProps } from "@/lib/types";
-import Issue from "../Issue/Issue";
+import Issue from "@/components/Issue/Issue";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import ResolutionFeed from "../ResolutionFeed/ResolutionFeed";
+import ResolutionFeed from "@/components/ResolutionFeed/ResolutionFeed";
 
 import { profileFetchIssues } from "@/lib/api/profileFetchIssues";
 

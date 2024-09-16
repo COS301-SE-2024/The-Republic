@@ -3,7 +3,7 @@ import { Comment as CommentType } from "@/lib/types";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/contexts/UserContext";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import CommentList from "./CommentList";
+import CommentList from "@/components/Comment/CommentList";
 import { Loader2 } from "lucide-react";
 import { deleteComment } from "@/lib/api/deleteComment";
 
