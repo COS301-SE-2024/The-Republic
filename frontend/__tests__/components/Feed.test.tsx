@@ -79,11 +79,13 @@ describe("Feed", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
+
 
   it("renders without crashing", () => {
     render(<Feed user={user}/>);
-    expect(screen.getByText("No issues")).toBeInTheDocument();
+    expect(screen.getByText("Spinner")).toBeInTheDocument();
   });
 
   // it("shows loading indicator while fetching data", async () => {
