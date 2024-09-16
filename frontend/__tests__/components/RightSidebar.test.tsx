@@ -55,6 +55,7 @@ const renderWithClient = (ui: React.ReactNode) => {
 describe("RightSidebar", () => {
   beforeEach(() => {
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
     (useUser as jest.Mock).mockReturnValue({
       user: { access_token: "test-token" },
     });
