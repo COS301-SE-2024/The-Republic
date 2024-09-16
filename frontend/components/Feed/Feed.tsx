@@ -1,8 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Issue from "@/components/Issue/Issue";
-import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
-import RightSidebar from "@/components/RightSidebar/RightSidebar";
+
+const IssueInputBox = React.lazy(() => import("@/components/IssueInputBox/IssueInputBox"));
+const MobileIssueInput = React.lazy(() => import("@/components/MobileIssueInput/MobileIssueInput"));
+const RightSidebar = React.lazy(() => import('@/components/RightSidebar/RightSidebar'));
+
 import {
   Issue as IssueType,
   RequestBody,

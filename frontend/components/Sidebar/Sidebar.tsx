@@ -24,12 +24,12 @@ import {
   ReactionNotification,
   CommentNotification,
   Issue,
-  HomeAvatarProps } from "@/lib/types";
+} from "@/lib/types";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { fetchUserData } from '@/lib/api/fetchUserData';
 import { useRouter } from 'next/navigation';
 
-interface SidebarProps extends HomeAvatarProps {
+interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }

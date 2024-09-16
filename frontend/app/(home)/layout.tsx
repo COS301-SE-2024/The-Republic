@@ -1,11 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Header from "@/components/Header/Header";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import HelpMenu from "@/components/HelpMenu/Helpmenu";
 import { HomeAvatarProps } from "@/lib/types";
-import { useState } from "react";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 
 export default function HomeLayout({
@@ -17,12 +16,6 @@ export default function HomeLayout({
   const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  const sidebarProps: HomeAvatarProps = {
-    username: "johndoe",
-    fullname: "John Doe",
-    imageUrl: "",
-  };
-
   return (
     <div className="flex flex-col h-screen">
       <Header 
@@ -30,8 +23,7 @@ export default function HomeLayout({
         isDesktop={isDesktop}
       />
        <div className="flex flex-1 overflow-hidden">
-        <Sidebar 
-          {...sidebarProps}
+        <Sidebar
           isOpen={leftSidebarOpen}
           onClose={() => setLeftSidebarOpen(false)}
         />
