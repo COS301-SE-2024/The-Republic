@@ -1,12 +1,12 @@
 import React from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { useToast } from "../ui/use-toast";
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
 
 interface HomeAvatarProps {

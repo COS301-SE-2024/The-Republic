@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ClusterService } from "../services/clusterService";
+import { ClusterService } from "@/modules/clusters/services/clusterService";
 import { sendResponse } from "@/utilities/response";
 import { APIResponse, APIError } from "@/types/response";
 import { cacheMiddleware } from "@/middleware/cacheMiddleware";

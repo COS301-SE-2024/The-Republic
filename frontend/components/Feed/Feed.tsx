@@ -1,17 +1,17 @@
 import { useRef, useState, useEffect } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
-import Issue from "../Issue/Issue";
+import Issue from "@/components/Issue/Issue";
 import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
 import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import {
   Issue as IssueType,
   RequestBody,
   Resolution,
+  Location,
 } from "@/lib/types";
 import styles from '@/styles/Feed.module.css';
 import { Filter, Loader2, Plus } from "lucide-react";
-import { LazyList, LazyListRef } from "../LazyList/LazyList";
-import { Location } from "@/lib/types";
+import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";

@@ -1,7 +1,7 @@
 import React from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Resolution as ResolutionType } from "@/lib/types";
-import Resolution from "../Resolution/Resolution";
+import Resolution from "@/components/Resolution/Resolution";
 import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserResolutions } from "@/lib/api/fetchUserResolutions";

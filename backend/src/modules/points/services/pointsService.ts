@@ -1,4 +1,4 @@
-import { PointsRepository } from "./../repositories/pointsRepository";
+import { PointsRepository } from "@/modules/points/repositories/pointsRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
 
 export class PointsService {

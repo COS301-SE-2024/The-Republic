@@ -1,4 +1,4 @@
-import { MulterFile } from "../types/users";
+import { MulterFile } from "@/types/users";
 
 const mockFile: MulterFile = {
   fieldname: "image",

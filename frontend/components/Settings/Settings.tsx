@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import ProfileSettings from "./ProfileSettings";
-import RequestVerifications from "./RequestVerification";
-import NotificationSettings from "./NotificationSettings";
-import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
+import ProfileSettings from "@/components/Settings/ProfileSettings";
+import RequestVerifications from "@/components/Settings/RequestVerification";
+import NotificationSettings from "@/components/Settings/NotificationSettings";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
-import AccountManagement from "./AccountManagement";
+import AccountManagement from "@/components/Settings/AccountManagement";
 
 interface SettingsDropdownProps {
   title: string;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as organizationController from "../controllers/organizationController";
+import * as organizationController from "@/modules/organizations/controllers/organizationController";
 import { verifyAndGetUser } from "@/middleware/middleware";
 
 const router = Router();

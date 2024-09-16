@@ -1,4 +1,4 @@
-import { Issue } from "../../shared/models/issue";
+import { Issue } from "@/modules/shared/models/issue";
 import { Resolution } from "@/modules/shared/models/resolution";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { DateTime } from "luxon";
