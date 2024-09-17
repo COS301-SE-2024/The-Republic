@@ -18,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@eslint/js": "^9.3.0",
+    "@radix-ui/react-toggle": "^1.1.0",
     "@supabase/supabase-js": "^2.43.4",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
