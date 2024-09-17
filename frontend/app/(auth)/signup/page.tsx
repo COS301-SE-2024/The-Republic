@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 import { Eye, EyeOff, UserPlus, Mail, User, Lock, Share2, AlertTriangle, MessageCircle, Shield, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { checkUsername } from "@/lib/api/checkUsername";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,29 +20,18 @@ export default function Signup() {
   const { toast } = useToast();
   const router = useRouter();
 
-  // Check if username already exists
-  const checkUsernameAvailability = async (username: string) => {
-    try {
-      const response = await fetch(`/api/users/check-username/${username}`);
-      const data = await response.json();
-      if (response.ok) {
-        return data.available; // Adjust based on API response structure
-      } else {
-        toast({ variant: "destructive", description: data.error || "Failed to check username" });
-        return false;
-      }
-    } catch (error) {
-      console.error("Error checking username availability:", error);
-      toast({ variant: "destructive", description: "Username already exists" });
-      return false;
-    }
-  };
-
   const signup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const isUsernameAvailable = await checkUsernameAvailability(username);
-    if (!isUsernameAvailable) return; // Stop the signup process if username is not available
+    const isUsernameAvailable = await checkUsername({"username" : username});
+    if (!isUsernameAvailable) {
+      toast({
+        variant: "destructive",
+        description: "Username is not available, already in use.",
+      });
+
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
