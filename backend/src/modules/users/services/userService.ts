@@ -283,11 +283,11 @@ export class UserService {
     }
   }
 
-  async checkUsernameAvailability(
+  async usernameExists(
     params: Partial<UserExists>
   ): Promise<APIResponse<boolean>> {
     try {
-      const isUsernameTaken = await this.userRepository.isUsernameTaken(params);
+      const isUsernameTaken = await this.userRepository.usernameExists(params);
       return {
         code: 200,
         success: true,

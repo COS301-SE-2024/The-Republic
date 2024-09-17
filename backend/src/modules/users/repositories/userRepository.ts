@@ -129,7 +129,7 @@ export default class UserRepository {
     return data;
   }
 
-  async isUsernameTaken(
+  async usernameExists(
     params: Partial<UserExists>
   ): Promise<boolean> {
     try {
@@ -170,7 +170,7 @@ export default class UserRepository {
   async updateUsername(userId: string, newUsername: string): Promise<User> {
     try {
 
-      const isUsernameTaken = await this.isUsernameTaken({"username": newUsername, "user_id": userId});
+      const isUsernameTaken = await this.usernameExists({"username": newUsername, "user_id": userId});
 
       if (isUsernameTaken) {
         throw APIError({

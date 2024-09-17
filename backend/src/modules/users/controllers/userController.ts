@@ -4,18 +4,7 @@ import { UserService } from "@/modules/users/services/userService";
 import { APIResponse } from "@/types/response";
 import { cacheMiddleware } from "@/middleware/cacheMiddleware";
 import { clearCache, clearCachePattern } from "@/utilities/cacheUtils";
-
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
+import { MulterFile } from "@/types/users";
 
 const userService = new UserService();
 
@@ -82,9 +71,9 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
-export const checkUsernameAvailability = async (req: Request, res: Response) => {
+export const usernameExists = async (req: Request, res: Response) => {
   try {
-    const response = await userService.checkUsernameAvailability(
+    const response = await userService.usernameExists(
       req.body
     );
 

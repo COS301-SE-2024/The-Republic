@@ -1,17 +1,18 @@
-import { Router } from "express";
-import multer from "multer";
 import {
+  usernameExists,
   getUserById,
   updateUserProfile,
   updateUsername,
-  changePassword,
-  checkUsernameAvailability
+  changePassword
 } from "@/modules/users/controllers/userController";
 import { verifyAndGetUser } from "@/middleware/middleware";
+import { Router } from "express";
+import multer from "multer";
 
 const router = Router();
 router.use(verifyAndGetUser);
 const upload = multer();
+
 
 router.post(
   "/:id",
@@ -36,7 +37,8 @@ router.put(
 
 router.post(
   "/username/exists",
-  checkUsernameAvailability
+  usernameExists
 );
+
 
 export default router;
