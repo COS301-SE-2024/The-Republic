@@ -81,3 +81,15 @@ export const changePassword = async (req: Request, res: Response) => {
     sendResponse(res, error as APIResponse);
   }
 };
+
+export const checkUsernameAvailability = async (req: Request, res: Response) => {
+  try {
+    const response = await userService.checkUsernameAvailability(
+      req.body
+    );
+
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse<boolean>);
+  }
+};
