@@ -26,8 +26,8 @@
   },
   "include": [
     "next-env.d.ts",
-    "frontend/**/*.ts",
-    "frontend/**/*.tsx",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/types/**/*.ts",
     "cypress/**/*.ts",
     "global.d.ts",
