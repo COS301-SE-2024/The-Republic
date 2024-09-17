@@ -32,4 +32,9 @@ interface MockUser {
   } | null;
 }
 
-export type { MockUser, MulterFile };
+interface UserExists {
+  username: string;
+  user_id?: string;
+}
+
+export type { UserExists, MockUser, MulterFile };
