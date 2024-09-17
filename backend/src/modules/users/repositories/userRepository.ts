@@ -1,6 +1,7 @@
 import supabase from "../../shared/services/supabaseClient";
 import { User } from "../../shared/models/issue";
 import { APIError } from "../../../types/response";
+import { UserExists } from "@/types/users";
 
 export default class UserRepository {
   async getUserById(userId: string) {
@@ -128,27 +129,34 @@ export default class UserRepository {
     return data;
   }
 
-  async isUsernameTaken(username: string, excludeUserId?: string): Promise<boolean> {
+  async isUsernameTaken(
+    params: Partial<UserExists>
+  ): Promise<boolean> {
     try {
-
-      const escapedUsername = username.replace(/[_%]/g, '\\$&');
-
-      let query = supabase
-        .from("user")
-        .select("username")
-        .ilike("username", escapedUsername);
+      const { username, user_id: excludeUserId } = params;
       
-      if (excludeUserId) {
-        query = query.neq("user_id", excludeUserId);
+      console.log("Paramenters: ", params);
+
+      if (username) {
+        let query = supabase
+          .from("user")
+          .select("username")
+          .eq("username", username);
+        
+        if (excludeUserId) {
+          query = query.neq("user_id", excludeUserId);
+        }
+  
+        const { data, error } = await query;
+  
+        if (error) {
+          throw error;
+        }
+  
+        return data.length > 0;
       }
 
-      const { data, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      return data.length > 0;
+      return false;
     } catch (error) {
       console.error("Error checking username availability:", error);
       throw APIError({
@@ -162,7 +170,7 @@ export default class UserRepository {
   async updateUsername(userId: string, newUsername: string): Promise<User> {
     try {
 
-      const isUsernameTaken = await this.isUsernameTaken(newUsername, userId);
+      const isUsernameTaken = await this.isUsernameTaken({"username": newUsername, "user_id": userId});
 
       if (isUsernameTaken) {
         throw APIError({
@@ -206,5 +214,4 @@ export default class UserRepository {
       });
     }
   }
-
 }
