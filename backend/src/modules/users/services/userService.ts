@@ -2,7 +2,7 @@ import UserRepository from "@/modules/users/repositories/userRepository";
 import { User } from "@/modules/shared/models/issue";
 import { APIResponse, APIError } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";
-import { MulterFile, UserExists } from "@/types/users";
+import { MulterFile } from "@/types/users";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -279,32 +279,6 @@ export class UserService {
         code: 500,
         success: false,
         error: "Current password is incorrect",
-      });
-    }
-  }
-
-  async usernameExists(
-    params: Partial<UserExists>,
-  ): Promise<APIResponse<boolean>> {
-    try {
-      const data = 
-        await this.userRepository.usernameExists(
-          params,
-        );
-      return {
-        code: 200,
-        success: true,
-        data: !data,
-      };
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while checking username availability.",
       });
     }
   }

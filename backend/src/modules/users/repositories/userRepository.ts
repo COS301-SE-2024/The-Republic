@@ -1,9 +1,15 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
-import { UserExists } from "@/types/users";
+import NoAuthRepository from "@/modules/users/repositories/noAuthRepository";
 
 export default class UserRepository {
+  private noAuthRepository: NoAuthRepository;
+
+  constructor() {
+    this.noAuthRepository = new NoAuthRepository();
+  }
+
   async getUserById(userId: string) {
     const { data, error } = await supabase
       .from("user")
@@ -129,40 +135,9 @@ export default class UserRepository {
     return data;
   }
 
-  async usernameExists({
-    username,
-    user_id,
-  }: Partial<UserExists>): Promise<boolean> {
-    try {
-      let query = supabase
-        .from("user")
-        .select("username")
-        .eq("username", username);
-      
-      if (user_id) {
-        query = query.neq("user_id", user_id);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      return data.length > 0;
-    } catch (error) {
-      console.error("Error checking username availability:", error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while checking username availability.",
-      });
-    }
-  }
-
   async updateUsername(userId: string, newUsername: string): Promise<User> {
     try {
-      const isUsernameTaken = await this.usernameExists({"username": newUsername, "user_id": userId});
+      const isUsernameTaken = await this.noAuthRepository.usernameExists({"username": newUsername, "user_id": userId});
 
       if (isUsernameTaken) {
         throw APIError({

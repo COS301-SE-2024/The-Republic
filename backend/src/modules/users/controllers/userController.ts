@@ -71,14 +71,3 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
-export const usernameExists = async (req: Request, res: Response) => {
-  try {
-    const response = await userService.usernameExists(
-      req.body,
-    );
-
-    sendResponse(res, response);
-  } catch (error) {
-    sendResponse(res, error as APIResponse<Promise<boolean>>);
-  }
-};

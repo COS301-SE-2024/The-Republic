@@ -31,9 +31,4 @@ router.put(
   userController.changePassword
 );
 
-router.post(
-  "/username/exists",
-  userController.usernameExists
-);
-
 export default router;
