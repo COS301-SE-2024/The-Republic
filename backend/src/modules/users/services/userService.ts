@@ -2,7 +2,7 @@ import UserRepository from "@/modules/users/repositories/userRepository";
 import { User } from "@/modules/shared/models/issue";
 import { APIResponse, APIError } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";
-import { MulterFile } from "@/types/users";
+import { MulterFile, UserExists } from "@/types/users";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -188,7 +188,7 @@ export class UserService {
   async updateUsername(userId: string, newUsername: string): Promise<APIResponse<User>> {
     try {
       const updatedUser = await this.userRepository.updateUsername(userId, newUsername);
-      
+
       return {
         code: 200,
         success: true,
@@ -205,26 +205,6 @@ export class UserService {
       });
     }
   }
-
-  async checkUsernameAvailability(username: string, currentUserId?: string): Promise<APIResponse<boolean>> {
-    try {
-      const isUsernameTaken = await this.userRepository.isUsernameTaken(username, currentUserId);
-      
-      return {
-        code: 200,
-        success: true,
-        data: !isUsernameTaken
-      };
-    } catch (error) {
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while checking username availability.",
-      });
-    }
-  }
-  
-
 
   async changePassword(
     userId: string,
@@ -299,6 +279,25 @@ export class UserService {
         code: 500,
         success: false,
         error: "Current password is incorrect",
+      });
+    }
+  }
+
+  async checkUsernameAvailability(
+    params: Partial<UserExists>
+  ): Promise<APIResponse<boolean>> {
+    try {
+      const isUsernameTaken = await this.userRepository.isUsernameTaken(params);
+      return {
+        code: 200,
+        success: true,
+        data: !isUsernameTaken
+      };
+    } catch (error) {
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking username availability.",
       });
     }
   }
