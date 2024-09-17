@@ -85,4 +85,20 @@ describe("User Routes", () => {
       expect(userController.changePassword).toHaveBeenCalled();
     });
   });
+
+  describe("POST /username/exists", () => {
+    it("should call usernameExists controller", async () => {
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (userController.usernameExists as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
+      );
+
+      const response = await request(app).post("/username/exists").send({ username: "user" });
+
+      expect(response.status).toBe(200);
+      expect(userController.usernameExists).toHaveBeenCalled();
+    });
+  });
 });

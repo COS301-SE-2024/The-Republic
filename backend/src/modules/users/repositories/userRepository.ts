@@ -1,7 +1,7 @@
 import supabase from "../../shared/services/supabaseClient";
 import { User } from "../../shared/models/issue";
 import { APIError } from "../../../types/response";
-import { UserExists } from "@/types/users";
+import { UserExists } from "../../../types/users";
 
 export default class UserRepository {
   async getUserById(userId: string) {
@@ -129,22 +129,19 @@ export default class UserRepository {
     return data;
   }
 
-  async usernameExists(
-    params: Partial<UserExists>
-  ): Promise<boolean> {
+  async usernameExists({
+    username,
+    user_id,
+  }: Partial<UserExists>) {
     try {
-      const { username, user_id: excludeUserId } = params;
-      
-      console.log("Paramenters: ", params);
-
       if (username) {
         let query = supabase
           .from("user")
           .select("username")
           .eq("username", username);
         
-        if (excludeUserId) {
-          query = query.neq("user_id", excludeUserId);
+        if (user_id) {
+          query = query.neq("user_id", user_id);
         }
   
         const { data, error } = await query;
@@ -155,8 +152,6 @@ export default class UserRepository {
   
         return data.length > 0;
       }
-
-      return false;
     } catch (error) {
       console.error("Error checking username availability:", error);
       throw APIError({
@@ -165,6 +160,8 @@ export default class UserRepository {
         error: "An unexpected error occurred while checking username availability.",
       });
     }
+
+    return false;
   }
 
   async updateUsername(userId: string, newUsername: string): Promise<User> {

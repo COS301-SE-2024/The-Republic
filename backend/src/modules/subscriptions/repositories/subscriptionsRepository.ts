@@ -1,8 +1,6 @@
 import supabase from "@/modules/shared/services/supabaseClient";
-import { SubsParams } from "@/types/subscriptions";
+import { SubsParams, Notification } from "@/types/subscriptions";
 import { APIError } from "@/types/response";
-
-import { Notification } from "@/types/subscriptions";
 
 export default class SubscriptionsRepository {
   async issueSubscriptions({

@@ -1,43 +1,36 @@
-import {
-  usernameExists,
-  getUserById,
-  updateUserProfile,
-  updateUsername,
-  changePassword
-} from "@/modules/users/controllers/userController";
-import { verifyAndGetUser } from "@/middleware/middleware";
 import { Router } from "express";
 import multer from "multer";
+import * as userController from "@/modules/users/controllers/userController";
+import { verifyAndGetUser } from "@/middleware/middleware";
 
 const router = Router();
 router.use(verifyAndGetUser);
 const upload = multer();
 
-
 router.post(
   "/:id",
-  getUserById
+  userController.getUserById
 );
 
 router.put(
   "/:id",
   upload.single("profile_picture"),
-  updateUserProfile,
+  userController.updateUserProfile
 );
 
 router.put(
   "/:id/username",
-  updateUsername
+  userController.updateUsername
 );
 
 router.put(
   "/:id/password",
-  changePassword
+  userController.changePassword
 );
 
 router.post(
   "/username/exists",
-  usernameExists
+  userController.usernameExists
 );
 
 

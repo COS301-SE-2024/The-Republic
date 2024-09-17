@@ -8,6 +8,18 @@ import { MulterFile } from "@/types/users";
 
 const userService = new UserService();
 
+export const usernameExists = async (req: Request, res: Response) => {
+  try {
+    const response = await userService.usernameExists(
+      req.body,
+    );
+
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
+  }
+};
+
 export const getUserById = [
   cacheMiddleware(300), 
   async (req: Request, res: Response) => {
@@ -68,17 +80,5 @@ export const changePassword = async (req: Request, res: Response) => {
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);
-  }
-};
-
-export const usernameExists = async (req: Request, res: Response) => {
-  try {
-    const response = await userService.usernameExists(
-      req.body
-    );
-
-    sendResponse(res, response);
-  } catch (error) {
-    sendResponse(res, error as APIResponse<boolean>);
   }
 };

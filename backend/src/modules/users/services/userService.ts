@@ -284,14 +284,17 @@ export class UserService {
   }
 
   async usernameExists(
-    params: Partial<UserExists>
+    params: Partial<UserExists>,
   ): Promise<APIResponse<boolean>> {
     try {
-      const isUsernameTaken = await this.userRepository.usernameExists(params);
+      const data = 
+        await this.userRepository.usernameExists(
+          params,
+        );
       return {
         code: 200,
         success: true,
-        data: !isUsernameTaken
+        data: !data
       };
     } catch (error) {
       throw APIError({
