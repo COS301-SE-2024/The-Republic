@@ -7,7 +7,7 @@ export const checkUsername = async (
     "Content-Type": "application/json",
   };
 
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/username/exists`;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/validate/username/exists`;
   try {
     const response = await fetch(url, {
       method: "POST",
