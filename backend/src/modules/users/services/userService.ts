@@ -294,9 +294,13 @@ export class UserService {
       return {
         code: 200,
         success: true,
-        data: !data
+        data: !data,
       };
     } catch (error) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      
       throw APIError({
         code: 500,
         success: false,
