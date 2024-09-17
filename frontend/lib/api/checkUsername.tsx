@@ -1,34 +1,30 @@
-import { Request, Response } from "express";
-import { UserService } from "../../../backend/src/modules/users/services/userService";
+import { UserAlt as User, UserExists } from "@/lib/types";
 
-const userService = new UserService();
+export const checkUsername = async (
+  user: User,
+  requestBody: UserExists,
+) => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
 
-export const checkUsername = async (req: Request, res: Response) => {
-  if (req.method === 'GET') {
-    const { username } = req.query;
+  if (user) {
+    headers.Authorization = `Bearer ${user.access_token}`;
+  }
 
-    if (typeof username !== 'string') {
-      return res.status(400).json({
-        code: 400,
-        success: false,
-        error: 'Username must be a string'
-      });
-    }
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/username/exists`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(requestBody),
+  });
 
-    try {
-      const response = await userService.checkUsernameAvailability(username);
-      res.status(response.code).json(response);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        code: 500,
-        success: false,
-        error: 'An unexpected error occurred'
-      });
-    }
+  const apiResponse = await response.json();
+
+  if (apiResponse.success && apiResponse.data) {
+    return apiResponse.data;
   } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+    return false;
   }
 };
 
