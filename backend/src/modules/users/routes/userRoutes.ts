@@ -1,29 +1,42 @@
-import express from "express";
+import { Router } from "express";
 import multer from "multer";
-import { getUserById, updateUserProfile, updateUsername, changePassword } from "@/modules/users/controllers/userController";
+import {
+  getUserById,
+  updateUserProfile,
+  updateUsername,
+  changePassword,
+  checkUsernameAvailability
+} from "@/modules/users/controllers/userController";
 import { verifyAndGetUser } from "@/middleware/middleware";
 
-const router = express.Router();
+const router = Router();
+router.use(verifyAndGetUser);
 const upload = multer();
 
-router.post("/:id", verifyAndGetUser, getUserById);
+router.post(
+  "/:id",
+  getUserById
+);
+
 router.put(
   "/:id",
-  verifyAndGetUser,
   upload.single("profile_picture"),
   updateUserProfile,
 );
 
 router.put(
   "/:id/username",
-  verifyAndGetUser,
   updateUsername
 );
 
 router.put(
   "/:id/password",
-  verifyAndGetUser,
   changePassword
+);
+
+router.post(
+  "/username/exists",
+  checkUsernameAvailability
 );
 
 export default router;
