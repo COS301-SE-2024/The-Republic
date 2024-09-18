@@ -117,5 +117,9 @@ export const changePassword = async ({ currentPassword, newPassword }: { current
     throw new Error(responseData.error || "An error occurred while changing the password");
   }
 
+  await supabase.auth.signOut();
+
+  window.location.href = '/login';
+
   return responseData;
 };

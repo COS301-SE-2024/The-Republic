@@ -265,6 +265,18 @@ export class UserService {
         });
       }
 
+      // If password update was successful, invalidate all sessions
+      const { error: signOutError } = await supabase.auth.signOut({ scope: 'global' });
+
+      if (signOutError) {
+        console.error("Error signing out user:", signOutError);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "Failed to sign out user after password change",
+        });
+      }
+
       return {
         code: 200,
         success: true,
@@ -278,7 +290,7 @@ export class UserService {
       throw APIError({
         code: 500,
         success: false,
-        error: "Current password is incorrect",
+        error: "An unexpected error occurred while changing the password",
       });
     }
   }

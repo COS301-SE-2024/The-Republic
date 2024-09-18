@@ -9,6 +9,7 @@ import { updateUsername } from "@/lib/api/updateProfile";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 import ChangePasswordForm from "../ChangePasswordForm/ChangePasswordForm";
 
+
 const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsername }) => {
   const [newUsername, setNewUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -59,6 +60,7 @@ const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsernam
           </CardTitle>
         </CardHeader>
         <CardContent>
+
           <div className="space-y-4">
             <div>
               <Label htmlFor="currentUsername">Current Username</Label>

@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Lock } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { changePassword } from "@/lib/api/updateProfile";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 
 interface ChangePasswordError {
   message: string;
@@ -62,6 +64,11 @@ const ChangePasswordForm: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+      <Alert className="mb-4 text-red-500">
+          <AlertDescription>
+            Warning: You will be logged out after changing your password.
+          </AlertDescription>
+        </Alert>
         <div className="space-y-4">
           <div>
             <Label htmlFor="currentPassword">Current Password</Label>
