@@ -559,7 +559,13 @@ interface ErrorDisplayProps {
   linkText: string;
 }
 
+interface UserExists {
+  username: string;
+  user_id?: string;
+}
+
 export type {
+  UserExists,
   AnalysisResult,
   FeedProps,
   RequestBody,

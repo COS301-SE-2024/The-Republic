@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@eslint/js": "^9.3.0",
-    "@supabase/supabase-js": "^2.43.4",
+    "@supabase/supabase-js": "^2.45.4",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/luxon": "^3.4.2",
