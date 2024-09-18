@@ -76,6 +76,10 @@ const MentionInput: React.FC<MentionInputProps> = ({
     setShowSuggestions(false);
   };
 
+  const highlightMentions = (text: string) => {
+    return text.replace(/@(\w+)/g, '<span class="text-blue-500 font-semibold">@$1</span>');
+  };
+
   return (
     <div className="relative">
       <textarea
@@ -83,6 +87,10 @@ const MentionInput: React.FC<MentionInputProps> = ({
         onChange={handleInputChange}
         className={`w-full p-2 border rounded resize-none ${className}`}
         placeholder={placeholder}
+      />
+      <div
+        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none"
+        dangerouslySetInnerHTML={{ __html: highlightMentions(value) }}
       />
       {showSuggestions && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg">
