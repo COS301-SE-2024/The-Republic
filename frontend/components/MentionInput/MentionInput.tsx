@@ -1,10 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import TextareaAutosize from "react-textarea-autosize";
 import debounce from 'lodash/debounce';
 
 interface User {
   id: string;
   username: string;
   fullname: string;
+  image_url: string;
 }
 
 interface MentionInputProps {
@@ -15,11 +18,11 @@ interface MentionInputProps {
 }
 
 const staticUsers: User[] = [
-  { id: '1', username: 'hlokomani', fullname: 'Hlokomani Khondlo' },
-  { id: '2', username: 'mulisa', fullname: 'Mulisa Musehane' },
-  { id: '3', username: 'boitumelo', fullname: 'Boitumelo Segwane' },
-  { id: '4', username: 'boipelo', fullname: 'Boipelo Madumo' },
-  { id: '5', username: 'shama', fullname: 'Shama Ntenda' },
+  { id: '1', username: 'hlokomani', fullname: 'Hlokomani Khondlo', image_url: 'https://example.com/johndoe.jpg' },
+  { id: '2', username: 'mulisa', fullname: 'Mulisa Musehane', image_url: 'https://example.com/janesmith.jpg' },
+  { id: '3', username: 'boitumelo', fullname: 'Boitumelo Segwane', image_url: 'https://example.com/bobross.jpg' },
+  { id: '4', username: 'boipelo', fullname: 'Boipelo Madumo', image_url: 'https://example.com/alicegreen.jpg' },
+  { id: '5', username: 'shama', fullname: 'Shama Ntenda', image_url: 'https://example.com/charliew.jpg' },
 ];
 
 const MentionInput: React.FC<MentionInputProps> = ({
@@ -31,6 +34,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const fetchUserSuggestions = useCallback((query: string): User[] => {
     return staticUsers.filter(user => 
@@ -74,34 +78,40 @@ const MentionInput: React.FC<MentionInputProps> = ({
     const newValue = `${beforeMention}@${username} ${afterMention}`;
     onChange(newValue);
     setShowSuggestions(false);
+    textareaRef.current?.focus();
   };
 
   const highlightMentions = (text: string) => {
-    return text.replace(/@(\w+)/g, '<span class="text-blue-500 font-semibold">@$1</span>');
+    return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
   };
 
   return (
     <div className="relative">
-      <textarea
+      <TextareaAutosize
+        ref={textareaRef}
         value={value}
         onChange={handleInputChange}
-        className={`w-full p-2 border rounded resize-none ${className}`}
+        className={`w-full p-2 border rounded resize-none bg-background text-foreground ${className}`}
         placeholder={placeholder}
       />
       <div
-        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none"
+        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none text-foreground"
         dangerouslySetInnerHTML={{ __html: highlightMentions(value) }}
       />
       {showSuggestions && (
-        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg">
+        <div className="absolute z-10 w-full mt-1 bg-background border rounded shadow-lg dark:shadow-gray-800">
           {suggestions.map((user) => (
             <div
               key={user.id}
-              className="p-2 cursor-pointer hover:bg-gray-100"
+              className="flex items-center p-2 cursor-pointer hover:bg-accent hover:text-accent-foreground"
               onClick={() => handleSuggestionClick(user.username)}
             >
-              <span className="font-medium">{user.username}</span>
-              <span className="ml-2 text-gray-500">{user.fullname}</span>
+              <Avatar className="h-6 w-6 mr-2">
+                <AvatarImage src={user.image_url} alt={user.username} />
+                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+              </Avatar>
+              <span className="font-medium text-foreground">{user.username}</span>
+              <span className="ml-2 text-muted-foreground">{user.fullname}</span>
             </div>
           ))}
         </div>
