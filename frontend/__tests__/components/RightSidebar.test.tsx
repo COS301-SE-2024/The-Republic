@@ -64,6 +64,7 @@ describe("RightSidebar", () => {
 
   afterEach(() => {
     (console.error as jest.Mock).mockRestore();
+    (console.warn as jest.Mock).mockRestore();
   });
 
   const setSortBy = jest.fn();

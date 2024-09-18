@@ -1,6 +1,5 @@
 import IssueService from "@/modules/issues/services/issueService";
 import IssueRepository from "@/modules/issues/repositories/issueRepository";
-import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
@@ -14,18 +13,14 @@ jest.mock("@/modules/points/services/pointsService");
 describe("IssueService", () => {
   let issueService: IssueService;
   let issueRepository: jest.Mocked<IssueRepository>;
-  let locationRepository: jest.Mocked<LocationRepository>;
   let mockPointsService: jest.Mocked<PointsService>;
   let mockClusterService: jest.Mocked<ClusterService>;
   let mockOpenAIService: jest.Mocked<OpenAIService>;
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
-    locationRepository =
-      new LocationRepository() as jest.Mocked<LocationRepository>;
     issueService = new IssueService();
     issueService.setIssueRepository(issueRepository);
-    issueService.setLocationRepository(locationRepository);
     mockPointsService = {
       awardPoints: jest.fn().mockResolvedValue(100),
       getFirstTimeAction: jest.fn().mockResolvedValue(true),
@@ -433,7 +428,6 @@ describe("IssueService", () => {
     const response = await issueService.createIssue(newIssue);
 
     expect(response.data).toEqual(createdIssue);
-    expect(locationRepository.createLocation).not.toHaveBeenCalled();
     expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
   });
 });

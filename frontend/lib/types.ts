@@ -308,6 +308,7 @@ interface Issue {
   image_url: string | null;
   is_anonymous: boolean;
   created_at: string;
+  forecast: string | null;
   resolved_at: string | null;
   sentiment: string;
   user: User;

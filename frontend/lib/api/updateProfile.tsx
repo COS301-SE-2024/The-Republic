@@ -38,8 +38,6 @@ const updateUserProfile = async (
     body: formData,
   });
 
-  //console.log(response);
-
   if (!response.ok) {
     const responseData = await response.json();
     throw new Error(responseData.error || "Failed to update profile");

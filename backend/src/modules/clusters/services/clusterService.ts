@@ -101,8 +101,6 @@ export class ClusterService {
         });
       }
   
-      //console.log('Cluster:', cluster);
-  
       if (cluster.issue_count <= 1) {
         await this.clusterRepository.deleteCluster(clusterId);
       } else {
@@ -129,8 +127,6 @@ export class ClusterService {
       throw new Error("No issues left in cluster after exclusion");
     }
     
-    //console.log('Relevant issues:', relevantIssues);
-  
     let embeddingLength = 0;
     let sumEmbedding: number[] = [];
     let validEmbeddingsCount = 0;
