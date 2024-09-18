@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
+import { ErrorPage } from "@/components/ui/error_page";
 import FilterModal from "@/components/FilterModal/FilterModal";
 
 const FETCH_SIZE = 10;
