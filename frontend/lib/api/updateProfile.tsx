@@ -58,6 +58,21 @@ const updateUsername = async (newUsername: string) => {
     throw new Error("User ID not found in session");
   }
 
+  const { data: existingUsers, error: checkError } = await supabase
+    .from("user")
+    .select("user_id")
+    .ilike("username", newUsername)
+    .neq("user_id", session.user.id);
+
+  if (checkError) {
+    console.error("Error checking username:", checkError);
+    throw new Error("An error occurred while checking username availability");
+  }
+
+  if (existingUsers && existingUsers.length > 0) {
+    throw new Error("Username already exists");
+  }
+
   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${session.user.id}/username`, {
     method: "PUT",
     headers: {
