@@ -29,6 +29,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
 }) => {
   const [suggestions, setSuggestions] = useState<User[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   const fetchUserSuggestions = useCallback((query: string): User[] => {
     return staticUsers.filter(user => 
@@ -39,17 +40,27 @@ const MentionInput: React.FC<MentionInputProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
+    const newCursorPosition = e.target.selectionStart;
     onChange(newValue);
+    setCursorPosition(newCursorPosition);
 
-    const lastAtSymbolIndex = newValue.lastIndexOf('@');
-    if (lastAtSymbolIndex !== -1) {
-      const query = newValue.slice(lastAtSymbolIndex + 1);
+    const lastAtSymbolIndex = newValue.lastIndexOf('@', newCursorPosition);
+    if (lastAtSymbolIndex !== -1 && lastAtSymbolIndex < newCursorPosition) {
+      const query = newValue.slice(lastAtSymbolIndex + 1, newCursorPosition);
       const fetchedSuggestions = fetchUserSuggestions(query);
       setSuggestions(fetchedSuggestions);
       setShowSuggestions(fetchedSuggestions.length > 0);
     } else {
       setShowSuggestions(false);
     }
+  };
+
+  const handleSuggestionClick = (username: string) => {
+    const beforeMention = value.slice(0, value.lastIndexOf('@', cursorPosition));
+    const afterMention = value.slice(cursorPosition);
+    const newValue = `${beforeMention}@${username} ${afterMention}`;
+    onChange(newValue);
+    setShowSuggestions(false);
   };
 
   return (
@@ -63,7 +74,11 @@ const MentionInput: React.FC<MentionInputProps> = ({
       {showSuggestions && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg">
           {suggestions.map((user) => (
-            <div key={user.id} className="p-2 cursor-pointer hover:bg-gray-100">
+            <div
+              key={user.id}
+              className="p-2 cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSuggestionClick(user.username)}
+            >
               <span className="font-medium">{user.username}</span>
               <span className="ml-2 text-gray-500">{user.fullname}</span>
             </div>
