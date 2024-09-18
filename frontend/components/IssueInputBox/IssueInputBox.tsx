@@ -1,16 +1,13 @@
-"use client";
-
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import TextareaAutosize from "react-textarea-autosize";
 import { categoryOptions, moodOptions } from "@/lib/constants";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
-import { LocationType, IssueInputBoxProps } from "@/lib/types";
+import { LocationType, IssueInputBoxProps, User } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
@@ -18,10 +15,11 @@ import CircularProgress from "@/components/CircularProgressBar/CircularProgressB
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useQuery } from "@tanstack/react-query";
+import MentionInput from "@/components/MentionInput/MentionInput";
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user, onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [mood, setMood] = useState("");
@@ -128,23 +126,26 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
       requestBody.append("image", image);
     }
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
-      {
-        method: "POST",
-        body: requestBody,
-        headers: {
-          Authorization: `Bearer ${user?.access_token}`,
-        },
-      },
-    );
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
+        {
+          method: "POST",
+          body: requestBody,
+          headers: {
+            Authorization: `Bearer ${user?.access_token}`,
+          },
+        }
+      );
 
-    if (!res.ok) {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    } else {
+      if (!res.ok) {
+        throw new Error("Failed to post");
+      }
+
+      const apiResponse = await res.json();
+      onAddIssue(apiResponse.data);
+
+      // Reset form after successful submission
       setContent("");
       setCategory("");
       setMood("");
@@ -152,11 +153,18 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
       setLocation(userLocation ?? null);
       setImage(null);
 
-      const apiResponse = await res.json();
-      onAddIssue(apiResponse.data);
+      toast({
+        variant: "success",
+        description: "Issue posted successfully!",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to post, please try again",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,6 +179,23 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
       fileInputRef.current.value = "";
     }
   };
+
+  // Placeholder function for fetching user suggestions
+  // Replace this with actual API call when available
+const fetchUserSuggestions = async (query: string): Promise<User[]> => {
+  try {
+    // Replace this with your actual API call
+    const response = await fetch(`/api/user-suggestions?query=${query}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user suggestions');
+    }
+    const data = await response.json();
+    return data.users || [];
+  } catch (error) {
+    console.error('Error fetching user suggestions:', error);
+    return [];
+  }
+};
 
   const charCount = content.length;
 
@@ -187,12 +212,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
             </div>
           )}
           <div className="flex-grow w-full">
-            <TextareaAutosize
-              placeholder="What's going on!?"
+            <MentionInput
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
+              placeholder="What's going on!?"
               className="w-full p-2 border rounded resize-none"
-              maxRows={10}
+              fetchSuggestions={fetchUserSuggestions} //api call that will be implemented
             />
             {image && (
               <div className="relative w-full h-48 mt-2">
@@ -269,7 +294,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
           <CircularProgress charCount={charCount} />
           <Button
             onClick={handleIssueSubmit}
-            disabled={charCount > MAX_CHAR_COUNT || !content}
+            disabled={charCount > MAX_CHAR_COUNT || !content || isLoading}
             className="w-full sm:w-auto"
           >
             Post
