@@ -8,7 +8,7 @@ import {
   IssuesGroupedByCategory,
   CategoryAndDateCount,
   NameValue
-} from "../../shared/models/reports";
+} from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
 
 export default class ReportsService {

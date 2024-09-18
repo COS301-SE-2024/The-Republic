@@ -84,4 +84,4 @@ interface Issue {
   pendingResolutionId?: string | null;
 }
 
-export { User, Category, ReactionCount, Issue, DatabaseUser };
+export type { User, Category, ReactionCount, Issue, DatabaseUser };

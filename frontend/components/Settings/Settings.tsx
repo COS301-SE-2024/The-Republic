@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProfileSettings from "./ProfileSettings";
-import RequestVerifications from "./RequestVerification";
 import NotificationSettings from "./NotificationSettings";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
+import { fetchUserData } from "@/lib/api/fetchUserData"; 
+import { UserAlt } from "@/lib/types";
 import AccountManagement from "./AccountManagement";
 
 interface SettingsDropdownProps {
@@ -16,7 +17,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   title,
   children,
 }) => {
-  const [isOpen, setIsOpen] = useState(false); // State for dropdown visibility
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -32,6 +33,32 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
 const SettingsPage = () => {
   const { toast } = useToast();
+  const [user, setUser] = useState<UserAlt | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userData = await fetchUserData();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load user data. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [toast]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto my-8 space-y-8">
@@ -42,10 +69,11 @@ const SettingsPage = () => {
         </Button>
       </div>
       <SettingsDropdown title="Profile Settings">
-        <ProfileSettings />
-      </SettingsDropdown>
-      <SettingsDropdown title="Request Verifications">
-        <RequestVerifications />
+        {user ? (
+          <ProfileSettings currentUsername={user.username} />
+        ) : (
+          <p>User data not available</p>
+        )}
       </SettingsDropdown>
       <SettingsDropdown title="Notification Settings">
         <NotificationSettings />

@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast as shadToast } from "@/components/ui/use-toast";
-import { supabase } from "./globals";
-import { Api, AnalysisResult } from "./types";
+import { supabase } from "@/lib/globals";
+import { Api, AnalysisResult } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

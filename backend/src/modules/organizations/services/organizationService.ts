@@ -1,4 +1,4 @@
-import { OrganizationRepository } from "../repositories/organizationRepository";
+import { OrganizationRepository } from "@/modules/organizations/repositories/organizationRepository";
 import { Organization, OrganizationMember, JoinRequest, OrganizationPost, ActivityLog, ActionDetails, UpdateOrganizationDetails } from "@/modules/shared/models/organization";
 import { APIResponse, APIData, APIError } from "@/types/response";
 import { validateOrganizationName, validateOrganizationUsername } from "@/utilities/validators";

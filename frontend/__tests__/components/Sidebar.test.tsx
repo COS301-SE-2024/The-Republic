@@ -38,7 +38,7 @@ describe("Sidebar", () => {
   it("renders all expected tabs", () => {
     (useUser as jest.Mock).mockReturnValue({ user: null });
 
-    render(<Sidebar isOpen={true} onClose={() => {}} username="" fullname="" imageUrl="" />);
+    render(<Sidebar isOpen={true} onClose={() => {}} />);
     
     // Check for the presence of each expected tab
     expect(screen.getByText("Home")).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("Sidebar", () => {
       },
     });
 
-    render(<Sidebar isOpen={true} onClose={() => {}} username="testuser" fullname="Test User" imageUrl="https://example.com/avatar.jpg" />);
+    render(<Sidebar isOpen={true} onClose={() => {}} />);
     
     expect(screen.getByText("Test User")).toBeInTheDocument();
     expect(screen.getByText("@testuser")).toBeInTheDocument();

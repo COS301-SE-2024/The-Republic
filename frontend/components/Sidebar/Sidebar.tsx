@@ -10,23 +10,26 @@ import {
   NotificationsIcon,
   SettingsIcon,
   TrophyIcon,
-} from "../icons";
+} from "@/components/icons";
 
 import { supabase } from "@/lib/globals";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { HomeAvatarProps } from "@/lib/types";
 import styles from "@/styles/Custom.module.css";
 import { useUser } from "@/lib/contexts/UserContext";
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
 import { XIcon } from "lucide-react";
-import { ReactionNotification, CommentNotification, Issue } from "@/lib/types";
+import {
+  ReactionNotification,
+  CommentNotification,
+  Issue,
+} from "@/lib/types";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { fetchUserData } from '@/lib/api/fetchUserData';
 import { useRouter } from 'next/navigation';
 
-interface SidebarProps extends HomeAvatarProps {
+interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }

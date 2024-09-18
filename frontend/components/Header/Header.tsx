@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ModeToggle } from "../ThemeToggle/ModeToggle";
+import { ModeToggle } from "@/components/ThemeToggle/ModeToggle";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";

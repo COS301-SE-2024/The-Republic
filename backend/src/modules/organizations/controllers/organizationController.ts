@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { OrganizationService } from "../services/organizationService";
+import { OrganizationService } from "@/modules/organizations/services/organizationService";
 import { sendResponse } from "@/utilities/response";
 import { APIData, APIError } from "@/types/response";
 import { PaginationParams } from "@/types/pagination";

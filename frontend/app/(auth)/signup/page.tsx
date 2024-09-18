@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 import { Eye, EyeOff, UserPlus, Mail, User, Lock, Share2, AlertTriangle, MessageCircle, Shield, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { checkUsername } from "@/lib/api/checkUsername";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,17 @@ export default function Signup() {
 
   const signup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const isUsernameAvailable = await checkUsername({"username" : username});
+    if (!isUsernameAvailable) {
+      toast({
+        variant: "destructive",
+        description: "Username is not available, already in use.",
+      });
+
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -59,6 +71,7 @@ export default function Signup() {
           transition={{ duration: 0.5 }}
           className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-500"
         >
+          Create Your Account
         </motion.h1>
       </div>
       <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto bg-white dark:bg-transparent rounded-xl overflow-hidden shadow-lg">
