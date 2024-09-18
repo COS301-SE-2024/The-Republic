@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import debounce from 'lodash/debounce';
 
 interface User {
   id: string;
@@ -38,6 +39,20 @@ const MentionInput: React.FC<MentionInputProps> = ({
     ).slice(0, 5);
   }, []);
 
+  const debouncedFetchSuggestions = useCallback(
+    debounce((query: string) => {
+      if (query.length > 0) {
+        const fetchedSuggestions = fetchUserSuggestions(query);
+        setSuggestions(fetchedSuggestions);
+        setShowSuggestions(fetchedSuggestions.length > 0);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300),
+    [fetchUserSuggestions]
+  );
+
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     const newCursorPosition = e.target.selectionStart;
@@ -47,9 +62,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
     const lastAtSymbolIndex = newValue.lastIndexOf('@', newCursorPosition);
     if (lastAtSymbolIndex !== -1 && lastAtSymbolIndex < newCursorPosition) {
       const query = newValue.slice(lastAtSymbolIndex + 1, newCursorPosition);
-      const fetchedSuggestions = fetchUserSuggestions(query);
-      setSuggestions(fetchedSuggestions);
-      setShowSuggestions(fetchedSuggestions.length > 0);
+      debouncedFetchSuggestions(query);
     } else {
       setShowSuggestions(false);
     }
