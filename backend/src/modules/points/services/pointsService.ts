@@ -1,20 +1,19 @@
 import { PointsRepository } from "@/modules/points/repositories/pointsRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
+import { UserService } from "@/modules/users/services/userService";
 
 export class PointsService {
   private pointsRepository: PointsRepository;
+  private userService: UserService;
 
   constructor() {
     this.pointsRepository = new PointsRepository();
+    this.userService = new UserService();
   }
 
   async awardPoints(userId: string, points: number, reason: string) {
     const newScore = await this.pointsRepository.updateUserScore(userId, points) as number;
     await this.pointsRepository.logPointsTransaction(userId, points, reason);
-  
-    if (newScore < -150) {
-      await this.pointsRepository.blockUser(userId);
-    }
   
     return newScore;
   }
@@ -23,8 +22,8 @@ export class PointsService {
     const newScore = await this.pointsRepository.updateUserScore(userId, -points) as number;
     await this.pointsRepository.logPointsTransaction(userId, -points, reason);
 
-    if (newScore < -150) {
-      await this.pointsRepository.blockUser(userId);
+    if (newScore <= -150) {
+      await this.userService.blockUser(userId);
     }
 
     return newScore;
