@@ -48,6 +48,7 @@ export default class UserRepository {
       ...data,
       total_issues: totalIssues,
       resolved_issues: resolvedIssues,
+      is_suspended: new Date() < new Date(data.suspended_until),
     } as User;
   }
 

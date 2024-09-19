@@ -71,7 +71,10 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
+          is_suspended: false,
+          suspended_until: null,
+          suspension_reason: null
         };
       }
 
@@ -121,8 +124,11 @@ export default class IssueService {
         total_issues: null,
         resolved_issues: null,
         user_score: 0, 
-          location_id: null,
-          location: null
+        location_id: null,
+        location: null,
+        is_suspended: false,
+        suspended_until: null,
+        suspension_reason: null
       };
     }
 
@@ -541,7 +547,10 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
+          is_suspended: false,
+          suspended_until: null,
+          suspension_reason: null
         };
       }
 
@@ -586,7 +595,10 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
+          is_suspended: false,
+          suspended_until: null,
+          suspension_reason: null
         };
       }
 
