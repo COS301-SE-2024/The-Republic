@@ -176,4 +176,45 @@ export default class UserRepository {
       });
     }
   }
+
+  async suspendUser(userId: string, reason: string, until: Date) {
+    const { 
+      data: currentSuspension, 
+      error: currentSuspensionError 
+    } = await supabase
+      .from("user")
+      .select("suspended_until")
+      .eq("user_id", userId)
+      .single();
+
+    if (currentSuspensionError) {
+      console.error("suspendUser: ", currentSuspensionError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while suspending user from resolving.",
+      });
+    }
+
+    if (new Date(currentSuspension.suspended_until) > until) {
+      return; // User already has longer suspension
+    }
+
+    const { error } = await supabase
+      .from("user")
+      .update({
+        suspended_until: until,
+        suspension_reason: reason
+      })
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while suspending user from resolving.",
+      });
+    }
+  }
 }

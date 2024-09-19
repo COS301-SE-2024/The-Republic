@@ -294,4 +294,8 @@ export class UserService {
       });
     }
   }
+
+  async suspendUser(userId: string, reason: string, until: Date) {
+    this.userRepository.suspendUser(userId, reason, until);
+  }
 }
