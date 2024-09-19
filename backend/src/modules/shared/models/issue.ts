@@ -17,9 +17,9 @@ interface User {
     suburb: string;
     district: string;
   } | null;
-  is_suspended: boolean;
-  suspended_until: string | null;
-  suspension_reason: string | null;
+  is_suspended?: boolean;
+  suspended_until?: string | null;
+  suspension_reason?: string | null;
 }
 
 interface DatabaseUser {
