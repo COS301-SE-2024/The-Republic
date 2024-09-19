@@ -14,6 +14,7 @@ interface LocationModalProps {
   onClose: () => void;
   onLocationSet: (location: LocationType) => void;
   defaultLocation?: LocationType | null;
+  required?: boolean;
 }
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
@@ -43,7 +44,8 @@ const LocationModal: React.FC<LocationModalProps> = ({
     isOpen,
     onClose,
     onLocationSet,
-    defaultLocation
+    defaultLocation,
+    required = false
   }) => {
     const [activeTab, setActiveTab] = useState("map");
     const [mapCenter, setMapCenter] = useState(
@@ -136,8 +138,20 @@ const LocationModal: React.FC<LocationModalProps> = ({
     }
   };
 
+  const handleClose = () => {
+    if (!required) {
+      onClose();
+    } else {
+      toast({
+        title: "Location Required",
+        description: "Please set your location to continue.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Set Your Location</DialogTitle>
@@ -178,8 +192,13 @@ const LocationModal: React.FC<LocationModalProps> = ({
           <p className="mt-2">Selected location: {selectedLocation.label}</p>
         )}
         <Button onClick={handleSetLocation} disabled={!selectedLocation} className="mt-4">
-          Use This Location
+          {required ? "Set Location and Continue" : "Use This Location"}
         </Button>
+        {!required && (
+          <Button variant="outline" onClick={onClose} className="mt-2">
+            Cancel
+          </Button>
+        )}
       </DialogContent>
     </Dialog>
   );
