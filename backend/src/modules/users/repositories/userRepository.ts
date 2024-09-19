@@ -218,4 +218,20 @@ export default class UserRepository {
       });
     }
   }
+
+  async blockUser(userId: string) {
+    const { error } = await supabase
+      .from("user")
+      .update({ is_blocked: true })
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while blocking user.",
+      });
+    }
+  }
 }

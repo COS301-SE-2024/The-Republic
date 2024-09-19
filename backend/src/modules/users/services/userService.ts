@@ -298,4 +298,8 @@ export class UserService {
   async suspendUser(userId: string, reason: string, until: Date) {
     this.userRepository.suspendUser(userId, reason, until);
   }
+
+  async blockUser(userId: string) {
+    this.blockUser(userId);
+  }
 }
