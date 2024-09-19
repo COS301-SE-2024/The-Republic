@@ -9,6 +9,7 @@ import { PointsService } from "@/modules/points/services/pointsService";
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import { OpenAIService } from '@/modules/shared/services/openAIService';
 import { ResolutionService } from "@/modules/resolutions/services/resolutionService";
+import UserRepository from "@/modules/users/repositories/userRepository";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -16,6 +17,7 @@ export default class IssueService {
   private clusterService: ClusterService;
   private openAIService: OpenAIService;
   private resolutionService: ResolutionService;
+  private userRepository: UserRepository;
 
   constructor() {
     this.issueRepository = new IssueRepository();
@@ -23,6 +25,7 @@ export default class IssueService {
     this.clusterService = new ClusterService();
     this.openAIService = new OpenAIService();
     this.resolutionService = new ResolutionService();
+    this.userRepository = new UserRepository();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
@@ -429,6 +432,20 @@ export default class IssueService {
     organizationId?: string
   ): Promise<APIResponse<Resolution>> {
     try {
+      const user = await this.userRepository.getUserById(userId);
+
+      if (user?.is_suspended) {
+        throw APIData({
+          code: 403,
+          success: false,
+          error: "User is suspended",
+          data: {
+            suspended_until: user!.suspended_until,
+            suspension_reason: user!.suspension_reason
+          }
+        });
+      }
+
       const issue = await this.issueRepository.getIssueById(issueId);
       
       if (issue.resolved_at) {
