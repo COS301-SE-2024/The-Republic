@@ -75,9 +75,6 @@ export default class IssueService {
           user_score: 0, 
           location_id: null,
           location: null,
-          is_suspended: false,
-          suspended_until: null,
-          suspension_reason: null
         };
       }
 
@@ -129,9 +126,6 @@ export default class IssueService {
         user_score: 0, 
         location_id: null,
         location: null,
-        is_suspended: false,
-        suspended_until: null,
-        suspension_reason: null
       };
     }
 
@@ -432,16 +426,16 @@ export default class IssueService {
     organizationId?: string
   ): Promise<APIResponse<Resolution>> {
     try {
-      const user = await this.userRepository.getUserById(userId);
+      const suspension = await this.userRepository.getSuspension(userId);
 
-      if (user?.is_suspended) {
+      if (suspension.is_suspended) {
         throw APIData({
           code: 403,
           success: false,
           error: "User is suspended",
           data: {
-            suspended_until: user!.suspended_until,
-            suspension_reason: user!.suspension_reason
+            suspended_until: suspension.suspended_until,
+            suspension_reason: suspension.suspension_reason
           }
         });
       }
@@ -565,9 +559,6 @@ export default class IssueService {
           user_score: 0, 
           location_id: null,
           location: null,
-          is_suspended: false,
-          suspended_until: null,
-          suspension_reason: null
         };
       }
 
@@ -613,9 +604,6 @@ export default class IssueService {
           user_score: 0, 
           location_id: null,
           location: null,
-          is_suspended: false,
-          suspended_until: null,
-          suspension_reason: null
         };
       }
 

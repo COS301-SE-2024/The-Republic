@@ -2,6 +2,7 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
 import NoAuthRepository from "@/modules/users/repositories/noAuthRepository";
+import { Suspension } from "@/types/suspension";
 
 export default class UserRepository {
   private noAuthRepository: NoAuthRepository;
@@ -48,7 +49,6 @@ export default class UserRepository {
       ...data,
       total_issues: totalIssues,
       resolved_issues: resolvedIssues,
-      is_suspended: new Date() < new Date(data.suspended_until),
     } as User;
   }
 
@@ -217,6 +217,28 @@ export default class UserRepository {
         error: "An unexpected error occurred while suspending user from resolving.",
       });
     }
+  }
+
+  async getSuspension(userId: string): Promise<Suspension> {
+    const { error, data } = await supabase
+      .from("user")
+      .select("suspended_until, suspension_reason")
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      console.log("getSuspension: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking suspension.",
+      });
+    }
+
+    return {
+      ...data,
+      is_suspended: new Date() < new Date(data.suspended_until),
+    };
   }
 
   async blockUser(userId: string) {
