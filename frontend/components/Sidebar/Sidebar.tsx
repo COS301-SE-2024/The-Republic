@@ -190,7 +190,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             }
           }
         },
-      );
+      )
+      .subscribe();
 
     return () => {
       if (channelA && channelA.unsubscribe) {

@@ -11,7 +11,7 @@ try {
     redisClient = null;
   });
 
-  redisClient.on('connect', () => console.log('Connected to Redis'));
+  // redisClient.on('connect', () => console.log('Connected to Redis'));
 } catch (error) {
   console.error('Failed to initialize Redis client:', error);
 }

@@ -50,7 +50,7 @@ const CommentList: React.FC<CommentListProps> = ({
 
   const FailedIndicator = () => (
     <div className="flex justify-center items-center h-32">
-      <h3 className="text-muted-foreground">Failed to fetch comments</h3>
+      <h3 className="text-muted-foreground">Failed to fetch issues</h3>
     </div>
   );
 
