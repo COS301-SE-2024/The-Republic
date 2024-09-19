@@ -6,6 +6,7 @@ import { ClusterService } from '@/modules/clusters/services/clusterService';
 import IssueRepository from '@/modules/issues/repositories/issueRepository';
 import { ResolutionResponseRepository } from '../repositories/resolutionResponseRepository';
 import { Issue } from '@/modules/shared/models/issue';
+import { UserService } from '@/modules/users/services/userService';
 
 export class ResolutionService {
   private resolutionRepository: ResolutionRepository;
@@ -13,6 +14,7 @@ export class ResolutionService {
   private clusterService: ClusterService;
   private issueRepository: IssueRepository;
   private ResolutionResponseRepository: ResolutionResponseRepository;
+  private userService: UserService;
 
   constructor() {
     this.resolutionRepository = new ResolutionRepository();
@@ -20,6 +22,7 @@ export class ResolutionService {
     this.clusterService = new ClusterService();
     this.issueRepository = new IssueRepository();
     this.ResolutionResponseRepository = new ResolutionResponseRepository();
+    this.userService = new UserService();
   }
 
   async createResolution(resolution: Omit<Resolution, 'resolution_id' | 'created_at' | 'updated_at' | 'status' | 'num_cluster_members_accepted' | 'num_cluster_members_rejected'>): Promise<Resolution> {
@@ -189,6 +192,14 @@ private async finalizeResolution(resolution: Resolution): Promise<void> {
 
       if (totalResponses === resolution.num_cluster_members || resolution.num_cluster_members_rejected > majority) {
         await this.pointsService.penalizeUser(resolution.resolver_id, 50, "external resolution rejected");
+
+        const suspendUntil = new Date();
+        suspendUntil.setHours(suspendUntil.getHours() + 24);
+        await this.userService.suspendUser(
+          resolution.resolver_id,
+          "false_resolution",
+          suspendUntil,
+        );
       }
     }
 

@@ -23,10 +23,6 @@ export class PointsService {
     const newScore = await this.pointsRepository.updateUserScore(userId, -points) as number;
     await this.pointsRepository.logPointsTransaction(userId, -points, reason);
 
-    if (reason === "Falsely resolving someone else's issue") {
-      await this.pointsRepository.suspendUserFromResolving(userId);
-    }
-
     if (newScore < -150) {
       await this.pointsRepository.blockUser(userId);
     }
