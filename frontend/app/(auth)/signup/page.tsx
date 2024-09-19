@@ -9,8 +9,10 @@ import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 import { Eye, EyeOff, UserPlus, Mail, User, Lock, Share2, AlertTriangle, MessageCircle, Shield, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import PostSignupLocation from "@/components/PostSignupLocation/PostSignupLocation";
 
 export default function Signup() {
+  const [showLocationSetup, setShowLocationSetup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +23,7 @@ export default function Signup() {
 
   const signup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -37,9 +39,13 @@ export default function Signup() {
         variant: "destructive",
         description: "Failed to sign up, please try again",
       });
-    } else {
-      router.push("/");
+    } else if (data.user) {
+      setShowLocationSetup(true);
     }
+  };
+
+  const handleLocationSetupComplete = () => {
+    router.push("/");
   };
 
   const floatingIcons = [
@@ -174,6 +180,9 @@ export default function Signup() {
           <p className="mt-4 sm:mt-6 text-center text-sm sm:text-base text-green-600 dark:text-green-400">
             Already have an account? <a href="/login" className="text-green-700 dark:text-green-300 hover:underline">Log in</a>
           </p>
+          {showLocationSetup && (
+            <PostSignupLocation onComplete={handleLocationSetupComplete} />
+          )}
         </div>
       </div>
     </div>
