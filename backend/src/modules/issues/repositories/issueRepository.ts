@@ -67,10 +67,6 @@ export default class IssueRepository {
       query = query.eq("category_id", categoryId);
     }
 
-    if (mood) {
-      query = query.eq("sentiment", mood);
-    }
-
     const { data, error } = await query;
 
     if (error) {
@@ -333,7 +329,6 @@ export default class IssueRepository {
           user_id: issue.user_id,
           category_id: issue.category_id,
           content: issue.content,
-          sentiment: issue.sentiment,
           is_anonymous: issue.is_anonymous,
           location_id: locationId,
           created_at: issue.created_at,
