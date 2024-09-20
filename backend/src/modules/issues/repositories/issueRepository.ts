@@ -780,13 +780,12 @@ export default class IssueRepository {
     return data.resolved_at !== null;
   }
 
-  // TODO: resolution bug fix
   async getPendingResolutionForIssue(issueId: number): Promise<Resolution | null> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*')
+      .from('issue')
+      .select('*, resolution: resolution_id(*)')
       .eq('issue_id', issueId)
-      .eq('status', 'pending')
+      .eq('resolution.status', 'pending')
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 is the error code for no rows returned
@@ -798,7 +797,7 @@ export default class IssueRepository {
       });
     }
 
-    return data || null;
+    return data?.resolution || null;
   }
 
   async getResolutionsForIssue(issueId: number): Promise<Resolution[]> {
