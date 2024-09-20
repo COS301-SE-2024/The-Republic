@@ -25,7 +25,16 @@ export class ResolutionService {
     this.userRepository = new UserRepository();
   }
 
-  async createResolution(resolution: Omit<Resolution, 'resolution_id' | 'created_at' | 'updated_at' | 'status' | 'num_cluster_members_accepted' | 'num_cluster_members_rejected'>): Promise<Resolution> {
+  async createResolution(resolution: Omit<
+    Resolution, 
+    'resolution_id' | 
+    'created_at' | 
+    'updated_at' | 
+    'status' | 
+    'num_cluster_members_accepted' | 
+    'num_cluster_members_rejected' |
+    'num_cluster_members'>
+  ): Promise<Resolution> {
     const isResolved = await this.issueRepository.isIssueResolved(resolution.issue_id);
     if (isResolved) {
       throw APIError({

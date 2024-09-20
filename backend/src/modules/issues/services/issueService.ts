@@ -353,13 +353,6 @@ export default class IssueService {
         });
       }
     
-      let numClusterMembers = 1;
-    
-      if (issue.cluster_id) {
-        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-        numClusterMembers = cluster.issue_count;
-      }
-  
       let imageUrl: string | null = null;
   
       if (proofImage) {
@@ -390,7 +383,6 @@ export default class IssueService {
         resolution_text: resolutionText,
         proof_image: imageUrl,
         resolution_source: 'self',
-        num_cluster_members: numClusterMembers,
         political_association: null,
         state_entity_association: null,
         resolved_by: null,
@@ -450,13 +442,6 @@ export default class IssueService {
         });
       }
     
-      let numClusterMembers = 1;
-    
-      if (issue.cluster_id) {
-        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-        numClusterMembers = cluster.issue_count;
-      }
-  
       let imageUrl: string | null = null;
   
       if (proofImage) {
@@ -487,7 +472,6 @@ export default class IssueService {
         resolution_text: resolutionText,
         proof_image: imageUrl,
         resolution_source: resolvedBy ? 'other' : 'unknown',
-        num_cluster_members: numClusterMembers,
         political_association: politicalAssociation || null,
         state_entity_association: stateEntityAssociation || null,
         resolved_by: resolvedBy || null,
