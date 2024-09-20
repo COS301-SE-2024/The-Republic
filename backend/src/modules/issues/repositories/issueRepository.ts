@@ -819,7 +819,7 @@ export default class IssueRepository {
     return data as Resolution[];
   }
 
-  async assignResolutionToIssues(resolutionId: string, issuesIds: string[]) {
+  async assignResolutionToIssues(resolutionId: string, issuesIds: number[]) {
     const { error } = await supabase
       .from('issue')
       .update({ resolutionId: resolutionId })

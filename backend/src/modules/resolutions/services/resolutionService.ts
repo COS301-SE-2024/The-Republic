@@ -49,6 +49,7 @@ export class ResolutionService {
 
     let status: 'pending' | 'accepted' | 'declined' = 'pending';
     if (resolution.resolution_source === 'self') {
+      // TODO: Remove the duplicate points and early accepting, and add an accept response for the user
       status = 'accepted';
       await this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
       await this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, [resolution.resolver_id]);
@@ -71,21 +72,10 @@ export class ResolutionService {
       num_cluster_members_rejected: 0,
     });
 
-    // Create resolutions for other issues in the cluster
-    if (clusterId) {
-      for (const clusterIssue of clusterIssues) {
-        if (clusterIssue.issue_id !== resolution.issue_id) {
-          await this.resolutionRepository.createResolution({
-            ...resolution,
-            issue_id: clusterIssue.issue_id,
-            status: 'pending',
-            num_cluster_members: numClusterMembers,
-            num_cluster_members_accepted: 0,
-            num_cluster_members_rejected: 0,
-          });
-        }
-      }
-    }
+    this.issueRepository.assignResolutionToIssues(
+      createdResolution.resolution_id,
+      clusterIssues.map((issue) => issue.issue_id)
+    );
 
     // Notify cluster members for both self and external resolutions
     await this.notifyClusterMembers(createdResolution, clusterIssues);
@@ -105,7 +95,9 @@ private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[
   }
 }
 
+// TODO: resolution bug fix
 async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string, satisfactionRating?: number): Promise<Resolution> {
+  // TODO: Get the resolution this issues is assinged to
   const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
   
   if (resolution.status !== 'pending') {
@@ -116,6 +108,7 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
     });
   }
 
+  // TODO: Check if they have an issue assigned to this resolution
   const issue = await this.issueRepository.getIssueById(resolution.issue_id);
   if (issue.user_id !== userId) {
     throw APIError({
@@ -162,6 +155,7 @@ private async finalizeResolution(resolution: Resolution): Promise<void> {
 
   if (resolution.resolution_source === 'self') {
     await this.pointsService.awardPoints(resolution.resolver_id, 50, "self-resolution accepted");
+    // TODO: Award organization points
   } else {
     if (resolution.organization_id) {
       await this.pointsService.awardOrganizationPoints(resolution.organization_id, 75, "External resolution accepted for Organization member");
@@ -211,6 +205,7 @@ private async finalizeResolution(resolution: Resolution): Promise<void> {
   }
 
   private async getAcceptedUsers(resolutionId: string): Promise<string[]> {
+    // TODO: Get user IDs from issues with this resolution ID that are resolved
     const acceptedUsers = await this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
     return acceptedUsers.map(user => user.userId);
   }
