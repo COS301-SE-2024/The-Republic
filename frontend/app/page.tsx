@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Github, Mail } from "lucide-react";
 
 const LandingPage = () => {
-    const router = useRouter();
+  const router = useRouter();
   const features = [
     { title: "Incident Reporting", description: "Report issues with government services", icon: "🚨" },
     { title: "Data Analysis", description: "Gain insights from reported data", icon: "📊" },
@@ -17,7 +17,7 @@ const LandingPage = () => {
   ];
 
   const handleSignUp = () => {
-    router.push("/login");  // Navigate to the login page
+    router.push("/login"); 
   };
 
   return (
@@ -40,8 +40,9 @@ const LandingPage = () => {
           <h1 className="text-5xl font-bold mb-4">Revolutionize Citizen Engagement</h1>
           <p className="text-xl mb-8">Empower your voice in government services</p>
           <button 
-          onClick={handleSignUp}
-          className="bg-green-500 text-white px-6 py-3 rounded-full text-lg hover:bg-green-600 transition duration-300">
+            onClick={handleSignUp}
+            className="bg-green-500 text-white px-6 py-3 rounded-full text-lg hover:bg-green-600 transition duration-300"
+          >
             Sign Up Now
           </button>
         </section>
@@ -78,8 +79,9 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold mb-4">Ready to Make a Difference?</h2>
             <p className="text-xl mb-8">Join The Republic and help improve government services for all.</p>
             <button 
-            onClick={handleSignUp}
-            className="bg-white text-green-600 px-6 py-3 rounded-full text-lg hover:bg-gray-100 transition duration-300">
+              onClick={handleSignUp}
+              className="bg-white text-green-600 px-6 py-3 rounded-full text-lg hover:bg-gray-100 transition duration-300"
+            >
               Sign Up Now
             </button>
           </div>
