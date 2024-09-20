@@ -1,52 +1,127 @@
-import React from 'react';
-import { Smartphone } from 'lucide-react';
+"use client"
+
+import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Github, Mail } from "lucide-react";
 
 const LandingPage = () => {
+    const router = useRouter();
+  const features = [
+    { title: "Incident Reporting", description: "Report issues with government services", icon: "🚨" },
+    { title: "Data Analysis", description: "Gain insights from reported data", icon: "📊" },
+    { title: "Public Discourse", description: "Engage in meaningful discussions", icon: "💬" },
+    { title: "Sentiment Analysis", description: "Understand public opinion trends", icon: "🔍" },
+    { title: "Visualizations", description: "View data in interactive formats", icon: "📈" },
+    { title: "Anonymous Posting", description: "Share concerns privately", icon: "🕵️" },
+  ];
+
+  const handleSignUp = () => {
+    router.push("/login");  // Navigate to the login page
+  };
+
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col">
       <header className="p-4 flex justify-between items-center">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-green-500 rounded-full mr-2"></div>
-          <span className="font-bold text-xl">The Republic</span>
+          <Image
+            priority
+            width={200}
+            height={100}
+            src="/images/b-logo-full.png"
+            alt="The Republic logo"
+          />
         </div>
-        <nav>
-          <ul className="flex space-x-4">
-            <li><a href="#" className="hover:text-green-500">Home</a></li>
-            <li><a href="#" className="hover:text-green-500">How it works</a></li>
-            <li><a href="#" className="hover:text-green-500">Services</a></li>
-            <li><a href="#" className="hover:text-green-500">Contacts</a></li>
-          </ul>
-        </nav>
-        <button className="bg-green-500 text-white px-4 py-2 rounded-full">Download App</button>
       </header>
 
-      <main className="flex-grow flex items-center">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-8 md:mb-0">
-            <h1 className="text-5xl font-bold mb-4">Empower Your Finances!</h1>
-            <p className="text-xl mb-6">Empowering Your Financial Journey with Innovative Solutions</p>
-            <button className="bg-green-500 text-white px-6 py-3 rounded-full text-lg">Get Started</button>
-            <div className="mt-8 flex items-center">
-              <div className="flex -space-x-2 mr-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-gray-400 border-2 border-white"></div>
-                ))}
-              </div>
-              <p className="text-xl">1200+ specialists</p>
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 py-16 text-center">
+          <h1 className="text-5xl font-bold mb-4">Revolutionize Citizen Engagement</h1>
+          <p className="text-xl mb-8">Empower your voice in government services</p>
+          <button 
+          onClick={handleSignUp}
+          className="bg-green-500 text-white px-6 py-3 rounded-full text-lg hover:bg-green-600 transition duration-300">
+            Sign Up Now
+          </button>
+        </section>
+
+        {/* Project Overview */}
+        <section className="bg-gray-800 py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-4 text-center">About The Republic</h2>
+            <p className="text-xl text-center max-w-3xl mx-auto">
+              The Republic project aims to revolutionize citizen engagement with government services by providing a platform for individuals to share their experiences, report incidents, and voice their concerns. This initiative enhances transparency and accountability within government operations.
+            </p>
+          </div>
+        </section>
+
+        {/* Core Features */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">Core Features</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <div key={index} className="bg-gray-800 p-6 rounded-lg">
+                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                  <p>{feature.description}</p>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="md:w-1/2 relative">
-            <div className="absolute inset-0 bg-green-500 opacity-20 blur-3xl"></div>
-            <div className="relative">
-              <Smartphone className="w-64 h-auto text-white mb-4" />
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h2 className="text-2xl font-bold mb-2">Unlock Your Financial Future</h2>
-                <p className="text-green-500 text-xl">Total Balance: $22,350.50</p>
+        </section>
+
+        {/* Call to Action */}
+        <section className="bg-green-600 py-16">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to Make a Difference?</h2>
+            <p className="text-xl mb-8">Join The Republic and help improve government services for all.</p>
+            <button 
+            onClick={handleSignUp}
+            className="bg-white text-green-600 px-6 py-3 rounded-full text-lg hover:bg-gray-100 transition duration-300">
+              Sign Up Now
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-gray-800 py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-between items-center">
+            <div className="w-full md:w-1/3 mb-4 md:mb-0">
+              <Image
+                width={150}
+                height={75}
+                src="/images/b-logo-full.png"
+                alt="The Republic logo"
+              />
+            </div>
+            <div className="w-full md:w-1/3 mb-4 md:mb-0">
+              <h3 className="text-xl font-bold mb-2">Connect With Us</h3>
+              <div className="flex justify-center space-x-4">
+                <a 
+                  href="https://github.com/COS301-SE-2024/The-Republic" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-white hover:text-green-500"
+                >
+                  <Github size={24} />
+                </a>
+                <a 
+                  href="mailto:inifiniteloopers@gmail.com" 
+                  className="text-white hover:text-green-500"
+                >
+                  <Mail size={24} />
+                </a>
               </div>
+            </div>
+            <div className="w-full md:w-1/3 text-center md:text-right">
+              <p>&copy; 2024 The Republic. All rights reserved.</p>
             </div>
           </div>
         </div>
-      </main>
+      </footer>
     </div>
   );
 };
