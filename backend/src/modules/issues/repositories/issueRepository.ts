@@ -9,12 +9,21 @@ import { CategoryRepository } from "@/modules/issues/repositories/categoryReposi
 import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import { formatTime } from "@/utilities/formatTime";
-
-const reactionRepository = new ReactionRepository();
-const categoryRepository = new CategoryRepository();
-const commentRepository = new CommentRepository();
+import { ResolutionResponseRepository } from "@/modules/resolutions/repositories/resolutionResponseRepository";
 
 export default class IssueRepository {
+  private reactionRepository: ReactionRepository;
+  private categoryRepository: CategoryRepository;
+  private commentRepository: CommentRepository;
+  private resolutionResponseRepository: ResolutionResponseRepository;
+
+  constructor() {
+    this.reactionRepository = new ReactionRepository();
+    this.categoryRepository = new CategoryRepository();
+    this.commentRepository = new CommentRepository();
+    this.resolutionResponseRepository = new ResolutionResponseRepository();
+  }
+
   async getIssues({
     from,
     amount,
@@ -64,7 +73,7 @@ export default class IssueRepository {
     }
 
     if (category) {
-      const categoryId = await categoryRepository.getCategoryId(category);
+      const categoryId = await this.categoryRepository.getCategoryId(category);
       query = query.eq("category_id", categoryId);
     }
 
@@ -86,13 +95,13 @@ export default class IssueRepository {
     // I Might Fetch The Data In Parallel Instead of Mapping Through The List While Fetching
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
 
         const userReaction = user_id
-          ? await reactionRepository.getReactionByUserAndItem(
+          ? await this.reactionRepository.getReactionByUserAndItem(
               issue.issue_id.toString(),
               "issue",
               user_id,
@@ -107,6 +116,9 @@ export default class IssueRepository {
             category_id_param: issue.category_id,
             suburb_param: issue.location?.suburb
           });
+        const resolutionResponse = pendingResolution 
+          ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, issue.user_id)
+          : null;
 
         const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
         const information = (!issue.resolved_at) ? 
@@ -130,6 +142,7 @@ export default class IssueRepository {
             : issue.user,
           hasPendingResolution: !!pendingResolution,
           pendingResolutionId: pendingResolution?.resolution_id || null,
+          resolutionResponse,
           relatedIssuesCount,
           userHasIssueInCluster,
           relatedIssues,
@@ -188,19 +201,19 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByItemId(
+    const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
       "issue"
     );
 
     const userReaction = user_id
-      ? await reactionRepository.getReactionByUserAndItem(
+      ? await this.reactionRepository.getReactionByUserAndItem(
           data.issue_id.toString(),
           "issue",
           user_id,
         )
       : null;
-    const commentCount = await commentRepository.getNumComments(data.issue_id, "issue");
+    const commentCount = await this.commentRepository.getNumComments(data.issue_id, "issue");
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
     const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
     const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
@@ -209,6 +222,9 @@ export default class IssueRepository {
         category_id_param: data.category_id,
         suburb_param: data.location?.suburb
       });
+    const resolutionResponse = pendingResolution 
+      ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, data.user_id)
+      : null;
 
     const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
     const information = (!data.resolved_at) ? 
@@ -233,6 +249,7 @@ export default class IssueRepository {
         : data.user,
       hasPendingResolution: !!pendingResolution,
       pendingResolutionId: pendingResolution?.resolution_id || null,
+      resolutionResponse,
       relatedIssuesCount,
       userHasIssueInCluster,
       relatedIssues,
@@ -406,6 +423,7 @@ export default class IssueRepository {
         hasPendingResolution: false,
         pendingResolutionId: null,
         resolution: null,
+        resolutionResponse: null,
         relatedIssuesCount: 0,
         userHasIssueInCluster: false,
       } as Issue;
@@ -483,7 +501,7 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByItemId(
+    const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
       "issue"
     );
@@ -602,17 +620,17 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndItem(
+        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
           issue.issue_id.toString() ,
           "issue",
           userId,
         );
 
-        const commentCount = await commentRepository.getNumComments(
+        const commentCount = await this.commentRepository.getNumComments(
           issue.issue_id.toString(), "issue"
         );
 
@@ -691,17 +709,17 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndItem(
+        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
           issue.issue_id.toString(),
           "issue",
           userId,
         );
 
-        const commentCount = await commentRepository.getNumComments(
+        const commentCount = await this.commentRepository.getNumComments(
           issue.issue_id.toString(),
           "issue"
         );
