@@ -43,7 +43,7 @@ export class UserAdminService {
     userId: string,
     authenticatedUserId: string,
     username: string,
-    email: string
+    email_address: string
   ): Promise<APIResponse<null>> {
     if (userId !== authenticatedUserId) {
       throw APIError({
@@ -53,7 +53,7 @@ export class UserAdminService {
       });
     }
   
-    const user = await this.userAdminRepository.deleteAccountById(userId, username, email);
+    const user = await this.userAdminRepository.deleteAccountById(userId, username, email_address);
     
     if (!user) {
       throw APIError({
