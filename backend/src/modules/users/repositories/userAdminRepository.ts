@@ -73,9 +73,6 @@ export default class UserAdminRepository {
       .eq('email_address', email_address)
       .maybeSingle();
 
-    console.log("Error: ", fetchError);
-    console.log("User: ",rand ,existingUser);
-
     if (fetchError || !existingUser) {
       throw APIError({
         code: 500,
@@ -83,7 +80,6 @@ export default class UserAdminRepository {
         error: "Error occurred, Please confirm details and retry later.",
       });
     } else {
-      console.log("Here in Delete 2");
       const { error } = await supabase
         .from('user')
         .update({
@@ -100,7 +96,7 @@ export default class UserAdminRepository {
         .eq("user_id", userId);
 
       if (error) {
-        console.error("Supabase error:", error);
+        console.error("Error:", error);
         throw APIError({
           code: 500,
           success: false,
