@@ -35,7 +35,7 @@ export default class UserAdminRepository {
     }
   }
 
-  async deleteAccountById(userId: string, username: string, email: string) {
+  async deleteAccountById(userId: string, username: string, email_address: string) {
     const tables = [
       'points_history',
       'subscriptions',
@@ -65,34 +65,53 @@ export default class UserAdminRepository {
     }
 
     const rand = generateRandomString();
-    const { error } = await supabase
+    const { data: existingUser, error: fetchError } = await supabase
       .from('user')
-      .update({
-        email_address: `${rand}@gmail.com`,
-        username: `anon_${rand}`,
-        image_url: "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
-        fullname: 'anonuser',
-        bio: null,
-        suspended_until: null,
-        suspension_reason: null
-      })
-      .eq("user_id", userId)
-      .eq("username", username)
-      .eq("email_address", email);
+      .select('*')
+      .eq('user_id', userId)
+      .eq('username', username)
+      .eq('email_address', email_address)
+      .maybeSingle();
 
-    if (error) {
-      console.error("Supabase error:", error);
+    console.log("Error: ", fetchError);
+    console.log("User: ",rand ,existingUser);
+
+    if (fetchError || !existingUser) {
       throw APIError({
         code: 500,
         success: false,
         error: "Error occurred, Please confirm details and retry later.",
       });
+    } else {
+      console.log("Here in Delete 2");
+      const { error } = await supabase
+        .from('user')
+        .update({
+          email_address: `deleted_${rand}@gmail.com`,
+          username: `deleted_${rand}`,
+          image_url: "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
+          fullname: 'deleted_user',
+          user_score: 0,
+          location_id: null,
+          bio: null,
+          suspended_until: null,
+          suspension_reason: null
+        })
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "Invadid Inputs, Please confirm details and retry later.",
+        });
+      }
+
+      deleteUserRecords();
+      return {
+        "deleted": true
+      };
     }
-
-    deleteUserRecords();
-
-    return {
-      "deleted": true
-    };
   }
 }
