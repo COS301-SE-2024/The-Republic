@@ -46,7 +46,6 @@ describe("IssueService", () => {
         is_anonymous: false,
         created_at: "2024-06-01",
         updated_at: "2024-06-01",
-        sentiment: "angry",
         image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
@@ -91,7 +90,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: "https://example.com/image.png",
       user: {
         user_id: "1",
@@ -140,7 +138,6 @@ describe("IssueService", () => {
         content: "New Issue",
         resolved_at: null,
         is_anonymous: false,
-        sentiment: "neutral",
         image_url: null,
       };
       const createdIssue: Issue = {
@@ -160,7 +157,6 @@ describe("IssueService", () => {
         is_anonymous: false,
         created_at: "2022-01-01",
         updated_at: "2022-01-01",
-        sentiment: "neutral",
         image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
@@ -240,7 +236,6 @@ describe("IssueService", () => {
         content: "A".repeat(501),
         resolved_at: null,
         is_anonymous: false,
-        sentiment: "neutral",
       };
 
       await expect(
@@ -271,7 +266,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: null,
       user: {
         user_id: "1",
@@ -324,7 +318,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: "https://example.com/image.png",
       user: {
         user_id: "1",
@@ -373,7 +366,6 @@ describe("IssueService", () => {
       category_id: 1,
       content: "New Issue",
       is_anonymous: false,
-      sentiment: "neutral",
     };
     const createdIssue: Issue = {
       issue_id: 1,
@@ -389,7 +381,6 @@ describe("IssueService", () => {
       category_id: 1,
       content: "New Issue",
       is_anonymous: false,
-      sentiment: "neutral",
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
       user: {
