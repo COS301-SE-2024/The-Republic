@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import TextareaAutosize from "react-textarea-autosize";
-import { categoryOptions, moodOptions } from "@/lib/constants";
+import { categoryOptions } from "@/lib/constants";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
@@ -24,7 +24,6 @@ const MAX_CHAR_COUNT = 500;
 const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
-  const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [image, setImage] = useState<File | null>(null);

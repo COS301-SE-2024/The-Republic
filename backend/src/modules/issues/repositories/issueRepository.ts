@@ -19,7 +19,6 @@ export default class IssueRepository {
     from,
     amount,
     category,
-    mood,
     user_id,
     order_by = "created_at",
     ascending = false,
