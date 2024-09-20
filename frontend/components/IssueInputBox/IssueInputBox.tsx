@@ -62,17 +62,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
       },
       {
         check: !category,
-        message: "Please select a category.",
-        variant: "destructive",
-      },
-      {
-        check: !mood,
-        message: "Please select a mood.",
+        message: "Please select a category associated with your issue.",
         variant: "destructive",
       },
       {
         check: !location,
-        message: "Please set a location.",
+        message: "Please set a location of where your issue is taking place.",
         variant: "destructive",
       },
     ];
@@ -116,7 +111,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
-    requestBody.append("sentiment", mood);
     requestBody.append("is_anonymous", isAnonymous.toString());
     requestBody.append(
       "location_data",
@@ -147,7 +141,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
     } else {
       setContent("");
       setCategory("");
-      setMood("");
       setIsAnonymous(false);
       setLocation(userLocation ?? null);
       setImage(null);
@@ -224,15 +217,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ user, onAddIssue }) => {
             onChange={setCategory}
             placeholder="Select category..."
             className="w-full sm:w-40 mb-2 sm:mb-0"
-          />
-          <Dropdown
-            options={moodOptions}
-            value={mood}
-            onChange={setMood}
-            placeholder="😟"
-            className="w-full sm:w-36"
-            showSearch={false}
-            compact={true}
           />
           <Button
             variant="ghost"
