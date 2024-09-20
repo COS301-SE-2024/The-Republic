@@ -8,6 +8,7 @@ import ReactionRepository from "@/modules/reactions/repositories/reactionReposit
 import { CategoryRepository } from "@/modules/issues/repositories/categoryRepository";
 import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
+import { formatTime } from "@/utilities/formatTime";
 
 const reactionRepository = new ReactionRepository();
 const categoryRepository = new CategoryRepository();
@@ -18,7 +19,6 @@ export default class IssueRepository {
     from,
     amount,
     category,
-    mood,
     user_id,
     order_by = "created_at",
     ascending = false,
@@ -66,10 +66,6 @@ export default class IssueRepository {
       query = query.eq("category_id", categoryId);
     }
 
-    if (mood) {
-      query = query.eq("sentiment", mood);
-    }
-
     const { data, error } = await query;
 
     if (error) {
@@ -88,6 +84,7 @@ export default class IssueRepository {
           issue.issue_id.toString(),
           "issue"
         );
+
         const userReaction = user_id
           ? await reactionRepository.getReactionByUserAndItem(
               issue.issue_id.toString(),
@@ -95,16 +92,28 @@ export default class IssueRepository {
               user_id,
             )
           : null;
+        
         const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
         const resolutions = await this.getResolutionsForIssue(issue.issue_id);
         const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
         const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
+        const { data: forecastData, error: forecastError } = await supabase
+          .rpc('avg_resolution_time', {
+            category_id_param: issue.category_id,
+            suburb_param: issue.location?.suburb
+          });
+
+        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
+        const information = (!issue.resolved_at) ? 
+          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          : "This issue has already been resolved.";
 
         return {
           ...issue,
           reactions,
           user_reaction: userReaction?.emoji || null,
           is_owner: issue.user_id === user_id,
+          forecast: information,
           user: issue.is_anonymous
             ? {
                 user_id: null,
@@ -178,6 +187,7 @@ export default class IssueRepository {
       data.issue_id.toString(),
       "issue"
     );
+
     const userReaction = user_id
       ? await reactionRepository.getReactionByUserAndItem(
           data.issue_id.toString(),
@@ -190,6 +200,16 @@ export default class IssueRepository {
     const resolutions = await this.getResolutionsForIssue(data.issue_id);
     const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
     const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
+    const { data: forecastData, error: forecastError } = await supabase
+      .rpc('avg_resolution_time', {
+        category_id_param: data.category_id,
+        suburb_param: data.location?.suburb
+      });
+
+    const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
+    const information = (!data.resolved_at) ? 
+      `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+      : "This issue has already been resolved.";
 
     return {
       ...data,
@@ -197,6 +217,7 @@ export default class IssueRepository {
       user_reaction: userReaction?.emoji || null,
       comment_count: commentCount,
       is_owner: data.user_id === user_id,
+      forecast: information,
       user: data.is_anonymous
         ? {
             user_id: null,
@@ -277,10 +298,8 @@ export default class IssueRepository {
         );
   
         if (existingLocations.length > 0) {
-          // If locations exist, use the first one
           locationId = existingLocations[0].location_id;
         } else {
-          // If no location exists, create a new one
           const newLocation = await locationRepository.createLocation({
             place_id: locationDataObj.place_id,
             province: locationDataObj.province,
@@ -309,7 +328,6 @@ export default class IssueRepository {
           user_id: issue.user_id,
           category_id: issue.category_id,
           content: issue.content,
-          sentiment: issue.sentiment,
           is_anonymous: issue.is_anonymous,
           location_id: locationId,
           created_at: issue.created_at,
@@ -349,12 +367,24 @@ export default class IssueRepository {
         });
       }
 
+      const { data: forecastData, error: forecastError } = await supabase
+        .rpc('avg_resolution_time', {
+          category_id_param: issue.category_id,
+          suburb_param: issue.location?.suburb
+        });
+
+      const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
+      const information = (!issue.resolved_at) ? 
+      `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+      : "This issue has already been resolved.";
+
       return {
         ...data,
         reactions: [],
         user_reaction: null,
         comment_count: 0,
         is_owner: true,
+        forecast: information,
         user: data.is_anonymous
           ? {
               user_id: null,
@@ -576,15 +606,29 @@ export default class IssueRepository {
           "issue",
           userId,
         );
+
         const commentCount = await commentRepository.getNumComments(
           issue.issue_id.toString(), "issue"
         );
+
+        const { data: forecastData, error: forecastError } = await supabase
+          .rpc('avg_resolution_time', {
+            category_id_param: issue.category_id,
+            suburb_param: issue.location?.suburb
+          });
+
+        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
+        const information = (!issue.resolved_at) ? 
+          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          : "This issue has already been resolved.";
+
         return {
           ...issue,
           reactions,
           user_reaction: userReaction?.emoji || null,
           comment_count: commentCount,
           is_owner: issue.user_id === userId,
+          forecast: information,
           user: issue.is_anonymous
             ? {
                 user_id: null,
@@ -651,16 +695,30 @@ export default class IssueRepository {
           "issue",
           userId,
         );
+
         const commentCount = await commentRepository.getNumComments(
           issue.issue_id.toString(),
           "issue"
         );
+
+        const { data: forecastData, error: forecastError } = await supabase
+          .rpc('avg_resolution_time', {
+            category_id_param: issue.category_id,
+            suburb_param: issue.location?.suburb
+          });
+
+        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
+        const information = (!issue.resolved_at) ? 
+          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          : "This issue has already been resolved.";
+
         return {
           ...issue,
           reactions,
           user_reaction: userReaction?.emoji || null,
           comment_count: commentCount,
           is_owner: issue.user_id === userId,
+          forecast: information,
           user: issue.is_anonymous
             ? {
                 user_id: null,

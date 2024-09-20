@@ -1,6 +1,5 @@
 import IssueService from "@/modules/issues/services/issueService";
 import IssueRepository from "@/modules/issues/repositories/issueRepository";
-import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
@@ -14,18 +13,14 @@ jest.mock("@/modules/points/services/pointsService");
 describe("IssueService", () => {
   let issueService: IssueService;
   let issueRepository: jest.Mocked<IssueRepository>;
-  let locationRepository: jest.Mocked<LocationRepository>;
   let mockPointsService: jest.Mocked<PointsService>;
   let mockClusterService: jest.Mocked<ClusterService>;
   let mockOpenAIService: jest.Mocked<OpenAIService>;
 
   beforeEach(() => {
     issueRepository = new IssueRepository() as jest.Mocked<IssueRepository>;
-    locationRepository =
-      new LocationRepository() as jest.Mocked<LocationRepository>;
     issueService = new IssueService();
     issueService.setIssueRepository(issueRepository);
-    issueService.setLocationRepository(locationRepository);
     mockPointsService = {
       awardPoints: jest.fn().mockResolvedValue(100),
       getFirstTimeAction: jest.fn().mockResolvedValue(true),
@@ -51,7 +46,6 @@ describe("IssueService", () => {
         is_anonymous: false,
         created_at: "2024-06-01",
         updated_at: "2024-06-01",
-        sentiment: "angry",
         image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
@@ -96,7 +90,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: "https://example.com/image.png",
       user: {
         user_id: "1",
@@ -145,7 +138,6 @@ describe("IssueService", () => {
         content: "New Issue",
         resolved_at: null,
         is_anonymous: false,
-        sentiment: "neutral",
         image_url: null,
       };
       const createdIssue: Issue = {
@@ -165,7 +157,6 @@ describe("IssueService", () => {
         is_anonymous: false,
         created_at: "2022-01-01",
         updated_at: "2022-01-01",
-        sentiment: "neutral",
         image_url: "https://example.com/image.png",
         user: {
           user_id: "1",
@@ -245,7 +236,6 @@ describe("IssueService", () => {
         content: "A".repeat(501),
         resolved_at: null,
         is_anonymous: false,
-        sentiment: "neutral",
       };
 
       await expect(
@@ -276,7 +266,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: null,
       user: {
         user_id: "1",
@@ -329,7 +318,6 @@ describe("IssueService", () => {
       is_anonymous: false,
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
-      sentiment: "neutral",
       image_url: "https://example.com/image.png",
       user: {
         user_id: "1",
@@ -378,7 +366,6 @@ describe("IssueService", () => {
       category_id: 1,
       content: "New Issue",
       is_anonymous: false,
-      sentiment: "neutral",
     };
     const createdIssue: Issue = {
       issue_id: 1,
@@ -394,7 +381,6 @@ describe("IssueService", () => {
       category_id: 1,
       content: "New Issue",
       is_anonymous: false,
-      sentiment: "neutral",
       created_at: "2022-01-01",
       updated_at: "2022-01-01",
       user: {
@@ -433,7 +419,6 @@ describe("IssueService", () => {
     const response = await issueService.createIssue(newIssue);
 
     expect(response.data).toEqual(createdIssue);
-    expect(locationRepository.createLocation).not.toHaveBeenCalled();
     expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
   });
 });

@@ -49,7 +49,6 @@ interface Issue {
   user_id: string;
   category_id: number;
   content: string;
-  sentiment: string;
   image_url: string | null;
   is_anonymous: boolean;
   location_id: number | null;
@@ -84,4 +83,4 @@ interface Issue {
   pendingResolutionId?: string | null;
 }
 
-export { User, Category, ReactionCount, Issue, DatabaseUser };
+export type { User, Category, ReactionCount, Issue, DatabaseUser };

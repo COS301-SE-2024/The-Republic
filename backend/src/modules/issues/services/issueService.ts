@@ -3,43 +3,30 @@ import { Issue } from "@/modules/shared/models/issue";
 import { Resolution } from "@/modules/shared/models/resolution";
 import { GetIssuesParams } from "@/types/issue";
 import { APIData, APIError, APIResponse } from "@/types/response";
-import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { MulterFile } from "@/types/users";
 import { PointsService } from "@/modules/points/services/pointsService";
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import { OpenAIService } from '@/modules/shared/services/openAIService';
 import { ResolutionService } from "@/modules/resolutions/services/resolutionService";
-import ReactionRepository from "@/modules/reactions/repositories/reactionRepository";
-import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
-  private locationRepository: LocationRepository;
   private pointsService: PointsService;
   private clusterService: ClusterService;
   private openAIService: OpenAIService;
   private resolutionService: ResolutionService;
-  private reactionRepository: ReactionRepository;
-  private commentRepository: CommentRepository;
 
   constructor() {
     this.issueRepository = new IssueRepository();
-    this.locationRepository = new LocationRepository();
     this.pointsService = new PointsService();
     this.clusterService = new ClusterService();
     this.openAIService = new OpenAIService();
     this.resolutionService = new ResolutionService();
-    this.reactionRepository = new ReactionRepository();
-    this.commentRepository = new CommentRepository();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
     this.issueRepository = issueRepository;
-  }
-
-  setLocationRepository(locationRepository: LocationRepository): void {
-    this.locationRepository = locationRepository;
   }
 
   setPointsService(pointsService: PointsService): void {
@@ -56,14 +43,6 @@ export default class IssueService {
 
   setResolutionService(resolutionService: ResolutionService): void {
     this.resolutionService = resolutionService;
-  }
-
-  setReactionRepository(reactionRepository: ReactionRepository): void{
-    this.reactionRepository = reactionRepository;
-  }
-
-  setCommentRepository(commentRepository: CommentRepository): void{
-    this.commentRepository = commentRepository;
   }
 
   async getIssues(params: Partial<GetIssuesParams>) {
@@ -353,8 +332,6 @@ export default class IssueService {
 
   async createSelfResolution(issueId: number, userId: string, resolutionText: string, proofImage?: MulterFile, organizationId?: string): Promise<APIResponse<Resolution>> {
     try {
-      //console.log(`Starting createSelfResolution for issue ${issueId} by user ${userId}`);
-      
       const issue = await this.issueRepository.getIssueById(issueId);
       
       if (issue.resolved_at) {

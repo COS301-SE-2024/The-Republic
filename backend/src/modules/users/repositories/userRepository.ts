@@ -1,8 +1,15 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
+import UserAdminRepository from "@/modules/users/repositories/userAdminRepository";
 
 export default class UserRepository {
+  private userAdminRepository: UserAdminRepository;
+
+  constructor() {
+    this.userAdminRepository = new UserAdminRepository();
+  }
+
   async getUserById(userId: string) {
     const { data, error } = await supabase
       .from("user")
@@ -22,11 +29,6 @@ export default class UserRepository {
     if (!data) {
       console.error("User not found in database - userId:", userId);
       return null;
-      throw APIError({
-        code: 404,
-        success: false,
-        error: "User does not exist",
-      });
     }
 
     const [{ count: totalIssues }, { count: resolvedIssues }] =
@@ -126,5 +128,52 @@ export default class UserRepository {
     }
 
     return data;
+  }
+
+  async updateUsername(userId: string, newUsername: string): Promise<User> {
+    try {
+      const isUsernameTaken = await this.userAdminRepository.usernameExists({"username": newUsername, "user_id": userId});
+
+      if (isUsernameTaken) {
+        throw APIError({
+          code: 409,
+          success: false,
+          error: "Username already exists.",
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("user")
+        .update({ username: newUsername })
+        .eq("user_id", userId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        throw APIError({
+          code: 404,
+          success: false,
+          error: "User not found.",
+        });
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error updating username:", error);
+
+      if (error instanceof APIError) {
+        throw error;
+      }
+
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating username.",
+      });
+    }
   }
 }

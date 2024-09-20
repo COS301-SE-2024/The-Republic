@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
+import { ErrorPage } from "@/components/ui/error_page";
 import FilterModal from "@/components/FilterModal/FilterModal";
 
 const FETCH_SIZE = 10;
@@ -165,11 +166,13 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
   );
 
   const EmptyIndicator = () => (
-    <div className="flex justify-center items-center h-32">
-      <h3 className="text-lg">No issues</h3>
-    </div>
+    <ErrorPage
+      message="No issues found."
+      error="It seems there are no issues to display. Please check back later."
+      showReloadButton={true}
+    />
   );
-
+  
   const FailedIndicator = () => (
     <div className="flex justify-center items-center h-32">
       <h3 className="text-muted-foreground">Failed to fetch issues</h3>

@@ -308,8 +308,8 @@ interface Issue {
   image_url: string | null;
   is_anonymous: boolean;
   created_at: string;
+  forecast: string | null;
   resolved_at: string | null;
-  sentiment: string;
   user: User;
   category: Category;
   reactions: Reaction[];
@@ -559,7 +559,13 @@ interface ErrorDisplayProps {
   linkText: string;
 }
 
+interface UserExists {
+  username: string;
+  user_id?: string;
+}
+
 export type {
+  UserExists,
   AnalysisResult,
   FeedProps,
   RequestBody,

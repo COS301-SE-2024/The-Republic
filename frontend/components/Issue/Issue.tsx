@@ -6,6 +6,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
+import InfoPopover from "@/components/ui/resolution-popover";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2, Sparkles as Star } from "lucide-react";
@@ -360,6 +361,7 @@ const Issue: React.FC<IssueProps> = ({
                   </div>
                 )}
               </div>
+              <InfoPopover message={issue.forecast}/>
               {!isLoading && showMoreMenu && menuItems.length > 0 && (
                 <MoreMenu
                   menuItems={menuItems}
@@ -374,9 +376,6 @@ const Issue: React.FC<IssueProps> = ({
           <div className="flex flex-wrap gap-2 pt-2">
             <Badge variant="outline">
               {issue.category?.name}
-            </Badge>
-            <Badge variant="outline" className="hidden sm:inline-flex">
-              {issue?.sentiment}
             </Badge>
             {issue.location && (
               <Badge

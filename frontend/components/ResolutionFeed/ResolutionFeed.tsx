@@ -5,6 +5,7 @@ import Resolution from "@/components/Resolution/Resolution";
 import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserResolutions } from "@/lib/api/fetchUserResolutions";
+import ErrorPage from "@/components/ui/error_page";
 
 interface ResolutionFeedProps {
   userId: string;
@@ -34,13 +35,19 @@ const ResolutionFeed: React.FC<ResolutionFeedProps> = ({ userId }) => {
       {isLoading ? (
         <LoadingIndicator />
       ) : isError ? (
-        <p className="text-center text-red-500 mt-4">Failed to load resolutions.</p>
+        <ErrorPage
+          message="Failed to load resolutions."
+          error="We encountered a problem while trying to load resolutions. Please check your connection and try reloading the page."
+        />
       ) : resolutions.length > 0 ? (
         resolutions.map((resolution) => (
           <Resolution key={resolution.resolution_id} resolution={resolution} />
         ))
       ) : (
-        <p className="text-center text-gray-500 mt-4">No resolutions found.</p>
+        <ErrorPage
+          message="No resolutions found."
+          error="It seems there are no resolutions to display. Please check back later."
+        />
       )}
     </div>
   );
