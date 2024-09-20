@@ -310,7 +310,6 @@ interface Issue {
   created_at: string;
   forecast: string | null;
   resolved_at: string | null;
-  sentiment: string;
   user: User;
   category: Category;
   reactions: Reaction[];
