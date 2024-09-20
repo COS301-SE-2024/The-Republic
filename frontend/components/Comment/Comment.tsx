@@ -63,6 +63,10 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }
   const isAnonymous = !comment.user || comment.user.username === "Anonymous";
   const isReply = comment.parent_id !== null;
 
+  const highlightMentions = (text: string) => {
+    return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
+  };
+
   return (
     <>
       <div className="flex items-start space-x-4 space-y-4 mb-4" data-testid="comment">
@@ -78,7 +82,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }
         <div className="flex-1">
           <div className="bg-card text-card-foreground p-4 rounded-lg shadow">
             <div className="font-bold">{userFullname}</div>
-            <div>{comment.content}</div>
+            <div dangerouslySetInnerHTML={{ __html: highlightMentions(comment.content) }} />
           </div>
           <div className="flex items-center space-x-2 mt-2">
             {user && !isReply && (

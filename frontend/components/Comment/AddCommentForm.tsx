@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Comment } from "@/lib/types";
+import { Comment, User } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
