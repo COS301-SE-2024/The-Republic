@@ -780,6 +780,7 @@ export default class IssueRepository {
     return data.resolved_at !== null;
   }
 
+  // TODO: resolution bug fix
   async getPendingResolutionForIssue(issueId: number): Promise<Resolution | null> {
     const { data, error } = await supabase
       .from('resolution')
@@ -817,6 +818,22 @@ export default class IssueRepository {
     }
   
     return data as Resolution[];
+  }
+
+  async assignResolutionToIssues(resolutionId: string, issuesIds: string[]) {
+    const { error } = await supabase
+      .from('issue')
+      .update({ resolutionId: resolutionId })
+      .in('issue_id', issuesIds);
+
+    if (error) {
+      console.error("assignResolutionToIssues: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while assigning resolution to issues",
+      });
+    }
   }
 
   async userHasIssueInCluster(userId: string, clusterId: string | null): Promise<boolean> {
