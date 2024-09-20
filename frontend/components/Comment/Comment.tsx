@@ -4,9 +4,7 @@ import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWith
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { AddComment } from "@/lib/api/AddComment";
-import MentionInput from "@/components/MentionInput/MentionInput";
-import debounce from 'lodash/debounce';
+
 
 import {
   Dialog,
@@ -33,23 +31,6 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useUser();
-
-  const fetchUserSuggestions = useCallback(
-    debounce(async (query: string): Promise<User[]> => {
-      try {
-        const response = await fetch(`/api/user-suggestions?query=${query}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user suggestions');
-        }
-        const data = await response.json();
-        return data.users || [];
-      } catch (error) {
-        console.error('Error fetching user suggestions:', error);
-        return [];
-      }
-    }, 300),
-    []
-  );
 
   const handleDelete = async () => {
     if (!user) {
