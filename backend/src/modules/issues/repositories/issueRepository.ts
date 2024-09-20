@@ -48,6 +48,7 @@ export default class IssueRepository {
           latitude,
           longitude
         ),
+        resolution: resolution_id (*),
         comment_count
       `,
       )
@@ -99,7 +100,6 @@ export default class IssueRepository {
           : null;
         
         const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
-        const resolutions = await this.getResolutionsForIssue(issue.issue_id);
         const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
         const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
         const { data: forecastData, error: forecastError } = await supabase
@@ -130,7 +130,6 @@ export default class IssueRepository {
             : issue.user,
           hasPendingResolution: !!pendingResolution,
           pendingResolutionId: pendingResolution?.resolution_id || null,
-          resolutions,
           relatedIssuesCount,
           userHasIssueInCluster,
           relatedIssues,
@@ -165,6 +164,7 @@ export default class IssueRepository {
           latitude,
           longitude
         ),
+        resolution: resolution_id (*),
         cluster_id
       `,
       )
@@ -202,7 +202,6 @@ export default class IssueRepository {
       : null;
     const commentCount = await commentRepository.getNumComments(data.issue_id, "issue");
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
-    const resolutions = await this.getResolutionsForIssue(data.issue_id);
     const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
     const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
     const { data: forecastData, error: forecastError } = await supabase
@@ -234,7 +233,6 @@ export default class IssueRepository {
         : data.user,
       hasPendingResolution: !!pendingResolution,
       pendingResolutionId: pendingResolution?.resolution_id || null,
-      resolutions,
       relatedIssuesCount,
       userHasIssueInCluster,
       relatedIssues,
@@ -407,7 +405,7 @@ export default class IssueRepository {
           : data.user,
         hasPendingResolution: false,
         pendingResolutionId: null,
-        resolutions: [],
+        resolution: null,
         relatedIssuesCount: 0,
         userHasIssueInCluster: false,
       } as Issue;
@@ -586,7 +584,8 @@ export default class IssueRepository {
           suburb,
           city,
           province
-        )
+        ),
+        resolution: resolution_id (*)
       `,
       )
       .eq("user_id", userId)
