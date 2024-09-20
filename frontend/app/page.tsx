@@ -26,8 +26,8 @@ const LandingPage = () => {
         <div className="flex items-center">
           <Image
             priority
-            width={200}
-            height={100}
+            width={250}
+            height={150}
             src="/images/b-logo-full.png"
             alt="The Republic logo"
           />
