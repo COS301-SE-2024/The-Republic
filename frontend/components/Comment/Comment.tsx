@@ -4,7 +4,9 @@ import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWith
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-
+import { AddComment } from "@/lib/api/AddComment";
+import MentionInput from "@/components/MentionInput/MentionInput";
+import debounce from 'lodash/debounce';
 
 import {
   Dialog,
