@@ -1,13 +1,13 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
-import NoAuthRepository from "@/modules/users/repositories/noAuthRepository";
+import UserAdminRepository from "@/modules/users/repositories/userAdminRepository";
 
 export default class UserRepository {
-  private noAuthRepository: NoAuthRepository;
+  private userAdminRepository: UserAdminRepository;
 
   constructor() {
-    this.noAuthRepository = new NoAuthRepository();
+    this.userAdminRepository = new UserAdminRepository();
   }
 
   async getUserById(userId: string) {
@@ -132,7 +132,7 @@ export default class UserRepository {
 
   async updateUsername(userId: string, newUsername: string): Promise<User> {
     try {
-      const isUsernameTaken = await this.noAuthRepository.usernameExists({"username": newUsername, "user_id": userId});
+      const isUsernameTaken = await this.userAdminRepository.usernameExists({"username": newUsername, "user_id": userId});
 
       if (isUsernameTaken) {
         throw APIError({
