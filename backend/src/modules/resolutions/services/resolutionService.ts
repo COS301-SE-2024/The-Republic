@@ -95,9 +95,13 @@ private async notifyClusterMembers(resolution: Resolution, clusterIssues: Issue[
   }
 }
 
-// TODO: resolution bug fix
-async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'declined', userId: string, satisfactionRating?: number): Promise<Resolution> {
-  // TODO: Get the resolution this issues is assinged to
+async updateResolutionStatus(
+  resolutionId: string, 
+  issueId: number,
+  status: 'accepted' | 'declined', 
+  userId: string, 
+  satisfactionRating?: number
+): Promise<Resolution> {
   const resolution = await this.resolutionRepository.getResolutionById(resolutionId);
   
   if (resolution.status !== 'pending') {
@@ -108,8 +112,7 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
     });
   }
 
-  // TODO: Check if they have an issue assigned to this resolution
-  const issue = await this.issueRepository.getIssueById(resolution.issue_id);
+  const issue = await this.issueRepository.getIssueById(issueId);
   if (issue.user_id !== userId) {
     throw APIError({
       code: 403,
@@ -120,9 +123,13 @@ async updateResolutionStatus(resolutionId: string, status: 'accepted' | 'decline
 
   await this.ResolutionResponseRepository.createResponse(resolutionId, userId, status, satisfactionRating);
 
+  if (status === 'accepted') {
+    await this.issueRepository.resolveIssue(issueId, userId);
+  }
+
   const updatedResolution = await this.resolutionRepository.updateResolution(resolutionId, {
-    num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
-    num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
+    num_cluster_members_accepted: resolution.num_cluster_members_accepted + (status === 'accepted' ?  1 : 0),
+    num_cluster_members_rejected: resolution.num_cluster_members_rejected + (status === 'declined' ?  1 : 0),
   });
 
   const totalResponses = updatedResolution.num_cluster_members_accepted + updatedResolution.num_cluster_members_rejected;

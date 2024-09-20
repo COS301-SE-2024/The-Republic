@@ -511,9 +511,15 @@ export default class IssueService {
     }
   }
 
-  async respondToResolution(resolutionId: string, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
+  async respondToResolution(resolutionId: string, issueId: number, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
     try {
-      const resolution = await this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId, satisfactionRating);
+      const resolution = await this.resolutionService.updateResolutionStatus(
+        resolutionId, 
+        issueId,
+        accept ? 'accepted' : 'declined', 
+        userId, 
+        satisfactionRating
+      );
       return APIData({
         code: 200,
         success: true,
