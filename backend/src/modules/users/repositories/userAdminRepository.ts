@@ -82,6 +82,17 @@ export default class UserAdminRepository {
       }
     }
 
+    const { error } = await supabase.auth.admin.deleteUser(userId);
+
+    if (error) {
+      console.error('Error deleting user:', error.message);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: `Error deleting user: ${error.message}`,
+      });
+    }
+
     const rand = generateRandomString();
     const { data: existingUser, error: fetchError } = await supabase
       .from('user')
