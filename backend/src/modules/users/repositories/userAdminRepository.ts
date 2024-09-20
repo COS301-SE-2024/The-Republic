@@ -43,6 +43,24 @@ export default class UserAdminRepository {
       'join_requests'
     ];
 
+    async function deleteImage(image_url: string) {
+      const filename = image_url.split("/").pop();
+      const imagePath = `profile_pictures/${filename}`;
+
+      if (filename) {
+        const { error: deleteImageError } = await supabase
+          .storage
+          .from("user")
+          .remove([imagePath]);
+  
+        if (deleteImageError) {
+          return false;
+        }
+      }
+      
+      return true;
+    }
+
     async function deleteUserRecords() {
       try {
         const deletePromises = tables.map(async (table) => {
@@ -105,6 +123,8 @@ export default class UserAdminRepository {
       }
 
       deleteUserRecords();
+      deleteImage(existingUser.image_url);
+      
       return {
         "deleted": true
       };
