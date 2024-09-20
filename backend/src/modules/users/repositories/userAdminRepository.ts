@@ -1,6 +1,7 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 import { UserExists } from "@/types/users";
+import { generateRandomString } from "@/utilities/randomString";
 
 export default class UserAdminRepository {
   async usernameExists({
@@ -35,28 +36,63 @@ export default class UserAdminRepository {
   }
 
   async deleteAccountById(userId: string, username: string, email: string) {
-    const { data, error } = await supabase
-      .from("user")
-      .select("*")
+    const tables = [
+      'points_history',
+      'subscriptions',
+      'organisation_members',
+      'join_requests'
+    ];
+
+    async function deleteUserRecords() {
+      try {
+        const deletePromises = tables.map(async (table) => {
+          const { data, error } = await supabase
+            .from(table)
+            .delete()
+            .eq('user_id', userId);
+
+          if (error && error.code !== 'PGRST116') {
+            throw new Error(`Error deleting from ${table}: ${error.message}`);
+          }
+
+          return data;
+        });
+
+        await Promise.all(deletePromises);
+      } catch (error) {
+        // Do Nothing
+      }
+    }
+
+    const rand = generateRandomString();
+    const { error } = await supabase
+      .from('user')
+      .update({
+        email_address: `${rand}@gmail.com`,
+        username: `anon_${rand}`,
+        image_url: "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
+        fullname: 'anonuser',
+        bio: null,
+        suspended_until: null,
+        suspension_reason: null
+      })
       .eq("user_id", userId)
       .eq("username", username)
-      .eq("email", email)
-      .maybeSingle();
+      .eq("email_address", email);
 
     if (error) {
       console.error("Supabase error:", error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later.",
+        error: "Error occurred, Please confirm details and retry later.",
       });
     }
 
-    if (!data) {
-      console.error("User not found in database - userId:", userId);
-      return null;
-    }
+    deleteUserRecords();
 
-    return null;
+    return {
+      "deleted": true
+    };
   }
 }

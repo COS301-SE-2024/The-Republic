@@ -23,7 +23,7 @@ export const deleteAccountById = async (req: Request, res: Response) => {
       req.params.id,
       req.body.user_id,
       req.body.username,
-      req.body.email
+      req.body.email_address
     );
 
     sendResponse(res, response);
