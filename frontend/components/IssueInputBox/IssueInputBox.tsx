@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { categoryOptions } from "@/lib/constants";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
-import { LocationType, IssueInputBoxProps, User } from "@/lib/types";
+import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
@@ -174,20 +174,20 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user, onAddIssue }) => {
 
   // Placeholder function for fetching user suggestions
   // Replace this with actual API call when available
-const fetchUserSuggestions = async (query: string): Promise<User[]> => {
-  try {
-    // Replace this with your actual API call
-    const response = await fetch(`/api/user-suggestions?query=${query}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch user suggestions');
-    }
-    const data = await response.json();
-    return data.users || [];
-  } catch (error) {
-    console.error('Error fetching user suggestions:', error);
-    return [];
-  }
-};
+// const fetchUserSuggestions = async (query: string): Promise<User[]> => {
+//   try {
+//     // Replace this with your actual API call
+//     const response = await fetch(`/api/user-suggestions?query=${query}`);
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch user suggestions');
+//     }
+//     const data = await response.json();
+//     return data.users || [];
+//   } catch (error) {
+//     console.error('Error fetching user suggestions:', error);
+//     return [];
+//   }
+// };
 
   const charCount = content.length;
 
@@ -209,7 +209,6 @@ const fetchUserSuggestions = async (query: string): Promise<User[]> => {
               onChange={setContent}
               placeholder="What's going on!?"
               className="w-full p-2 border rounded resize-none"
-              fetchSuggestions={fetchUserSuggestions} //api call that will be implemented
             />
             {image && (
               <div className="relative w-full h-48 mt-2">

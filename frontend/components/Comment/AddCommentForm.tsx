@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import { Comment, User } from "@/lib/types";
+import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,8 +10,6 @@ import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriatene
 import { useMutation } from "@tanstack/react-query";
 import { AddComment } from "@/lib/api/AddComment";
 import MentionInput from "@/components/MentionInput/MentionInput";
-import debounce from 'lodash/debounce';
-
 
 interface AddCommentFormProps {
   itemId: string;
@@ -77,22 +75,22 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
     },
   });
 
-  const fetchUserSuggestions = useCallback(
-    debounce(async (query: string): Promise<User[]> => {
-      try {
-        const response = await fetch(`/api/user-suggestions?query=${query}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user suggestions');
-        }
-        const data = await response.json();
-        return data.users || [];
-      } catch (error) {
-        console.error('Error fetching user suggestions:', error);
-        return [];
-      }
-    }, 300),
-    []
-  );
+  // const fetchUserSuggestions = useCallback(
+  //   debounce(async (query: string): Promise<User[]> => {
+  //     try {
+  //       const response = await fetch(`/api/user-suggestions?query=${query}`);
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch user suggestions');
+  //       }
+  //       const data = await response.json();
+  //       return data.users || [];
+  //     } catch (error) {
+  //       console.error('Error fetching user suggestions:', error);
+  //       return [];
+  //     }
+  //   }, 300),
+  //   []
+  // );
 
   return (
     <form
@@ -112,10 +110,8 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
           data-testid="comment-input"
           value={content}
           onChange={setContent}
-          fetchSuggestions={fetchUserSuggestions}
           placeholder="Add Comment..."
           className=" w-full flex-grow p-2 border rounded resize-none bg-background text-foreground dark:bg-background dark:text-foreground"
-          rows={1}
           />
           </div>
 
