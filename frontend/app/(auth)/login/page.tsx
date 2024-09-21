@@ -10,6 +10,7 @@ import { useState, FormEvent } from "react";
 import { Eye, EyeOff, Share2, AlertTriangle, MessageCircle, Shield, TrendingUp, Mail, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
+import GoogleSignup from "@/components/GoogleSignup/GoogleSignup";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +38,22 @@ export default function Login() {
       });
     } else {
       router.push("/");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to sign in with Google, please try again",
+      });
     }
   };
 
@@ -93,6 +110,10 @@ export default function Login() {
         </div>
         <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10">
           <h2 className="text-2xl sm:text-3xl font-semibold text-green-700 dark:text-green-500 mb-6 sm:mb-8">Login</h2>
+          <GoogleSignup onSignup={handleGoogleSignIn} />
+          <div className="my-4 text-center">
+            <span className="px-2 bg-white dark:bg-transparent text-gray-500">or</span>
+          </div>
           <form onSubmit={login} className="space-y-4 sm:space-y-6">
             <div>
               <Label htmlFor="email" className="text-base sm:text-lg text-green-700 dark:text-green-500">Email</Label>

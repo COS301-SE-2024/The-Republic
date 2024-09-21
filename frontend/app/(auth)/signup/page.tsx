@@ -11,6 +11,7 @@ import { Eye, EyeOff, UserPlus, Mail, User, Lock, Share2, AlertTriangle, Message
 import { motion } from "framer-motion";
 import PostSignupLocation from "@/components/PostSignupLocation/PostSignupLocation";
 import { checkUsername } from "@/lib/api/checkUsername";
+import GoogleSignup from "@/components/GoogleSignup/GoogleSignup";
 
 export default function Signup() {
   const [showLocationSetup, setShowLocationSetup] = useState(false);
@@ -57,6 +58,22 @@ export default function Signup() {
 
   const handleLocationSetupComplete = () => {
     router.push("/");
+  };
+
+  const handleGoogleSignup = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to sign up with Google, please try again",
+      });
+    }
   };
 
   const floatingIcons = [
@@ -113,6 +130,10 @@ export default function Signup() {
         </div>
         <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10">
           <h2 className="text-2xl sm:text-3xl font-semibold text-green-700 dark:text-green-500 mb-6 sm:mb-8">Create an Account</h2>
+          <GoogleSignup onSignup={handleGoogleSignup} />
+          <div className="my-4 text-center">
+            <span className="px-2 bg-white dark:bg-transparent text-gray-500">or</span>
+          </div>
           <form onSubmit={signup} className="space-y-4 sm:space-y-6">
             <div>
               <Label htmlFor="fullname" className="text-base sm:text-lg text-green-700 dark:text-green-500">Full Name</Label>
