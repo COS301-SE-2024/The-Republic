@@ -218,6 +218,7 @@ export class ClusterService {
   
     if (acceptedIssues.length > 0) {
       // Check for similar clusters among accepted issues
+      // TODO: This may cause issues to stay in the same cluster
       const similarClusters = await this.clusterRepository.findSimilarClustersForIssues(acceptedIssues, 0.9);
   
       if (similarClusters.length > 0) {

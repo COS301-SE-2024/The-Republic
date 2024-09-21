@@ -328,7 +328,7 @@ interface Issue {
   hasPendingResolution: boolean;
   pendingResolutionId: string | null;
   cluster_id?: string;
-  resolutions: Resolution[];
+  resolution: Resolution;
   relatedIssues?: Issue[];
   relatedIssuesCount: number;
   userHasIssueInCluster: boolean;

@@ -450,7 +450,7 @@ const Issue: React.FC<IssueProps> = ({
         isOpen={isResolutionResponseModalOpen}
         onClose={() => setIsResolutionResponseModalOpen(false)}
         onRespond={handleResolutionResponse}
-        resolution={issue.resolutions && issue.resolutions.length > 0 ? issue.resolutions[0] : null}
+        resolution={issue.resolution}
         canRespond={canRespond}
         isLoading={isResolutionResponseLoading}
       />
