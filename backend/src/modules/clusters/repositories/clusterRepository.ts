@@ -130,11 +130,6 @@ export class ClusterRepository {
 
     if (!suburb) {
       console.error('No suburb information found for the issue');
-      throw APIError({
-        code: 400,
-        success: false,
-        error: "Suburb information is missing for the issue.",
-      });
     }
   
     const embeddings = issues.map(issue => issue.content_embedding);
@@ -269,9 +264,17 @@ export class ClusterRepository {
       .from('issue')
       .select(`
         *,
-        issue_embeddings (content_embedding),
+        ...issue_embeddings (content_embedding),
         cluster:cluster_id (
           centroid_embedding
+        ),
+        location: location_id (
+          province,
+          city,
+          suburb,
+          district,
+          latitude,
+          longitude
         )
       `)
       .eq('cluster_id', clusterId);
@@ -290,10 +293,7 @@ export class ClusterRepository {
       return [];
     }
   
-    return data.map(issue => ({
-      ...issue,
-      content_embedding: issue.issue_embeddings?.[0]?.content_embedding || null
-    }));
+    return data;
   }
 
   async getIssueEmbeddingsInCluster(clusterId: string): Promise<Partial<Issue>[]> {
