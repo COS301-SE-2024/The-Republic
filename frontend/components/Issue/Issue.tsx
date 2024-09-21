@@ -50,7 +50,7 @@ const Issue: React.FC<IssueProps> = ({
   const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
 
   const isOwner = user ? user.user_id === issue.user_id : false;
-  const canRespond = isOwner || issue.userHasIssueInCluster;
+  const canRespond = isOwner;
   const hasRelatedIssues = issue.relatedIssues && issue.relatedIssues.length > 0;
 
   const deleteMutation = useMutation({
@@ -451,6 +451,7 @@ const Issue: React.FC<IssueProps> = ({
         onClose={() => setIsResolutionResponseModalOpen(false)}
         onRespond={handleResolutionResponse}
         resolution={issue.resolution}
+        response={issue.resolutionResponse}
         canRespond={canRespond}
         isLoading={isResolutionResponseLoading}
       />

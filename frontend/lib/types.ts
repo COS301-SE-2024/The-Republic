@@ -329,9 +329,16 @@ interface Issue {
   pendingResolutionId: string | null;
   cluster_id?: string;
   resolution: Resolution;
+  resolutionResponse: ResolutionResponse | null;
   relatedIssues?: Issue[];
   relatedIssuesCount: number;
   userHasIssueInCluster: boolean;
+}
+
+interface ResolutionResponse {
+  response: string;
+  created_at: string;
+  satisfaction_rating: number;
 }
 
 interface IssueProps {
@@ -605,5 +612,6 @@ export type {
   ReactionNotification,
   CommentNotification,
   NotificationType,
-  ErrorDisplayProps
+  ErrorDisplayProps,
+  ResolutionResponse
 };

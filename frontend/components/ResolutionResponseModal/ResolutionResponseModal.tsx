@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Resolution } from '@/lib/types';
+import { Resolution, ResolutionResponse } from '@/lib/types';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Loader2, Star } from "lucide-react";
@@ -11,6 +11,7 @@ interface ResolutionResponseModalProps {
   onClose: () => void;
   onRespond: (accept: boolean, rating?: number) => void;
   resolution: Resolution | null;
+  response: ResolutionResponse | null;
   canRespond: boolean;
   isLoading: boolean;
 }
@@ -27,6 +28,7 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
   onClose,
   onRespond,
   resolution,
+  response,
   canRespond,
   isLoading
 }) => {
@@ -75,7 +77,9 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
           <DialogTitle>Pending Resolution</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
-          <p><strong>Resolution Text:</strong> {extendedResolution.resolution_text}</p>
+          {extendedResolution.resolution_text && (
+             <p><strong>Resolution Text:</strong> {extendedResolution.resolution_text}</p>
+          )}
           {extendedResolution.resolved_by && 
             <p><strong>Resolved By:</strong> {extendedResolution.resolved_by}</p>
           }
@@ -86,13 +90,13 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
             <Image src={extendedResolution.proof_image} alt="Resolution Proof" className="mt-2 max-w-full h-auto" width={500} height={300} /> 
           )}
         </div>
-        {canRespond && extendedResolution.organization_id && (
+        {canRespond && !response && extendedResolution.organization_id && (
           <div>
             <p className="mt-4 mb-2">Please rate your satisfaction with this resolution:</p>
             {renderStarRating()}
           </div>
         )}
-        {canRespond && (
+        {canRespond && !response && (
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => onRespond(false)} disabled={isLoading}>
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
@@ -109,7 +113,12 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
         )}
         {!canRespond && (
           <p className="mt-4 text-sm text-gray-500">
-            You cannot respond to this resolution as you are not the issue owner or have any related issues.
+            You cannot respond to this resolution as you are not the issue owner.
+          </p>
+        )}
+        {canRespond && response && (
+          <p className="mt-4 text-sm text-gray-500">
+            {`You ${response.response} this resolution on ${new Date(response.created_at).toDateString()}`}
           </p>
         )}
       </DialogContent>
