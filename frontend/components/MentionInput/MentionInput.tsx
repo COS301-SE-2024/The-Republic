@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import TextareaAutosize from "react-textarea-autosize";
-import debounce from 'lodash/debounce';
 
 interface User {
   id: string;
@@ -24,6 +23,20 @@ const staticUsers: User[] = [
   { id: '4', username: 'boipelo', fullname: 'Boipelo Madumo', image_url: 'https://example.com/alicegreen.jpg' },
   { id: '5', username: 'shama', fullname: 'Shama Ntenda', image_url: 'https://example.com/charliew.jpg' },
 ];
+
+function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
+  func: T,
+  waitFor: number
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return (...args: Parameters<T>): void => {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => func(...args), waitFor);
+  };
+}
 
 const MentionInput: React.FC<MentionInputProps> = ({
   value,
