@@ -181,8 +181,8 @@ export const getOrganizationResolutions = [
 
 export const respondToResolution = async (req: Request, res: Response) => {
   try {
-    const { resolutionId, userId, accept, satisfactionRating } = req.body;
-    const response = await issueService.respondToResolution(resolutionId, userId, accept, satisfactionRating);
+    const { resolutionId, issueId, userId, accept, satisfactionRating } = req.body;
+    const response = await issueService.respondToResolution(resolutionId, issueId, userId, accept, satisfactionRating);
     clearCachePattern('__express__/api/issues*');
     sendResponse(res, response);
   } catch (err) {

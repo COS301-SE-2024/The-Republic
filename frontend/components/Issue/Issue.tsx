@@ -181,7 +181,7 @@ const Issue: React.FC<IssueProps> = ({
   const handleResolutionResponse = async (accept: boolean, rating?: number) => {
     setIsResolutionResponseLoading(true);
     try {
-      await respondToResolution(user!, issue.pendingResolutionId!, accept, rating);
+      await respondToResolution(user!, issue.pendingResolutionId!, issue.issue_id, accept, rating);
 
       // Optimistically update the UI
       if (accept) {
