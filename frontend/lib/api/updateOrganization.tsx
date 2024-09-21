@@ -20,19 +20,12 @@ const updateOrganization = async (
       // Check if the location has actually changed
       if (JSON.stringify(newLocation) !== JSON.stringify(oldLocation)) {
         updatedFormData.append(key, JSON.stringify(newLocation));
-        console.log(`Appending changed location: ${JSON.stringify(newLocation)}`);
-      } else {
-        console.log('Location unchanged, not appending');
       }
     } else if (key === 'profilePhoto') {
       // Always include the profile photo if it's present
       updatedFormData.append(key, value);
-      console.log('Appending profile photo');
     } else if (originalOrganization[key as keyof Organization] !== value) {
       updatedFormData.append(key, value);
-      console.log(`Appending changed field: ${key}`);
-    } else {
-      console.log(`Unchanged field, not appending: ${key}`);
     }
   }
 
@@ -54,7 +47,6 @@ const updateOrganization = async (
       throw new Error(apiResponse.error);
     }
   } else {
-    console.log('No changes detected, skipping update');
     return originalOrganization;
   }
 };
