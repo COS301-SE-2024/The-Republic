@@ -839,7 +839,7 @@ export default class IssueRepository {
   async assignResolutionToIssues(resolutionId: string, issuesIds: number[]) {
     const { error } = await supabase
       .from('issue')
-      .update({ resolutionId: resolutionId })
+      .update({ resolution_id: resolutionId })
       .in('issue_id', issuesIds);
 
     if (error) {
