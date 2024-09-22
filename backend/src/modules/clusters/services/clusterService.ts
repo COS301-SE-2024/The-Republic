@@ -188,7 +188,7 @@ export class ClusterService {
     return new Array(embeddingLength).fill(0);
   }
 
-  async moveAcceptedMembersToNewCluster(issueId: number, acceptedUserIds: string[]): Promise<string> {
+  async moveAcceptedMembersToNewCluster(issueId: number, acceptedUserIds: string[]): Promise<string | null> {
     const issue = await this.issueRepository.getIssueById(issueId);
     if (!issue) {
       throw APIError({
@@ -213,6 +213,11 @@ export class ClusterService {
     const acceptedIssues = clusterIssues.filter(clusterIssue => 
       acceptedUserIds.includes(clusterIssue.user_id)
     );
+
+    // Return if no one accepted
+    if (acceptedIssues.length === 0) {
+      return null;
+    }
   
     // Create a new cluster with the first accepted issue
     const newCluster = await this.clusterRepository.createCluster(acceptedIssues[0]);
@@ -224,6 +229,7 @@ export class ClusterService {
       newClusterId
     );
 
+    // Set new cluster to resolved so unresovled issues are not added to it
     await this.clusterRepository.resolveCluster(newClusterId);
   
     // Recalculate centroids for both old and new clusters

@@ -485,29 +485,18 @@ export default class IssueService {
   }
 
   async respondToResolution(resolutionId: string, issueId: number, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
-    try {
-      const resolution = await this.resolutionService.updateResolutionStatus(
-        resolutionId, 
-        issueId,
-        accept ? 'accepted' : 'declined', 
-        userId, 
-        satisfactionRating
-      );
-      return APIData({
-        code: 200,
-        success: true,
-        data: resolution,
-      });
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while responding to the resolution.",
-      });
-    }
+    const resolution = await this.resolutionService.updateResolutionStatus(
+      resolutionId, 
+      issueId,
+      accept ? 'accepted' : 'declined', 
+      userId, 
+      satisfactionRating
+    );
+    return APIData({
+      code: 200,
+      success: true,
+      data: resolution,
+    });
   }
 
   async getUserIssues(issue: Partial<Issue>) {
