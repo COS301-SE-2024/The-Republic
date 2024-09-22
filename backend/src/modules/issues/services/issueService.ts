@@ -417,82 +417,71 @@ export default class IssueService {
     resolvedBy?: string,
     organizationId?: string
   ): Promise<APIResponse<Resolution>> {
-    try {
-      const suspension = await this.userRepository.getSuspension(userId);
+    const suspension = await this.userRepository.getSuspension(userId);
 
-      if (suspension.is_suspended) {
-        throw APIData({
-          code: 403,
-          success: false,
-          error: "User is suspended",
-          data: {
-            suspended_until: suspension.suspended_until,
-            suspension_reason: suspension.suspension_reason
-          }
-        });
-      }
-
-      const issue = await this.issueRepository.getIssueById(issueId);
-      
-      if (issue.resolved_at) {
-        throw APIError({
-          code: 400,
-          success: false,
-          error: "This issue has already been resolved.",
-        });
-      }
-    
-      let imageUrl: string | null = null;
-  
-      if (proofImage) {
-        const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
-        const { error } = await supabase.storage
-          .from("resolutions")
-          .upload(fileName, proofImage.buffer);
-  
-        if (error) {
-          console.error(error);
-          throw APIError({
-            code: 500,
-            success: false,
-            error: "An error occurred while uploading the image. Please try again.",
-          });
-        }
-  
-        const { data: urlData } = supabase.storage
-          .from("resolutions")
-          .getPublicUrl(fileName);
-  
-        imageUrl = urlData.publicUrl;
-      }
-    
-      const resolution = await this.resolutionService.createResolution({
-        issue_id: issueId,
-        resolver_id: userId,
-        resolution_text: resolutionText,
-        proof_image: imageUrl,
-        resolution_source: resolvedBy ? 'other' : 'unknown',
-        political_association: politicalAssociation || null,
-        state_entity_association: stateEntityAssociation || null,
-        resolved_by: resolvedBy || null,
-        organization_id: organizationId
-      });
-  
-      return APIData({
-        code: 200,
-        success: true,
-        data: resolution,
-      });
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw APIError({
-        code: 500,
+    if (suspension.is_suspended) {
+      throw APIData({
+        code: 403,
         success: false,
-        error: "An unexpected error occurred while creating an external resolution.",
+        error: "User is suspended",
+        data: {
+          suspended_until: suspension.suspended_until,
+          suspension_reason: suspension.suspension_reason
+        }
       });
     }
+
+    const issue = await this.issueRepository.getIssueById(issueId);
+    
+    if (issue.resolved_at) {
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "This issue has already been resolved.",
+      });
+    }
+  
+    let imageUrl: string | null = null;
+
+    if (proofImage) {
+      const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
+      const { error } = await supabase.storage
+        .from("resolutions")
+        .upload(fileName, proofImage.buffer);
+
+      if (error) {
+        console.error(error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An error occurred while uploading the image. Please try again.",
+        });
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("resolutions")
+        .getPublicUrl(fileName);
+
+      imageUrl = urlData.publicUrl;
+    }
+  
+    const resolution = await this.resolutionService.createResolution({
+      issue_id: issueId,
+      resolver_id: userId,
+      resolution_text: resolutionText,
+      proof_image: imageUrl,
+      resolution_source: resolvedBy ? 'other' : 'unknown',
+      political_association: politicalAssociation || null,
+      state_entity_association: stateEntityAssociation || null,
+      resolved_by: resolvedBy || null,
+      organization_id: organizationId
+    });
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: resolution,
+    });
   }
 
   async respondToResolution(resolutionId: string, issueId: number, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
