@@ -336,6 +336,22 @@ export class ClusterRepository {
     }
   }
 
+  async updateIssuesCluster(issueIds: number[], newClusterId: string): Promise<void> {
+    const { error } = await supabase
+      .from('issue')
+      .update({ cluster_id: newClusterId })
+      .in('issue_id', issueIds);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while updating issues cluster.",
+      });
+    }
+  }
+
   async getClusterSize(clusterId: string): Promise<number> {
     const { count, error } = await supabase
       .from('issue')

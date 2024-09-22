@@ -211,56 +211,18 @@ export class ClusterService {
     
     // Find accepted issues
     const acceptedIssues = clusterIssues.filter(clusterIssue => 
-      clusterIssue.issue_id !== issueId && acceptedUserIds.includes(clusterIssue.user_id)
+      acceptedUserIds.includes(clusterIssue.user_id)
     );
   
-    let newClusterId = '';
+    // Create a new cluster with the first accepted issue
+    const newCluster = await this.clusterRepository.createCluster(acceptedIssues[0]);
+    const newClusterId = newCluster.cluster_id;
   
-    if (acceptedIssues.length > 0) {
-      // Check for similar clusters among accepted issues
-      // TODO: This may cause issues to stay in the same cluster
-      const similarClusters = await this.clusterRepository.findSimilarClustersForIssues(acceptedIssues, 0.9);
-  
-      if (similarClusters.length > 0) {
-        // Move accepted issues to the most similar cluster
-        const mostSimilarCluster = similarClusters[0];
-        newClusterId = mostSimilarCluster.cluster_id;
-  
-        for (const acceptedIssue of acceptedIssues) {
-          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
-        }
-      } else {
-        // Create a new cluster with the first accepted issue
-        const newCluster = await this.clusterRepository.createCluster(acceptedIssues[0]);
-        newClusterId = newCluster.cluster_id;
-  
-        // Move accepted issues to the new cluster
-        for (const acceptedIssue of acceptedIssues) {
-          await this.clusterRepository.updateIssueCluster(acceptedIssue.issue_id, newClusterId);
-        }
-      }
-    } else {
-      // Create a new cluster with the accepted issue
-      const issueEmbedding = await this.issueRepository.getIssueEmbedding(issueId);
-      if (!issueEmbedding.content_embedding) {
-        throw APIError({
-          code: 500,
-          success: false,
-          error: "Issue embedding not found",
-        });
-      }
-      // Combine the full issue data with the embedding
-      const fullIssueWithEmbedding = {
-        ...issue,
-        content_embedding: issueEmbedding.content_embedding
-      };
-
-      const newCluster = await this.clusterRepository.createCluster(fullIssueWithEmbedding);
-      newClusterId = newCluster.cluster_id;
-    }
-  
-    // Move the accepted issue to the new cluster
-    await this.clusterRepository.updateIssueCluster(issueId, newClusterId);
+    // Move accepted issues to the new cluster
+    await this.clusterRepository.updateIssuesCluster(
+      acceptedIssues.map((acceptedIssue) => acceptedIssue.issue_id), 
+      newClusterId
+    );
   
     // Recalculate centroids for both old and new clusters
     await this.recalculateClusterCentroid(oldClusterId);
