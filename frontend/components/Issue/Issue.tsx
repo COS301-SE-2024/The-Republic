@@ -270,6 +270,10 @@ const Issue: React.FC<IssueProps> = ({
     }
   };
 
+    const highlightMentions = (text: string) => {
+    return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
+  };
+
   return (
     <>
       <Card className="mb-4" id={id} data-testid="issue-item">
@@ -403,7 +407,11 @@ const Issue: React.FC<IssueProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p className="whitespace-pre-wrap">{issue?.content}</p>
+          <p 
+            className="whitespace-pre-wrap"
+            dangerouslySetInnerHTML={{ __html: highlightMentions(issue?.content) }}
+          />
+          
           {issue?.image_url && (
             <div className="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3 h-auto mt-4">
               <Image
