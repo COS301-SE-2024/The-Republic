@@ -95,7 +95,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
         placeholder={placeholder}
       />
       <div
-        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none text-foreground"
+        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none text-transparent"
         dangerouslySetInnerHTML={{ __html: highlightMentions(value) }}
       />
       {showSuggestions && (
