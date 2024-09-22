@@ -131,12 +131,20 @@ const Issue: React.FC<IssueProps> = ({
       data.organizationId
     ),
     onSuccess: (response) => {
-      const resolvedIssue = response;
-      queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
-      if (resolvedIssue) {
-        onResolveIssue!(issue, resolvedIssue);
+      if ('suspended_until' in response!) {
+        toast({
+          variant: "destructive",
+          description: "You are suspended from resolving until " + new Date(response.suspended_until)
+        });
+      } else {
+        const resolvedIssue = response;
+        queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
+        if (resolvedIssue) {
+          onResolveIssue!(issue, resolvedIssue);
+        }
+        toast({ description: "External resolution submitted successfully" });
       }
-      toast({ description: "External resolution submitted successfully" });
+
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {

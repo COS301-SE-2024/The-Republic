@@ -76,7 +76,7 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
         <DialogHeader>
           <DialogTitle>Pending Resolution</DialogTitle>
         </DialogHeader>
-        <div className="mt-4">
+        <div className="mt-2">
           {extendedResolution.resolution_text && (
              <p><strong>Resolution Text:</strong> {extendedResolution.resolution_text}</p>
           )}
