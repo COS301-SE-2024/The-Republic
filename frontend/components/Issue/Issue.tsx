@@ -135,7 +135,9 @@ const Issue: React.FC<IssueProps> = ({
       if ('suspended_until' in response!) {
         toast({
           variant: "destructive",
-          description: "You are suspended from resolving until " + formatLongDate(response.suspended_until)
+          description: 
+            "Because of a false resolution you are suspended from resolving until " +
+            formatLongDate(response.suspended_until)
         });
       } else {
         const resolvedIssue = response;

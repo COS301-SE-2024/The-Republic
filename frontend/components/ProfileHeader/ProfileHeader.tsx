@@ -78,7 +78,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <p className="mt-2">{user.bio}</p>
           {user.suspended_until && new Date(user.suspended_until) > new Date() && (
             <p className="text-red-500 mt-2">
-              Suspended until {formatLongDate(user.suspended_until)}
+              {/*Should check suspension_reason property of User for suspension reason*/}
+              Because of a false resolution you are suspended until {formatLongDate(user.suspended_until)}
             </p>
           )}
         </div>
