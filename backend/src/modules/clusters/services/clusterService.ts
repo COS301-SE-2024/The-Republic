@@ -223,6 +223,8 @@ export class ClusterService {
       acceptedIssues.map((acceptedIssue) => acceptedIssue.issue_id), 
       newClusterId
     );
+
+    await this.clusterRepository.resolveCluster(newClusterId);
   
     // Recalculate centroids for both old and new clusters
     await this.recalculateClusterCentroid(oldClusterId);

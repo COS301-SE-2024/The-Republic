@@ -369,4 +369,20 @@ export class ClusterRepository {
 
     return count || 0;
   }
+
+  async resolveCluster(clusterId: string) {
+    const { error } = await supabase
+      .from('cluster')
+      .update({ is_resolved: true })
+      .eq('cluster_id', clusterId);
+
+    if (error) {
+      console.error("resolveCluster: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while resolving cluster.",
+      });
+    }
+  }
 }
