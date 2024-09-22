@@ -91,7 +91,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
         ref={textareaRef}
         value={value}
         onChange={handleInputChange}
-        className={`w-full p-2 border rounded resize-none bg-background text-foreground ${className}`}
+        className={`w-full p-2 border rounded resize-none bg-transparent text-foreground ${className}`}
         placeholder={placeholder}
       />
       <div
