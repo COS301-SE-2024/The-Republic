@@ -85,6 +85,12 @@ const MentionInput: React.FC<MentionInputProps> = ({
     return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
   };
 
+//   {value.split(/(@\w+)/).map((part, index) => (
+//   part.startsWith('@') ? 
+//     <span key={index} className="text-primary font-semibold">{part}</span> : 
+//     <span key={index}>{part}</span>
+// ))}
+
   return (
     <div className="relative">
       <TextareaAutosize
