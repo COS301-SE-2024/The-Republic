@@ -81,16 +81,6 @@ const MentionInput: React.FC<MentionInputProps> = ({
     textareaRef.current?.focus();
   };
 
-  const highlightMentions = (text: string) => {
-    return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
-  };
-
-//   {value.split(/(@\w+)/).map((part, index) => (
-//   part.startsWith('@') ? 
-//     <span key={index} className="text-primary font-semibold">{part}</span> : 
-//     <span key={index}>{part}</span>
-// ))}
-
   return (
     <div className="relative">
       <TextareaAutosize
@@ -99,11 +89,23 @@ const MentionInput: React.FC<MentionInputProps> = ({
         onChange={handleInputChange}
         className={`w-full p-2 border rounded resize-none bg-transparent text-foreground ${className}`}
         placeholder={placeholder}
+        style={{ caretColor: 'auto' }}
       />
       <div
+        aria-hidden="true"
         className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none text-transparent"
-        dangerouslySetInnerHTML={{ __html: highlightMentions(value) }}
-      />
+        style={{
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word',
+        }}
+      >
+        {value.split(/(@\w+)/).map((part, index) => (
+          part.startsWith('@') ? 
+            <span key={index} className="text-primary font-semibold">{part}</span> : 
+            <span key={index}>{part}</span>
+        ))}
+      </div>
       {showSuggestions && (
         <div className="absolute z-10 w-full mt-1 bg-background border rounded shadow-lg dark:shadow-gray-800">
           {suggestions.map((user) => (
