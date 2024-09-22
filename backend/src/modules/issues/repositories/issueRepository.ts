@@ -28,7 +28,6 @@ export default class IssueRepository {
     from,
     amount,
     category,
-    mood,
     user_id,
     order_by = "created_at",
     ascending = false,
@@ -75,10 +74,6 @@ export default class IssueRepository {
     if (category) {
       const categoryId = await this.categoryRepository.getCategoryId(category);
       query = query.eq("category_id", categoryId);
-    }
-
-    if (mood) {
-      query = query.eq("sentiment", mood);
     }
 
     const { data, error } = await query;
@@ -348,7 +343,6 @@ export default class IssueRepository {
           user_id: issue.user_id,
           category_id: issue.category_id,
           content: issue.content,
-          sentiment: issue.sentiment,
           is_anonymous: issue.is_anonymous,
           location_id: locationId,
           created_at: issue.created_at,

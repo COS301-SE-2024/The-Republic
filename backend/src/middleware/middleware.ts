@@ -3,7 +3,7 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { sendResponse } from "@/utilities/response";
 import { APIError } from "@/types/response";
 
-export const serverMiddleare = (
+export const serverMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -26,46 +26,46 @@ export const verifyAndGetUser = async (
 
   req.body.user_id = undefined;
 
-  if (authHeader === undefined) {
+  if (!authHeader) {
+    // sendResponse(
+    //   res,
+    //   APIError({
+    //     code: 401,
+    //     success: false,
+    //     error: "Authorization token is required",
+    //   }),
+    // );
+    
     next();
     return;
   }
 
-  const jwt = authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
 
   try {
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser(jwt);
+    } = await supabase.auth.getUser(token);
 
-    if (error) {
+    if (error || !user) {
       sendResponse(
         res,
         APIError({
           code: 403,
           success: false,
-          error: "Invalid token",
+          error: "Invalid or expired token",
         }),
       );
+
       return;
     }
 
-    if (user) {
-      req.body.user_id = user.id;
-      next();
-    } else {
-      sendResponse(
-        res,
-        APIError({
-          code: 403,
-          success: false,
-          error: "Invalid token",
-        }),
-      );
-    }
+    req.body.user_id = user.id;
+    next();
   } catch (error) {
-    console.error(error);
+    console.error("Error verifying token:", error);
+
     sendResponse(
       res,
       APIError({
@@ -74,5 +74,7 @@ export const verifyAndGetUser = async (
         error: "An unexpected error occurred. Please try again later.",
       }),
     );
+
+    return;
   }
 };

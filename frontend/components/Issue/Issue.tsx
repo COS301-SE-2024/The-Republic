@@ -382,9 +382,6 @@ const Issue: React.FC<IssueProps> = ({
             <Badge variant="outline">
               {issue.category?.name}
             </Badge>
-            <Badge variant="outline" className="hidden sm:inline-flex">
-              {issue?.sentiment}
-            </Badge>
             {issue.location && (
               <Badge
                 variant="outline"

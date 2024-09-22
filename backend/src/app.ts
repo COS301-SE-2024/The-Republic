@@ -9,9 +9,9 @@ import locationRoutes from "@/modules/locations/routes/locationRoutes";
 import subscriptionsRoutes from "@/modules/subscriptions/routes/subscriptionsRoutes";
 import pointsRoutes from "@/modules/points/routes/pointsRoutes";
 import clusterRoutes from "@/modules/clusters/routes/clusterRoutes";
-import noAuthRoutes from "@/modules/users/routes/noAuthRoutes";
+import userAdminRoutes from "@/modules/users/routes/userAdminRoutes";
 import organizationRoutes from "@/modules/organizations/routes/organizationRoutes";
-import { serverMiddleare } from "@/middleware/middleware";
+import { serverMiddleware } from "@/middleware/middleware";
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(serverMiddleare);
+app.use(serverMiddleware);
 app.use("/api/issues", issueRoutes);
 app.use("/api/reactions", reactionRoutes);
 app.use("/api/users", userRoutes);
@@ -48,7 +48,7 @@ app.use("/api/points", pointsRoutes);
 app.use('/api/clusters', clusterRoutes);
 app.use("/api/organizations", organizationRoutes);
 app.use("/api/organizations", organizationRoutes);
-app.use("/api/validate", noAuthRoutes);
+app.use("/api/validate", userAdminRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({
