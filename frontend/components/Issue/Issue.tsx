@@ -11,7 +11,7 @@ import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWith
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2, Sparkles as Star } from "lucide-react";
 import MoreMenu from "@/components/MoreMenu/MoreMenu";
-import { timeSince } from "@/lib/utils";
+import { formatLongDate, timeSince } from "@/lib/utils";
 import Reaction from "@/components/Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -135,7 +135,7 @@ const Issue: React.FC<IssueProps> = ({
       if ('suspended_until' in response!) {
         toast({
           variant: "destructive",
-          description: "You are suspended from resolving until " + new Date(response.suspended_until)
+          description: "You are suspended from resolving until " + formatLongDate(response.suspended_until)
         });
       } else {
         const resolvedIssue = response;

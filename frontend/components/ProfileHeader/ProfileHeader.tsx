@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { cn } from "@/lib/utils";
+import { cn, formatLongDate } from "@/lib/utils";
 import { User } from "@/lib/types";
 import EditProfile from "@/components/EditProfile/EditProfile";
 import { useTheme } from "next-themes";
@@ -78,7 +78,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <p className="mt-2">{user.bio}</p>
           {user.suspended_until && new Date(user.suspended_until) > new Date() && (
             <p className="text-red-500 mt-2">
-              Suspended until {new Date(user.suspended_until).toLocaleDateString()}
+              Suspended until {formatLongDate(user.suspended_until)}
             </p>
           )}
         </div>
