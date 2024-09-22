@@ -13,7 +13,7 @@ interface ResolutionResponseModalProps {
   resolution: Resolution | null;
   response: ResolutionResponse | null;
   canRespond: boolean;
-  isLoading: boolean;
+  isLoading: 'accept' | 'reject' | undefined;
 }
 
 // Extend the Resolution type to include the organization property
@@ -98,15 +98,15 @@ const ResolutionResponseModal: React.FC<ResolutionResponseModalProps> = ({
         )}
         {canRespond && !response && (
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => onRespond(false)} disabled={isLoading}>
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            <Button variant="outline" onClick={() => onRespond(false)} disabled={!!isLoading}>
+              {isLoading === 'reject' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Reject
             </Button>
             <Button 
               onClick={handleAccept} 
-              disabled={isLoading || (extendedResolution.organization_id && rating === 0) || false}
+              disabled={!!isLoading || (extendedResolution.organization_id && rating === 0) || false}
             >
-              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {isLoading === 'accept' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Accept
             </Button>
           </DialogFooter>

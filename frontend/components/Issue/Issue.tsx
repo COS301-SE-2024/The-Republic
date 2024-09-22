@@ -46,8 +46,9 @@ const Issue: React.FC<IssueProps> = ({
   const [isResolutionResponseModalOpen, setIsResolutionResponseModalOpen] = useState(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isRelatedIssuesModalOpen, setIsRelatedIssuesModalOpen] = useState(false);
-  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = useState(false);
   const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
+  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = 
+    useState<'accept' | 'reject' | undefined>();
 
   const isOwner = user ? user.user_id === issue.user_id : false;
   const canRespond = isOwner;
@@ -187,7 +188,7 @@ const Issue: React.FC<IssueProps> = ({
   };
 
   const handleResolutionResponse = async (accept: boolean, rating?: number) => {
-    setIsResolutionResponseLoading(true);
+    setIsResolutionResponseLoading(accept ? 'accept' : 'reject');
     try {
       await respondToResolution(user!, issue.pendingResolutionId!, issue.issue_id, accept, rating);
 
@@ -206,7 +207,7 @@ const Issue: React.FC<IssueProps> = ({
       console.error(error);
       toast({ variant: "destructive", description: "Failed to respond to resolution" });
     } finally {
-      setIsResolutionResponseLoading(false);
+      setIsResolutionResponseLoading(undefined);
     }
   };
 
