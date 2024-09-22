@@ -283,7 +283,6 @@ export default class SubscriptionsRepository {
         content,
         is_anonymous,
         created_at,
-        sentiment,
         comment (
           user_id,
           content,

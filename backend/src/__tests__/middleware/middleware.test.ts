@@ -1,7 +1,7 @@
 import request from "supertest";
 import express from "express";
 import supabase from "@/modules/shared/services/supabaseClient";
-import { serverMiddleare, verifyAndGetUser } from "@/middleware/middleware";
+import { serverMiddleware, verifyAndGetUser } from "@/middleware/middleware";
 import { sendResponse } from "@/utilities/response";
 
 jest.mock("@/modules/shared/services/supabaseClient");
@@ -9,7 +9,7 @@ jest.mock("@/utilities/response");
 
 const app = express();
 app.use(express.json());
-app.use(serverMiddleare);
+app.use(serverMiddleware);
 
 app.get("/test", verifyAndGetUser, (req, res) => {
   res.status(200).json({ message: "success", user_id: req.body.user_id });
@@ -66,7 +66,7 @@ describe("Middleware", () => {
   it("should send 403 error response if token is invalid", async () => {
     (supabase.auth.getUser as jest.Mock).mockResolvedValue({
       data: { user: null },
-      error: new Error("Invalid token"),
+      error: new Error("Invalid or expired token"),
     });
 
     (sendResponse as jest.Mock).mockImplementation((res, data) => {
@@ -79,7 +79,7 @@ describe("Middleware", () => {
 
     expect(response.status).toBe(403);
     expect(response.body.success).toBe(false);
-    expect(response.body.error).toBe("Invalid token");
+    expect(response.body.error).toBe("Invalid or expired token");
     expect(supabase.auth.getUser).toHaveBeenCalledWith("invalidtoken");
   });
 

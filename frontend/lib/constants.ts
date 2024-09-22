@@ -12,15 +12,6 @@ export const categoryOptions = {
   ],
 };
 
-export const moodOptions = {
-  group: "Moods",
-  items: [
-    { value: "Concerned", label: "Concerned", emoji: "😟" },
-    { value: "Angry", label: "Angry", emoji: "😡" },
-    { value: "Sad", label: "Sad", emoji: "😢" },
-    { value: "Happy", label: "Happy", emoji: "😊" },
-  ],
-};
 
 export const politicalAssociationOptions = {
   group: "Political Associations",
