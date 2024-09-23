@@ -135,11 +135,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
            />
          )}
         </div>
-        <div className="mb-4">
-          <Link href="/about" className="text-green-600 hover:underline">
-            About The Republic
-          </Link>
-        </div>
       </div>
       <div className="h-[50vh] relative mt-4">
         <Image 
