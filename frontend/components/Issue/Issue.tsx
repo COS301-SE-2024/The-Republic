@@ -11,7 +11,7 @@ import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWith
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Bell, Loader2, Sparkles as Star } from "lucide-react";
 import MoreMenu from "@/components/MoreMenu/MoreMenu";
-import { timeSince } from "@/lib/utils";
+import { formatLongDate, timeSince } from "@/lib/utils";
 import Reaction from "@/components/Reaction/Reaction";
 import { useRouter } from "next/navigation";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -46,11 +46,12 @@ const Issue: React.FC<IssueProps> = ({
   const [isResolutionResponseModalOpen, setIsResolutionResponseModalOpen] = useState(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [isRelatedIssuesModalOpen, setIsRelatedIssuesModalOpen] = useState(false);
-  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = useState(false);
   const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
+  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = 
+    useState<'accept' | 'reject' | undefined>();
 
   const isOwner = user ? user.user_id === issue.user_id : false;
-  const canRespond = isOwner || issue.userHasIssueInCluster;
+  const canRespond = isOwner;
   const hasRelatedIssues = issue.relatedIssues && issue.relatedIssues.length > 0;
 
   const deleteMutation = useMutation({
@@ -131,12 +132,22 @@ const Issue: React.FC<IssueProps> = ({
       data.organizationId
     ),
     onSuccess: (response) => {
-      const resolvedIssue = response;
-      queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
-      if (resolvedIssue) {
-        onResolveIssue!(issue, resolvedIssue);
+      if ('suspended_until' in response!) {
+        toast({
+          variant: "destructive",
+          description: 
+            "Because of a false resolution you are suspended from resolving until " +
+            formatLongDate(response.suspended_until)
+        });
+      } else {
+        const resolvedIssue = response;
+        queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
+        if (resolvedIssue) {
+          onResolveIssue!(issue, resolvedIssue);
+        }
+        toast({ description: "External resolution submitted successfully" });
       }
-      toast({ description: "External resolution submitted successfully" });
+
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {
@@ -179,9 +190,9 @@ const Issue: React.FC<IssueProps> = ({
   };
 
   const handleResolutionResponse = async (accept: boolean, rating?: number) => {
-    setIsResolutionResponseLoading(true);
+    setIsResolutionResponseLoading(accept ? 'accept' : 'reject');
     try {
-      await respondToResolution(user!, issue.pendingResolutionId!, accept, rating);
+      await respondToResolution(user!, issue.pendingResolutionId!, issue.issue_id, accept, rating);
 
       // Optimistically update the UI
       if (accept) {
@@ -198,7 +209,7 @@ const Issue: React.FC<IssueProps> = ({
       console.error(error);
       toast({ variant: "destructive", description: "Failed to respond to resolution" });
     } finally {
-      setIsResolutionResponseLoading(false);
+      setIsResolutionResponseLoading(undefined);
     }
   };
 
@@ -455,7 +466,8 @@ const Issue: React.FC<IssueProps> = ({
         isOpen={isResolutionResponseModalOpen}
         onClose={() => setIsResolutionResponseModalOpen(false)}
         onRespond={handleResolutionResponse}
-        resolution={issue.resolutions && issue.resolutions.length > 0 ? issue.resolutions[0] : null}
+        resolution={issue.resolution}
+        response={issue.resolutionResponse}
         canRespond={canRespond}
         isLoading={isResolutionResponseLoading}
       />

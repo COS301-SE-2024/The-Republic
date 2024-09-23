@@ -327,10 +327,17 @@ interface Issue {
   hasPendingResolution: boolean;
   pendingResolutionId: string | null;
   cluster_id?: string;
-  resolutions: Resolution[];
+  resolution: Resolution;
+  resolutionResponse: ResolutionResponse | null;
   relatedIssues?: Issue[];
   relatedIssuesCount: number;
   userHasIssueInCluster: boolean;
+}
+
+interface ResolutionResponse {
+  response: string;
+  created_at: string;
+  satisfaction_rating: number;
 }
 
 interface IssueProps {
@@ -544,6 +551,11 @@ interface Resolution {
   organization_id: string | null;
 }
 
+interface Suspension {
+  suspended_until: string;
+  suspension_reason: string;
+}
+
 // TODO: Update extracted type to match this and use it
 interface CommentListProps2 {
   issueId: number;
@@ -604,5 +616,7 @@ export type {
   ReactionNotification,
   CommentNotification,
   NotificationType,
-  ErrorDisplayProps
+  ErrorDisplayProps,
+  ResolutionResponse,
+  Suspension
 };

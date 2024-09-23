@@ -1,6 +1,8 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { SubsParams, Notification } from "@/types/subscriptions";
 import { APIError } from "@/types/response";
+import { Comment } from "@/modules/shared/models/comment";
+import { Reaction } from "@/modules/shared/models/reaction";
 
 export default class SubscriptionsRepository {
   async issueSubscriptions({
@@ -276,6 +278,7 @@ export default class SubscriptionsRepository {
     const { data: issueData, error: issueError } = await supabase
       .from('issue')
       .select(`
+        *,
         issue_id,
         user_id,
         location_id,
@@ -294,7 +297,7 @@ export default class SubscriptionsRepository {
           emoji,
           created_at
         ),
-        resolution (
+        resolution: resolution_id (
           resolver_id,
           resolution_text,
           status,
@@ -344,7 +347,7 @@ export default class SubscriptionsRepository {
       }
 
       if (issue.comment) {
-        issue.comment.forEach(comment => {
+        issue.comment.forEach((comment: Comment) => {
           if (subIssues.includes(issueIdStr) || comment.user_id === user_id) {
             filteredNotifications.push({
               type: 'comment',
@@ -359,7 +362,7 @@ export default class SubscriptionsRepository {
       }
 
       if (issue.reaction) {
-        issue.reaction.forEach(reaction => {
+        issue.reaction.forEach((reaction: Reaction) => {
           if (subIssues.includes(issueIdStr) || reaction.user_id === user_id) {
             filteredNotifications.push({
               type: 'reaction',
@@ -373,19 +376,18 @@ export default class SubscriptionsRepository {
         });
       }
 
-      if (issue.resolution) {
-        issue.resolution.forEach(resolution => {
-          if (subIssues.includes(issueIdStr) || resolution.resolver_id === user_id) {
-            filteredNotifications.push({
-              type: 'resolution',
-              content: `Your ${resolution.resolution_text}`,
-              issue_id: issue.issue_id,
-              category: issue.category_id,
-              location: issue.location_id,
-              created_at: resolution.created_at
-            });
-          }
-        });
+      const resolution = issue.resolution;
+      if (resolution) {
+        if (subIssues.includes(issueIdStr) || resolution.resolver_id === user_id) {
+          filteredNotifications.push({
+            type: 'resolution',
+            content: `Your ${resolution.resolution_text}`,
+            issue_id: issue.issue_id,
+            category: issue.category_id,
+            location: issue.location_id,
+            created_at: resolution.created_at
+          });
+        }
       }
     });
 

@@ -65,4 +65,29 @@ export class ResolutionResponseRepository {
     const sum = data.reduce((acc, curr) => acc + curr.satisfaction_rating!, 0);
     return sum / data.length;
   }
+
+  async getResolutionResponse(resolutionId: string, userId: string) {
+    const { data, error } = await supabase
+      .from('resolution_responses')
+      .select()
+      .eq('resolution_id', resolutionId)
+      .eq('user_id', userId)
+      /* NOTE: If a user has more than 1 issue in a cluster
+       * they would have multiple responses with the same
+       * resolution and user ID. Maybe we should replace
+       * the user ID with an issue ID */
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error("getUserResponse: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while fetching user response",
+      });
+    }
+
+    return data;
+  }
 }
