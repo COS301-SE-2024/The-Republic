@@ -7,6 +7,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import { Location } from "@/lib/types";
 import { dotVisualization } from "@/lib/api/dotVisualization";
 import Image from "next/image";
+import Link from "next/link";
 
 const sortOptions = {
   group: "Sort",
@@ -101,6 +102,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   return (
     <div className="w-[250px] border-l h-full overflow-y-auto">
       <div className="sticky top-0 p-4">
+      
         <div className="mb-4">
           <Dropdown
             options={sortOptions}
@@ -132,6 +134,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
              placeholder="Select location..."
            />
          )}
+        </div>
+        <div className="mb-4">
+          <Link href="/about" className="text-green-600 hover:underline">
+            About The Republic
+          </Link>
         </div>
       </div>
       <div className="h-[50vh] relative mt-4">
