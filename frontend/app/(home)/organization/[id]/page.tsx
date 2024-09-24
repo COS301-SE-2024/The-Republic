@@ -14,7 +14,6 @@ import { Organization, OrganizationPost, UserAlt } from '@/lib/types';
 import { getOrganizationById } from '@/lib/api/getOrganizationById';
 import { getOrganizationPosts } from '@/lib/api/getOrganizationPosts';
 import { getOrganizationMembers } from '@/lib/api/getOrganizationMembers';
-import { getTopOrganizationMembers } from '@/lib/api/getTopOrganizationMembers';
 import { joinOrganization } from '@/lib/api/joinOrganization';
 import { getJoinRequestByUser } from '@/lib/api/getJoinRequestByUser';
 import { deleteJoinRequest } from '@/lib/api/deleteJoinRequest';
@@ -34,7 +33,6 @@ export default function OrganizationPage() {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [orgPosts, setOrgPosts] = useState<OrganizationPost[]>([]);
   const [members, setMembers] = useState<{ data: OrganizationMember[], total: number }>({ data: [], total: 0 });
-  const [topActiveMembers, setTopActiveMembers] = useState<UserAlt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isUserMember, setIsUserMember] = useState(false);
@@ -80,16 +78,6 @@ export default function OrganizationPage() {
       setHasUserRequested(!!joinRequest);
       setJoinRequestId(joinRequest?.id || null);
   
-      if (userMember) {
-        const [topMembersData] = await Promise.all([
-          getTopOrganizationMembers(user, id as string).catch((err) => {
-            console.error("Error fetching top members:", err);
-            return [];
-          }),
-        ]);
-        setMembers(membersData);
-        setTopActiveMembers(Array.isArray(topMembersData) ? topMembersData : []);
-      }
     } catch (err) {
       console.error("Error fetching data:", err);
       setError('An error occurred while fetching data');
