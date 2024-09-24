@@ -555,9 +555,9 @@ export class OrganizationService {
     }
   }
 
-  async generateReport(organizationId: string, userId: string): Promise<APIResponse<null>> {
+  async generateReport(organizationId: string, userId: string, email: string): Promise<APIResponse<null>> {
     try {
-      const isAdmin: boolean = await this.organizationRepository.isUserAdmin(organizationId, userId) as boolean;
+      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -565,16 +565,14 @@ export class OrganizationService {
           error: "You do not have permission to generate reports.",
         });
       }
-  
-      // Placeholder for future implementation
-      // Example: Fetch organization and member details, generate report
-      // const organization = await this.organizationRepository.getOrganizationById(organizationId);
-      // const members = await this.organizationRepository.getOrganizationMembers(organizationId);
-  
+
+      // The report service will call this function to get organization specific data for the report
+      console.log(email);
+
       return APIData({
         code: 200,
         success: true,
-        data: null, // Replace with the actual report object in the future
+        data: null,
       });
     } catch (error) {
       if (error instanceof APIError) {

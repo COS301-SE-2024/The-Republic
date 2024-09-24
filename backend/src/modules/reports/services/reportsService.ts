@@ -10,6 +10,8 @@ import {
   NameValue
 } from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
+import { reportQueue } from "@/modules/shared/services/queue"; 
+import ExcelJS from 'exceljs';
 
 export default class ReportsService {
   private ReportsRepository: ReportsRepository;
@@ -142,4 +144,39 @@ export default class ReportsService {
       data
     });
   }
+
+  async generateAndSendReport(organizationId: string, email: string): Promise<APIResponse<null>> {
+    try {
+      await reportQueue.add({ organizationId, email });
+
+      return APIData({
+        code: 200,
+        success: true,
+        data: null,
+      });
+    } catch (error) {
+      console.error("Error: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while generating the report.",
+      });
+    }
+  }
 }
+
+export const generateReport = async (): Promise<Buffer> => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Report');
+
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Name', key: 'name', width: 30 },
+    { header: 'Value', key: 'value', width: 10 },
+  ];
+
+  worksheet.addRow({ id: 1, name: 'Test', value: 123 });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  return Buffer.from(buffer);
+};
