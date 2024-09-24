@@ -159,21 +159,40 @@ export default function OrganizationPage() {
       
       {isUserMember ? (
         <Tabs defaultValue="information" className="mt-6">
-          <TabsList className="bg-green-100 p-1 rounded-lg">
-            <TabsTrigger value="information" className="data-[state=active]:bg-white data-[state=active]:text-green-600">Information</TabsTrigger>
-            <TabsTrigger value="members" className="data-[state=active]:bg-white data-[state=active]:text-green-600">Members</TabsTrigger>
+          <TabsList className="bg-green-100 dark:bg-green-900 p-1 rounded-lg">
+            <TabsTrigger 
+              value="information" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-600 dark:data-[state=active]:bg-green-800 dark:data-[state=active]:text-green-200"
+            >
+              Information
+            </TabsTrigger>
+            <TabsTrigger 
+              value="members" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-600 dark:data-[state=active]:bg-green-800 dark:data-[state=active]:text-green-200"
+            >
+              Members
+            </TabsTrigger>
             {showJoinRequests && (
-              <TabsTrigger value="join-requests" className="data-[state=active]:bg-white data-[state=active]:text-green-600">Join Requests</TabsTrigger>
+              <TabsTrigger 
+                value="join-requests" 
+                className="data-[state=active]:bg-white data-[state=active]:text-green-600 dark:data-[state=active]:bg-green-800 dark:data-[state=active]:text-green-200"
+              >
+                Join Requests
+              </TabsTrigger>
             )}
             {isUserAdmin && (
-              <TabsTrigger value="settings" className="data-[state=active]:bg-white data-[state=active]:text-green-600">Settings</TabsTrigger>
+              <TabsTrigger 
+                value="settings" 
+                className="data-[state=active]:bg-white data-[state=active]:text-green-600 dark:data-[state=active]:bg-green-800 dark:data-[state=active]:text-green-200"
+              >
+                Settings
+              </TabsTrigger>
             )}
           </TabsList>
           <TabsContent value="information">
             <InformationTab 
               organization={organization} 
               orgPosts={orgPosts} 
-              topActiveMembers={topActiveMembers}
               setOrgPosts={setOrgPosts}
               isUserAdmin={isUserAdmin}
             />
@@ -207,7 +226,6 @@ export default function OrganizationPage() {
           <InformationTab 
             organization={organization} 
             orgPosts={orgPosts} 
-            topActiveMembers={[]}
             setOrgPosts={setOrgPosts}
             isUserAdmin={false}
           />
