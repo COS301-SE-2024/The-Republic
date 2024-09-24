@@ -22,6 +22,7 @@ const AccountManagement: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(1);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
+  const [password, setPassword] = useState("");
   const { toast } = useToast();
 
   const handleAnonymousToggle = () => {
@@ -53,12 +54,24 @@ const AccountManagement: React.FC = () => {
         break;
       case 2:
         if (deleteConfirmationText === "username@example.com") {
-          // Call API to delete the account
-          handleDeleteAccount();
+          setDeleteConfirmationStep(3);
+          setDeleteConfirmationText("");
         } else {
           toast({
             title: "Incorrect username",
             description: "Please enter your username to confirm deletion.",
+            variant: "destructive",
+          });
+        }
+        break;
+      case 3:
+        if (password === "correctPassword123") {
+          // Call API to delete the account
+          handleDeleteAccount();
+        } else {
+          toast({
+            title: "Incorrect password",
+            description: "Please enter your correct password to confirm deletion.",
             variant: "destructive",
           });
         }
@@ -78,6 +91,7 @@ const AccountManagement: React.FC = () => {
     setIsDeleting(false);
     setDeleteConfirmationStep(1);
     setDeleteConfirmationText("");
+    setPassword("");
     // Update relevant state management (e.g., user context) after successful deletion
     // Implement redirect logic after account deletion (e.g., to home page or login page)
   };
@@ -128,7 +142,7 @@ const AccountManagement: React.FC = () => {
             {deleteConfirmationStep === 2 && (
               <>
                 <p>
-                  Please enter your username to confirm the final step of the deletion process.
+                  Please enter your username to confirm the second step of the deletion process.
                 </p>
                 <input
                   type="text"
@@ -139,12 +153,26 @@ const AccountManagement: React.FC = () => {
                 />
               </>
             )}
+            {deleteConfirmationStep === 3 && (
+              <>
+                <p>
+                  This is the final step. Please enter your password to permanently delete your account.
+                </p>
+                <input
+                  type="password"
+                  className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </>
+            )}
             <div className="flex justify-end space-x-2">
               <Button variant="secondary" onClick={() => setIsDeleting(false)}>
                 Cancel
               </Button>
               <Button variant="destructive" onClick={handleDeleteAccountConfirm}>
-                {deleteConfirmationStep === 1 ? "Confirm Deletion" : "Proceed to Deletion"}
+                {deleteConfirmationStep === 3 ? "Confirm Deletion" : "Proceed to Next Step"}
               </Button>
             </div>
           </div>
