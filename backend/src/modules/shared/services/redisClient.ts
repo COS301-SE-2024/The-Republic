@@ -16,4 +16,11 @@ try {
   console.error('Failed to initialize Redis client:', error);
 }
 
+export const createBullRedisClient = (): Redis => {
+  return new Redis(process.env.REDIS_URL as string, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+  });
+};
+
 export default redisClient;
