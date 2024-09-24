@@ -113,8 +113,8 @@ export default function InformationTab({
     };
 
     return (
-      <div className="grid grid-cols-3 gap-6">
-        <Card className="col-span-2 row-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="col-span-1 md:col-span-2 row-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-green-800 flex items-center">
               <PenSquare className="w-5 h-5 mr-2" />

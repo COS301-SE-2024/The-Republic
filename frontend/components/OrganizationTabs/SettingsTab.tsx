@@ -418,19 +418,19 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
             ) : (
               <div className="space-y-4">
                 {activityLogs.map((log) => (
-                  <div key={log.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={log.admin.image_url || undefined} />
-                      <AvatarFallback>{log.admin.fullname.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">{log.admin.fullname} (@{log.admin.username})</p>
-                      <p className="text-sm text-gray-600">
-                        {formatLogDetails(log)}
-                      </p>
-                      <p className="text-xs text-gray-400">{new Date(log.created_at).toLocaleString()}</p>
-                    </div>
-                  </div>
+                 <div key={log.id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-transparent mb-4 rounded-lg">
+                 <Avatar className="h-10 w-10">
+                   <AvatarImage src={log.admin.image_url || undefined} />
+                   <AvatarFallback>{log.admin.fullname.charAt(0)}</AvatarFallback>
+                 </Avatar>
+                 <div>
+                   <p className="font-semibold">{log.admin.fullname} (@{log.admin.username})</p>
+                   <p className="text-sm text-gray-600 dark:text-gray-300">
+                     {formatLogDetails(log)}
+                   </p>
+                   <p className="text-xs text-gray-400 dark:text-gray-500">{new Date(log.created_at).toLocaleString()}</p>
+                 </div>
+               </div>
                 ))}
               </div>
             )}
