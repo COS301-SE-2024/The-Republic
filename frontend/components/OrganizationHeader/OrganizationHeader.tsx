@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Users, Globe, Calendar, Star } from 'lucide-react';
 import { formatDate } from '@/lib/utils'; 
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
-import { deleteJoinRequest } from '@/lib/api/deleteJoinRequest';
 
 interface OrganizationHeaderProps {
   organization: Organization;
