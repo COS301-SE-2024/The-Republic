@@ -18,6 +18,7 @@ import { useToast } from '@/components/ui/use-toast';
 import TypedDeleteConfirmation from '@/components/DeleteConfirmation/TypedDeleteConfirmation';
 import LocationModal from '@/components/LocationModal/LocationModal';
 import Link from 'next/link';
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
 interface SettingsTabProps {
   organization: Organization;
@@ -157,10 +158,26 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       if (!user || !user.user_id) {
         throw new Error('User not found or user ID is missing');
       }
-      
+
+      const fieldsToCheck: (keyof typeof formData)[] = ['name', 'username', 'bio'];
+      for (const field of fieldsToCheck) {
+        const value = formData[field];
+        if (typeof value === 'string') {
+        const isContentAppropriate = await checkContentAppropriateness(value);
+        if (!isContentAppropriate) {
+          setLoading(false);
+          toast({
+            variant: "destructive",
+            description: `Please use appropriate language in the ${field} field.`,
+          });
+          return;
+        }
+      }
+      }
+
       const updateData = new FormData();
       let hasChanges = false;
-  
+
       Object.entries(formData).forEach(([key, value]) => {
         if (key === 'location') {
           const newLocation = JSON.stringify(value);
@@ -174,20 +191,20 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
           hasChanges = true;
         }
       });
-  
+
       if (profilePhoto) {
         updateData.append('profilePhoto', profilePhoto);
         hasChanges = true;
       }
-  
+
       if (!hasChanges) {
         setSuccess('No changes to update');
         return;
       }
-  
+
       const updatedOrg = await updateOrganization(user, organization.id, updateData, organization);
       setSuccess('Organization updated successfully');
-      
+
       const mergedOrg = { ...organization, ...updatedOrg };
       onOrganizationUpdate(mergedOrg);
     } catch (err) {
