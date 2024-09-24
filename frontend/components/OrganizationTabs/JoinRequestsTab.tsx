@@ -61,8 +61,8 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
         title: "Success",
         description: `Join request ${accept ? 'accepted' : 'rejected'} successfully`,
       });
-      fetchJoinRequests(); // Refresh the list
-      onJoinRequestsUpdate(); // Update parent component
+      fetchJoinRequests();
+      onJoinRequestsUpdate();
     } catch (err) {
       console.error("Error handling join request:", err);
       toast({
