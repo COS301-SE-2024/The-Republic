@@ -591,17 +591,33 @@ export class OrganizationService {
 
   async deleteJoinRequest(requestId: number, userId: string): Promise<APIResponse<null>> {
     try {
+      const joinRequest = await this.organizationRepository.getJoinRequestById(requestId);
+      
+      if (!joinRequest) {
+        return APIError({
+          code: 404,
+          success: false,
+          error: "Join request not found.",
+        });
+      }
+
+      if (joinRequest.user_id !== userId) {
+        return APIError({
+          code: 403,
+          success: false,
+          error: "You do not have permission to delete this join request.",
+        });
+      }
+
       await this.organizationRepository.deleteJoinRequest(requestId, userId);
+
       return APIData({
         code: 200,
         success: true,
         data: null,
       });
     } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw APIError({
+      return APIError({
         code: 500,
         success: false,
         error: "An unexpected error occurred while deleting the join request.",

@@ -17,6 +17,7 @@ import { getOrganizationMembers } from '@/lib/api/getOrganizationMembers';
 import { getTopOrganizationMembers } from '@/lib/api/getTopOrganizationMembers';
 import { joinOrganization } from '@/lib/api/joinOrganization';
 import { getJoinRequestByUser } from '@/lib/api/getJoinRequestByUser';
+import { deleteJoinRequest } from '@/lib/api/deleteJoinRequest';
 
 interface OrganizationMember {
   id: number;
@@ -40,6 +41,7 @@ export default function OrganizationPage() {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [showJoinRequests, setShowJoinRequests] = useState(false);
   const [hasUserRequested, setHasUserRequested] = useState(false);
+  const [joinRequestId, setJoinRequestId] = useState<number | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user || !id) return;
@@ -76,6 +78,7 @@ export default function OrganizationPage() {
       setIsUserMember(!!userMember);
       setIsUserAdmin(userMember?.role === 'admin');
       setHasUserRequested(!!joinRequest);
+      setJoinRequestId(joinRequest?.id || null);
   
       if (userMember) {
         const [topMembersData] = await Promise.all([
@@ -117,6 +120,19 @@ export default function OrganizationPage() {
     }
   };
 
+  const handleRemoveRequest = async () => {
+    if (!user || !joinRequestId) return;
+    try {
+      await deleteJoinRequest(user, joinRequestId);
+      setHasUserRequested(false);
+      setJoinRequestId(null);
+      fetchData();
+    } catch (err) {
+      console.error("Error removing join request:", err);
+      setError('Failed to remove join request. Please try again.');
+    }
+  };
+
   const handleOrganizationUpdate = async () => {
     fetchData();
   };
@@ -138,6 +154,7 @@ export default function OrganizationPage() {
         isUserMember={isUserMember}
         onJoinRequest={handleJoinRequest}
         hasUserRequested={hasUserRequested}
+        onRemoveRequest={handleRemoveRequest}
       />
       
       {isUserMember ? (

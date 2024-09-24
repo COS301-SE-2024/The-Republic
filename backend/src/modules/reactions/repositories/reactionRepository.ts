@@ -3,8 +3,9 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
 export default class ReactionRepository {
-  async addReaction(reaction: Partial<Reaction> & { itemType: 'issue' | 'post' }) {
-    const reactionData = reaction;
+  async addReaction(reaction: Partial<Reaction> & { itemType?: 'issue' | 'post' }) {
+    const reactionData = { ...reaction };
+    delete reactionData.itemType;
     reactionData.created_at = new Date().toISOString();
 
     const { data, error } = await supabase
