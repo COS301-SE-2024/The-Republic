@@ -70,7 +70,7 @@ export default class UserAdminRepository {
             .eq('user_id', userId);
 
           if (error && error.code !== 'PGRST116') {
-            throw new Error(`Error deleting from ${table}: ${error.message}`);
+            console.error(`Error deleting from ${table}: ${error.message}`);
           }
 
           return data;
@@ -80,17 +80,6 @@ export default class UserAdminRepository {
       } catch (error) {
         // Do Nothing
       }
-    }
-
-    const { error } = await supabase.auth.admin.deleteUser(userId);
-
-    if (error) {
-      console.error('Error deleting user:', error.message);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: `Error deleting user: ${error.message}`,
-      });
     }
 
     const rand = generateRandomString();
@@ -136,6 +125,17 @@ export default class UserAdminRepository {
       deleteUserRecords();
       deleteImage(existingUser.image_url);
       
+      const { error: errorAdmin } = await supabase.auth.admin.deleteUser(userId);
+
+      if (error) {
+        console.error('Error deleting user:', errorAdmin?.message);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: `Error deleting user: ${errorAdmin?.message}`,
+        });
+      }
+
       return {
         "deleted": true
       };
