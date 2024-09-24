@@ -11,12 +11,22 @@ jest.mock("@/utilities/cacheUtils");
 
 jest.mock("@/modules/shared/services/redisClient", () => ({
   __esModule: true,
+  createBullRedisClient: jest.fn().mockReturnValue({
+    options: {},
+  }),
   default: {
     on: jest.fn(),
     get: jest.fn(),
     setex: jest.fn(),
     del: jest.fn(),
     keys: jest.fn().mockResolvedValue([]),
+  },
+}));
+
+jest.mock("@/modules/shared/services/queue", () => ({
+  __esModule: true,
+  reportQueue: {
+    add: jest.fn(),
   },
 }));
 
@@ -27,6 +37,7 @@ describe("Reports Controller", () => {
   let mockReportsService: jest.Mocked<ReportsService>;
 
   beforeEach(() => {
+    process.env.REDIS_URL = "redis://localhost:6379";
     mockRequest = { body: {}, query: {} };
     mockResponse = {
       json: jest.fn(),
