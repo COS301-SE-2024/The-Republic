@@ -564,6 +564,15 @@ interface UserExists {
   user_id?: string;
 }
 
+interface UserSearchResult {
+  id: string;
+  name: string;
+  username: string;
+  image_url: string;
+  created_at: string;
+  type: 'org' | 'user';
+}
+
 export type {
   UserExists,
   AnalysisResult,
@@ -604,5 +613,6 @@ export type {
   ReactionNotification,
   CommentNotification,
   NotificationType,
-  ErrorDisplayProps
+  ErrorDisplayProps,
+  UserSearchResult
 };
