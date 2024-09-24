@@ -5,14 +5,13 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Users, Globe, Calendar, Star } from 'lucide-react';
 import { formatDate } from '@/lib/utils'; 
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
-import { deleteJoinRequest } from '@/lib/api/deleteJoinRequest';
 
 interface OrganizationHeaderProps {
   organization: Organization;
   isUserMember: boolean;
   onJoinRequest: () => void;
   hasUserRequested: boolean;
-  onRemoveRequest: () => void; // Add a new prop for handling remove request
+  onRemoveRequest: () => void;
 }
 
 const getOrganizationTypeBadge = (orgType: string | undefined) => {
