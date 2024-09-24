@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,21 +13,17 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { Loader2, Upload, X } from "lucide-react";
+import { Check, Loader2, Search, Upload, X } from "lucide-react";
 import Image from 'next/image';
-import { Organization } from "@/lib/types";
+import { Organization, UserSearchResult } from "@/lib/types";
 import { getOrganizations } from '@/lib/api/getOrganizations';
-import { searchOrganizations } from '@/lib/api/searchOrganizations';
 import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Toggle } from "@/components/ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-interface SearchResult {
-  id: string;
-  name: string;
-  type: 'organization' | 'user';
-}
+import { debounce } from 'lodash';
+import { searchForUser } from '@/lib/api/searchForUser';
+import { useToast } from '../ui/use-toast';
 
 interface ResolutionModalProps {
   isOpen: boolean;
@@ -38,6 +34,7 @@ interface ResolutionModalProps {
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
+    resolverId?: string;
     organizationIds?: string[];
   }) => void;
   isLoading: boolean;
@@ -87,12 +84,14 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     isSelfResolution ? 'self' : 'unknown'
   );
   const [resolvedBy, setResolvedBy] = useState('');
+  const [resolverId, setResolverID] = useState<string>();
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([]);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen) {
@@ -136,11 +135,23 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalResolutionSource = isSelfResolution ? 'self' : resolutionSource;
+
+    if (resolutionSource === "other" && !resolverId) {
+      toast({
+        description: 
+          "Please specify who resolved the issue " + 
+          "or set the resolution type to 'I don't know who fixed it'"
+      });
+
+      return;
+    }
+
     onSubmit({
       resolutionText,
       proofImage,
       resolutionSource: finalResolutionSource as 'self' | 'unknown' | 'other',
       resolvedBy: finalResolutionSource === 'other' ? resolvedBy : undefined,
+      resolverId,
       organizationIds: selectedOrganizations.length > 0 ? selectedOrganizations : undefined,
     });
     if (!isLoading) {
@@ -180,28 +191,23 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     }
   };
 
-  const handleSearch = async (query: string) => {
-    setSearchQuery(query);
-    if (resolutionSource === 'other' && query.length > 0 && user) {
-      try {
-        const result = await searchOrganizations(user, query, { limit: 10 });
-        const formattedResults: SearchResult[] = result.data.map(org => ({
-          id: org.id,
-          name: org.name,
-          type: 'organization' as const
-        }));
-        setSearchResults(formattedResults);
-        setIsSearchOpen(true);
-      } catch (error) {
-        console.error("Error during search:", error);
-        setError("Failed to perform search");
+  const handleSearch = useCallback(
+    debounce(async (query: string) => {
+      if (resolutionSource === 'other' && query.length > 0) {
+        try {
+          const result = await searchForUser({ name: query });
+          setSearchResults(result);
+          setIsSearchOpen(true);
+        } catch (error) {
+          console.error("Error during search:", error);
+          setError("Failed to perform search");
+          setSearchResults([]);
+        }
+      } else {
         setSearchResults([]);
+        setIsSearchOpen(false);
       }
-    } else {
-      setSearchResults([]);
-      setIsSearchOpen(false);
-    }
-  };
+  }, 500), [resolutionSource]);
 
   const toggleOrganization = (orgId: string) => {
     setSelectedOrganizations(prev =>
@@ -241,13 +247,25 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
           {resolutionSource === 'other' && (
             <div className="relative" ref={searchRef}>
               <Label htmlFor="resolvedBy">Resolved By</Label>
-              <Input
-                id="resolvedBy"
-                placeholder="Search for organization or user..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="w-full"
-              />
+              <div className='relative'>
+                <Input
+                  id="resolvedBy"
+                  placeholder="Search for organization or user..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setResolverID(undefined);
+                    setSearchQuery(e.target.value);
+                    handleSearch(e.target.value);
+                  }}
+                  className="w-full pr-10"
+                />
+                <div className='absolute right-2 top-[50%] -translate-y-[50%]'>
+                  {resolverId 
+                    ? <Check className='text-green-300'/>
+                    : <Search className='text-gray-300'/>
+                  }
+                </div>
+              </div>
               {isSearchOpen && searchResults.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
                   {searchResults.map((item) => (
@@ -256,11 +274,20 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
                         setResolvedBy(item.name);
+                        setResolverID(item.id);
                         setSearchQuery(item.name);
                         setIsSearchOpen(false);
                       }}
                     >
-                      {item.name} ({item.type})
+                      <span className="font-medium text-foreground">
+                        {item.name}
+                      </span>
+                      <span className="ml-2 text-sm text-muted-foreground">
+                        @{item.username}
+                      </span>
+                      <span className="px-2 bg-gray-200 rounded absolute right-2">
+                        {item.type}
+                      </span>
                     </div>
                   ))}
                 </div>
