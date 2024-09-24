@@ -172,7 +172,7 @@ const AccountManagement: React.FC = () => {
                 Cancel
               </Button>
               <Button variant="destructive" onClick={handleDeleteAccountConfirm}>
-                {deleteConfirmationStep === 3 ? "Confirm Deletion" : "Proceed to Next Step"}
+                {deleteConfirmationStep === 3 ? "Confirm Deletion" : "Delete Accoount"}
               </Button>
             </div>
           </div>
