@@ -560,6 +560,7 @@ async updateOrganization(id: string, updates: Partial<Organization>, profilePhot
       .eq("user_id", userId);
 
     if (error) {
+      console.error("Error deleting join request:", error);
       throw APIError({
         code: 500,
         success: false,

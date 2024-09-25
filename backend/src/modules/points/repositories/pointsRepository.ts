@@ -56,41 +56,6 @@ export class PointsRepository {
     return data.user_score;
   }
 
-  async suspendUserFromResolving(userId: string) {
-    const suspensionEnd = new Date();
-    suspensionEnd.setHours(suspensionEnd.getHours() + 24);
-
-    const { error } = await supabase
-      .from("user")
-      .update({ resolve_suspension_end: suspensionEnd.toISOString() })
-      .eq("user_id", userId);
-
-    if (error) {
-      console.error(error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while suspending user from resolving.",
-      });
-    }
-  }
-
-  async blockUser(userId: string) {
-    const { error } = await supabase
-      .from("user")
-      .update({ is_blocked: true })
-      .eq("user_id", userId);
-
-    if (error) {
-      console.error(error);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while blocking user.",
-      });
-    }
-  }
-
   async getLeaderboard(locationFilter: { province?: string, city?: string, suburb?: string }) {
     let query = supabase
       .from('user')

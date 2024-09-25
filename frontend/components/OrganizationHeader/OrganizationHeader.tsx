@@ -11,6 +11,7 @@ interface OrganizationHeaderProps {
   isUserMember: boolean;
   onJoinRequest: () => void;
   hasUserRequested: boolean;
+  onRemoveRequest: () => void; // Add a new prop for handling remove request
 }
 
 const getOrganizationTypeBadge = (orgType: string | undefined) => {
@@ -34,7 +35,7 @@ const getOrganizationTypeBadge = (orgType: string | undefined) => {
   return <Badge>{badgeText}</Badge>;
 };
 
-export default function OrganizationHeader({ organization, isUserMember, onJoinRequest, hasUserRequested }: OrganizationHeaderProps) {
+export default function OrganizationHeader({ organization, isUserMember, onJoinRequest, hasUserRequested, onRemoveRequest }: OrganizationHeaderProps) {
   const renderJoinButton = () => {
     if (isUserMember) {
       return null;
@@ -42,7 +43,9 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
 
     if (hasUserRequested) {
       return (
-        <Button disabled>Request Sent</Button>
+        <Button onClick={onRemoveRequest}>
+          Remove Request
+        </Button>
       );
     }
 

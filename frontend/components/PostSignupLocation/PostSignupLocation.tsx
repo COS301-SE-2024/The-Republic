@@ -7,9 +7,11 @@ import { supabase } from "@/lib/globals";
 
 interface PostSignupLocationProps {
   onComplete: () => void;
+  username?: string;
+  fullname?: string;
 }
 
-export default function PostSignupLocation({ onComplete }: PostSignupLocationProps) {
+export default function PostSignupLocation({ onComplete, username, fullname }: PostSignupLocationProps) {
   const [showModal, setShowModal] = useState(true);
   const { toast } = useToast();
 
@@ -20,11 +22,11 @@ export default function PostSignupLocation({ onComplete }: PostSignupLocationPro
 
       const currentUser: User = {
         user_id: user.id,
-        fullname: user.user_metadata?.fullname || "",
-        username: user.user_metadata?.username || "",
+        fullname: fullname || "",
+        username: username || "",
         bio: "",
         image_url: "",
-        email_address: "",
+        email_address: user.email || "",
         total_issues: 0,
         resolved_issues: 0,
         user_score: 0,
@@ -34,9 +36,9 @@ export default function PostSignupLocation({ onComplete }: PostSignupLocationPro
 
       const dataToUpdate: ProfileUpdate = {
         location: location,
-        fullname: currentUser.fullname,
-        username: currentUser.username, 
-        bio: currentUser.bio,
+        fullname: fullname || "",
+        username: username || "",
+        bio: "",
       };
 
       const result = await updateUserProfile(currentUser, dataToUpdate, null);
@@ -62,7 +64,7 @@ export default function PostSignupLocation({ onComplete }: PostSignupLocationPro
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Welcome to The Republic</h2>
+        <h2 className="text-2xl font-bold mb-4">Welcome to The Republic, {fullname}!</h2>
         <p className="mb-4">Let's set up your default location to personalize your experience.</p>
         <LocationModal
           isOpen={showModal}

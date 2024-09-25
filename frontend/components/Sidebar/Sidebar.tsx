@@ -19,7 +19,7 @@ import styles from "@/styles/Custom.module.css";
 import { useUser } from "@/lib/contexts/UserContext";
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
-import { XIcon } from "lucide-react";
+import { CircleHelp, XIcon } from "lucide-react";
 import {
   ReactionNotification,
   CommentNotification,
@@ -279,6 +279,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </Link>
               </li>
             )}
+            <h4>
+              <span>About</span>
+            </h4>
+            <li onClick={onClose}>
+              <Link href={`/about`}>
+                <CircleHelp />
+                  About
+              </Link>
+            </li>
           </ul>
           {user && (
             <div className={styles.userAccount}>

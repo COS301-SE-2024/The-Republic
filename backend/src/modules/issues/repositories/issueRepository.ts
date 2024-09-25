@@ -9,12 +9,21 @@ import { CategoryRepository } from "@/modules/issues/repositories/categoryReposi
 import { CommentRepository } from "@/modules/comments/repositories/commentRepository";
 import { LocationRepository } from "@/modules/locations/repositories/locationRepository";
 import { formatTime } from "@/utilities/formatTime";
-
-const reactionRepository = new ReactionRepository();
-const categoryRepository = new CategoryRepository();
-const commentRepository = new CommentRepository();
+import { ResolutionResponseRepository } from "@/modules/resolutions/repositories/resolutionResponseRepository";
 
 export default class IssueRepository {
+  private reactionRepository: ReactionRepository;
+  private categoryRepository: CategoryRepository;
+  private commentRepository: CommentRepository;
+  private resolutionResponseRepository: ResolutionResponseRepository;
+
+  constructor() {
+    this.reactionRepository = new ReactionRepository();
+    this.categoryRepository = new CategoryRepository();
+    this.commentRepository = new CommentRepository();
+    this.resolutionResponseRepository = new ResolutionResponseRepository();
+  }
+
   async getIssues({
     from,
     amount,
@@ -47,6 +56,7 @@ export default class IssueRepository {
           latitude,
           longitude
         ),
+        resolution: resolution_id (*),
         comment_count
       `,
       )
@@ -62,7 +72,7 @@ export default class IssueRepository {
     }
 
     if (category) {
-      const categoryId = await categoryRepository.getCategoryId(category);
+      const categoryId = await this.categoryRepository.getCategoryId(category);
       query = query.eq("category_id", categoryId);
     }
 
@@ -80,13 +90,13 @@ export default class IssueRepository {
     // I Might Fetch The Data In Parallel Instead of Mapping Through The List While Fetching
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
 
         const userReaction = user_id
-          ? await reactionRepository.getReactionByUserAndItem(
+          ? await this.reactionRepository.getReactionByUserAndItem(
               issue.issue_id.toString(),
               "issue",
               user_id,
@@ -94,7 +104,6 @@ export default class IssueRepository {
           : null;
         
         const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
-        const resolutions = await this.getResolutionsForIssue(issue.issue_id);
         const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
         const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
         const { data: forecastData, error: forecastError } = await supabase
@@ -102,6 +111,9 @@ export default class IssueRepository {
             category_id_param: issue.category_id,
             suburb_param: issue.location?.suburb
           });
+        const resolutionResponse = pendingResolution 
+          ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, issue.user_id)
+          : null;
 
         const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
         const information = (!issue.resolved_at) ? 
@@ -125,7 +137,7 @@ export default class IssueRepository {
             : issue.user,
           hasPendingResolution: !!pendingResolution,
           pendingResolutionId: pendingResolution?.resolution_id || null,
-          resolutions,
+          resolutionResponse,
           relatedIssuesCount,
           userHasIssueInCluster,
           relatedIssues,
@@ -160,6 +172,7 @@ export default class IssueRepository {
           latitude,
           longitude
         ),
+        resolution: resolution_id (*),
         cluster_id
       `,
       )
@@ -183,21 +196,20 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByItemId(
+    const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
       "issue"
     );
 
     const userReaction = user_id
-      ? await reactionRepository.getReactionByUserAndItem(
+      ? await this.reactionRepository.getReactionByUserAndItem(
           data.issue_id.toString(),
           "issue",
           user_id,
         )
       : null;
-    const commentCount = await commentRepository.getNumComments(data.issue_id, "issue");
+    const commentCount = await this.commentRepository.getNumComments(data.issue_id, "issue");
     const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
-    const resolutions = await this.getResolutionsForIssue(data.issue_id);
     const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
     const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
     const { data: forecastData, error: forecastError } = await supabase
@@ -205,6 +217,9 @@ export default class IssueRepository {
         category_id_param: data.category_id,
         suburb_param: data.location?.suburb
       });
+    const resolutionResponse = pendingResolution 
+      ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, data.user_id)
+      : null;
 
     const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
     const information = (!data.resolved_at) ? 
@@ -229,7 +244,7 @@ export default class IssueRepository {
         : data.user,
       hasPendingResolution: !!pendingResolution,
       pendingResolutionId: pendingResolution?.resolution_id || null,
-      resolutions,
+      resolutionResponse,
       relatedIssuesCount,
       userHasIssueInCluster,
       relatedIssues,
@@ -401,7 +416,8 @@ export default class IssueRepository {
           : data.user,
         hasPendingResolution: false,
         pendingResolutionId: null,
-        resolutions: [],
+        resolution: null,
+        resolutionResponse: null,
         relatedIssuesCount: 0,
         userHasIssueInCluster: false,
       } as Issue;
@@ -479,7 +495,7 @@ export default class IssueRepository {
       });
     }
 
-    const reactions = await reactionRepository.getReactionCountsByItemId(
+    const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
       "issue"
     );
@@ -580,7 +596,8 @@ export default class IssueRepository {
           suburb,
           city,
           province
-        )
+        ),
+        resolution: resolution_id (*)
       `,
       )
       .eq("user_id", userId)
@@ -597,17 +614,17 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndItem(
+        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
           issue.issue_id.toString() ,
           "issue",
           userId,
         );
 
-        const commentCount = await commentRepository.getNumComments(
+        const commentCount = await this.commentRepository.getNumComments(
           issue.issue_id.toString(), "issue"
         );
 
@@ -686,17 +703,17 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await reactionRepository.getReactionCountsByItemId(
+        const reactions = await this.reactionRepository.getReactionCountsByItemId(
           issue.issue_id.toString(),
           "issue"
         );
-        const userReaction = await reactionRepository.getReactionByUserAndItem(
+        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
           issue.issue_id.toString(),
           "issue",
           userId,
         );
 
-        const commentCount = await commentRepository.getNumComments(
+        const commentCount = await this.commentRepository.getNumComments(
           issue.issue_id.toString(),
           "issue"
         );
@@ -776,10 +793,10 @@ export default class IssueRepository {
 
   async getPendingResolutionForIssue(issueId: number): Promise<Resolution | null> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*')
+      .from('issue')
+      .select('*, resolution: resolution_id(*)')
       .eq('issue_id', issueId)
-      .eq('status', 'pending')
+      .eq('resolution.status', 'pending')
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 is the error code for no rows returned
@@ -791,7 +808,7 @@ export default class IssueRepository {
       });
     }
 
-    return data || null;
+    return data?.resolution || null;
   }
 
   async getResolutionsForIssue(issueId: number): Promise<Resolution[]> {
@@ -811,6 +828,22 @@ export default class IssueRepository {
     }
   
     return data as Resolution[];
+  }
+
+  async assignResolutionToIssues(resolutionId: string, issuesIds: number[]) {
+    const { error } = await supabase
+      .from('issue')
+      .update({ resolution_id: resolutionId })
+      .in('issue_id', issuesIds);
+
+    if (error) {
+      console.error("assignResolutionToIssues: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while assigning resolution to issues",
+      });
+    }
   }
 
   async userHasIssueInCluster(userId: string, clusterId: string | null): Promise<boolean> {

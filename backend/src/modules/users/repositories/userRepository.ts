@@ -1,6 +1,7 @@
 import supabase from "@/modules/shared/services/supabaseClient";
 import { User } from "@/modules/shared/models/issue";
 import { APIError } from "@/types/response";
+import { Suspension } from "@/types/suspension";
 import UserAdminRepository from "@/modules/users/repositories/userAdminRepository";
 
 export default class UserRepository {
@@ -247,5 +248,84 @@ export default class UserRepository {
       .sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+  }
+
+  async suspendUser(userId: string, reason: string, until: Date) {
+    const { 
+      data: currentSuspension, 
+      error: currentSuspensionError 
+    } = await supabase
+      .from("user")
+      .select("suspended_until")
+      .eq("user_id", userId)
+      .single();
+
+    if (currentSuspensionError) {
+      console.error("suspendUser: ", currentSuspensionError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while suspending user from resolving.",
+      });
+    }
+
+    if (new Date(currentSuspension.suspended_until) > until) {
+      return; // User already has longer suspension
+    }
+
+    const { error } = await supabase
+      .from("user")
+      .update({
+        suspended_until: until,
+        suspension_reason: reason
+      })
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while suspending user from resolving.",
+      });
+    }
+  }
+
+  async getSuspension(userId: string): Promise<Suspension> {
+    const { error, data } = await supabase
+      .from("user")
+      .select("suspended_until, suspension_reason")
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      console.log("getSuspension: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while checking suspension.",
+      });
+    }
+
+    return {
+      ...data,
+      is_suspended: new Date() < new Date(data.suspended_until),
+    };
+  }
+
+  async blockUser(userId: string) {
+    const { error } = await supabase
+      .from("user")
+      .update({ is_blocked: true })
+      .eq("user_id", userId);
+
+    if (error) {
+      console.error(error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred while blocking user.",
+      });
+    }
   }
 }

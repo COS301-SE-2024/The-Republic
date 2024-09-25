@@ -1,4 +1,4 @@
-import { UserAlt as User, Resolution } from "@/lib/types";
+import { UserAlt as User, Resolution, Suspension } from "@/lib/types";
 import { toast } from "@/components/ui/use-toast";
 
 const createExternalResolution = async (
@@ -11,7 +11,7 @@ const createExternalResolution = async (
   stateEntityAssociation?: string,
   proofImage?: File,
   organizationId?: string
-): Promise<Resolution | null> => {
+): Promise<Resolution | Suspension | null> => {
   if (!user) {
     toast({
       variant: "destructive",
@@ -42,9 +42,12 @@ const createExternalResolution = async (
 
   const apiResponse = await response.json();
 
-  if (apiResponse.success && apiResponse.data) {
+  if (
+    apiResponse.success ||
+    apiResponse.error === "User is suspended"
+  ) {
     return apiResponse.data;
-  } else {
+  } {
     throw new Error(apiResponse.error || "Failed to create external resolution");
   }
 };

@@ -12,6 +12,7 @@ import { useUser } from "@/lib/contexts/UserContext";
 import ErrorDisplay from '@/components/ui/error_display';
 
 import type { NotificationType } from "@/lib/types";
+import { formatLongDate } from "@/lib/utils";
 
 const LoadingIndicator = () => (
   <div className="flex justify-center items-center h-32">
@@ -76,6 +77,13 @@ const NotificationsList: React.FC = () => {
     );
   }
 
+  const addSuspendMessage = (notif: NotificationType) => 
+    notif.content.includes("external resolution rejected")
+      ? notif.content + " You will be suspended from resolving until " + formatLongDate(
+        new Date(notif.created_at).getTime() + 3600 * 24 * 1000
+      )
+      : notif.content;
+
   return (
     <Card>
       <CardContent className="p-0">
@@ -96,7 +104,7 @@ const NotificationsList: React.FC = () => {
                   <p className="text-sm font-medium">
                     {
                       (notification.type === "points")
-                      ? notification.content :
+                      ? addSuspendMessage(notification) :
                       (notification.type === "resolution")
                       ? "New resolution logged: " + notification.content:
                       (notification.type === "issue")

@@ -3,6 +3,7 @@ import { Resolution, UserAlt as User } from "@/lib/types";
 const respondToResolution = async (
   user: User,
   resolutionId: string,
+  issueId: number,
   accept: boolean,
   rating?: number
 ): Promise<Resolution> => {
@@ -13,6 +14,7 @@ const respondToResolution = async (
 
   const body = {
     resolutionId,
+    issueId,
     userId: user.user_id,
     accept,
     satisfactionRating: rating

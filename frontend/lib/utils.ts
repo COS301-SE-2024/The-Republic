@@ -196,3 +196,20 @@ export async function checkImageFileAndToast(
 
   return true;
 }
+
+export function formatLongDate(input: Date | string | number) {
+  const date = new Date(input);
+
+  return date
+    .toLocaleString(undefined, {
+      hour12: true,
+      hour: "numeric",
+      minute: "numeric",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+    .replace("am", "AM")
+    .replace("pm", "PM")
+    .replace(" at", ",");
+}

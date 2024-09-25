@@ -9,6 +9,7 @@ import { PointsService } from "@/modules/points/services/pointsService";
 import { ClusterService } from '@/modules/clusters/services/clusterService';
 import { OpenAIService } from '@/modules/shared/services/openAIService';
 import { ResolutionService } from "@/modules/resolutions/services/resolutionService";
+import UserRepository from "@/modules/users/repositories/userRepository";
 
 export default class IssueService {
   private issueRepository: IssueRepository;
@@ -16,6 +17,7 @@ export default class IssueService {
   private clusterService: ClusterService;
   private openAIService: OpenAIService;
   private resolutionService: ResolutionService;
+  private userRepository: UserRepository;
 
   constructor() {
     this.issueRepository = new IssueRepository();
@@ -23,6 +25,7 @@ export default class IssueService {
     this.clusterService = new ClusterService();
     this.openAIService = new OpenAIService();
     this.resolutionService = new ResolutionService();
+    this.userRepository = new UserRepository();
   }
 
   setIssueRepository(issueRepository: IssueRepository): void {
@@ -71,7 +74,7 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
         };
       }
 
@@ -121,8 +124,8 @@ export default class IssueService {
         total_issues: null,
         resolved_issues: null,
         user_score: 0, 
-          location_id: null,
-          location: null
+        location_id: null,
+        location: null,
       };
     }
 
@@ -350,13 +353,6 @@ export default class IssueService {
         });
       }
     
-      let numClusterMembers = 1;
-    
-      if (issue.cluster_id) {
-        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-        numClusterMembers = cluster.issue_count;
-      }
-  
       let imageUrl: string | null = null;
   
       if (proofImage) {
@@ -387,7 +383,6 @@ export default class IssueService {
         resolution_text: resolutionText,
         proof_image: imageUrl,
         resolution_source: 'self',
-        num_cluster_members: numClusterMembers,
         political_association: null,
         state_entity_association: null,
         resolved_by: null,
@@ -422,96 +417,86 @@ export default class IssueService {
     resolvedBy?: string,
     organizationId?: string
   ): Promise<APIResponse<Resolution>> {
-    try {
-      const issue = await this.issueRepository.getIssueById(issueId);
-      
-      if (issue.resolved_at) {
+    const suspension = await this.userRepository.getSuspension(userId);
+
+    if (suspension.is_suspended) {
+      throw APIData({
+        code: 403,
+        success: false,
+        error: "User is suspended",
+        data: {
+          suspended_until: suspension.suspended_until,
+          suspension_reason: suspension.suspension_reason
+        }
+      });
+    }
+
+    const issue = await this.issueRepository.getIssueById(issueId);
+    
+    if (issue.resolved_at) {
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "This issue has already been resolved.",
+      });
+    }
+  
+    let imageUrl: string | null = null;
+
+    if (proofImage) {
+      const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
+      const { error } = await supabase.storage
+        .from("resolutions")
+        .upload(fileName, proofImage.buffer);
+
+      if (error) {
+        console.error(error);
         throw APIError({
-          code: 400,
+          code: 500,
           success: false,
-          error: "This issue has already been resolved.",
+          error: "An error occurred while uploading the image. Please try again.",
         });
       }
-    
-      let numClusterMembers = 1;
-    
-      if (issue.cluster_id) {
-        const cluster = await this.clusterService.getClusterById(issue.cluster_id);
-        numClusterMembers = cluster.issue_count;
-      }
-  
-      let imageUrl: string | null = null;
-  
-      if (proofImage) {
-        const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
-        const { error } = await supabase.storage
-          .from("resolutions")
-          .upload(fileName, proofImage.buffer);
-  
-        if (error) {
-          console.error(error);
-          throw APIError({
-            code: 500,
-            success: false,
-            error: "An error occurred while uploading the image. Please try again.",
-          });
-        }
-  
-        const { data: urlData } = supabase.storage
-          .from("resolutions")
-          .getPublicUrl(fileName);
-  
-        imageUrl = urlData.publicUrl;
-      }
-    
-      const resolution = await this.resolutionService.createResolution({
-        issue_id: issueId,
-        resolver_id: userId,
-        resolution_text: resolutionText,
-        proof_image: imageUrl,
-        resolution_source: resolvedBy ? 'other' : 'unknown',
-        num_cluster_members: numClusterMembers,
-        political_association: politicalAssociation || null,
-        state_entity_association: stateEntityAssociation || null,
-        resolved_by: resolvedBy || null,
-        organization_id: organizationId
-      });
-  
-      return APIData({
-        code: 200,
-        success: true,
-        data: resolution,
-      });
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while creating an external resolution.",
-      });
+
+      const { data: urlData } = supabase.storage
+        .from("resolutions")
+        .getPublicUrl(fileName);
+
+      imageUrl = urlData.publicUrl;
     }
+  
+    const resolution = await this.resolutionService.createResolution({
+      issue_id: issueId,
+      resolver_id: userId,
+      resolution_text: resolutionText,
+      proof_image: imageUrl,
+      resolution_source: resolvedBy ? 'other' : 'unknown',
+      political_association: politicalAssociation || null,
+      state_entity_association: stateEntityAssociation || null,
+      resolved_by: resolvedBy || null,
+      organization_id: organizationId
+    });
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: resolution,
+    });
   }
 
-  async respondToResolution(resolutionId: string, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
-    try {
-      const resolution = await this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId, satisfactionRating);
-      return APIData({
-        code: 200,
-        success: true,
-        data: resolution,
-      });
-    } catch (error) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw APIError({
-        code: 500,
-        success: false,
-        error: "An unexpected error occurred while responding to the resolution.",
-      });
-    }
+  async respondToResolution(resolutionId: string, issueId: number, userId: string, accept: boolean, satisfactionRating?: number): Promise<APIResponse<Resolution>> {
+    const resolution = await this.resolutionService.updateResolutionStatus(
+      resolutionId, 
+      issueId,
+      accept ? 'accepted' : 'declined', 
+      userId, 
+      satisfactionRating
+    );
+    return APIData({
+      code: 200,
+      success: true,
+      data: resolution,
+    });
   }
 
   async getUserIssues(issue: Partial<Issue>) {
@@ -541,7 +526,7 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
         };
       }
 
@@ -586,7 +571,7 @@ export default class IssueService {
           resolved_issues: null,
           user_score: 0, 
           location_id: null,
-          location: null
+          location: null,
         };
       }
 
