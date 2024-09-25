@@ -25,11 +25,11 @@ const createOrganization = async (
     body: JSON.stringify(organizationData),
   });
 
-  if (response.ok) {
-    const data = await response.json();
-    return data.organization as Organization;
+  const apiResponse = await response.json();
+
+  if (apiResponse.success) {
+    return apiResponse.data;
   } else {
-    const apiResponse = await response.json();
     throw new Error(apiResponse.error);
   }
 };
