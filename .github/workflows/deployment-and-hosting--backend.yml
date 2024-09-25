@@ -1,24 +1,16 @@
 name: Backend Deployment and Hosting
 
-# on:
-#   push:
-#     branches:
-#       - master
-#       - main
-#       - develop
-#   pull_request:
-#     branches:
-#       - master
-#       - main
-#       - develop
-
 on:
   push:
     branches:
-      - feature/backend_vercel_deployment
+      - master
+      - main
+      - develop
   pull_request:
     branches:
-      - feature/backend_vercel_deployment
+      - master
+      - main
+      - develop
 
 jobs:
   build-and-push-backend:
