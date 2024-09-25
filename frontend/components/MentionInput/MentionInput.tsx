@@ -2,13 +2,8 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import TextareaAutosize from "react-textarea-autosize";
 import debounce from 'lodash/debounce';
-
-interface User {
-  id: string;
-  username: string;
-  fullname: string;
-  image_url: string;
-}
+import { UserSearchResult } from '@/lib/types';
+import { searchForUser } from '@/lib/api/searchForUser';
 
 interface MentionInputProps {
   value: string;
@@ -17,36 +12,21 @@ interface MentionInputProps {
   className?: string;
 }
 
-const staticUsers: User[] = [
-  { id: '1', username: 'hlokomani', fullname: 'Hlokomani Khondlo', image_url: 'https://example.com/johndoe.jpg' },
-  { id: '2', username: 'mulisa', fullname: 'Mulisa Musehane', image_url: 'https://example.com/janesmith.jpg' },
-  { id: '3', username: 'boitumelo', fullname: 'Boitumelo Segwane', image_url: 'https://example.com/bobross.jpg' },
-  { id: '4', username: 'boipelo', fullname: 'Boipelo Madumo', image_url: 'https://example.com/alicegreen.jpg' },
-  { id: '5', username: 'shama', fullname: 'Shama Ntenda', image_url: 'https://example.com/charliew.jpg' },
-];
-
 const MentionInput: React.FC<MentionInputProps> = ({
   value,
   onChange,
   placeholder,
   className,
 }) => {
-  const [suggestions, setSuggestions] = useState<User[]>([]);
+  const [suggestions, setSuggestions] = useState<UserSearchResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const fetchUserSuggestions = useCallback((query: string): User[] => {
-    return staticUsers.filter(user => 
-      user.username.toLowerCase().includes(query.toLowerCase()) ||
-      user.fullname.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 5);
-  }, []);
-
   const debouncedFetchSuggestions = useCallback(
-    debounce((query: string) => {
+    debounce(async (query: string) => {
       if (query.length > 0) {
-        const fetchedSuggestions = fetchUserSuggestions(query);
+        const fetchedSuggestions = await searchForUser({ username: query });
         setSuggestions(fetchedSuggestions);
         setShowSuggestions(fetchedSuggestions.length > 0);
       } else {
@@ -54,7 +34,7 @@ const MentionInput: React.FC<MentionInputProps> = ({
         setShowSuggestions(false);
       }
     }, 300),
-    [fetchUserSuggestions]
+    []
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -116,10 +96,10 @@ const MentionInput: React.FC<MentionInputProps> = ({
             >
               <Avatar className="h-6 w-6 mr-2">
                 <AvatarImage src={user.image_url} alt={user.username} />
-                <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                <AvatarFallback>{user.name[0]}</AvatarFallback>
               </Avatar>
               <span className="font-medium text-foreground">{user.username}</span>
-              <span className="ml-2 text-muted-foreground">{user.fullname}</span>
+              <span className="ml-2 text-muted-foreground">{user.name}</span>
             </div>
           ))}
         </div>
