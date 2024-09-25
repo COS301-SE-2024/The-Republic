@@ -63,17 +63,9 @@ const MentionInput: React.FC<MentionInputProps> = ({
 
   return (
     <div className="relative">
-      <TextareaAutosize
-        ref={textareaRef}
-        value={value}
-        onChange={handleInputChange}
-        className={`w-full p-2 border rounded resize-none bg-transparent text-foreground ${className}`}
-        placeholder={placeholder}
-        style={{ caretColor: 'auto' }}
-      />
       <div
         aria-hidden="true"
-        className="absolute top-0 left-0 w-full h-full p-2 pointer-events-none text-transparent"
+        className="absolute top-0 left-0 w-full p-2 pointer-events-none"
         style={{
           whiteSpace: 'pre-wrap',
           wordWrap: 'break-word',
@@ -82,10 +74,22 @@ const MentionInput: React.FC<MentionInputProps> = ({
       >
         {value.split(/(@\w+)/).map((part, index) => (
           part.startsWith('@') ? 
-            <span key={index} className="text-primary font-semibold">{part}</span> : 
+            <span key={index} className="text-primary">{part}</span> : 
             <span key={index}>{part}</span>
         ))}
       </div>
+      <TextareaAutosize
+        ref={textareaRef}
+        value={value}
+        onChange={handleInputChange}
+        className={`
+          relative
+          w-full p-2 border rounded 
+          text-transparent bg-transparent caret-black dark:caret-white 
+          ${className}
+        `}
+        placeholder={placeholder}
+      />
       {showSuggestions && (
         <div className="absolute z-10 w-full mt-1 bg-background border rounded shadow-lg dark:shadow-gray-800">
           {suggestions.map((user) => (
