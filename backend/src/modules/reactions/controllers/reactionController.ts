@@ -9,9 +9,9 @@ const reactionService = new ReactionService();
 const addOrRemoveReaction = async (req: Request, res: Response) => {
   try {
     const response = await reactionService.addOrRemoveReaction(req.body);
-    
-    clearCachePattern('__express__/api/reactions*');
-    
+
+    clearCachePattern("__express__/api/reactions*");
+
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);

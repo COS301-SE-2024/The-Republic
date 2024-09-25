@@ -28,8 +28,16 @@ export class PointsController {
           });
         }
 
-        const leaderboard = await this.pointsService.getLeaderboard({ province, city, suburb });
-        const userPosition = await this.pointsService.getUserPosition(userId, { province, city, suburb });
+        const leaderboard = await this.pointsService.getLeaderboard({
+          province,
+          city,
+          suburb,
+        });
+        const userPosition = await this.pointsService.getUserPosition(userId, {
+          province,
+          city,
+          suburb,
+        });
 
         const response = {
           code: 200,
@@ -44,6 +52,6 @@ export class PointsController {
       } catch (err) {
         sendResponse(res, err as APIResponse);
       }
-    }
+    },
   ];
 }

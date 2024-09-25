@@ -16,7 +16,9 @@ jest.mock("@/modules/shared/services/redisClient", () => ({
   },
 }));
 
-const mockSubscriptionsService = SubscriptionsService as jest.MockedClass<typeof SubscriptionsService>;
+const mockSubscriptionsService = SubscriptionsService as jest.MockedClass<
+  typeof SubscriptionsService
+>;
 
 describe("Subscriptions Controller", () => {
   let req: Partial<Request>;
@@ -35,66 +37,126 @@ describe("Subscriptions Controller", () => {
 
   describe("issueSubscriptions", () => {
     it("should send a successful response", async () => {
-      const mockResponse = { success: true, code: 200, data: "Issue subscription successful" };
-      mockSubscriptionsService.prototype.issueSubscriptions.mockResolvedValue(mockResponse);
+      const mockResponse = {
+        success: true,
+        code: 200,
+        data: "Issue subscription successful",
+      };
+      mockSubscriptionsService.prototype.issueSubscriptions.mockResolvedValue(
+        mockResponse,
+      );
 
-      await subscriptionsController.issueSubscriptions(req as Request, res as Response);
+      await subscriptionsController.issueSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.issueSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.issueSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockResponse);
     });
 
     it("should send an error response", async () => {
       const mockError = { success: false, error: "Issue subscription failed" };
-      mockSubscriptionsService.prototype.issueSubscriptions.mockRejectedValue(mockError);
+      mockSubscriptionsService.prototype.issueSubscriptions.mockRejectedValue(
+        mockError,
+      );
 
-      await subscriptionsController.issueSubscriptions(req as Request, res as Response);
+      await subscriptionsController.issueSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.issueSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.issueSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockError);
     });
   });
 
   describe("categorySubscriptions", () => {
     it("should send a successful response", async () => {
-      const mockResponse = { success: true, code: 200, data: "Category subscription successful" };
-      mockSubscriptionsService.prototype.categorySubscriptions.mockResolvedValue(mockResponse);
+      const mockResponse = {
+        success: true,
+        code: 200,
+        data: "Category subscription successful",
+      };
+      mockSubscriptionsService.prototype.categorySubscriptions.mockResolvedValue(
+        mockResponse,
+      );
 
-      await subscriptionsController.categorySubscriptions(req as Request, res as Response);
+      await subscriptionsController.categorySubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.categorySubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.categorySubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockResponse);
     });
 
     it("should send an error response", async () => {
-      const mockError = { success: false, error: "Category subscription failed" };
-      mockSubscriptionsService.prototype.categorySubscriptions.mockRejectedValue(mockError);
+      const mockError = {
+        success: false,
+        error: "Category subscription failed",
+      };
+      mockSubscriptionsService.prototype.categorySubscriptions.mockRejectedValue(
+        mockError,
+      );
 
-      await subscriptionsController.categorySubscriptions(req as Request, res as Response);
+      await subscriptionsController.categorySubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.categorySubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.categorySubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockError);
     });
   });
 
   describe("locationSubscriptions", () => {
     it("should send a successful response", async () => {
-      const mockResponse = { success: true, code: 200, data: "Location subscription successful" };
-      mockSubscriptionsService.prototype.locationSubscriptions.mockResolvedValue(mockResponse);
+      const mockResponse = {
+        success: true,
+        code: 200,
+        data: "Location subscription successful",
+      };
+      mockSubscriptionsService.prototype.locationSubscriptions.mockResolvedValue(
+        mockResponse,
+      );
 
-      await subscriptionsController.locationSubscriptions(req as Request, res as Response);
+      await subscriptionsController.locationSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.locationSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.locationSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockResponse);
     });
 
     it("should send an error response", async () => {
-      const mockError = { success: false, error: "Location subscription failed" };
-      mockSubscriptionsService.prototype.locationSubscriptions.mockRejectedValue(mockError);
+      const mockError = {
+        success: false,
+        error: "Location subscription failed",
+      };
+      mockSubscriptionsService.prototype.locationSubscriptions.mockRejectedValue(
+        mockError,
+      );
 
-      await subscriptionsController.locationSubscriptions(req as Request, res as Response);
+      await subscriptionsController.locationSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.locationSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.locationSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockError);
     });
   });
@@ -108,23 +170,37 @@ describe("Subscriptions Controller", () => {
           issues: [],
           categories: [],
           locations: [],
-        }
+        },
       };
-      mockSubscriptionsService.prototype.getSubscriptions.mockResolvedValue(mockResponse);
+      mockSubscriptionsService.prototype.getSubscriptions.mockResolvedValue(
+        mockResponse,
+      );
 
-      await subscriptionsController.getSubscriptions(req as Request, res as Response);
+      await subscriptionsController.getSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.getSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.getSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockResponse);
     });
 
     it("should send an error response", async () => {
       const mockError = { success: false, error: "Get subscriptions failed" };
-      mockSubscriptionsService.prototype.getSubscriptions.mockRejectedValue(mockError);
+      mockSubscriptionsService.prototype.getSubscriptions.mockRejectedValue(
+        mockError,
+      );
 
-      await subscriptionsController.getSubscriptions(req as Request, res as Response);
+      await subscriptionsController.getSubscriptions(
+        req as Request,
+        res as Response,
+      );
 
-      expect(mockSubscriptionsService.prototype.getSubscriptions).toHaveBeenCalledWith(req.body);
+      expect(
+        mockSubscriptionsService.prototype.getSubscriptions,
+      ).toHaveBeenCalledWith(req.body);
       expect(sendResponse).toHaveBeenCalledWith(res, mockError);
     });
   });

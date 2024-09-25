@@ -15,7 +15,7 @@ export const getAllLocations = [
     } catch (err) {
       sendResponse(res, err as APIResponse);
     }
-  }
+  },
 ];
 
 export const getLocationById = [
@@ -28,5 +28,5 @@ export const getLocationById = [
     } catch (err) {
       sendResponse(res, err as APIResponse);
     }
-  }
+  },
 ];

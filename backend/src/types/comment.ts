@@ -1,6 +1,6 @@
 export interface GetCommentsParams {
   itemId: string;
-  itemType: 'issue' | 'post';
+  itemType: "issue" | "post";
   user_id: string;
   from: number;
   amount: number;

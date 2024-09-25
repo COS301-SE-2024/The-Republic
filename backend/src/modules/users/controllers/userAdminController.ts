@@ -7,9 +7,7 @@ const userAdminService = new UserAdminService();
 
 export const usernameExists = async (req: Request, res: Response) => {
   try {
-    const response = await userAdminService.usernameExists(
-      req.body,
-    );
+    const response = await userAdminService.usernameExists(req.body);
 
     sendResponse(res, response);
   } catch (error) {
@@ -23,7 +21,7 @@ export const deleteAccountById = async (req: Request, res: Response) => {
       req.params.id,
       req.body.user_id,
       req.body.username,
-      req.body.email_address
+      req.body.email_address,
     );
 
     sendResponse(res, response);

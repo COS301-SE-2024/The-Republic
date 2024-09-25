@@ -90,10 +90,11 @@ export default class IssueRepository {
     // I Might Fetch The Data In Parallel Instead of Mapping Through The List While Fetching
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await this.reactionRepository.getReactionCountsByItemId(
-          issue.issue_id.toString(),
-          "issue"
-        );
+        const reactions =
+          await this.reactionRepository.getReactionCountsByItemId(
+            issue.issue_id.toString(),
+            "issue",
+          );
 
         const userReaction = user_id
           ? await this.reactionRepository.getReactionByUserAndItem(
@@ -102,22 +103,33 @@ export default class IssueRepository {
               user_id,
             )
           : null;
-        
-        const pendingResolution = await this.getPendingResolutionForIssue(issue.issue_id);
-        const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null ) : false;
-        const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
-        const { data: forecastData, error: forecastError } = await supabase
-          .rpc('avg_resolution_time', {
+
+        const pendingResolution = await this.getPendingResolutionForIssue(
+          issue.issue_id,
+        );
+        const userHasIssueInCluster = user_id
+          ? await this.userHasIssueInCluster(user_id, issue.cluster_id ?? null)
+          : false;
+        const { issues: relatedIssues, totalCount: relatedIssuesCount } =
+          await this.getRelatedIssues(issue.cluster_id ?? null, issue.issue_id);
+        const { data: forecastData, error: forecastError } = await supabase.rpc(
+          "avg_resolution_time",
+          {
             category_id_param: issue.category_id,
-            suburb_param: issue.location?.suburb
-          });
-        const resolutionResponse = pendingResolution 
-          ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, issue.user_id)
+            suburb_param: issue.location?.suburb,
+          },
+        );
+        const resolutionResponse = pendingResolution
+          ? await this.resolutionResponseRepository.getResolutionResponse(
+              pendingResolution.resolution_id,
+              issue.user_id,
+            )
           : null;
 
-        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
-        const information = (!issue.resolved_at) ? 
-          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+        const days =
+          forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+        const information = !issue.resolved_at
+          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
           : "This issue has already been resolved.";
 
         return {
@@ -198,7 +210,7 @@ export default class IssueRepository {
 
     const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
-      "issue"
+      "issue",
     );
 
     const userReaction = user_id
@@ -208,22 +220,36 @@ export default class IssueRepository {
           user_id,
         )
       : null;
-    const commentCount = await this.commentRepository.getNumComments(data.issue_id, "issue");
-    const pendingResolution = await this.getPendingResolutionForIssue(data.issue_id);
-    const { issues: relatedIssues, totalCount: relatedIssuesCount } = await this.getRelatedIssues(data.cluster_id, data.issue_id);
-    const userHasIssueInCluster = user_id ? await this.userHasIssueInCluster(user_id, data.cluster_id) : false;
-    const { data: forecastData, error: forecastError } = await supabase
-      .rpc('avg_resolution_time', {
+    const commentCount = await this.commentRepository.getNumComments(
+      data.issue_id,
+      "issue",
+    );
+    const pendingResolution = await this.getPendingResolutionForIssue(
+      data.issue_id,
+    );
+    const { issues: relatedIssues, totalCount: relatedIssuesCount } =
+      await this.getRelatedIssues(data.cluster_id, data.issue_id);
+    const userHasIssueInCluster = user_id
+      ? await this.userHasIssueInCluster(user_id, data.cluster_id)
+      : false;
+    const { data: forecastData, error: forecastError } = await supabase.rpc(
+      "avg_resolution_time",
+      {
         category_id_param: data.category_id,
-        suburb_param: data.location?.suburb
-      });
-    const resolutionResponse = pendingResolution 
-      ? await this.resolutionResponseRepository.getResolutionResponse(pendingResolution.resolution_id, data.user_id)
+        suburb_param: data.location?.suburb,
+      },
+    );
+    const resolutionResponse = pendingResolution
+      ? await this.resolutionResponseRepository.getResolutionResponse(
+          pendingResolution.resolution_id,
+          data.user_id,
+        )
       : null;
 
-    const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
-    const information = (!data.resolved_at) ? 
-      `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+    const days =
+      forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+    const information = !data.resolved_at
+      ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
       : "This issue has already been resolved.";
 
     return {
@@ -251,12 +277,16 @@ export default class IssueRepository {
     } as Issue;
   }
 
-  async getRelatedIssues(clusterId: string | null, currentIssueId: number): Promise<{ issues: Issue[]; totalCount: number }> {
+  async getRelatedIssues(
+    clusterId: string | null,
+    currentIssueId: number,
+  ): Promise<{ issues: Issue[]; totalCount: number }> {
     if (!clusterId) return { issues: [], totalCount: 0 };
-    
+
     const { data, error, count } = await supabase
-      .from('issue')
-      .select(`
+      .from("issue")
+      .select(
+        `
         *,
         user: user_id (
           user_id,
@@ -276,9 +306,11 @@ export default class IssueRepository {
           latitude,
           longitude
         )
-      `, { count: 'exact' })
-      .eq('cluster_id', clusterId)
-      .neq('issue_id', currentIssueId)
+      `,
+        { count: "exact" },
+      )
+      .eq("cluster_id", clusterId)
+      .neq("issue_id", currentIssueId)
       .limit(3);
 
     if (error) {
@@ -295,23 +327,23 @@ export default class IssueRepository {
 
   async createIssue(issue: Partial<Issue>) {
     issue.created_at = new Date().toISOString();
-  
+
     let locationId: number | null = null;
-  
+
     if (issue.location_data) {
-  
       let locationDataObj;
       try {
         locationDataObj =
           typeof issue.location_data === "string"
             ? JSON.parse(issue.location_data)
             : issue.location_data;
-  
+
         const locationRepository = new LocationRepository();
-        const existingLocations = await locationRepository.getLocationByPlacesId(
-          locationDataObj.place_id
-        );
-  
+        const existingLocations =
+          await locationRepository.getLocationByPlacesId(
+            locationDataObj.place_id,
+          );
+
         if (existingLocations.length > 0) {
           locationId = existingLocations[0].location_id;
         } else {
@@ -322,7 +354,7 @@ export default class IssueRepository {
             suburb: locationDataObj.suburb,
             district: locationDataObj.district,
             latitude: locationDataObj.lat,
-            longitude: locationDataObj.lng
+            longitude: locationDataObj.lng,
           });
           locationId = newLocation.location_id;
         }
@@ -335,7 +367,7 @@ export default class IssueRepository {
         });
       }
     }
-  
+
     try {
       const { data, error } = await supabase
         .from("issue")
@@ -347,9 +379,10 @@ export default class IssueRepository {
           location_id: locationId,
           created_at: issue.created_at,
           image_url: issue.image_url || null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
-        .select(`
+        .select(
+          `
           *,
           user: user_id (
             user_id,
@@ -370,9 +403,10 @@ export default class IssueRepository {
             longitude
           ),
           cluster_id
-        `)
+        `,
+        )
         .single();
-  
+
       if (error) {
         console.error("Error inserting issue:", error);
         throw APIError({
@@ -382,16 +416,19 @@ export default class IssueRepository {
         });
       }
 
-      const { data: forecastData, error: forecastError } = await supabase
-        .rpc('avg_resolution_time', {
+      const { data: forecastData, error: forecastError } = await supabase.rpc(
+        "avg_resolution_time",
+        {
           category_id_param: issue.category_id,
-          suburb_param: issue.location?.suburb
-        });
+          suburb_param: issue.location?.suburb,
+        },
+      );
 
-      const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
-      const information = (!issue.resolved_at) ? 
-      `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
-      : "This issue has already been resolved.";
+      const days =
+        forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+      const information = !issue.resolved_at
+        ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+        : "This issue has already been resolved.";
 
       return {
         ...data,
@@ -411,7 +448,7 @@ export default class IssueRepository {
               resolved_issues: null,
               user_score: 0,
               location_id: null,
-              location: null
+              location: null,
             }
           : data.user,
         hasPendingResolution: false,
@@ -433,12 +470,12 @@ export default class IssueRepository {
 
   async updateIssueCluster(issueId: number, clusterId: string): Promise<void> {
     const { error } = await supabase
-      .from('issue')
-      .update({ 
+      .from("issue")
+      .update({
         cluster_id: clusterId,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('issue_id', issueId);
+      .eq("issue_id", issueId);
 
     if (error) {
       console.error(error);
@@ -451,12 +488,10 @@ export default class IssueRepository {
   }
 
   async setIssueEmbedding(issueId: number, embedding: number[]): Promise<void> {
-    const { error } = await supabase
-      .from('issue_embeddings')
-      .insert({ 
-        issue_id: issueId,
-        content_embedding: embedding,
-      });
+    const { error } = await supabase.from("issue_embeddings").insert({
+      issue_id: issueId,
+      content_embedding: embedding,
+    });
 
     if (error) {
       console.error(error);
@@ -497,7 +532,7 @@ export default class IssueRepository {
 
     const reactions = await this.reactionRepository.getReactionCountsByItemId(
       data.issue_id.toString(),
-      "issue"
+      "issue",
     );
 
     return {
@@ -614,29 +649,35 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await this.reactionRepository.getReactionCountsByItemId(
-          issue.issue_id.toString(),
-          "issue"
-        );
-        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
-          issue.issue_id.toString() ,
-          "issue",
-          userId,
-        );
+        const reactions =
+          await this.reactionRepository.getReactionCountsByItemId(
+            issue.issue_id.toString(),
+            "issue",
+          );
+        const userReaction =
+          await this.reactionRepository.getReactionByUserAndItem(
+            issue.issue_id.toString(),
+            "issue",
+            userId,
+          );
 
         const commentCount = await this.commentRepository.getNumComments(
-          issue.issue_id.toString(), "issue"
+          issue.issue_id.toString(),
+          "issue",
         );
 
-        const { data: forecastData, error: forecastError } = await supabase
-          .rpc('avg_resolution_time', {
+        const { data: forecastData, error: forecastError } = await supabase.rpc(
+          "avg_resolution_time",
+          {
             category_id_param: issue.category_id,
-            suburb_param: issue.location?.suburb
-          });
+            suburb_param: issue.location?.suburb,
+          },
+        );
 
-        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
-        const information = (!issue.resolved_at) ? 
-          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+        const days =
+          forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+        const information = !issue.resolved_at
+          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
           : "This issue has already been resolved.";
 
         return {
@@ -703,30 +744,35 @@ export default class IssueRepository {
 
     const issues = await Promise.all(
       data.map(async (issue: Issue) => {
-        const reactions = await this.reactionRepository.getReactionCountsByItemId(
-          issue.issue_id.toString(),
-          "issue"
-        );
-        const userReaction = await this.reactionRepository.getReactionByUserAndItem(
-          issue.issue_id.toString(),
-          "issue",
-          userId,
-        );
+        const reactions =
+          await this.reactionRepository.getReactionCountsByItemId(
+            issue.issue_id.toString(),
+            "issue",
+          );
+        const userReaction =
+          await this.reactionRepository.getReactionByUserAndItem(
+            issue.issue_id.toString(),
+            "issue",
+            userId,
+          );
 
         const commentCount = await this.commentRepository.getNumComments(
           issue.issue_id.toString(),
-          "issue"
+          "issue",
         );
 
-        const { data: forecastData, error: forecastError } = await supabase
-          .rpc('avg_resolution_time', {
+        const { data: forecastData, error: forecastError } = await supabase.rpc(
+          "avg_resolution_time",
+          {
             category_id_param: issue.category_id,
-            suburb_param: issue.location?.suburb
-          });
+            suburb_param: issue.location?.suburb,
+          },
+        );
 
-        const days = ((forecastData && !forecastError) ? formatTime(forecastData) : "6 days");
-        const information = (!issue.resolved_at) ? 
-          `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+        const days =
+          forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+        const information = !issue.resolved_at
+          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
           : "This issue has already been resolved.";
 
         return {
@@ -752,31 +798,35 @@ export default class IssueRepository {
     return issues as Issue[];
   }
 
-  async updateIssueResolutionStatus(issueId: number, resolved: boolean): Promise<void> {
+  async updateIssueResolutionStatus(
+    issueId: number,
+    resolved: boolean,
+  ): Promise<void> {
     const resolvedAt = DateTime.now().setZone("UTC+2").toISO();
     const { error } = await supabase
-      .from('issue')
-      .update({ 
+      .from("issue")
+      .update({
         resolved_at: resolved ? resolvedAt : null,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('issue_id', issueId);
+      .eq("issue_id", issueId);
 
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while updating the issue resolution status.",
+        error:
+          "An unexpected error occurred while updating the issue resolution status.",
       });
     }
   }
 
   async isIssueResolved(issueId: number): Promise<boolean> {
     const { data, error } = await supabase
-      .from('issue')
-      .select('resolved_at')
-      .eq('issue_id', issueId)
+      .from("issue")
+      .select("resolved_at")
+      .eq("issue_id", issueId)
       .single();
 
     if (error) {
@@ -784,27 +834,32 @@ export default class IssueRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while checking the issue resolution status.",
+        error:
+          "An unexpected error occurred while checking the issue resolution status.",
       });
     }
 
     return data.resolved_at !== null;
   }
 
-  async getPendingResolutionForIssue(issueId: number): Promise<Resolution | null> {
+  async getPendingResolutionForIssue(
+    issueId: number,
+  ): Promise<Resolution | null> {
     const { data, error } = await supabase
-      .from('issue')
-      .select('*, resolution: resolution_id(*)')
-      .eq('issue_id', issueId)
-      .eq('resolution.status', 'pending')
+      .from("issue")
+      .select("*, resolution: resolution_id(*)")
+      .eq("issue_id", issueId)
+      .eq("resolution.status", "pending")
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is the error code for no rows returned
+    if (error && error.code !== "PGRST116") {
+      // PGRST116 is the error code for no rows returned
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while checking for pending resolutions.",
+        error:
+          "An unexpected error occurred while checking for pending resolutions.",
       });
     }
 
@@ -813,69 +868,81 @@ export default class IssueRepository {
 
   async getResolutionsForIssue(issueId: number): Promise<Resolution[]> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*')
-      .eq('issue_id', issueId)
-      .order('created_at', { ascending: false });
-  
+      .from("resolution")
+      .select("*")
+      .eq("issue_id", issueId)
+      .order("created_at", { ascending: false });
+
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching resolutions for the issue.",
+        error:
+          "An unexpected error occurred while fetching resolutions for the issue.",
       });
     }
-  
+
     return data as Resolution[];
   }
 
   async assignResolutionToIssues(resolutionId: string, issuesIds: number[]) {
     const { error } = await supabase
-      .from('issue')
+      .from("issue")
       .update({ resolution_id: resolutionId })
-      .in('issue_id', issuesIds);
+      .in("issue_id", issuesIds);
 
     if (error) {
       console.error("assignResolutionToIssues: ", error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while assigning resolution to issues",
+        error:
+          "An unexpected error occurred while assigning resolution to issues",
       });
     }
   }
 
-  async userHasIssueInCluster(userId: string, clusterId: string | null): Promise<boolean> {
+  async userHasIssueInCluster(
+    userId: string,
+    clusterId: string | null,
+  ): Promise<boolean> {
     if (!clusterId) return false;
     const { count } = await supabase
-      .from('issue')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('cluster_id', clusterId);
+      .from("issue")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("cluster_id", clusterId);
     return (count || 0) > 0;
   }
 
-  async hasUserIssuesInCluster(userId: string, clusterId: string): Promise<boolean> {
+  async hasUserIssuesInCluster(
+    userId: string,
+    clusterId: string,
+  ): Promise<boolean> {
     const { count, error } = await supabase
-      .from('issue')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('cluster_id', clusterId);
-  
+      .from("issue")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("cluster_id", clusterId);
+
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while checking user issues in the cluster.",
+        error:
+          "An unexpected error occurred while checking user issues in the cluster.",
       });
     }
-  
+
     return count !== null && count > 0;
   }
 
-  async getUserIssueInCluster(userId: string, clusterId: string): Promise<Issue | null> {
+  async getUserIssueInCluster(
+    userId: string,
+    clusterId: string,
+  ): Promise<Issue | null> {
     const { data, error } = await supabase
       .from("issue")
       .select("*")
@@ -893,38 +960,40 @@ export default class IssueRepository {
 
   async getIssuesInCluster(clusterId: string): Promise<Issue[]> {
     const { data, error } = await supabase
-      .from('issue')
-      .select('*')
-      .eq('cluster_id', clusterId);
-  
+      .from("issue")
+      .select("*")
+      .eq("cluster_id", clusterId);
+
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching issues in the cluster.",
+        error:
+          "An unexpected error occurred while fetching issues in the cluster.",
       });
     }
-  
+
     return data;
   }
 
   async getIssueEmbedding(issueId: number): Promise<Issue> {
     const { data, error } = await supabase
-      .from('issue_embeddings')
-      .select('*')
-      .eq('issue_id', issueId)
+      .from("issue_embeddings")
+      .select("*")
+      .eq("issue_id", issueId)
       .single();
-  
+
     if (error) {
-      console.error('Error fetching issue embedding:', error);
+      console.error("Error fetching issue embedding:", error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching the issue embedding.",
+        error:
+          "An unexpected error occurred while fetching the issue embedding.",
       });
     }
-  
+
     if (!data) {
       throw APIError({
         code: 404,
@@ -932,7 +1001,7 @@ export default class IssueRepository {
         error: "Issue embedding not found",
       });
     }
-  
+
     return data;
   }
 }

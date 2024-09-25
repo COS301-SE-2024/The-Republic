@@ -23,6 +23,9 @@ router.post(
   "/groupedCategoryAndCreatedAt",
   reportsController.getIssuesCountGroupedByCategoryAndCreatedAt,
 );
-router.post("/groupedPoliticalAssociation", reportsController.groupedByPoliticalAssociation);
+router.post(
+  "/groupedPoliticalAssociation",
+  reportsController.groupedByPoliticalAssociation,
+);
 
 export default router;

@@ -39,8 +39,12 @@ describe("Location Controller", () => {
       getAllLocations: jest.fn(),
       getLocationById: jest.fn(),
     } as unknown as jest.Mocked<LocationService>;
-    (LocationService as jest.MockedClass<typeof LocationService>).mockImplementation(() => mockLocationService);
-    (cacheMiddleware as jest.Mock).mockImplementation(() => (req: Request, res: Response, next: NextFunction) => next());
+    (
+      LocationService as jest.MockedClass<typeof LocationService>
+    ).mockImplementation(() => mockLocationService);
+    (cacheMiddleware as jest.Mock).mockImplementation(
+      () => (req: Request, res: Response, next: NextFunction) => next(),
+    );
   });
 
   const testControllerMethod = async (
@@ -49,18 +53,26 @@ describe("Location Controller", () => {
     const controllerMethod = locationController[methodName];
     if (Array.isArray(controllerMethod)) {
       for (const middleware of controllerMethod) {
-        if (typeof middleware === 'function') {
-          await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+        if (typeof middleware === "function") {
+          await middleware(
+            mockRequest as Request,
+            mockResponse as Response,
+            mockNext,
+          );
         }
       }
-    } else if (typeof controllerMethod === 'function') {
-      await (controllerMethod as (req: Request, res: Response, next: NextFunction) => Promise<void>)(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+    } else if (typeof controllerMethod === "function") {
+      await (
+        controllerMethod as (
+          req: Request,
+          res: Response,
+          next: NextFunction,
+        ) => Promise<void>
+      )(mockRequest as Request, mockResponse as Response, mockNext);
     } else {
-      throw new Error(`Controller method ${methodName} not found or not a function`);
+      throw new Error(
+        `Controller method ${methodName} not found or not a function`,
+      );
     }
     expect(sendResponse).toHaveBeenCalled();
   };
@@ -86,8 +98,8 @@ describe("Location Controller", () => {
         suburb: "Test Suburb",
         district: "Test",
         place_id: "4",
-        latitude: "0", 
-        longitude: "0", 
+        latitude: "0",
+        longitude: "0",
       },
     };
     mockLocationService.getLocationById.mockResolvedValue(mockAPIResponse);
@@ -96,12 +108,16 @@ describe("Location Controller", () => {
   });
 
   it("should handle errors in getAllLocations", async () => {
-    mockLocationService.getAllLocations.mockRejectedValue(new Error("Test error"));
+    mockLocationService.getAllLocations.mockRejectedValue(
+      new Error("Test error"),
+    );
     await testControllerMethod("getAllLocations");
   });
 
   it("should handle errors in getLocationById", async () => {
-    mockLocationService.getLocationById.mockRejectedValue(new Error("Test error"));
+    mockLocationService.getLocationById.mockRejectedValue(
+      new Error("Test error"),
+    );
     mockRequest.params = { id: "1" };
     await testControllerMethod("getLocationById");
   });

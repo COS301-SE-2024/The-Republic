@@ -3,8 +3,8 @@ import IssueRepository from "@/modules/issues/repositories/issueRepository";
 import { Issue } from "@/modules/shared/models/issue";
 import { APIData, APIResponse } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
-import { ClusterService } from '@/modules/clusters/services/clusterService';
-import { OpenAIService } from '@/modules/shared/services/openAIService';
+import { ClusterService } from "@/modules/clusters/services/clusterService";
+import { OpenAIService } from "@/modules/shared/services/openAIService";
 
 jest.mock("@/modules/issues/repositories/issueRepository");
 jest.mock("@/modules/locations/repositories/locationRepository");
@@ -30,7 +30,9 @@ describe("IssueService", () => {
     issueService.setClusterService(mockClusterService);
     mockOpenAIService = new OpenAIService() as jest.Mocked<OpenAIService>;
     issueService.setOpenAIService(mockOpenAIService);
-    mockOpenAIService.getEmbedding = jest.fn().mockResolvedValue([0.1, 0.2, 0.3]);
+    mockOpenAIService.getEmbedding = jest
+      .fn()
+      .mockResolvedValue([0.1, 0.2, 0.3]);
   });
 
   it("should get all issues", async () => {
@@ -56,9 +58,9 @@ describe("IssueService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
-          user_score: 0, 
+          user_score: 0,
           location_id: null,
-          location: null
+          location: null,
         },
         category: {
           name: "Category 1",
@@ -100,9 +102,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
-        user_score: 0, 
-          location_id: null,
-          location: null
+        user_score: 0,
+        location_id: null,
+        location: null,
       },
       category: {
         name: "Category 1",
@@ -167,9 +169,9 @@ describe("IssueService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
-          user_score: 0, 
+          user_score: 0,
           location_id: null,
-          location: null
+          location: null,
         },
         category: {
           name: "Category 1",
@@ -181,16 +183,20 @@ describe("IssueService", () => {
         profile_user_id: "0",
       };
       issueRepository.createIssue.mockResolvedValue(createdIssue);
-      jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({
-        success: true,
-        code: 200,
-        data: createdIssue
-      }));
+      jest.spyOn(issueService, "getIssueById").mockResolvedValue(
+        APIData({
+          success: true,
+          code: 200,
+          data: createdIssue,
+        }),
+      );
 
       const response = await issueService.createIssue(newIssue);
 
       expect(response.data).toEqual(createdIssue);
-      expect(issueRepository.createIssue).toHaveBeenCalledWith(expect.objectContaining(newIssue));
+      expect(issueRepository.createIssue).toHaveBeenCalledWith(
+        expect.objectContaining(newIssue),
+      );
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
 
       // Check that processIssueAsync was called
@@ -199,8 +205,15 @@ describe("IssueService", () => {
       // Wait for any pending promises to resolve
       await new Promise(process.nextTick);
 
-      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith("1", "created first issue");
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 50, "created first issue");
+      expect(mockPointsService.getFirstTimeAction).toHaveBeenCalledWith(
+        "1",
+        "created first issue",
+      );
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
+        "1",
+        50,
+        "created first issue",
+      );
       expect(response.data).toEqual(createdIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledWith(newIssue);
       expect(issueRepository.createIssue).toHaveBeenCalledTimes(1);
@@ -276,9 +289,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
-        user_score: 0, 
-          location_id: null,
-          location: null
+        user_score: 0,
+        location_id: null,
+        location: null,
       },
       category: {
         name: "Category 1",
@@ -328,9 +341,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
-        user_score: 0, 
-          location_id: null,
-          location: null
+        user_score: 0,
+        location_id: null,
+        location: null,
       },
       category: {
         name: "Category 1",
@@ -392,9 +405,9 @@ describe("IssueService", () => {
         is_owner: true,
         total_issues: 10,
         resolved_issues: 5,
-        user_score: 0, 
-          location_id: null,
-          location: null
+        user_score: 0,
+        location_id: null,
+        location: null,
       },
       category: {
         name: "Category 1",
@@ -408,13 +421,14 @@ describe("IssueService", () => {
       profile_user_id: "0",
     };
 
-
     issueRepository.createIssue.mockResolvedValue(createdIssue);
-    jest.spyOn(issueService, "getIssueById").mockResolvedValue(APIData({
-      success: true,
-      code: 200,
-      data: createdIssue
-    }));
+    jest.spyOn(issueService, "getIssueById").mockResolvedValue(
+      APIData({
+        success: true,
+        code: 200,
+        data: createdIssue,
+      }),
+    );
 
     const response = await issueService.createIssue(newIssue);
 

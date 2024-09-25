@@ -7,7 +7,7 @@ import {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
-  NameValue
+  NameValue,
 } from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
 
@@ -133,13 +133,12 @@ export default class ReportsService {
   }
 
   async groupedByPoliticalAssociation(): Promise<APIResponse<NameValue[]>> {
-    const data =
-      await this.ReportsRepository.groupedByPoliticalAssociation();
+    const data = await this.ReportsRepository.groupedByPoliticalAssociation();
 
     return APIData({
       code: 200,
       success: true,
-      data
+      data,
     });
   }
 }

@@ -6,29 +6,17 @@ import { verifyAndGetUser } from "@/middleware/middleware";
 const router = Router();
 const upload = multer();
 
-router.post(
-  "/:id",
-  verifyAndGetUser,
-  userController.getUserById
-);
+router.post("/:id", verifyAndGetUser, userController.getUserById);
 
 router.put(
   "/:id",
   verifyAndGetUser,
   upload.single("profile_picture"),
-  userController.updateUserProfile
+  userController.updateUserProfile,
 );
 
-router.put(
-  "/:id/username",
-  verifyAndGetUser,
-  userController.updateUsername
-);
+router.put("/:id/username", verifyAndGetUser, userController.updateUsername);
 
-router.put(
-  "/:id/password",
-  verifyAndGetUser,
-  userController.changePassword
-);
+router.put("/:id/password", verifyAndGetUser, userController.changePassword);
 
 export default router;
