@@ -608,6 +608,7 @@ export class OrganizationRepository {
       .eq("user_id", userId);
 
     if (error) {
+      console.error("Error deleting join request:", error);
       throw APIError({
         code: 500,
         success: false,

@@ -9,8 +9,9 @@ jest.mock("@/middleware/middleware");
 jest.mock("@/modules/users/controllers/userController", () => ({
   getUserById: [jest.fn()],
   updateUserProfile: jest.fn(),
-  updateUsername: jest.fn(),
-  changePassword: jest.fn(),
+  updateUsername: jest.fn(), 
+  changePassword: jest.fn(), 
+  searchForUser: jest.fn(),
 }));
 
 const app = express();
@@ -20,9 +21,7 @@ app.use("/users", userRouter);
 describe("User Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
-      next(),
-    );
+    (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
   });
 
   describe("GET /users/:id", () => {
@@ -30,8 +29,8 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (userController.getUserById[0] as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
+      (userController.getUserById[0] as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
       );
 
       const response = await request(app).post("/users/1").send();
@@ -46,8 +45,8 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (userController.updateUserProfile as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
+      (userController.updateUserProfile as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
       );
 
       const response = await request(app).put("/users/1").send();
@@ -62,13 +61,11 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (userController.updateUsername as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
+      (userController.updateUsername as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
       );
 
-      const response = await request(app)
-        .put("/users/1/username")
-        .send({ username: "newUsername" });
+      const response = await request(app).put("/users/1/username").send({ username: "newUsername" });
 
       expect(response.status).toBe(200);
       expect(userController.updateUsername).toHaveBeenCalled();
@@ -80,13 +77,11 @@ describe("User Routes", () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
         next(),
       );
-      (userController.changePassword as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
+      (userController.changePassword as jest.Mock).mockImplementation((req, res) =>
+        res.status(200).json({}),
       );
 
-      const response = await request(app)
-        .put("/users/1/password")
-        .send({ password: "newPassword" });
+      const response = await request(app).put("/users/1/password").send({ password: "newPassword" });
 
       expect(response.status).toBe(200);
       expect(userController.changePassword).toHaveBeenCalled();

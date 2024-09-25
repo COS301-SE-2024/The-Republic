@@ -3,10 +3,9 @@ import supabase from "@/modules/shared/services/supabaseClient";
 import { APIError } from "@/types/response";
 
 export default class ReactionRepository {
-  async addReaction(
-    reaction: Partial<Reaction> & { itemType: "issue" | "post" },
-  ) {
-    const reactionData = reaction;
+  async addReaction(reaction: Partial<Reaction> & { itemType?: 'issue' | 'post' }) {
+    const reactionData = { ...reaction };
+    delete reactionData.itemType;
     reactionData.created_at = new Date().toISOString();
 
     const { data, error } = await supabase
@@ -27,15 +26,11 @@ export default class ReactionRepository {
     return data as Reaction;
   }
 
-  async deleteReaction(
-    itemId: string,
-    itemType: "issue" | "post",
-    userId: string,
-  ) {
+  async deleteReaction(itemId: string, itemType: 'issue' | 'post', userId: string) {
     const { data, error } = await supabase
       .from("reaction")
       .delete()
-      .eq(itemType === "issue" ? "issue_id" : "post_id", itemId)
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
       .eq("user_id", userId)
       .select()
       .maybeSingle();
@@ -60,15 +55,11 @@ export default class ReactionRepository {
     return data as Reaction;
   }
 
-  async getReactionByUserAndItem(
-    itemId: string,
-    itemType: "issue" | "post",
-    userId: string,
-  ) {
+  async getReactionByUserAndItem(itemId: string, itemType: 'issue' | 'post', userId: string) {
     const { data, error } = await supabase
       .from("reaction")
       .select("*")
-      .eq(itemType === "issue" ? "issue_id" : "post_id", itemId)
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -84,11 +75,11 @@ export default class ReactionRepository {
     return data as Reaction | null;
   }
 
-  async getReactionCountsByItemId(itemId: string, itemType: "issue" | "post") {
+  async getReactionCountsByItemId(itemId: string, itemType: 'issue' | 'post') {
     const { data, error } = await supabase
       .from("reaction")
       .select("emoji")
-      .eq(itemType === "issue" ? "issue_id" : "post_id", itemId);
+      .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId);
 
     if (error) {
       console.error(error);
