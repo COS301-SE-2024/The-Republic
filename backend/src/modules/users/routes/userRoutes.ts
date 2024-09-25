@@ -7,6 +7,11 @@ const router = Router();
 const upload = multer();
 
 router.post(
+  "/search",
+  userController.searchForUser
+);
+
+router.post(
   "/:id",
   verifyAndGetUser,
   userController.getUserById
@@ -30,5 +35,6 @@ router.put(
   verifyAndGetUser,
   userController.changePassword
 );
+
 
 export default router;

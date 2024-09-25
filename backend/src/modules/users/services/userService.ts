@@ -1,6 +1,6 @@
 import UserRepository from "@/modules/users/repositories/userRepository";
 import { User } from "@/modules/shared/models/issue";
-import { APIResponse, APIError } from "@/types/response";
+import { APIResponse, APIError, APIData } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { MulterFile } from "@/types/users";
 
@@ -293,5 +293,23 @@ export class UserService {
         error: "An unexpected error occurred while changing the password",
       });
     }
+  }
+
+  async searchForUser(name?: string, username?: string) {
+    if (!name && !username) {
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "Must provide a name or username to search for",
+      });
+    }
+
+    const foundUsers = await this.userRepository.searchForUser(name, username); 
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: foundUsers
+    });
   }
 }

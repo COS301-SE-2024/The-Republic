@@ -11,6 +11,7 @@ jest.mock("@/modules/users/controllers/userController", () => ({
   updateUserProfile: jest.fn(),
   updateUsername: jest.fn(), 
   changePassword: jest.fn(), 
+  searchForUser: jest.fn(),
 }));
 
 const app = express();
