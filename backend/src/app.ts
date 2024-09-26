@@ -17,17 +17,10 @@ const app = express();
 
 app.use(express.json());
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://the-republic-six.vercel.app",
-  "https://www.the-republic.co.za",
-];
+// const allowedOrigins = [*];
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS",
