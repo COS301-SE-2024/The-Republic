@@ -1,6 +1,6 @@
 import UserRepository from "@/modules/users/repositories/userRepository";
 import { User } from "@/modules/shared/models/issue";
-import { APIResponse, APIError } from "@/types/response";
+import { APIResponse, APIError, APIData } from "@/types/response";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { MulterFile } from "@/types/users";
 
@@ -107,7 +107,7 @@ export class UserService {
     if (updateData.location) {
       const locationData = JSON.parse(updateData.location as unknown as string);
       const { data: locationRecord, error: locationError } = await supabase
-        .from('location')
+        .from("location")
         .upsert({
           province: locationData.value.province,
           city: locationData.value.city,
@@ -119,7 +119,7 @@ export class UserService {
         })
         .select()
         .single();
-  
+
       if (locationError) {
         throw APIError({
           code: 500,
@@ -127,7 +127,7 @@ export class UserService {
           error: "Failed to update location",
         });
       }
-  
+
       updateData.location_id = locationRecord.location_id;
       delete updateData.location; // Remove the location object from updateData
     }
@@ -151,8 +151,14 @@ export class UserService {
     };
   }
 
-  async updateUserLocation(userId: string, locationId: number): Promise<APIResponse<User>> {
-    const updatedUser = await this.userRepository.updateUserLocation(userId, locationId);
+  async updateUserLocation(
+    userId: string,
+    locationId: number,
+  ): Promise<APIResponse<User>> {
+    const updatedUser = await this.userRepository.updateUserLocation(
+      userId,
+      locationId,
+    );
     if (!updatedUser) {
       throw APIError({
         code: 404,
@@ -185,9 +191,15 @@ export class UserService {
     };
   }
 
-  async updateUsername(userId: string, newUsername: string): Promise<APIResponse<User>> {
+  async updateUsername(
+    userId: string,
+    newUsername: string,
+  ): Promise<APIResponse<User>> {
     try {
-      const updatedUser = await this.userRepository.updateUsername(userId, newUsername);
+      const updatedUser = await this.userRepository.updateUsername(
+        userId,
+        newUsername,
+      );
 
       return {
         code: 200,
@@ -209,13 +221,13 @@ export class UserService {
   async changePassword(
     userId: string,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<APIResponse<void>> {
     try {
       const { data: userData, error: userError } = await supabase
-        .from('user')
-        .select('email_address')
-        .eq('user_id', userId)
+        .from("user")
+        .select("email_address")
+        .eq("user_id", userId)
         .single();
 
       if (userError) {
@@ -266,7 +278,9 @@ export class UserService {
       }
 
       // If password update was successful, invalidate all sessions
-      const { error: signOutError } = await supabase.auth.signOut({ scope: 'global' });
+      const { error: signOutError } = await supabase.auth.signOut({
+        scope: "global",
+      });
 
       if (signOutError) {
         console.error("Error signing out user:", signOutError);
@@ -293,5 +307,23 @@ export class UserService {
         error: "An unexpected error occurred while changing the password",
       });
     }
+  }
+
+  async searchForUser(name?: string, username?: string) {
+    if (!name && !username) {
+      throw APIError({
+        code: 400,
+        success: false,
+        error: "Must provide a name or username to search for",
+      });
+    }
+
+    const foundUsers = await this.userRepository.searchForUser(name, username); 
+
+    return APIData({
+      code: 200,
+      success: true,
+      data: foundUsers
+    });
   }
 }

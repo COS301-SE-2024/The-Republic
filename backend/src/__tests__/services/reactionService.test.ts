@@ -25,11 +25,11 @@ describe("ReactionService", () => {
 
   describe("addOrRemoveReaction", () => {
     it("should add a new reaction", async () => {
-      const newReaction: Partial<Reaction> & { itemType: 'issue' | 'post' } = {
+      const newReaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         user_id: "1",
         emoji: "👍",
-        itemType: 'issue',
+        itemType: "issue",
       };
       const addedReaction: Reaction = {
         reaction_id: 1,
@@ -43,7 +43,11 @@ describe("ReactionService", () => {
 
       const response = await reactionService.addOrRemoveReaction(newReaction);
 
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "reacted to an issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
+        "1",
+        5,
+        "reacted to an issue",
+      );
 
       expect(response.data).toEqual({
         added: "👍",
@@ -51,7 +55,7 @@ describe("ReactionService", () => {
       });
       expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith(
         "1",
-        'issue',
+        "issue",
         "1",
       );
       expect(reactionRepository.addReaction).toHaveBeenCalledWith(newReaction);
@@ -59,11 +63,11 @@ describe("ReactionService", () => {
     });
 
     it("should remove an existing reaction", async () => {
-      const reaction: Partial<Reaction> & { itemType: 'issue' | 'post' } = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         user_id: "1",
         emoji: "👍",
-        itemType: 'issue',
+        itemType: "issue",
       };
       const existingReaction: Reaction = {
         reaction_id: 1,
@@ -85,22 +89,22 @@ describe("ReactionService", () => {
       });
       expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith(
         "1",
-        'issue',
+        "issue",
         "1",
       );
       expect(reactionRepository.deleteReaction).toHaveBeenCalledWith(
         "1",
-        'issue',
+        "issue",
         "1",
       );
       expect(reactionRepository.deleteReaction).toHaveBeenCalledTimes(1);
     });
 
     it("should throw an error when user_id is missing", async () => {
-      const reaction: Partial<Reaction> & { itemType: 'issue' | 'post' } = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         emoji: "👍",
-        itemType: 'issue',
+        itemType: "issue",
       };
 
       await expect(
@@ -120,9 +124,9 @@ describe("ReactionService", () => {
     });
 
     it("should throw an error when required fields are missing", async () => {
-      const reaction: Partial<Reaction> & { itemType: 'issue' | 'post' } = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         user_id: "1",
-        itemType: 'issue',
+        itemType: "issue",
       };
 
       await expect(

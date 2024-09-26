@@ -16,7 +16,11 @@ export class CommentService {
     this.pointsService = pointsService;
   }
 
-  async getNumComments({ itemId, itemType, parent_id }: Partial<GetCommentsParams>) {
+  async getNumComments({
+    itemId,
+    itemType,
+    parent_id,
+  }: Partial<GetCommentsParams>) {
     if (!itemId || !itemType) {
       throw APIError({
         code: 400,
@@ -39,7 +43,12 @@ export class CommentService {
   }
 
   async getComments(params: GetCommentsParams) {
-    if (!params.itemId || !params.itemType || !params.amount || params.from === undefined) {
+    if (
+      !params.itemId ||
+      !params.itemType ||
+      !params.amount ||
+      params.from === undefined
+    ) {
       throw APIError({
         code: 400,
         success: false,
@@ -62,9 +71,9 @@ export class CommentService {
           is_owner: isOwner,
           total_issues: null,
           resolved_issues: null,
-          user_score: 0, 
+          user_score: 0,
           location_id: null,
-          location: null
+          location: null,
         };
       } else {
         comment.user.is_owner = isOwner;
@@ -111,7 +120,11 @@ export class CommentService {
 
     // Award points for adding a comment, but only if it's a top-level comment
     if (!comment.parent_id) {
-      await this.pointsService.awardPoints(comment.user_id, 10, "Left a comment");
+      await this.pointsService.awardPoints(
+        comment.user_id,
+        10,
+        "Left a comment",
+      );
     }
 
     return APIData({

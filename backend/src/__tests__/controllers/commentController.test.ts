@@ -5,7 +5,7 @@ import * as commentController from "@/modules/comments/controllers/commentContro
 
 jest.mock("@/modules/comments/services/commentService");
 jest.mock("@/utilities/response");
-jest.mock('@/modules/shared/services/redisClient', () => ({
+jest.mock("@/modules/shared/services/redisClient", () => ({
   __esModule: true,
   default: {
     on: jest.fn(),

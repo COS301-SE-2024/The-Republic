@@ -35,7 +35,7 @@ export const verifyAndGetUser = async (
     //     error: "Authorization token is required",
     //   }),
     // );
-    
+
     next();
     return;
   }

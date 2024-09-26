@@ -8,7 +8,11 @@ const commentService = new CommentService();
 export async function getNumComments(req: Request, res: Response) {
   try {
     const { itemId, itemType, parent_id } = req.body;
-    const response = await commentService.getNumComments({ itemId, itemType, parent_id });
+    const response = await commentService.getNumComments({
+      itemId,
+      itemType,
+      parent_id,
+    });
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);

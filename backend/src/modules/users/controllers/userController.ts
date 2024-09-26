@@ -71,3 +71,15 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
+export const searchForUser = async (req: Request, res: Response) => {
+  try {
+    const response = await userService.searchForUser(
+      req.body.name,
+      req.body.username
+    );
+
+    sendResponse(res, response);
+  } catch (error) {
+    sendResponse(res, error as APIResponse);
+  }
+};

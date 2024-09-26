@@ -24,10 +24,14 @@ const AboutPage = () => {
 
   return (
     <div className="bg-white text-green-900 min-h-screen flex flex-col">
-      <header className="p-4 flex justify-between items-center">
-      <motion.button 
+      <header className="p-4 flex justify-center relative items-center">
+        <motion.button 
           onClick={goBackHome}
-          className="flex items-center text-green-900 hover:text-green-700 transition duration-300"
+          className={`
+            absolute left-4
+            flex items-center
+            text-green-900 hover:text-green-700 transition duration-300
+          `}
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
         >

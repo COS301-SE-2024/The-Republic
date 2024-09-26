@@ -54,7 +54,9 @@ describe("Reports Controller", () => {
       groupedByPoliticalAssociation: jest.fn(),
     } as unknown as jest.Mocked<ReportsService>;
     (ReportsService as jest.Mock).mockImplementation(() => mockReportsService);
-    (cacheMiddleware as jest.Mock).mockImplementation(() => (req: Request, res: Response, next: NextFunction) => next());
+    (cacheMiddleware as jest.Mock).mockImplementation(
+      () => (req: Request, res: Response, next: NextFunction) => next(),
+    );
   });
 
   const testControllerMethod = async (
@@ -63,18 +65,26 @@ describe("Reports Controller", () => {
     const controllerMethod = reportsController[methodName];
     if (Array.isArray(controllerMethod)) {
       for (const middleware of controllerMethod) {
-        if (typeof middleware === 'function') {
-          await middleware(mockRequest as Request, mockResponse as Response, mockNext);
+        if (typeof middleware === "function") {
+          await middleware(
+            mockRequest as Request,
+            mockResponse as Response,
+            mockNext,
+          );
         }
       }
-    } else if (typeof controllerMethod === 'function') {
-      await (controllerMethod as (req: Request, res: Response, next: NextFunction) => Promise<void>)(
-        mockRequest as Request,
-        mockResponse as Response,
-        mockNext
-      );
+    } else if (typeof controllerMethod === "function") {
+      await (
+        controllerMethod as (
+          req: Request,
+          res: Response,
+          next: NextFunction,
+        ) => Promise<void>
+      )(mockRequest as Request, mockResponse as Response, mockNext);
     } else {
-      throw new Error(`Controller method ${methodName} not found or not a function`);
+      throw new Error(
+        `Controller method ${methodName} not found or not a function`,
+      );
     }
     expect(sendResponse).toHaveBeenCalled();
   };

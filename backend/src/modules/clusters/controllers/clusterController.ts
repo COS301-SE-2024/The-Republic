@@ -43,7 +43,7 @@ export class ClusterController {
       } catch (err) {
         sendResponse(res, err as APIResponse);
       }
-    }
+    },
   ];
 
   getClusterById = [
@@ -72,7 +72,7 @@ export class ClusterController {
       } catch (err) {
         sendResponse(res, err as APIResponse);
       }
-    }
+    },
   ];
 
   assignCluster = async (req: Request, res: Response) => {
@@ -89,7 +89,7 @@ export class ClusterController {
 
       const clusterId = await this.clusterService.assignClusterToIssue(issueId);
 
-      clearCachePattern('__express__/api/clusters*');
+      clearCachePattern("__express__/api/clusters*");
 
       const response = {
         code: 200,

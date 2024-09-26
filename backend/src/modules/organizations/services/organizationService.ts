@@ -1,7 +1,18 @@
 import { OrganizationRepository } from "@/modules/organizations/repositories/organizationRepository";
-import { Organization, OrganizationMember, JoinRequest, OrganizationPost, ActivityLog, ActionDetails, UpdateOrganizationDetails } from "@/modules/shared/models/organization";
+import {
+  Organization,
+  OrganizationMember,
+  JoinRequest,
+  OrganizationPost,
+  ActivityLog,
+  ActionDetails,
+  UpdateOrganizationDetails,
+} from "@/modules/shared/models/organization";
 import { APIResponse, APIData, APIError } from "@/types/response";
-import { validateOrganizationName, validateOrganizationUsername } from "@/utilities/validators";
+import {
+  validateOrganizationName,
+  validateOrganizationUsername,
+} from "@/utilities/validators";
 import { PaginationParams } from "@/types/pagination";
 import { MulterFile } from "@/types/users";
 import supabase from "@/modules/shared/services/supabaseClient";
@@ -13,10 +24,16 @@ export class OrganizationService {
     this.organizationRepository = new OrganizationRepository();
   }
 
-  async createOrganization(organization: Partial<Organization>, userId: string): Promise<APIResponse<Organization>> {
+  async createOrganization(
+    organization: Partial<Organization>,
+    userId: string,
+  ): Promise<APIResponse<Organization>> {
     try {
-
-      if (!organization.name || !organization.username || !organization.join_policy) {
+      if (
+        !organization.name ||
+        !organization.username ||
+        !organization.join_policy
+      ) {
         throw APIError({
           code: 400,
           success: false,
@@ -40,7 +57,10 @@ export class OrganizationService {
         });
       }
 
-      const isNameUnique = await this.organizationRepository.isOrganizationNameUnique(organization.name);
+      const isNameUnique =
+        await this.organizationRepository.isOrganizationNameUnique(
+          organization.name,
+        );
       if (!isNameUnique) {
         throw APIError({
           code: 400,
@@ -49,7 +69,10 @@ export class OrganizationService {
         });
       }
 
-      const isUsernameUnique = await this.organizationRepository.isOrganizationUsernameUnique(organization.username);
+      const isUsernameUnique =
+        await this.organizationRepository.isOrganizationUsernameUnique(
+          organization.username,
+        );
       if (!isUsernameUnique) {
         throw APIError({
           code: 400,
@@ -58,13 +81,14 @@ export class OrganizationService {
         });
       }
 
-      const createdOrganization = await this.organizationRepository.createOrganization(organization);
+      const createdOrganization =
+        await this.organizationRepository.createOrganization(organization);
 
       await this.organizationRepository.addOrganizationMember({
         organization_id: createdOrganization.id,
         user_id: userId,
-        role: 'admin',
-        joined_at: new Date().toISOString()
+        role: "admin",
+        joined_at: new Date().toISOString(),
       });
 
       return APIData({
@@ -85,7 +109,12 @@ export class OrganizationService {
     }
   }
 
-  async updateOrganization(id: string, updates: Partial<Organization>, userId: string, profilePhoto?: MulterFile): Promise<APIResponse<Organization>> {
+  async updateOrganization(
+    id: string,
+    updates: Partial<Organization>,
+    userId: string,
+    profilePhoto?: MulterFile,
+  ): Promise<APIResponse<Organization>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(id, userId);
       if (!isAdmin) {
@@ -95,17 +124,26 @@ export class OrganizationService {
           error: "You do not have permission to update this organization.",
         });
       }
-  
+
       const updatesToSend = updates;
-  
-      const updatedOrganization = await this.organizationRepository.updateOrganization(id, updatesToSend, profilePhoto);
 
-      const actionDetails: ActionDetails = { 
-        type: 'UPDATE_ORGANIZATION', 
-        details: updatesToSend as UpdateOrganizationDetails 
+      const updatedOrganization =
+        await this.organizationRepository.updateOrganization(
+          id,
+          updatesToSend,
+          profilePhoto,
+        );
+
+      const actionDetails: ActionDetails = {
+        type: "UPDATE_ORGANIZATION",
+        details: updatesToSend as UpdateOrganizationDetails,
       };
-      await this.organizationRepository.logActivity(id, userId, 'UPDATE_ORGANIZATION', actionDetails);
-
+      await this.organizationRepository.logActivity(
+        id,
+        userId,
+        "UPDATE_ORGANIZATION",
+        actionDetails,
+      );
 
       return APIData({
         code: 200,
@@ -124,7 +162,10 @@ export class OrganizationService {
     }
   }
 
-  async deleteOrganization(id: string, userId: string): Promise<APIResponse<null>> {
+  async deleteOrganization(
+    id: string,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
       const isAdmin = await this.organizationRepository.isUserAdmin(id, userId);
       if (!isAdmin) {
@@ -153,11 +194,16 @@ export class OrganizationService {
     }
   }
 
-  async joinOrganization(organizationId: string, userId: string): Promise<APIResponse<JoinRequest | OrganizationMember>> {
+  async joinOrganization(
+    organizationId: string,
+    userId: string,
+  ): Promise<APIResponse<JoinRequest | OrganizationMember>> {
     try {
-  
-      const isMember = await this.organizationRepository.isMember(organizationId, userId);
-  
+      const isMember = await this.organizationRepository.isMember(
+        organizationId,
+        userId,
+      );
+
       if (isMember) {
         return APIData({
           code: 400,
@@ -165,15 +211,18 @@ export class OrganizationService {
           error: "You are already a member of this organization.",
         });
       }
-  
-      const joinPolicy = await this.organizationRepository.getOrganizationJoinPolicy(organizationId);
-  
-      if (joinPolicy === 'open') {
+
+      const joinPolicy =
+        await this.organizationRepository.getOrganizationJoinPolicy(
+          organizationId,
+        );
+
+      if (joinPolicy === "open") {
         const member = await this.organizationRepository.addOrganizationMember({
           organization_id: organizationId,
           user_id: userId,
-          role: 'member',
-          joined_at: new Date().toISOString()
+          role: "member",
+          joined_at: new Date().toISOString(),
         });
         return APIData({
           code: 201,
@@ -181,7 +230,10 @@ export class OrganizationService {
           data: member,
         });
       } else {
-        const joinRequest = await this.organizationRepository.createJoinRequest(organizationId, userId);
+        const joinRequest = await this.organizationRepository.createJoinRequest(
+          organizationId,
+          userId,
+        );
         return APIData({
           code: 201,
           success: true,
@@ -194,7 +246,9 @@ export class OrganizationService {
         return APIData({
           code: 500,
           success: false,
-          error: error.message || "An unexpected error occurred while joining the organization.",
+          error:
+            error.message ||
+            "An unexpected error occurred while joining the organization.",
         });
       }
       return APIData({
@@ -205,10 +259,16 @@ export class OrganizationService {
     }
   }
 
-  async leaveOrganization(organizationId: string, userId: string): Promise<APIResponse<null>> {
+  async leaveOrganization(
+    organizationId: string,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
-      
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      );
+
       if (isAdmin === null) {
         return APIData({
           code: 400,
@@ -216,26 +276,34 @@ export class OrganizationService {
           error: "You are not a member of this organization.",
         });
       }
-  
-      const memberCount = await this.organizationRepository.getOrganizationMemberCount(organizationId);
-      const adminCount = await this.organizationRepository.getOrganizationAdminCount(organizationId);
-  
+
+      const memberCount =
+        await this.organizationRepository.getOrganizationMemberCount(
+          organizationId,
+        );
+      const adminCount =
+        await this.organizationRepository.getOrganizationAdminCount(
+          organizationId,
+        );
+
       if (memberCount === 1) {
         return APIData({
           code: 400,
           success: false,
-          error: "You are the last member. Please delete the organization instead.",
+          error:
+            "You are the last member. Please delete the organization instead.",
         });
       }
-  
+
       if (isAdmin && adminCount === 1) {
         return APIData({
           code: 400,
           success: false,
-          error: "You are the only admin. Please appoint another admin before leaving.",
+          error:
+            "You are the only admin. Please appoint another admin before leaving.",
         });
       }
-  
+
       await this.organizationRepository.removeMember(organizationId, userId);
       return APIData({
         code: 200,
@@ -259,9 +327,16 @@ export class OrganizationService {
     }
   }
 
-  async addAdmin(organizationId: string, adminId: string, newAdminId: string): Promise<APIResponse<null>> {
+  async addAdmin(
+    organizationId: string,
+    adminId: string,
+    newAdminId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, adminId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        adminId,
+      );
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -270,14 +345,23 @@ export class OrganizationService {
         });
       }
 
-      await this.organizationRepository.updateMemberRole(organizationId, newAdminId, 'admin');
+      await this.organizationRepository.updateMemberRole(
+        organizationId,
+        newAdminId,
+        "admin",
+      );
 
-      const actionDetails: ActionDetails = { 
-        type: 'ASSIGN_ADMIN', 
-        details: { newAdminId } 
+      const actionDetails: ActionDetails = {
+        type: "ASSIGN_ADMIN",
+        details: { newAdminId },
       };
-      await this.organizationRepository.logActivity(organizationId, adminId, 'ASSIGN_ADMIN', actionDetails);
-      
+      await this.organizationRepository.logActivity(
+        organizationId,
+        adminId,
+        "ASSIGN_ADMIN",
+        actionDetails,
+      );
+
       return APIData({
         code: 200,
         success: true,
@@ -295,9 +379,16 @@ export class OrganizationService {
     }
   }
 
-  async setJoinPolicy(organizationId: string, joinPolicy: string, userId: string): Promise<APIResponse<null>> {
+  async setJoinPolicy(
+    organizationId: string,
+    joinPolicy: string,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      );
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -305,32 +396,42 @@ export class OrganizationService {
           error: "You do not have permission to change the join policy.",
         });
       }
-  
-      if (joinPolicy !== 'open' && joinPolicy !== 'request') {
+
+      if (joinPolicy !== "open" && joinPolicy !== "request") {
         throw APIError({
           code: 400,
           success: false,
           error: "Invalid join policy. Must be 'open' or 'request'.",
         });
       }
-  
-      await this.organizationRepository.updateOrganizationJoinPolicy(organizationId, joinPolicy);
 
-      if (joinPolicy === 'open') {
-        const pendingRequests = await this.organizationRepository.getJoinRequests(organizationId, { offset: 0, limit: 1000 }); // Adjust the limit as needed
-        
+      await this.organizationRepository.updateOrganizationJoinPolicy(
+        organizationId,
+        joinPolicy,
+      );
+
+      if (joinPolicy === "open") {
+        const pendingRequests =
+          await this.organizationRepository.getJoinRequests(organizationId, {
+            offset: 0,
+            limit: 1000,
+          }); // Adjust the limit as needed
+
         for (const request of pendingRequests.data) {
-          await this.organizationRepository.updateJoinRequestStatus(request.id, "accepted");
-          
+          await this.organizationRepository.updateJoinRequestStatus(
+            request.id,
+            "accepted",
+          );
+
           await this.organizationRepository.addOrganizationMember({
             organization_id: organizationId,
             user_id: request.user_id,
-            role: 'member',
-            joined_at: new Date().toISOString()
+            role: "member",
+            joined_at: new Date().toISOString(),
           });
         }
       }
-  
+
       return APIData({
         code: 200,
         success: true,
@@ -348,9 +449,16 @@ export class OrganizationService {
     }
   }
 
-  async getJoinRequests(organizationId: string, userId: string, params: PaginationParams): Promise<APIResponse<{ data: JoinRequest[], total: number }>> {
+  async getJoinRequests(
+    organizationId: string,
+    userId: string,
+    params: PaginationParams,
+  ): Promise<APIResponse<{ data: JoinRequest[]; total: number }>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      );
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -358,8 +466,11 @@ export class OrganizationService {
           error: "You do not have permission to view join requests.",
         });
       }
-  
-      const joinRequests = await this.organizationRepository.getJoinRequests(organizationId, params);
+
+      const joinRequests = await this.organizationRepository.getJoinRequests(
+        organizationId,
+        params,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -377,9 +488,17 @@ export class OrganizationService {
     }
   }
 
-  async handleJoinRequest(organizationId: string, requestId: number, accept: boolean, userId: string): Promise<APIResponse<null>> {
+  async handleJoinRequest(
+    organizationId: string,
+    requestId: number,
+    accept: boolean,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      );
       if (isAdmin !== true) {
         return APIData({
           code: 403,
@@ -387,8 +506,9 @@ export class OrganizationService {
           error: "You do not have permission to handle join requests.",
         });
       }
-  
-      const joinRequest = await this.organizationRepository.getJoinRequestById(requestId);
+
+      const joinRequest =
+        await this.organizationRepository.getJoinRequestById(requestId);
       if (!joinRequest) {
         return APIData({
           code: 404,
@@ -396,7 +516,7 @@ export class OrganizationService {
           error: "Join request not found.",
         });
       }
-  
+
       if (joinRequest.organization_id !== organizationId) {
         return APIData({
           code: 400,
@@ -404,31 +524,37 @@ export class OrganizationService {
           error: "Join request does not belong to this organization.",
         });
       }
-  
-      if (joinRequest.status !== 'pending') {
+
+      if (joinRequest.status !== "pending") {
         return APIData({
           code: 400,
           success: false,
           error: "This join request has already been processed.",
         });
       }
-  
+
       if (accept) {
         // Update the join request status
-        await this.organizationRepository.updateJoinRequestStatus(requestId, "accepted");
-        
+        await this.organizationRepository.updateJoinRequestStatus(
+          requestId,
+          "accepted",
+        );
+
         // Add the user to the organization_members table
         await this.organizationRepository.addOrganizationMember({
           organization_id: organizationId,
           user_id: joinRequest.user_id,
-          role: 'member',
-          joined_at: new Date().toISOString()
+          role: "member",
+          joined_at: new Date().toISOString(),
         });
       } else {
         // If not accepting, just update the join request status to rejected
-        await this.organizationRepository.updateJoinRequestStatus(requestId, "rejected");
+        await this.organizationRepository.updateJoinRequestStatus(
+          requestId,
+          "rejected",
+        );
       }
-  
+
       return APIData({
         code: 200,
         success: true,
@@ -440,7 +566,8 @@ export class OrganizationService {
         return APIData({
           code: 500,
           success: false,
-          error: "An unexpected error occurred while handling the join request.",
+          error:
+            "An unexpected error occurred while handling the join request.",
         });
       }
       return APIData({
@@ -451,9 +578,16 @@ export class OrganizationService {
     }
   }
 
-  async getJoinRequestByUser(organizationId: string, userId: string): Promise<APIResponse<JoinRequest | null>> {
+  async getJoinRequestByUser(
+    organizationId: string,
+    userId: string,
+  ): Promise<APIResponse<JoinRequest | null>> {
     try {
-      const joinRequest = await this.organizationRepository.getJoinRequestByUser(organizationId, userId);
+      const joinRequest =
+        await this.organizationRepository.getJoinRequestByUser(
+          organizationId,
+          userId,
+        );
       return APIData({
         code: 200,
         success: true,
@@ -471,9 +605,16 @@ export class OrganizationService {
     }
   }
 
-  async removeMember(organizationId: string, memberUserId: string, adminUserId: string): Promise<APIResponse<null>> {
+  async removeMember(
+    organizationId: string,
+    memberUserId: string,
+    adminUserId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, adminUserId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        adminUserId,
+      );
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -490,7 +631,10 @@ export class OrganizationService {
         });
       }
 
-      await this.organizationRepository.removeMember(organizationId, memberUserId);
+      await this.organizationRepository.removeMember(
+        organizationId,
+        memberUserId,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -512,10 +656,15 @@ export class OrganizationService {
     params: PaginationParams,
     orgType: string | null = null,
     locationId: string | null = null,
-    userId: string
+    userId: string,
   ): Promise<APIResponse<{ data: Organization[]; total: number }>> {
     try {
-      const organizations = await this.organizationRepository.getOrganizations(params, orgType, locationId, userId);
+      const organizations = await this.organizationRepository.getOrganizations(
+        params,
+        orgType,
+        locationId,
+        userId,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -533,15 +682,23 @@ export class OrganizationService {
     }
   }
 
-  async getOrganizationById(id: string, userId: string): Promise<APIResponse<Organization & { isAdmin: boolean }>> {
+  async getOrganizationById(
+    id: string,
+    userId: string,
+  ): Promise<APIResponse<Organization & { isAdmin: boolean }>> {
     try {
-      const organization = await this.organizationRepository.getOrganizationById(id);
+      const organization =
+        await this.organizationRepository.getOrganizationById(id);
       const isAdmin = await this.organizationRepository.isUserAdmin(id, userId);
-  
+
       return APIData({
         code: 200,
         success: true,
-        data: { ...organization, isAdmin: isAdmin ?? false, averageSatisfactionRating: organization.averageSatisfactionRating },
+        data: {
+          ...organization,
+          isAdmin: isAdmin ?? false,
+          averageSatisfactionRating: organization.averageSatisfactionRating,
+        },
       });
     } catch (error) {
       if (error instanceof APIError) {
@@ -555,9 +712,15 @@ export class OrganizationService {
     }
   }
 
-  async generateReport(organizationId: string, userId: string, email: string): Promise<APIResponse<null>> {
+  async generateReport(
+    organizationId: string,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin: boolean = (await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      )) as boolean;
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -566,8 +729,10 @@ export class OrganizationService {
         });
       }
 
-      // The report service will call this function to get organization specific data for the report
-      console.log(email);
+      // Placeholder for future implementation
+      // Example: Fetch organization and member details, generate report
+      // const organization = await this.organizationRepository.getOrganizationById(organizationId);
+      // const members = await this.organizationRepository.getOrganizationMembers(organizationId);
 
       return APIData({
         code: 200,
@@ -585,9 +750,11 @@ export class OrganizationService {
       });
     }
   }
-  
 
-  async deleteJoinRequest(requestId: number, userId: string): Promise<APIResponse<null>> {
+  async deleteJoinRequest(
+    requestId: number,
+    userId: string,
+  ): Promise<APIResponse<null>> {
     try {
       const joinRequest = await this.organizationRepository.getJoinRequestById(requestId);
       
@@ -623,9 +790,12 @@ export class OrganizationService {
     }
   }
 
-  async getJoinRequestsByUser(userId: string): Promise<APIResponse<JoinRequest[]>> {
+  async getJoinRequestsByUser(
+    userId: string,
+  ): Promise<APIResponse<JoinRequest[]>> {
     try {
-      const joinRequests = await this.organizationRepository.getJoinRequestsByUser(userId);
+      const joinRequests =
+        await this.organizationRepository.getJoinRequestsByUser(userId);
       return APIData({
         code: 200,
         success: true,
@@ -638,7 +808,8 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching user's join requests.",
+        error:
+          "An unexpected error occurred while fetching user's join requests.",
       });
     }
   }
@@ -647,10 +818,15 @@ export class OrganizationService {
     searchTerm: string,
     orgType: string | null,
     locationId: string | null,
-    params: PaginationParams
+    params: PaginationParams,
   ): Promise<APIResponse<{ data: Organization[]; total: number }>> {
     try {
-      const result = await this.organizationRepository.searchOrganizations(searchTerm, orgType, locationId, params);
+      const result = await this.organizationRepository.searchOrganizations(
+        searchTerm,
+        orgType,
+        locationId,
+        params,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -668,47 +844,65 @@ export class OrganizationService {
     }
   }
 
-  async getOrganizationPosts(organizationId: string, userId: string, params: PaginationParams): Promise<APIResponse<{ data: OrganizationPost[], total: number }>> {
+  async getOrganizationPosts(
+    organizationId: string,
+    userId: string,
+    params: PaginationParams,
+  ): Promise<APIResponse<{ data: OrganizationPost[]; total: number }>> {
     try {
-      const posts = await this.organizationRepository.getOrganizationPosts(organizationId, userId, params);
+      const posts = await this.organizationRepository.getOrganizationPosts(
+        organizationId,
+        userId,
+        params,
+      );
       return APIData({
         code: 200,
         success: true,
         data: posts,
       });
     } catch (error) {
-      console.error('Service: Error in getOrganizationPosts', error);
+      console.error("Service: Error in getOrganizationPosts", error);
       if (error instanceof APIError) {
         throw error;
       }
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching organization posts.",
+        error:
+          "An unexpected error occurred while fetching organization posts.",
       });
     }
   }
 
-  async createOrganizationPost(post: Partial<OrganizationPost>, userId: string, image?: MulterFile): Promise<APIResponse<OrganizationPost>> {
+  async createOrganizationPost(
+    post: Partial<OrganizationPost>,
+    userId: string,
+    image?: MulterFile,
+  ): Promise<APIResponse<OrganizationPost>> {
     try {
       let imageUrl: string | null = null;
-  
+
       if (image) {
         imageUrl = await this.uploadImage(post.organization_id!, image);
       }
-  
+
       const newPost = await this.organizationRepository.createOrganizationPost({
         ...post,
         image_url: imageUrl,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       });
 
-      const actionDetails: ActionDetails = { 
-        type: 'CREATE_POST', 
-        details: { postId: newPost.post_id } 
+      const actionDetails: ActionDetails = {
+        type: "CREATE_POST",
+        details: { postId: newPost.post_id },
       };
-      await this.organizationRepository.logActivity(post.organization_id!, userId, 'CREATE_POST', actionDetails);
-  
+      await this.organizationRepository.logActivity(
+        post.organization_id!,
+        userId,
+        "CREATE_POST",
+        actionDetails,
+      );
+
       return APIData({
         code: 201,
         success: true,
@@ -721,19 +915,21 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while creating the organization post.",
+        error:
+          "An unexpected error occurred while creating the organization post.",
       });
     }
   }
-  
+
   async isMember(organizationId: string, userId: string): Promise<boolean> {
     return await this.organizationRepository.isMember(organizationId, userId);
   }
 
   async deleteOrganizationPost(postId: string): Promise<APIResponse<null>> {
     try {
-      const post = await this.organizationRepository.getOrganizationPostById(postId);
-      
+      const post =
+        await this.organizationRepository.getOrganizationPostById(postId);
+
       if (post.image_url) {
         await this.deleteImage(post.image_url);
       }
@@ -751,14 +947,18 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while deleting the organization post.",
+        error:
+          "An unexpected error occurred while deleting the organization post.",
       });
     }
   }
 
-  async getTopActiveMembers(organizationId: string): Promise<APIResponse<OrganizationMember[]>> {
+  async getTopActiveMembers(
+    organizationId: string,
+  ): Promise<APIResponse<OrganizationMember[]>> {
     try {
-      const members = await this.organizationRepository.getTopActiveMembers(organizationId);
+      const members =
+        await this.organizationRepository.getTopActiveMembers(organizationId);
       return APIData({
         code: 200,
         success: true,
@@ -771,12 +971,16 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching top active members.",
+        error:
+          "An unexpected error occurred while fetching top active members.",
       });
     }
   }
 
-  private async uploadImage(organizationId: string, image: MulterFile): Promise<string> {
+  private async uploadImage(
+    organizationId: string,
+    image: MulterFile,
+  ): Promise<string> {
     const fileName = `${organizationId}_${Date.now()}-${image.originalname}`;
     const { error: uploadError } = await supabase.storage
       .from("organization_posts")
@@ -814,10 +1018,16 @@ export class OrganizationService {
     }
   }
 
-  async getOrganizationMembers(organizationId: string, userId: string, params: PaginationParams): Promise<APIResponse<{ data: OrganizationMember[], total: number }>> {
+  async getOrganizationMembers(
+    organizationId: string,
+    userId: string,
+    params: PaginationParams,
+  ): Promise<APIResponse<{ data: OrganizationMember[]; total: number }>> {
     try {
-
-      const members = await this.organizationRepository.getOrganizationMembers(organizationId, params);
+      const members = await this.organizationRepository.getOrganizationMembers(
+        organizationId,
+        params,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -830,18 +1040,31 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching organization members.",
+        error:
+          "An unexpected error occurred while fetching organization members.",
       });
     }
   }
 
-  async getOrganizationPost(organizationId: string, postId: string, userId: string): Promise<APIResponse<OrganizationPost>> {
+  async getOrganizationPost(
+    organizationId: string,
+    postId: string,
+    userId: string,
+  ): Promise<APIResponse<OrganizationPost>> {
     try {
-      const post = await this.organizationRepository.getOrganizationPost(organizationId, postId);
-      
+      const post = await this.organizationRepository.getOrganizationPost(
+        organizationId,
+        postId,
+      );
+
       // Fetch user's reaction
-      const userReaction = await this.organizationRepository.reactionRepository.getReactionByUserAndItem(postId, 'post', userId);
-      
+      const userReaction =
+        await this.organizationRepository.reactionRepository.getReactionByUserAndItem(
+          postId,
+          "post",
+          userId,
+        );
+
       // Add user's reaction to the post data
       post.reactions.userReaction = userReaction?.emoji || null;
 
@@ -857,14 +1080,21 @@ export class OrganizationService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching the organization post.",
+        error:
+          "An unexpected error occurred while fetching the organization post.",
       });
     }
   }
 
-  async checkUserMembership(organizationId: string, userId: string): Promise<APIResponse<{ isMember: boolean }>> {
+  async checkUserMembership(
+    organizationId: string,
+    userId: string,
+  ): Promise<APIResponse<{ isMember: boolean }>> {
     try {
-      const isMember = await this.organizationRepository.isMember(organizationId, userId);
+      const isMember = await this.organizationRepository.isMember(
+        organizationId,
+        userId,
+      );
       return APIData({
         code: 200,
         success: true,
@@ -882,9 +1112,16 @@ export class OrganizationService {
     }
   }
 
-  async getActivityLogs(organizationId: string, userId: string, params: PaginationParams): Promise<APIResponse<{ data: ActivityLog[], total: number }>> {
+  async getActivityLogs(
+    organizationId: string,
+    userId: string,
+    params: PaginationParams,
+  ): Promise<APIResponse<{ data: ActivityLog[]; total: number }>> {
     try {
-      const isAdmin = await this.organizationRepository.isUserAdmin(organizationId, userId);
+      const isAdmin = await this.organizationRepository.isUserAdmin(
+        organizationId,
+        userId,
+      );
       if (!isAdmin) {
         throw APIError({
           code: 403,
@@ -893,7 +1130,10 @@ export class OrganizationService {
         });
       }
 
-      const logs = await this.organizationRepository.getActivityLogs(organizationId, params);
+      const logs = await this.organizationRepository.getActivityLogs(
+        organizationId,
+        params,
+      );
       return APIData({
         code: 200,
         success: true,

@@ -13,7 +13,7 @@ export default class UserAdminRepository {
         .from("user")
         .select("username")
         .eq("username", username);
-      
+
       if (user_id) {
         query = query.neq("user_id", user_id);
       }
@@ -30,17 +30,22 @@ export default class UserAdminRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while checking username availability.",
+        error:
+          "An unexpected error occurred while checking username availability.",
       });
     }
   }
 
-  async deleteAccountById(userId: string, username: string, email_address: string) {
+  async deleteAccountById(
+    userId: string,
+    username: string,
+    email_address: string,
+  ) {
     const tables = [
-      'points_history',
-      'subscriptions',
-      'organisation_members',
-      'join_requests'
+      "points_history",
+      "subscriptions",
+      "organisation_members",
+      "join_requests",
     ];
 
     async function deleteImage(image_url: string) {
@@ -48,16 +53,15 @@ export default class UserAdminRepository {
       const imagePath = `profile_pictures/${filename}`;
 
       if (filename) {
-        const { error: deleteImageError } = await supabase
-          .storage
+        const { error: deleteImageError } = await supabase.storage
           .from("user")
           .remove([imagePath]);
-  
+
         if (deleteImageError) {
           return false;
         }
       }
-      
+
       return true;
     }
 
@@ -67,10 +71,10 @@ export default class UserAdminRepository {
           const { data, error } = await supabase
             .from(table)
             .delete()
-            .eq('user_id', userId);
+            .eq("user_id", userId);
 
-          if (error && error.code !== 'PGRST116') {
-            throw new Error(`Error deleting from ${table}: ${error.message}`);
+          if (error && error.code !== "PGRST116") {
+            console.error(`Error deleting from ${table}: ${error.message}`);
           }
 
           return data;
@@ -82,24 +86,13 @@ export default class UserAdminRepository {
       }
     }
 
-    const { error } = await supabase.auth.admin.deleteUser(userId);
-
-    if (error) {
-      console.error('Error deleting user:', error.message);
-      throw APIError({
-        code: 500,
-        success: false,
-        error: `Error deleting user: ${error.message}`,
-      });
-    }
-
     const rand = generateRandomString();
     const { data: existingUser, error: fetchError } = await supabase
-      .from('user')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('username', username)
-      .eq('email_address', email_address)
+      .from("user")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("username", username)
+      .eq("email_address", email_address)
       .maybeSingle();
 
     if (fetchError || !existingUser) {
@@ -110,17 +103,18 @@ export default class UserAdminRepository {
       });
     } else {
       const { error } = await supabase
-        .from('user')
+        .from("user")
         .update({
           email_address: `deleted_${rand}@gmail.com`,
           username: `deleted_${rand}`,
-          image_url: "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
-          fullname: 'deleted_user',
+          image_url:
+            "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
+          fullname: "deleted_user",
           user_score: 0,
           location_id: null,
           bio: null,
           suspended_until: null,
-          suspension_reason: null
+          suspension_reason: null,
         })
         .eq("user_id", userId);
 
@@ -135,9 +129,21 @@ export default class UserAdminRepository {
 
       deleteUserRecords();
       deleteImage(existingUser.image_url);
-      
+
+      const { error: errorAdmin } =
+        await supabase.auth.admin.deleteUser(userId);
+
+      if (error) {
+        console.error("Error deleting user:", errorAdmin?.message);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: `Error deleting user: ${errorAdmin?.message}`,
+        });
+      }
+
       return {
-        "deleted": true
+        deleted: true,
       };
     }
   }

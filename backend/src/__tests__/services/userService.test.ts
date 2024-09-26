@@ -4,7 +4,7 @@ import { User } from "@/modules/shared/models/issue";
 import supabase from "@/modules/shared/services/supabaseClient";
 import mockUser from "@/data/mockUser";
 import mockFile from "@/data/mockFile";
-import { MulterFile } from '@/types/users';
+import { MulterFile } from "@/types/users";
 
 jest.mock("@/modules/users/repositories/userRepository");
 
@@ -168,32 +168,34 @@ describe("UserService", () => {
       expect(supabase.storage.from("user").remove).not.toBe(null);
     });
 
-    it('should upload new profile picture', async () => {
+    it("should upload new profile picture", async () => {
       userRepository.getUserById.mockResolvedValue(mockUser);
       userRepository.updateUserProfile.mockResolvedValue(mockUser);
       (supabase.storage.from as jest.Mock).mockReturnValue({
         remove: jest.fn().mockResolvedValue({ error: null }),
         upload: jest.fn().mockResolvedValue({ error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'new_url' } }),
+        getPublicUrl: jest
+          .fn()
+          .mockReturnValue({ data: { publicUrl: "new_url" } }),
       });
 
       const file: MulterFile = {
-        fieldname: 'fieldname',
-        encoding: 'encoding',
-        mimetype: 'mimetype',
+        fieldname: "fieldname",
+        encoding: "encoding",
+        mimetype: "mimetype",
         size: 0,
-        originalname: 'new_picture.png',
-        buffer: Buffer.from(''),
-        destination: 'destination',
-        filename: 'filename',
-        path: 'path',
+        originalname: "new_picture.png",
+        buffer: Buffer.from(""),
+        destination: "destination",
+        filename: "filename",
+        path: "path",
       };
 
-      await userService.updateUserProfile('1', {}, file);
+      await userService.updateUserProfile("1", {}, file);
 
-      expect(supabase.storage.from('user').upload).toHaveBeenCalledWith(
-        expect.stringContaining('profile_pictures/1-'),
-        file.buffer
+      expect(supabase.storage.from("user").upload).toHaveBeenCalledWith(
+        expect.stringContaining("profile_pictures/1-"),
+        file.buffer,
       );
     });
   });

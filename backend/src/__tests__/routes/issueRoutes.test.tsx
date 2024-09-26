@@ -28,11 +28,15 @@ app.use("/issues", issueRouter);
 describe("Issue Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
+    (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+      next(),
+    );
   });
 
   it("should call getIssues controller", async () => {
-    (issueController.getIssues[0] as jest.Mock).mockImplementation((req, res) => res.status(200).json({}));
+    (issueController.getIssues[0] as jest.Mock).mockImplementation((req, res) =>
+      res.status(200).json({}),
+    );
 
     const response = await request(app).post("/issues");
 
