@@ -20,8 +20,8 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:3000",
   "https://the-republic-six.vercel.app",
-  "https://www.the-republic.co.za",
-  "https://infinite-loopers-load-balancer.vercel.app"
+  "https://www.the-republic.co.za/",
+  "https://www.the-republic.co.za"
 ];
 
 app.use((req, res, next) => {
