@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import redisClient from '@/modules/shared/services/redisClient';
+import redisClient from "@/modules/shared/services/redisClient";
 
 export const cacheMiddleware = (duration: number) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -8,7 +8,7 @@ export const cacheMiddleware = (duration: number) => {
     }
 
     const key = `__express__${req.originalUrl || req.url}__${JSON.stringify(req.body)}`;
-    
+
     try {
       const cachedBody = await redisClient.get(key);
 
@@ -23,7 +23,7 @@ export const cacheMiddleware = (duration: number) => {
         next();
       }
     } catch (error) {
-      console.error('Redis operation failed:', error);
+      console.error("Redis operation failed:", error);
       next();
     }
   };

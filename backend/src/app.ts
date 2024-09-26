@@ -17,18 +17,27 @@ const app = express();
 
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', 'https://the-republic-six.vercel.app'];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://the-republic-six.vercel.app",
+];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS",
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
     res.sendStatus(200);
   } else {
     next();
@@ -45,7 +54,7 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/points", pointsRoutes);
-app.use('/api/clusters', clusterRoutes);
+app.use("/api/clusters", clusterRoutes);
 app.use("/api/organizations", organizationRoutes);
 app.use("/api/organizations", organizationRoutes);
 app.use("/api/validate", userAdminRoutes);

@@ -5,52 +5,34 @@ import SubscriptionsService from "@/modules/subscriptions/services/subscriptions
 
 const subscriptionsService = new SubscriptionsService();
 
-export const issueSubscriptions = async (
-  req: Request,
-  res: Response,
-) => {
+export const issueSubscriptions = async (req: Request, res: Response) => {
   try {
-    const response = await subscriptionsService.issueSubscriptions(
-      req.body,
-    );
+    const response = await subscriptionsService.issueSubscriptions(req.body);
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);
   }
 };
 
-export const categorySubscriptions = async (
-  req: Request,
-  res: Response,
-) => {
+export const categorySubscriptions = async (req: Request, res: Response) => {
   try {
-    const response =
-      await subscriptionsService.categorySubscriptions(req.body);
+    const response = await subscriptionsService.categorySubscriptions(req.body);
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);
   }
 };
 
-export const locationSubscriptions = async (
-  req: Request,
-  res: Response,
-) => {
+export const locationSubscriptions = async (req: Request, res: Response) => {
   try {
-    const response =
-      await subscriptionsService.locationSubscriptions(
-        req.body,
-      );
+    const response = await subscriptionsService.locationSubscriptions(req.body);
     sendResponse(res, response);
   } catch (error) {
     sendResponse(res, error as APIResponse);
   }
 };
 
-export const getSubscriptions = async (
-  req: Request,
-  res: Response,
-) => {
+export const getSubscriptions = async (req: Request, res: Response) => {
   try {
     const response = await subscriptionsService.getSubscriptions(req.body);
     sendResponse(res, response);
@@ -59,11 +41,7 @@ export const getSubscriptions = async (
   }
 };
 
-
-export const getNotifications = async (
-  req: Request,
-  res: Response,
-) => {
+export const getNotifications = async (req: Request, res: Response) => {
   try {
     const response = await subscriptionsService.getNotifications(req.body);
     sendResponse(res, response);

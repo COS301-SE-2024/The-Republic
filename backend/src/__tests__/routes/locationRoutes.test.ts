@@ -19,8 +19,8 @@ describe("Location Routes", () => {
 
   describe("POST /locations/", () => {
     it("should call getAllLocations controller", async () => {
-      (locationController.getAllLocations[0] as jest.Mock).mockImplementation((req, res) =>
-        res.status(200).json({}),
+      (locationController.getAllLocations[0] as jest.Mock).mockImplementation(
+        (req, res) => res.status(200).json({}),
       );
 
       const response = await request(app).post("/locations/");

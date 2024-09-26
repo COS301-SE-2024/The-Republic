@@ -36,11 +36,13 @@ Follow these steps to install the application:
    git clone https://github.com/COS301-SE-2024/The-Republic.git
    cd backend
    ```
+
 2. **Install dependencies:**
 
    ```bash
    npm install
    ```
+
 3. **Install TypeScript (if not already installed globally):**
 
    ```bash
@@ -55,6 +57,7 @@ Follow these steps to install the application:
    SUPABASE_URL=https://your-project-url.supabase.co
    SUPABASE_ANON_KEY=your-anon-key
    ```
+
 2. **Modify the `supabaseClient.ts` file to use environment variables:**
 
    ```typescript
@@ -211,6 +214,7 @@ This structure enhances the modularity, maintainability, and scalability of our 
   npm i
   npm run dev
   ```
+
 - #### Running the Application locally in a Docker Container
 
   - Changing working directory to the backend folder
@@ -218,22 +222,26 @@ This structure enhances the modularity, maintainability, and scalability of our 
     ```bash
     cd backend
     ```
+
   - Building the application locally:
 
     ```bash
     docker build -t backend_the_republic .
     ```
+
   - Running the application locally:
 
     ```bash
     docker run -p 8080:8080 -d backend_the_republic
     ```
+
   - Stopping and Removing all Containers Locally:
 
     ```bash
     docker stop $(docker ps -a -q)
     docker rm $(docker ps -a -q)
     ```
+
   - Removing all Unused Docker Objects:
 
     ```bash

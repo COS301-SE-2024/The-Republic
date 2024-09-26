@@ -125,5 +125,5 @@ export {
   IssuesGroupedByDate,
   IssuesGroupedByCategory,
   CategoryAndDateCount,
-  NameValue
+  NameValue,
 };

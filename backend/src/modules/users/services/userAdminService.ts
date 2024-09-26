@@ -17,10 +17,7 @@ export class UserAdminService {
     params: Partial<UserExists>,
   ): Promise<APIResponse<boolean>> {
     try {
-      const data = 
-        await this.userAdminRepository.usernameExists(
-          params,
-        );
+      const data = await this.userAdminRepository.usernameExists(params);
       return {
         code: 200,
         success: true,
@@ -30,11 +27,12 @@ export class UserAdminService {
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while checking username availability.",
+        error:
+          "An unexpected error occurred while checking username availability.",
       });
     }
   }
@@ -43,30 +41,34 @@ export class UserAdminService {
     userId: string,
     authenticatedUserId: string,
     username: string,
-    email_address: string
+    email_address: string,
   ): Promise<APIResponse<null>> {
     if (userId !== authenticatedUserId) {
       throw APIError({
         code: 403,
         success: false,
-        error: "You do not have permission to delete this account."
+        error: "You do not have permission to delete this account.",
       });
     }
-  
-    const user = await this.userAdminRepository.deleteAccountById(userId, username, email_address);
-    
+
+    const user = await this.userAdminRepository.deleteAccountById(
+      userId,
+      username,
+      email_address,
+    );
+
     if (!user) {
       throw APIError({
         code: 404,
         success: false,
-        error: "User not found"
+        error: "User not found",
       });
     }
-  
+
     return {
       code: 204,
       success: true,
-      data: null
+      data: null,
     };
-  } 
+  }
 }

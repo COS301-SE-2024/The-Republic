@@ -2,7 +2,11 @@ import { Issue } from "@/modules/shared/models/issue";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { GetIssuesParams } from "@/types/issue";
 import { APIError } from "@/types/response";
-import { Counts, CategoryCounts, NameValue } from "@/modules/shared/models/reports";
+import {
+  Counts,
+  CategoryCounts,
+  NameValue,
+} from "@/modules/shared/models/reports";
 
 export default class ReportsRepository {
   async getAllIssuesGroupedByResolutionStatus({
@@ -286,9 +290,7 @@ export default class ReportsRepository {
   }
 
   async groupedByPoliticalAssociation(): Promise<NameValue[]> {
-    const { data, error } = await supabase
-      .from("resolution")
-      .select(`
+    const { data, error } = await supabase.from("resolution").select(`
         name: political_association,
         value: num_cluster_members_accepted.sum()
       `);
@@ -298,10 +300,9 @@ export default class ReportsRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred. Please try again later."
+        error: "An unexpected error occurred. Please try again later.",
       });
     }
-
 
     return (data as NameValue[]).reduce<NameValue[]>((newData, current) => {
       if (["NONE", null].includes(current.name)) {

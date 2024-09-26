@@ -36,7 +36,11 @@ export class LocationService {
     });
   }
 
-  async getLocationIds(filter: { province?: string; city?: string; suburb?: string }) {
+  async getLocationIds(filter: {
+    province?: string;
+    city?: string;
+    suburb?: string;
+  }) {
     return this.locationRepository.getLocationIds(filter);
   }
 }

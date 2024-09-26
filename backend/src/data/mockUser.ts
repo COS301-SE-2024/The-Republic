@@ -11,9 +11,9 @@ const mockUser: MockUser = {
   total_issues: 10,
   resolved_issues: 5,
   access_token: "access_token_value",
-  user_score: 0, 
+  user_score: 0,
   location_id: null,
-  location: null
+  location: null,
 };
 
 export default mockUser;

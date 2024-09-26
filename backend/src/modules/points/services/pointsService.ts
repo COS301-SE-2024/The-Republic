@@ -12,14 +12,20 @@ export class PointsService {
   }
 
   async awardPoints(userId: string, points: number, reason: string) {
-    const newScore = await this.pointsRepository.updateUserScore(userId, points) as number;
+    const newScore = (await this.pointsRepository.updateUserScore(
+      userId,
+      points,
+    )) as number;
     await this.pointsRepository.logPointsTransaction(userId, points, reason);
-  
+
     return newScore;
   }
 
   async penalizeUser(userId: string, points: number, reason: string) {
-    const newScore = await this.pointsRepository.updateUserScore(userId, -points) as number;
+    const newScore = (await this.pointsRepository.updateUserScore(
+      userId,
+      -points,
+    )) as number;
     await this.pointsRepository.logPointsTransaction(userId, -points, reason);
 
     if (newScore <= -150) {
@@ -45,29 +51,55 @@ export class PointsService {
     return data.length === 0;
   }
 
-  async getLeaderboard(locationFilter: { province?: string, city?: string, suburb?: string }) {
+  async getLeaderboard(locationFilter: {
+    province?: string;
+    city?: string;
+    suburb?: string;
+  }) {
     return this.pointsRepository.getLeaderboard(locationFilter);
   }
 
-  async getUserPosition(userId: string, locationFilter: { province?: string, city?: string, suburb?: string }) {
+  async getUserPosition(
+    userId: string,
+    locationFilter: { province?: string; city?: string; suburb?: string },
+  ) {
     return this.pointsRepository.getUserPosition(userId, locationFilter);
   }
 
-  async awardOrganizationPoints(organizationId: string, points: number, reason: string) {
-    const newScore = await this.pointsRepository.updateOrganizationScore(organizationId, points) as number;
-    await this.pointsRepository.logOrganizationPointsTransaction(organizationId, points, reason);
-  
+  async awardOrganizationPoints(
+    organizationId: string,
+    points: number,
+    reason: string,
+  ) {
+    const newScore = (await this.pointsRepository.updateOrganizationScore(
+      organizationId,
+      points,
+    )) as number;
+    await this.pointsRepository.logOrganizationPointsTransaction(
+      organizationId,
+      points,
+      reason,
+    );
+
     return newScore;
   }
 
-  async awardPointsForResolution(userId: string, organizationId: string | null, isSelfResolution: boolean) {
+  async awardPointsForResolution(
+    userId: string,
+    organizationId: string | null,
+    isSelfResolution: boolean,
+  ) {
     const userPoints = isSelfResolution ? 5 : 10;
     const orgPoints = 2;
 
     await this.awardPoints(userId, userPoints, "Resolution accepted");
 
     if (organizationId) {
-      await this.awardOrganizationPoints(organizationId, orgPoints, "Resolution accepted");
+      await this.awardOrganizationPoints(
+        organizationId,
+        orgPoints,
+        "Resolution accepted",
+      );
     }
   }
 }

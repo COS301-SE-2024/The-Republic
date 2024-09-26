@@ -58,7 +58,7 @@ export class LocationRepository {
       .from("location")
       .select("*")
       .eq("place_id", placesId);
-  
+
     if (error) {
       console.error(error);
       throw APIError({
@@ -67,16 +67,18 @@ export class LocationRepository {
         error: "An unexpected error occurred while fetching location.",
       });
     }
-  
+
     return data as Location[];
   }
 
   async createLocation(location: Partial<Location>): Promise<Location> {
     const { data, error } = await supabase
       .from("location")
-      .insert({...location,
+      .insert({
+        ...location,
         latitude: location.latitude,
-        longitude: location.longitude})
+        longitude: location.longitude,
+      })
       .select()
       .single();
 
@@ -111,7 +113,11 @@ export class LocationRepository {
     return data as Location | null;
   }
 
-  async getLocationIds(filter: { province?: string; city?: string; suburb?: string }) {
+  async getLocationIds(filter: {
+    province?: string;
+    city?: string;
+    suburb?: string;
+  }) {
     let query = supabase.from("location").select("location_id");
 
     if (filter.province) {
@@ -135,6 +141,6 @@ export class LocationRepository {
       });
     }
 
-    return data.map(loc => loc.location_id);
+    return data.map((loc) => loc.location_id);
   }
 }

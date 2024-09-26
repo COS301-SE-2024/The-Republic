@@ -1,4 +1,4 @@
-import { OpenAI } from 'openai';
+import { OpenAI } from "openai";
 import { APIError } from "@/types/response";
 
 export class OpenAIService {
@@ -6,7 +6,7 @@ export class OpenAIService {
 
   constructor() {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || ""
+      apiKey: process.env.OPENAI_API_KEY || "",
     });
   }
 
@@ -19,7 +19,7 @@ export class OpenAIService {
 
       return response.data[0].embedding;
     } catch (error) {
-      console.error('Error getting embedding:', error);
+      console.error("Error getting embedding:", error);
       throw APIError({
         code: 500,
         success: false,

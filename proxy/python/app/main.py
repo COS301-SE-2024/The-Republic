@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
 import requests
@@ -52,43 +52,62 @@ def proxy_request(request, server, retries):
                 verify=True
             )
             
-            excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+            excluded_headers = ['content-length', 'transfer-encoding', 'connection']
             headers = [(name, value) for name, value in response.raw.headers.items() if name.lower() not in excluded_headers]
             
+            content_type = response.headers.get('Content-Type', 'application/octet-stream')
+            headers.append(('Content-Type', content_type))
+            
+            content_length = response.headers.get('content-length')
+            if content_length:
+                headers.append(('Content-Length', content_length))
+
             if 500 <= int(response.status_code) < 600:
+                print(f"Error Occurred({retries}):", response)
                 retries += 1
             elif int(response.status_code) == 404:
-                return {
-                    "status": "error",
-                    "status_code": 404,
-                    "id": random.randint(1, 500),
-                    "data": "Bad Request, Client Error",
-                }
+                return jsonify({
+                        "status": "error",
+                        "status_code": 404,
+                        "success": False,
+                        "data": "Bad Request, Client Error",
+                    }), 404
             else:
-                return Response(response.content, response.status_code, headers)
+                if 'application/json' in response.headers.get('Content-Type', ''):
+                    try:
+                        data = response.json()
+                    except ValueError:
+                        data = response.content
+                else:
+                    try:
+                        data = response.content.decode('utf-8', errors='replace')
+                    except ValueError:
+                        data = response.content
+                
+                return jsonify(data), response.status_code
         
         except requests.exceptions.RequestException as e:
-            # print(f"Error proxying request: {e}")
+            print(f"Error proxying request: {e}")
             retries += 1
                 
         if retries >= MAX_RETRIES:
             break
     
-    return {
-        "status": "success",
-        "status_code": 502,
-        "id": random.randint(1, 500),
-        "data": "Bad API Gateway",
-    }
+    return jsonify({
+            "status": "error",
+            "success": False,
+            "status_code": 502,
+            "data": "Bad API Gateway",
+        }), 502
 
 @app.route('/', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def process_root():
-    return {
-        "status": "success",
-        "status_code": 200,
-        "id": random.randint(1, 500),
-        "data": "Welcome to The-Republic Node-Express App",
-    }
+    return jsonify({
+            "status": "success",
+            "success": True,
+            "status_code": 200,
+            "data": "Welcome to The-Republic Node-Express App",
+        }), 200
 
 @app.route('/<path:path>', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def process_request(path):

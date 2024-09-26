@@ -44,7 +44,9 @@ describe("Issue Controller", () => {
       getUserResolvedIssues: jest.fn(),
     } as unknown as jest.Mocked<IssueService>;
     (IssueService as jest.Mock).mockImplementation(() => mockIssueService);
-    (cacheMiddleware as jest.Mock).mockImplementation(() => (req: Request, res: Response, next: NextFunction) => next());
+    (cacheMiddleware as jest.Mock).mockImplementation(
+      () => (req: Request, res: Response, next: NextFunction) => next(),
+    );
   });
 
   const testControllerMethod = async (
@@ -54,10 +56,14 @@ describe("Issue Controller", () => {
     if (Array.isArray(controllerMethod)) {
       // If it's an array of middleware, call the last function (actual controller)
       const lastMiddleware = controllerMethod[controllerMethod.length - 1];
-      if (typeof lastMiddleware === 'function') {
-        await lastMiddleware(mockRequest as Request, mockResponse as Response, mockNext);
+      if (typeof lastMiddleware === "function") {
+        await lastMiddleware(
+          mockRequest as Request,
+          mockResponse as Response,
+          mockNext,
+        );
       }
-    } else if (typeof controllerMethod === 'function') {
+    } else if (typeof controllerMethod === "function") {
       await controllerMethod(mockRequest as Request, mockResponse as Response);
     }
     expect(sendResponse).toHaveBeenCalled();
@@ -68,8 +74,10 @@ describe("Issue Controller", () => {
   it("should handle updateIssue", () => testControllerMethod("updateIssue"));
   it("should handle deleteIssue", () => testControllerMethod("deleteIssue"));
   it("should handle resolveIssue", () => testControllerMethod("resolveIssue"));
-  it("should handle getUserIssues", () => testControllerMethod("getUserIssues"));
-  it("should handle getUserResolvedIssues", () => testControllerMethod("getUserResolvedIssues"));
+  it("should handle getUserIssues", () =>
+    testControllerMethod("getUserIssues"));
+  it("should handle getUserResolvedIssues", () =>
+    testControllerMethod("getUserResolvedIssues"));
 
   it("should handle createIssue", async () => {
     mockRequest.file = {} as Express.Multer.File;

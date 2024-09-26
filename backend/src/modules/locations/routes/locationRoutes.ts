@@ -1,5 +1,8 @@
 import express from "express";
-import { getAllLocations, getLocationById } from "@/modules/locations/controllers/locationController";
+import {
+  getAllLocations,
+  getLocationById,
+} from "@/modules/locations/controllers/locationController";
 
 const router = express.Router();
 

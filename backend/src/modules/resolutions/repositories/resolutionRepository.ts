@@ -3,9 +3,11 @@ import { APIError } from "@/types/response";
 import { Resolution } from "@/modules/shared/models/resolution";
 
 export class ResolutionRepository {
-  async createResolution(resolution: Omit<Resolution, 'resolution_id' | 'created_at' | 'updated_at'>): Promise<Resolution> {
+  async createResolution(
+    resolution: Omit<Resolution, "resolution_id" | "created_at" | "updated_at">,
+  ): Promise<Resolution> {
     const { data, error } = await supabase
-      .from('resolution')
+      .from("resolution")
       .insert(resolution)
       .select()
       .single();
@@ -24,9 +26,9 @@ export class ResolutionRepository {
 
   async getResolutionById(resolutionId: string): Promise<Resolution> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*, organization:organization_id(*)')
-      .eq('resolution_id', resolutionId)
+      .from("resolution")
+      .select("*, organization:organization_id(*)")
+      .eq("resolution_id", resolutionId)
       .single();
 
     if (error) {
@@ -41,11 +43,14 @@ export class ResolutionRepository {
     return data;
   }
 
-  async updateResolution(resolutionId: string, updates: Partial<Resolution>): Promise<Resolution> {
+  async updateResolution(
+    resolutionId: string,
+    updates: Partial<Resolution>,
+  ): Promise<Resolution> {
     const { data, error } = await supabase
-      .from('resolution')
+      .from("resolution")
       .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('resolution_id', resolutionId)
+      .eq("resolution_id", resolutionId)
       .select()
       .single();
 
@@ -63,16 +68,17 @@ export class ResolutionRepository {
 
   async getResolutionsByIssueId(issueId: number): Promise<Resolution[]> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*, organization:organization_id(*)')
-      .eq('issue_id', issueId);
+      .from("resolution")
+      .select("*, organization:organization_id(*)")
+      .eq("issue_id", issueId);
 
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching resolutions for the issue.",
+        error:
+          "An unexpected error occurred while fetching resolutions for the issue.",
       });
     }
 
@@ -81,11 +87,11 @@ export class ResolutionRepository {
 
   async getUserResolutions(userId: string): Promise<Resolution[]> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*, organization:organization_id(*)')
-      .eq('resolver_id', userId)
-      .order('created_at', { ascending: false });
-  
+      .from("resolution")
+      .select("*, organization:organization_id(*)")
+      .eq("resolver_id", userId)
+      .order("created_at", { ascending: false });
+
     if (error) {
       console.error(error);
       throw APIError({
@@ -94,18 +100,18 @@ export class ResolutionRepository {
         error: "An unexpected error occurred while fetching user resolutions.",
       });
     }
-  
+
     return data;
   }
-  
+
   async deleteResolution(resolutionId: string, userId: string): Promise<void> {
     const { data: resolution, error: fetchError } = await supabase
-      .from('resolution')
-      .select('*')
-      .eq('resolution_id', resolutionId)
-      .eq('resolver_id', userId)
+      .from("resolution")
+      .select("*")
+      .eq("resolution_id", resolutionId)
+      .eq("resolver_id", userId)
       .single();
-  
+
     if (fetchError) {
       console.error(fetchError);
       throw APIError({
@@ -114,29 +120,30 @@ export class ResolutionRepository {
         error: "An unexpected error occurred while fetching the resolution.",
       });
     }
-  
+
     if (!resolution) {
       throw APIError({
         code: 404,
         success: false,
-        error: "Resolution not found or you don't have permission to delete it.",
+        error:
+          "Resolution not found or you don't have permission to delete it.",
       });
     }
-  
-    if (resolution.status !== 'pending') {
+
+    if (resolution.status !== "pending") {
       throw APIError({
         code: 400,
         success: false,
         error: "Only pending resolutions can be deleted.",
       });
     }
-  
+
     const { error: deleteError } = await supabase
-      .from('resolution')
+      .from("resolution")
       .delete()
-      .eq('resolution_id', resolutionId)
-      .eq('resolver_id', userId);
-  
+      .eq("resolution_id", resolutionId)
+      .eq("resolver_id", userId);
+
     if (deleteError) {
       console.error(deleteError);
       throw APIError({
@@ -147,22 +154,25 @@ export class ResolutionRepository {
     }
   }
 
-  async getOrganizationResolutions(organizationId: string): Promise<Resolution[]> {
+  async getOrganizationResolutions(
+    organizationId: string,
+  ): Promise<Resolution[]> {
     const { data, error } = await supabase
-      .from('resolution')
-      .select('*')
-      .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
-  
+      .from("resolution")
+      .select("*")
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false });
+
     if (error) {
       console.error(error);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while fetching organization resolutions.",
+        error:
+          "An unexpected error occurred while fetching organization resolutions.",
       });
     }
-  
+
     return data;
   }
 }

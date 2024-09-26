@@ -1,6 +1,10 @@
 import SubscriptionsRepository from "@/modules/subscriptions/repositories/subscriptionsRepository";
 import { APIResponse, APIError } from "@/types/response";
-import { SubsParams, NotificationData, Notification } from "@/types/subscriptions";
+import {
+  SubsParams,
+  NotificationData,
+  Notification,
+} from "@/types/subscriptions";
 export default class SubscriptionsService {
   private SubscriptionsRepository: SubscriptionsRepository;
 
@@ -17,9 +21,7 @@ export default class SubscriptionsService {
   ): Promise<APIResponse<string>> {
     try {
       const data =
-        await this.SubscriptionsRepository.issueSubscriptions(
-          params,
-        );
+        await this.SubscriptionsRepository.issueSubscriptions(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);
@@ -36,9 +38,7 @@ export default class SubscriptionsService {
   ): Promise<APIResponse<string>> {
     try {
       const data =
-        await this.SubscriptionsRepository.categorySubscriptions(
-          params,
-        );
+        await this.SubscriptionsRepository.categorySubscriptions(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);
@@ -55,9 +55,7 @@ export default class SubscriptionsService {
   ): Promise<APIResponse<string>> {
     try {
       const data =
-        await this.SubscriptionsRepository.locationSubscriptions(
-          params,
-        );
+        await this.SubscriptionsRepository.locationSubscriptions(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);
@@ -73,8 +71,7 @@ export default class SubscriptionsService {
     params: Partial<SubsParams>,
   ): Promise<APIResponse<NotificationData>> {
     try {
-      const data =
-        await this.SubscriptionsRepository.getSubscriptions(params);
+      const data = await this.SubscriptionsRepository.getSubscriptions(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);
@@ -90,8 +87,7 @@ export default class SubscriptionsService {
     params: Partial<SubsParams>,
   ): Promise<APIResponse<Notification[]>> {
     try {
-      const data =
-        await this.SubscriptionsRepository.getNotifications(params);
+      const data = await this.SubscriptionsRepository.getNotifications(params);
       return { code: 200, success: true, data };
     } catch (error) {
       console.error("Error: ", error);

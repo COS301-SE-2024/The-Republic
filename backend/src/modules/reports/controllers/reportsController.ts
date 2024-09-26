@@ -10,14 +10,13 @@ export const getAllIssuesGroupedByResolutionStatus = [
   cacheMiddleware(300),
   async (req: Request, res: Response) => {
     try {
-      const response = await reportsService.getAllIssuesGroupedByResolutionStatus(
-        req.body,
-      );
+      const response =
+        await reportsService.getAllIssuesGroupedByResolutionStatus(req.body);
       sendResponse(res, response);
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const getIssueCountsGroupedByResolutionStatus = [
@@ -30,7 +29,7 @@ export const getIssueCountsGroupedByResolutionStatus = [
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const getIssueCountsGroupedByResolutionAndCategory = [
@@ -45,31 +44,35 @@ export const getIssueCountsGroupedByResolutionAndCategory = [
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const getIssuesGroupedByCreatedAt = [
   cacheMiddleware(300),
   async (req: Request, res: Response) => {
     try {
-      const response = await reportsService.getIssuesGroupedByCreatedAt(req.body);
+      const response = await reportsService.getIssuesGroupedByCreatedAt(
+        req.body,
+      );
       sendResponse(res, response);
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const getIssuesGroupedByCategory = [
   cacheMiddleware(300),
   async (req: Request, res: Response) => {
     try {
-      const response = await reportsService.getIssuesGroupedByCategory(req.body);
+      const response = await reportsService.getIssuesGroupedByCategory(
+        req.body,
+      );
       sendResponse(res, response);
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const getIssuesCountGroupedByCategoryAndCreatedAt = [
@@ -84,18 +87,17 @@ export const getIssuesCountGroupedByCategoryAndCreatedAt = [
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];
 
 export const groupedByPoliticalAssociation = [
   cacheMiddleware(300),
   async (_: Request, res: Response) => {
     try {
-      const response =
-        await reportsService.groupedByPoliticalAssociation();
+      const response = await reportsService.groupedByPoliticalAssociation();
       sendResponse(res, response);
     } catch (error) {
       sendResponse(res, error as APIResponse);
     }
-  }
+  },
 ];

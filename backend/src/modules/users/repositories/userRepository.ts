@@ -106,7 +106,8 @@ export default class UserRepository {
   async getUserWithLocation(userId: string) {
     const { data, error } = await supabase
       .from("user")
-      .select(`
+      .select(
+        `
         *,
         location:location_id (
           location_id,
@@ -115,7 +116,8 @@ export default class UserRepository {
           suburb,
           district
         )
-      `)
+      `,
+      )
       .eq("user_id", userId)
       .single();
 
@@ -133,7 +135,10 @@ export default class UserRepository {
 
   async updateUsername(userId: string, newUsername: string): Promise<User> {
     try {
-      const isUsernameTaken = await this.userAdminRepository.usernameExists({"username": newUsername, "user_id": userId});
+      const isUsernameTaken = await this.userAdminRepository.usernameExists({
+        username: newUsername,
+        user_id: userId,
+      });
 
       if (isUsernameTaken) {
         throw APIError({
@@ -251,21 +256,20 @@ export default class UserRepository {
   }
 
   async suspendUser(userId: string, reason: string, until: Date) {
-    const { 
-      data: currentSuspension, 
-      error: currentSuspensionError 
-    } = await supabase
-      .from("user")
-      .select("suspended_until")
-      .eq("user_id", userId)
-      .single();
+    const { data: currentSuspension, error: currentSuspensionError } =
+      await supabase
+        .from("user")
+        .select("suspended_until")
+        .eq("user_id", userId)
+        .single();
 
     if (currentSuspensionError) {
       console.error("suspendUser: ", currentSuspensionError);
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while suspending user from resolving.",
+        error:
+          "An unexpected error occurred while suspending user from resolving.",
       });
     }
 
@@ -277,7 +281,7 @@ export default class UserRepository {
       .from("user")
       .update({
         suspended_until: until,
-        suspension_reason: reason
+        suspension_reason: reason,
       })
       .eq("user_id", userId);
 
@@ -286,7 +290,8 @@ export default class UserRepository {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while suspending user from resolving.",
+        error:
+          "An unexpected error occurred while suspending user from resolving.",
       });
     }
   }
