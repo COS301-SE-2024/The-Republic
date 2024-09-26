@@ -1,16 +1,24 @@
 name: Backend Deployment and Hosting
 
+# on:
+#   push:
+#     branches:
+#       - master
+#       - main
+#       - develop
+#   pull_request:
+#     branches:
+#       - master
+#       - main
+#       - develop
+
 on:
   push:
     branches:
-      - master
-      - main
-      - develop
+      - feature/ignore_public_folder
   pull_request:
     branches:
-      - master
-      - main
-      - develop
+      - feature/ignore_public_folder
 
 jobs:
   build-and-push-backend:
