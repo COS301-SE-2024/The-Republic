@@ -102,4 +102,85 @@ export class ResolutionResponseRepository {
 
     return data;
   }
+
+  async getAverageSatisfactionRatingForUser(userId: string, organizationId: string, startDate: Date, endDate: Date): Promise<number | null> {
+    const { data, error } = await supabase
+      .from('resolution_responses')
+      .select('satisfaction_rating, resolution:resolution_id(resolver_id, organization_id, created_at)')
+      .eq('user_id', userId)
+      .eq('resolution.organization_id', organizationId)
+      .eq('response', 'accepted')
+      .gte('resolution.created_at', startDate.toISOString())
+      .lte('resolution.created_at', endDate.toISOString())
+      .not('satisfaction_rating', 'is', null);
+
+    if (error) {
+      console.error('Error getting average satisfaction rating:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting average satisfaction rating.',
+      });
+    }
+
+    if (data.length === 0) {
+      return null;
+    }
+
+    const validRatings = data.filter(item => item.satisfaction_rating !== null);
+    const sum = validRatings.reduce((acc, curr) => acc + (curr.satisfaction_rating || 0), 0);
+    return sum / validRatings.length;
+  }
+
+  async getOverallAverageSatisfactionRating(startDate: Date, endDate: Date): Promise<number> {
+    const { data, error } = await supabase
+      .from('resolution_responses')
+      .select('satisfaction_rating, resolution:resolution_id(created_at)')
+      .gte('resolution.created_at', startDate.toISOString())
+      .lte('resolution.created_at', endDate.toISOString())
+      .not('satisfaction_rating', 'is', null);
+  
+    if (error) {
+      console.error('Error getting overall average satisfaction rating:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting overall average satisfaction rating.',
+      });
+    }
+  
+    if (data.length === 0) {
+      return 0;
+    }
+  
+    const sum = data.reduce((acc, curr) => acc + curr.satisfaction_rating, 0);
+    return sum / data.length;
+  }
+
+  async getOrganizationAverageSatisfactionRating(organizationId: string, startDate: Date, endDate: Date): Promise<number> {
+    const { data, error } = await supabase
+      .from('resolution_responses')
+      .select('satisfaction_rating, resolution:resolution_id(organization_id, created_at, status)')
+      .eq('resolution.organization_id', organizationId)
+      .eq('resolution.status', 'accepted')
+      .gte('resolution.created_at', startDate.toISOString())
+      .lte('resolution.created_at', endDate.toISOString())
+      .not('satisfaction_rating', 'is', null);
+  
+    if (error) {
+      console.error('Error getting organization average satisfaction rating:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting organization average satisfaction rating.',
+      });
+    }
+  
+    if (data.length === 0) {
+      return 0;
+    }
+  
+    const sum = data.reduce((acc, curr) => acc + curr.satisfaction_rating, 0);
+    return sum / data.length;
+  }
 }

@@ -1,21 +1,29 @@
 import { useState, useEffect } from 'react';
-import { Organization, OrganizationPost, UserAlt as User } from '@/lib/types';
+import { Organization, OrganizationPost} from '@/lib/types';
 import { deleteOrganizationPost } from '@/lib/api/deleteOrganizationPost';
 import { checkUserMembership } from '@/lib/api/checkUserMembership';
+import { requestReport } from '@/lib/api/requestReport'; 
 import { useUser } from '@/lib/contexts/UserContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, MapPin, Tag, PenSquare, Star } from 'lucide-react';
+import { PenSquare, Star, BarChart, Sparkles } from 'lucide-react';
 import OrgPost from '@/components/OrgPost/OrgPost';
 import CreateOrgPost from '@/components/CreatePost/CreatePost';
 import { useToast } from '../ui/use-toast';
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 interface InformationTabProps {
   organization: Organization;
   orgPosts: OrganizationPost[];
-  topActiveMembers: User[];
   setOrgPosts: React.Dispatch<React.SetStateAction<OrganizationPost[]>>;
   isUserAdmin: boolean;
 }
@@ -23,7 +31,6 @@ interface InformationTabProps {
 export default function InformationTab({ 
   organization, 
   orgPosts, 
-  topActiveMembers, 
   setOrgPosts,
   isUserAdmin
 }: InformationTabProps) {
@@ -31,6 +38,8 @@ export default function InformationTab({
     const { toast } = useToast();
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [isMember, setIsMember] = useState(false);
+    const [showReportModal, setShowReportModal] = useState(false);
+    const [reportEmail, setReportEmail] = useState('');
 
     useEffect(() => {
       const fetchMembershipStatus = async () => {
@@ -75,47 +84,70 @@ export default function InformationTab({
       }
     };
 
-  // Mock analytics data (replace with actual data fetching logic later)
-  const analyticsData = {
-    mainCategories: ['Environment', 'Education', 'Healthcare'],
-    activeLocations: ['New York', 'Los Angeles', 'Chicago'],
-    issueResolutionTime: '3.5 days',
-  };
+    const handleReportRequest = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be signed in to request a report",
+          variant: "destructive",
+        });
+        return;
+      }
+      try {
+        await requestReport(user, organization.id, reportEmail);
+        toast({
+          title: "Report Requested",
+          description: `A detailed report will be sent to ${reportEmail}`,
+        });
+        setShowReportModal(false);
+        setReportEmail('');
+      } catch (error) {
+        console.error("Error requesting report:", error);
+        toast({
+          title: "Error",
+          description: "Failed to request report",
+          variant: "destructive",
+        });
+      }
+    };
 
-  return (
-    <div className="grid grid-cols-4 gap-6">
-      {/* Organization Posts - Spans 2 columns and full height */}
-      <Card className="col-span-2 row-span-3 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-blue-500">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-green-800">Organization Posts</CardTitle>
-          {isUserAdmin && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowCreatePost(!showCreatePost)}
-            >
-              <PenSquare className="w-5 h-5" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <AnimatePresence>
-            {showCreatePost && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="col-span-1 md:col-span-2 row-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-green-800 flex items-center">
+              <PenSquare className="w-5 h-5 mr-2" />
+              Organization Posts
+            </CardTitle>
+            {isUserAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowCreatePost(!showCreatePost)}
               >
-                <CreateOrgPost 
-                  organization={organization}
-                  onPostCreated={handlePostCreated}
-                />
-              </motion.div>
+                <PenSquare className="w-5 h-5" />
+              </Button>
             )}
-          </AnimatePresence>
-          <div className="overflow-auto max-h-[calc(100vh-300px)]">
-          {orgPosts && orgPosts.length > 0 ? (
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <AnimatePresence>
+              {showCreatePost && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <CreateOrgPost 
+                    organization={organization}
+                    onPostCreated={handlePostCreated}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className="overflow-auto max-h-[calc(100vh-300px)] space-y-4">
+              {orgPosts && orgPosts.length > 0 ? (
                 orgPosts.map((post: OrganizationPost) => (
                   <OrgPost
                     key={post.post_id}
@@ -123,96 +155,91 @@ export default function InformationTab({
                     onDeletePost={() => handleDeletePost(post.post_id)}
                     isAdmin={isUserAdmin}
                     organization={organization} 
-                    isMember={isMember}                  />
+                    isMember={isMember}
+                  />
                 ))
               ) : (
-                <p>No posts available.</p>
+                <p className="text-center text-gray-500">No posts available.</p>
               )}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-
-      {/* Top Active Members - Spans 2 columns */}
-      <Card className="col-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-yellow-500">
-        <CardHeader>
-          <CardTitle className="flex items-center text-green-800">
-            <Users className="mr-2 h-5 w-5" />
-            Most Active Members
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {topActiveMembers.length > 0 ? (
-            <ul className="space-y-4">
-              {topActiveMembers.map((member) => (
-                <li key={member.user_id} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={member.image_url} alt={member.fullname} />
-                      <AvatarFallback>{member.fullname.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span>{member.fullname}</span>
-                  </div>
-                  {/* <span className="text-sm text-gray-500">{member.activity_count} actions</span> */}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No active members to display.</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Main Focus Areas */}
-      <Card className="col-span-2 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-red-500">
-        <CardHeader>
-          <CardTitle className="flex items-center text-green-800">
-            <Tag className="mr-2 h-5 w-5" />
-            Main Focus Areas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc list-inside">
-            {analyticsData.mainCategories.map((category, index) => (
-              <li key={index}>{category}</li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Active Locations */}
-      <Card className="col-span-1 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-blue-500">
-        <CardHeader>
-          <CardTitle className="flex items-center text-green-800">
-            <MapPin className="mr-2 h-5 w-5" />
-            Active Locations
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc list-inside">
-            {analyticsData.activeLocations.map((location, index) => (
-              <li key={index}>{location}</li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Average Satisfaction Rating */}
-      <Card className="col-span-1 border-l-4 border-green-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:border-yellow-500">
+        <Card className="col-span-1 border-l-4 border-purple-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center text-green-800">
+            <CardTitle className="flex items-center text-purple-800 dark:text-purple-300">
+              <BarChart className="mr-2 h-5 w-5" />
+              Unlock Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Dive deep into this organization's performance!
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+              <li>Most active members</li>
+              <li>Issue resolution efficiency</li>
+              <li>Top-performing categories</li>
+              <li>Granular insights into the organization's performance</li>
+            </ul>
+            <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
+              <DialogTrigger asChild>
+                <Button className="w-full">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Get Your Detailed Report
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Request Your Detailed Report</DialogTitle>
+                  <DialogDescription>
+                    Enter your email to receive a comprehensive analysis of your organization's performance.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleReportRequest} className="space-y-4">
+                  <Input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={reportEmail}
+                    onChange={(e) => setReportEmail(e.target.value)}
+                    required
+                  />
+                  <Button type="submit" className="w-full">Send Me The Report</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-1 border-l-4 border-yellow-500 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle className="flex items-center text-yellow-800">
               <Star className="mr-2 h-5 w-5" />
               Satisfaction Rating
             </CardTitle>
           </CardHeader>
           <CardContent>
             {organization.averageSatisfactionRating !== null && organization.averageSatisfactionRating !== undefined ? (
-              <p className="text-2xl font-bold">{organization.averageSatisfactionRating.toFixed(1)} / 5</p>
+              <>
+                <p className="text-4xl font-bold">{organization.averageSatisfactionRating.toFixed(1)}</p>
+                <div className="flex items-center mt-2">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      className={`w-6 h-6 ${
+                        index < Math.round(organization.averageSatisfactionRating ?? 0)
+                          ? 'text-yellow-500 fill-current'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
             ) : (
-              <p className="text-sm text-gray-500">Not enough data</p>
+              <p className="text-lg text-gray-500">Not enough data</p>
             )}
           </CardContent>
         </Card>
-    </div>
-  );
+      </div>
+    );
 }
