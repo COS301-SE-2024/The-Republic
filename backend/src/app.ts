@@ -21,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://the-republic-six.vercel.app",
   "https://www.the-republic.co.za",
+  "https://infinite-loopers-load-balancer.vercel.app"
 ];
 
 app.use((req, res, next) => {
