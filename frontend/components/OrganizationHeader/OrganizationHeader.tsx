@@ -2,9 +2,10 @@ import React from 'react';
 import { Organization } from '@/lib/types';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Globe, Calendar, Star } from 'lucide-react';
+import { MapPin, Users, Globe, Calendar, Star, ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/lib/utils'; 
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
+import { useRouter } from 'next/navigation';
 
 interface OrganizationHeaderProps {
   organization: Organization;
@@ -36,6 +37,8 @@ const getOrganizationTypeBadge = (orgType: string | undefined) => {
 };
 
 export default function OrganizationHeader({ organization, isUserMember, onJoinRequest, hasUserRequested, onRemoveRequest }: OrganizationHeaderProps) {
+  const router = useRouter();
+  
   const renderJoinButton = () => {
     if (isUserMember) {
       return null;
@@ -57,9 +60,16 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row items-center justify-between">
-        <div className="flex flex-col md:flex-row items-center space-x-4">
+    <div className="space-y-4 pt-0">
+      <Button
+        variant="ghost"
+        onClick={() => router.back()}
+        className="mt-[-10px]"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+      </Button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
           <UserAvatarWithScore
             imageUrl={organization.profile_photo || ''}
             username={organization.name || 'Unknown'}
