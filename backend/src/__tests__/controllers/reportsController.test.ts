@@ -3,7 +3,6 @@ import * as reportsController from "@/modules/reports/controllers/reportsControl
 import ReportsService from "@/modules/reports/services/reportsService";
 import { sendResponse } from "@/utilities/response";
 import { cacheMiddleware } from "@/middleware/cacheMiddleware";
-import { Resend } from 'resend';
 
 jest.mock("@/modules/reports/services/reportsService");
 jest.mock("@/utilities/response");

@@ -20,6 +20,7 @@ describe("ReportsService", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env.RESEND_API_KEY = 'mocked-api-key';
     jest.spyOn(console, "error").mockImplementation(() => {});
     reportsRepository =
       new ReportsRepository() as jest.Mocked<ReportsRepository>;
