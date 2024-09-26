@@ -11,6 +11,9 @@ import {
 import { GetIssuesParams } from "@/types/issue";
 
 jest.mock("@/modules/reports/repositories/reportsRepository");
+jest.mock("@/modules/shared/services/emailService", () => ({
+  sendEmail: jest.fn(),
+}));
 
 describe("ReportsService", () => {
   let reportsService: ReportsService;
