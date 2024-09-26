@@ -9,10 +9,8 @@ import {
   CategoryAndDateCount,
 } from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
-import { sendEmail } from "@/modules/shared/services/emailService";
 
 jest.mock("@/modules/reports/repositories/reportsRepository");
-jest.mock("@/modules/shared/services/emailService");
 
 describe("ReportsService", () => {
   let reportsService: ReportsService;
@@ -20,7 +18,6 @@ describe("ReportsService", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.RESEND_API_KEY = 'mocked-api-key';
     jest.spyOn(console, "error").mockImplementation(() => {});
     reportsRepository =
       new ReportsRepository() as jest.Mocked<ReportsRepository>;
