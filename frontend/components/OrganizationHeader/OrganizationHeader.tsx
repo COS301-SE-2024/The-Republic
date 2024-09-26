@@ -12,7 +12,7 @@ interface OrganizationHeaderProps {
   isUserMember: boolean;
   onJoinRequest: () => void;
   hasUserRequested: boolean;
-  onRemoveRequest: () => void; // Add a new prop for handling remove request
+  onRemoveRequest: () => void;
 }
 
 const getOrganizationTypeBadge = (orgType: string | undefined) => {
@@ -76,7 +76,7 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
             score={organization.points || 0}
             className="h-24 w-24"
           />
-          <div>
+          <div className="mt-4 md:mt-0">
             <h1 className="text-3xl font-bold flex items-center">
               {organization.name || 'Unknown Organization'}
               {organization.verified_status && (
@@ -84,7 +84,7 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
               )}
             </h1>
             <p className="text-gray-500">@{organization.username || 'unknown'}</p>
-            <div className="flex items-center space-x-4 mt-2">
+            <div className="flex flex-col md:flex-row items-center space-x-4 mt-2">
               <span className="flex items-center">
                 <Users className="h-4 w-4 mr-1" />
                 {organization.totalMembers || 0} members
@@ -104,7 +104,7 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
             </div>
           </div>
         </div>
-        <div>
+        <div className="mt-4 md:mt-0">
           {renderJoinButton()}
         </div>
       </div>

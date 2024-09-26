@@ -61,8 +61,8 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
         title: "Success",
         description: `Join request ${accept ? 'accepted' : 'rejected'} successfully`,
       });
-      fetchJoinRequests(); // Refresh the list
-      onJoinRequestsUpdate(); // Update parent component
+      fetchJoinRequests();
+      onJoinRequestsUpdate();
     } catch (err) {
       console.error("Error handling join request:", err);
       toast({
@@ -100,7 +100,7 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
             {joinRequests.map((request) => (
               <div 
                 key={request.id} 
-                className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-200"
+                className="flex flex-col md:flex-row items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-200"
                 onClick={() => handleRowClick(request.user_id)}
               >
                 <div className="flex items-center space-x-4">
@@ -115,7 +115,7 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
                     </p>
                   </div>
                 </div>
-                <div className="space-x-2">
+                <div className="space-x-2 mt-2 md:mt-0">
                   <Button onClick={(e) => handleRequest(request.id, true, e)} variant="default">
                     Accept
                   </Button>

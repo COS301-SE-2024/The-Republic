@@ -29,7 +29,7 @@ router.get(
   organizationController.getJoinRequestByUser,
 );
 router.delete("/:id/members/:userId", organizationController.removeMember);
-router.get("/:id/report", organizationController.generateReport);
+router.post("/:id/report", organizationController.requestReport);
 router.get("/:id/posts", organizationController.getOrganizationPosts);
 router.post("/:id/posts", organizationController.createOrganizationPost);
 router.delete(

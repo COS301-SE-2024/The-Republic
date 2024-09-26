@@ -20,6 +20,14 @@ jest.mock("@/modules/shared/services/redisClient", () => ({
   },
 }));
 
+jest.mock("resend", () => ({
+  Resend: jest.fn().mockImplementation(() => ({
+    emails: {
+      send: jest.fn().mockResolvedValue({ id: 'mocked-email-id' }),
+    },
+  })),
+}));
+
 describe("Reports Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
@@ -27,6 +35,8 @@ describe("Reports Controller", () => {
   let mockReportsService: jest.Mocked<ReportsService>;
 
   beforeEach(() => {
+    process.env.REDIS_URL = "redis://localhost:6379";
+    process.env.RESEND_API_KEY = 'mocked-api-key';
     mockRequest = { body: {}, query: {} };
     mockResponse = {
       json: jest.fn(),
@@ -41,6 +51,7 @@ describe("Reports Controller", () => {
       getIssuesGroupedByCategory: jest.fn(),
       getIssuesCountGroupedByCategoryAndCreatedAt: jest.fn(),
       groupedByPoliticalAssociation: jest.fn(),
+      generateAndSendReport: jest.fn(),
     } as unknown as jest.Mocked<ReportsService>;
     (ReportsService as jest.Mock).mockImplementation(() => mockReportsService);
     (cacheMiddleware as jest.Mock).mockImplementation(
