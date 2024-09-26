@@ -158,7 +158,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
                 )}
                 {user?.user_id === member.user_id && (
                   <Button variant="secondary" onClick={handleLeaveOrganization}>
-                    Leave Organization
+                    Leave Organiztion
                   </Button>
                 )}
               </div>
