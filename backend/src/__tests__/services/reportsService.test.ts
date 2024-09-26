@@ -9,8 +9,10 @@ import {
   CategoryAndDateCount,
 } from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
+import { sendEmail } from "@/modules/shared/services/emailService";
 
 jest.mock("@/modules/reports/repositories/reportsRepository");
+jest.mock("@/modules/shared/services/emailService");
 
 describe("ReportsService", () => {
   let reportsService: ReportsService;
@@ -375,6 +377,50 @@ describe("ReportsService", () => {
       expect(
         reportsRepository.getIssuesCountGroupedByCategoryAndCreatedAt,
       ).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("generateAndSendReport", () => {
+    it("should generate and send a report", async () => {
+      const organizationId = "org123";
+      const email = "test@example.com";
+      const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>;
+      mockSendEmail.mockResolvedValue(undefined);
+
+      const response = await reportsService.generateAndSendReport(organizationId, email);
+
+      expect(response).toEqual({
+        code: 200,
+        success: true,
+        data: null,
+      });
+      expect(mockSendEmail).toHaveBeenCalledWith(
+        email,
+        'Your Requested Report',
+        '<strong>Please find the attached report.</strong>',
+        expect.arrayContaining([
+          expect.objectContaining({
+            filename: 'report.xlsx',
+            encoding: 'base64',
+            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+        ])
+      );
+    });
+
+    it("should throw an error when something goes wrong", async () => {
+      const organizationId = "org123";
+      const email = "test@example.com";
+      const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>;
+      mockSendEmail.mockRejectedValue(new Error("Email sending failed"));
+
+      await expect(reportsService.generateAndSendReport(organizationId, email)).rejects.toEqual(
+        expect.objectContaining({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred while generating and sending the report.",
+        })
+      );
     });
   });
 });
