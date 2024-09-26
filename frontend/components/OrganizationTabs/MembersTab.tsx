@@ -68,7 +68,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
     try {
       await leaveOrganization(user, organization.id);
       // Redirect user or update UI as needed
-      router.push('/');
+      router.push('/organization');
     } catch (err) {
       console.error("Error leaving organization:", err);
       toast({
