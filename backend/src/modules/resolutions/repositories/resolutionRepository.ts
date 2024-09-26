@@ -175,4 +175,66 @@ export class ResolutionRepository {
 
     return data;
   }
+
+  async getResolutionCount(params: { organizationId: string; startDate: Date; endDate: Date }): Promise<number> {
+    const { count, error } = await supabase
+      .from("resolution")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", params.organizationId)
+      .gte("created_at", params.startDate.toISOString())
+      .lte("created_at", params.endDate.toISOString());
+
+    if (error) {
+      console.error("Error getting resolution count:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while getting resolution count.",
+      });
+    }
+
+    return count || 0;
+  }
+
+  async getUserResolutionsInDateRange(userId: string, organizationId: string, startDate: Date, endDate: Date): Promise<Resolution[]> {
+    const { data, error } = await supabase
+      .from('resolution')
+      .select('*')
+      .eq('resolver_id', userId)
+      .eq('organization_id', organizationId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
+  
+    if (error) {
+      console.error('Error getting user resolutions:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting user resolutions.',
+      });
+    }
+  
+    return data || [];
+  }
+
+  async getAcceptedResolutionCount(params: { organizationId: string; startDate: Date; endDate: Date }): Promise<number> {
+    const { count, error } = await supabase
+      .from("resolution")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", params.organizationId)
+      .eq("status", "accepted")
+      .gte("created_at", params.startDate.toISOString())
+      .lte("created_at", params.endDate.toISOString());
+  
+    if (error) {
+      console.error("Error getting accepted resolution count:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while getting accepted resolution count.",
+      });
+    }
+  
+    return count || 0;
+  }
 }

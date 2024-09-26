@@ -170,4 +170,24 @@ export class CommentRepository {
       });
     }
   }
+
+  async getCommentCountByUser(userId: string, startDate: Date, endDate: Date): Promise<number> {
+    const { count, error } = await supabase
+      .from('comments')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
+
+    if (error) {
+      console.error('Error getting comment count:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting comment count.',
+      });
+    }
+
+    return count || 0;
+  }
 }

@@ -1059,13 +1059,11 @@ export class OrganizationRepository {
       });
     }
 
-    // Fetch reactions for the post
     const reactions = await this.reactionRepository.getReactionCountsByItemId(
       postId,
       "post",
     );
 
-    // Transform reactions into the expected format
     const reactionCounts = {
       "😠":
         reactions.find((r: { emoji: string }) => r.emoji === "😠")?.count || 0,
@@ -1081,7 +1079,7 @@ export class OrganizationRepository {
       ...data,
       reactions: {
         counts: reactionCounts,
-        userReaction: null, // We'll set this to null for now, as we don't have the user ID here
+        userReaction: null,
       },
     } as OrganizationPost;
   }
@@ -1141,5 +1139,28 @@ export class OrganizationRepository {
     }
 
     return { data: data as ActivityLog[], total: count || 0 };
+  }
+
+  async getNewMembers(organizationId: string, startDate: Date, endDate: Date): Promise<Array<{
+    user_id: string,
+    joined_at: string
+  }>> {
+    const { data, error } = await supabase
+      .from('organization_members')
+      .select('user_id, joined_at')
+      .eq('organization_id', organizationId)
+      .gte('joined_at', startDate.toISOString())
+      .lte('joined_at', endDate.toISOString());
+  
+    if (error) {
+      console.error('Error fetching new members:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while fetching new members.',
+      });
+    }
+  
+    return data;
   }
 }
