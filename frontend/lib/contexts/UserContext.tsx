@@ -25,11 +25,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (userData) {
-      setUser(userData);
-      localStorage.setItem("savedUser", JSON.stringify(userData));
-    }
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -38,7 +33,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           expires: new Date((session?.expires_at ?? 0) * 1000),
         });
 
-        if (user === null) {
+        if (session?.user.id !== user?.user_id) {
+          if (user) setUser(null);
           refetch();
         }
       } else if (event === "SIGNED_OUT") {
@@ -51,6 +47,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
+  }, [user, setUser]);
+
+  useEffect(() => {
+    if (userData) {
+      setUser(userData);
+      localStorage.setItem("savedUser", JSON.stringify(userData));
+    }
   }, [userData]);
 
   return (
