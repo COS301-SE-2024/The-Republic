@@ -3,10 +3,11 @@
 import React from "react";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Issue as IssueType, ProfileFeedProps } from "@/lib/types";
-import Issue from "../Issue/Issue";
+import Issue from "@/components/Issue/Issue";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import ResolutionFeed from "../ResolutionFeed/ResolutionFeed";
+import ErrorPage from "@/components/ui/error_page";
+import ResolutionFeed from "@/components/ResolutionFeed/ResolutionFeed";
 
 import { profileFetchIssues } from "@/lib/api/profileFetchIssues";
 
@@ -46,13 +47,19 @@ const ProfileFeed: React.FC<ProfileFeedProps> = ({ userId, selectedTab }) => {
       {isLoading ? (
         <LoadingIndicator />
       ) : isError ? (
-        <p className="text-center text-red-500 mt-4">Failed to load issues.</p>
+        <ErrorPage
+          message="Failed to load issues."
+          error="We encountered a problem while trying to load issues. Please check your connection and try reloading the page."
+        />
       ) : nonAnonymousIssues.length > 0 ? (
         nonAnonymousIssues.map((issue) => (
           <Issue key={issue.issue_id} issue={issue} />
         ))
       ) : (
-        <p className="text-center text-gray-500 mt-4">No issues found.</p>
+        <ErrorPage
+          message="No issues found."
+          error="It seems there are no issues to display. Please check back later."
+        />
       )}
     </div>
   );

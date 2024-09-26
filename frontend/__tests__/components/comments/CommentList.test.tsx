@@ -138,7 +138,7 @@ describe("CommentList", () => {
     secondDeleteButtons.forEach((button) => fireEvent.click(button));
 
     await waitFor(() => {
-      expect(mockToast.toast).not.toHaveBeenCalledWith({
+      expect(mockToast.toast).toHaveBeenCalledWith({
         description: "Comment deleted successfully",
       });
       expect(screen.queryByText("This is a comment")).not.toBeInTheDocument();
@@ -195,7 +195,8 @@ describe("CommentList", () => {
     await waitFor(() => {
       expect(console.error).not.toBe(null);
       expect(mockToast.toast).toHaveBeenCalledWith({
-        description: "Error deleting comment",
+        description: "Failed to delete comment",
+        variant: "destructive",
       });
       expect(screen.getByText("This is a comment")).toBeInTheDocument();
     });

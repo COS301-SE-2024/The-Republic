@@ -1,15 +1,16 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Loader2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Loader2 } from "lucide-react";
 import fetchLeaderboard from "@/lib/api/fetchLeaderboard";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
-import { UserAlt, LeaderboardEntry } from "@/lib/types";
 import { useUser } from "@/lib/contexts/UserContext";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import ErrorDisplay from '@/components/ui/error_display';
+import { useQuery } from '@tanstack/react-query';
 
 type RankingType = 'country' | 'province' |'city' | 'suburb';
 
@@ -23,36 +24,27 @@ const Leaderboard: React.FC = () => {
   const { user } = useUser();
   const [rankingType, setRankingType] = useState<RankingType>('country');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
-  const [userData, setUserData] = useState<UserAlt | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const { theme } = useTheme();
   const router = useRouter();
-  const [userHasLocation, setUserHasLocation] = useState(false);
-
-  const handleUsernameClick = (userId: string) => {
-    router.push(`/profile/${userId}`);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
+  const { data: locationData } = useQuery({
+    queryKey: ["user-location"],
+    queryFn: async () => {
+      if (user?.location_id) {
+        return await fetchUserLocation(user.location_id);
+      } else {
+        return null;
+      }
+    }
+  });
+  const { data, error, isPending, isFetching } = useQuery({
+    queryKey: ["leaderboard", rankingType],
+    queryFn: async () => {
       if (!user) {
-        setError('No user data available');
-        setIsLoading(false);
-        return;
+        throw 'No user data available';
       }
   
       try {
-        setIsLoading(true);
-        setError(null);
-  
-        const locationData = user.location_id ? await fetchUserLocation(user.location_id) : null;
-        setUserHasLocation(!!locationData);
-  
         let filterData = {};
         if (locationData && locationData.value) {
           filterData = {
@@ -63,21 +55,22 @@ const Leaderboard: React.FC = () => {
         }
   
         const data = await fetchLeaderboard(user.user_id, rankingType, filterData);
-  
-        setLeaderboardData(data.leaderboard);
-        setUserData(data.user);
-        setIsLoading(false);
+
+        return {
+          leaderboardData: data.leaderboard,
+          userData: data.user
+        };
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
-        setError('Failed to load leaderboard data');
-        setIsLoading(false);
-      } finally {
-        setIsLoading(false); 
+        throw 'Failed to load leaderboard data';
       }
-    };
-  
-    fetchData();
-  }, [user, rankingType]);
+    },
+    enabled: locationData !== undefined
+  });
+
+  const handleUsernameClick = (userId: string) => {
+    router.push(`/profile/${userId}`);
+  };
 
   useEffect(() => {
     if (userRowRef.current) {
@@ -85,7 +78,7 @@ const Leaderboard: React.FC = () => {
     }
   }, [rankingType]);
 
-  if (isLoading) {
+  if (isPending || isFetching) {
     return <LoadingIndicator />;
   }
 
@@ -99,6 +92,8 @@ const Leaderboard: React.FC = () => {
       />
     );
   }
+
+  const { leaderboardData, userData } = data!;
   
   if (!userData) {
     return (
@@ -111,20 +106,22 @@ const Leaderboard: React.FC = () => {
     );
   }  
 
+  const userHasLocation = !!locationData;
+
   return (
-    <div className={`min-h-screen p-4 max-w-7xl max-h-8xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
+    <div className={`min-h-screen p-4 max-w-7xl mx-auto w-full relative ${theme === 'dark' ? 'bg-[#0C0A09] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
       <div className="flex flex-col items-center mb-6">
-        <Avatar className="w-32 h-32 mb-4">
+        <Avatar className="w-24 h-24 mb-4 sm:w-32 sm:h-32">
           <AvatarImage src={userData.image_url} alt={userData.fullname} />
           <AvatarFallback>{userData.fullname.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="text-center">
-          <h2 className="text-4xl font-bold">{userData.fullname}</h2>
-          <p className="text-xl">Points: {userData.user_score}</p>
+          <h2 className="text-2xl font-bold sm:text-4xl">{userData.fullname}</h2>
+          <p className="text-lg sm:text-xl">Points: {userData.user_score}</p>
         </div>
         <div className="mt-4">
           <p className="text-sm">Your {rankingType.charAt(0).toUpperCase() + rankingType.slice(1)} Ranking</p>
-          <p className="text-3xl font-bold text-center">
+          <p className="text-2xl font-bold text-center sm:text-3xl">
             {userData.ranking !== null ? `${userData.ranking}` : 'N/A'}
           </p>
         </div>
@@ -139,88 +136,87 @@ const Leaderboard: React.FC = () => {
         </button>
         {showDropdown && (
           <div className={`absolute mt-2 border rounded shadow-lg z-20 ${theme === 'dark' ? 'bg-[#1a1a1a] text-[#f5f5f5]' : 'bg-white text-gray-800'}`}>
-          <button
-            className="block px-4 py-2 hover:bg-gray-200 text"
-            onClick={() => { setRankingType('country'); setShowDropdown(false); }}
-          >
-            Country Ranking
-          </button>
-          {userHasLocation && (
-            <>
-              <button
-                className="block px-4 py-2 hover:bg-gray-200"
-                onClick={() => { setRankingType('province'); setShowDropdown(false); }}
-              >
-                Province Ranking
-              </button>
-              <button
-                className="block px-4 py-2 hover:bg-gray-200"
-                onClick={() => { setRankingType('city'); setShowDropdown(false); }}
-              >
-                City Ranking
-              </button>
-              <button
-                className="block px-4 py-2 hover:bg-gray-200"
-                onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
-              >
-                Suburb Ranking
-              </button>
-            </>
-          )}
-        </div>
-      )}
-    </div>
+            <button
+              className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
+              onClick={() => { setRankingType('country'); setShowDropdown(false); }}
+            >
+              Country Ranking
+            </button>
+            {userHasLocation && (
+              <>
+                <button
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
+                  onClick={() => { setRankingType('province'); setShowDropdown(false); }}
+                >
+                  Province Ranking
+                </button>
+                <button
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
+                  onClick={() => { setRankingType('city'); setShowDropdown(false); }}
+                >
+                  City Ranking
+                </button>
+                <button
+                  className="block px-4 py-2 hover:bg-gray-200 text-left w-full"
+                  onClick={() => { setRankingType('suburb'); setShowDropdown(false); }}
+                >
+                  Suburb Ranking
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
 
-    {!userHasLocation && rankingType !== 'country' && (
+      {!userHasLocation && rankingType !== 'country' && (
         <div className="mb-4 p-4 bg-yellow-100 text-yellow-800 rounded">
-          Set your location to see more detailed ranking information.
+          <p className="mb-2">Set your location to see more detailed ranking information.</p>
           <Button
             onClick={() => router.push('/profile')}
-            className="ml-4 bg-yellow-500 text-white"
+            className="bg-yellow-500 text-white w-full sm:w-auto"
           >
             Set Location
           </Button>
         </div>
       )}
 
-      <div className={`border rounded scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 relative z-0 ${theme === 'dark' ? 'bg-[#0C0A09]' : 'bg-white'}`}>
+      <div className={`border rounded overflow-x-auto relative z-0 ${theme === 'dark' ? 'bg-[#0C0A09]' : 'bg-white'}`}>
         <table className="w-full table-auto">
           <thead className={theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-white'}>
             <tr className={`text-left ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
-              <th className="py-2 px-6">Ranking</th>
-              <th className="py-2 px-6">Username</th>
-              <th className="py-2 px-6">Points</th>
-              {rankingType === 'country' && <th className="py-2 px-6">Province</th>}
-              {rankingType === 'country' && <th className="py-2 px-6">City</th>}
-              {rankingType === 'country' && <th className="py-2 px-6">Suburb</th>}
-              {rankingType === 'city' && <th className="py-2 px-6">City</th>}
-              {rankingType === 'suburb' && <th className="py-2 px-6">Suburb</th>}
+              <th className="py-2 px-2 sm:px-6">Rank</th>
+              <th className="py-2 px-2 sm:px-6">User</th>
+              <th className="py-2 px-2 sm:px-6">Points</th>
+              {rankingType === 'country' && <th className="py-2 px-2 sm:px-6 hidden md:table-cell">Province</th>}
+              {rankingType === 'country' && <th className="py-2 px-2 sm:px-6 hidden lg:table-cell">City</th>}
+              {rankingType === 'country' && <th className="py-2 px-2 sm:px-6 hidden xl:table-cell">Suburb</th>}
+              {rankingType === 'city' && <th className="py-2 px-2 sm:px-6">City</th>}
+              {rankingType === 'suburb' && <th className="py-2 px-2 sm:px-6">Suburb</th>}
             </tr>
           </thead>
-           <tbody>
-        {leaderboardData.map(entry => (
-          <tr
-            key={entry.userId}
-            className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
-            ref={entry.userId === userData.user_id ? userRowRef : null}
-          >
-            <td className="py-2 px-6">{entry.rank}</td>
-            <td 
-              className="py-2 px-6"
-              onClick={() => handleUsernameClick(entry.userId)}
-              style={{ cursor: "pointer" }}
-            >
-              {entry.username}
-            </td>
-            <td className="py-2 px-6">{entry.points}</td>
-            {rankingType === 'country' && <td className="py-2 px-6">{entry.province || 'N/A'}</td>}
-            {rankingType === 'country' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
-            {rankingType === 'country' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
-            {rankingType === 'city' && <td className="py-2 px-6">{entry.city || 'N/A'}</td>}
-            {rankingType === 'suburb' && <td className="py-2 px-6">{entry.suburb || 'N/A'}</td>}
-          </tr>
-        ))}
-      </tbody>
+          <tbody>
+            {leaderboardData.map(entry => (
+              <tr
+                key={entry.userId}
+                className={`border-b ${entry.userId === userData.user_id ? theme === 'dark' ? 'bg-green-700 text-black' : 'bg-green-100' : ''}`}
+                ref={entry.userId === userData.user_id ? userRowRef : null}
+              >
+                <td className="py-2 px-2 sm:px-6">{entry.rank}</td>
+                <td 
+                  className="py-2 px-2 sm:px-6 cursor-pointer"
+                  onClick={() => handleUsernameClick(entry.userId)}
+                >
+                  {entry.username}
+                </td>
+                <td className="py-2 px-2 sm:px-6">{entry.points}</td>
+                {rankingType === 'country' && <td className="py-2 px-2 sm:px-6 hidden md:table-cell">{entry.province || 'N/A'}</td>}
+                {rankingType === 'country' && <td className="py-2 px-2 sm:px-6 hidden lg:table-cell">{entry.city || 'N/A'}</td>}
+                {rankingType === 'country' && <td className="py-2 px-2 sm:px-6 hidden xl:table-cell">{entry.suburb || 'N/A'}</td>}
+                {rankingType === 'city' && <td className="py-2 px-2 sm:px-6">{entry.city || 'N/A'}</td>}
+                {rankingType === 'suburb' && <td className="py-2 px-2 sm:px-6">{entry.suburb || 'N/A'}</td>}
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>

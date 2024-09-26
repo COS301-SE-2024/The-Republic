@@ -5,6 +5,16 @@ import * as visualizationController from "@/modules/visualizations/controllers/v
 
 jest.mock("@/modules/visualizations/services/visualizationService");
 jest.mock("@/utilities/response");
+jest.mock("@/modules/shared/services/redisClient", () => ({
+  __esModule: true,
+  default: {
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn().mockResolvedValue([]),
+  },
+}));
 
 describe("Visualization Controller", () => {
   let mockRequest: Partial<Request>;

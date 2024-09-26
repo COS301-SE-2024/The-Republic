@@ -5,7 +5,8 @@ const createSelfResolution = async (
   user: User,
   issueId: number,
   resolutionText: string,
-  proofImage?: File
+  proofImage?: File,
+  organizationId?: string
 ): Promise<Resolution | null> => {
   if (!user) {
     toast({
@@ -25,6 +26,9 @@ const createSelfResolution = async (
   formData.append('resolutionText', resolutionText);
   if (proofImage) {
     formData.append('proofImage', proofImage);
+  }
+  if (organizationId) {
+    formData.append('organizationId', organizationId);  // Add this line
   }
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/self-resolution`;

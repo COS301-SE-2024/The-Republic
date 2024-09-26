@@ -1,46 +1,156 @@
-"use client";
-
-import React from "react";
-import { SquarePen } from "lucide-react";
-import * as Dialog from "@radix-ui/react-dialog";
+import React, { useState, useRef } from 'react';
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-import { useTheme } from "next-themes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from '@/components/ui/use-toast';
+import TextareaAutosize from "react-textarea-autosize";
+import { Loader2, Image as LucideImage, X } from "lucide-react";
+import { Organization, OrganizationPost } from '@/lib/types';
+import Image from "next/image";
+import { checkImageFileAndToast } from "@/lib/utils";
+import { useUser } from "@/lib/contexts/UserContext";
+import { createOrganizationPost } from '@/lib/api/createOrganizationPost';
+import CircularProgress from "@/components/CircularProgressBar/CircularProgressBar";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
-const CreatePost: React.FC = () => {
-  const { theme } = useTheme();
+const MAX_CHAR_COUNT = 300;
+
+interface CreateOrgPostProps {
+  organization: Organization;
+  onPostCreated: (newPost: OrganizationPost) => void;
+}
+
+const CreateOrgPost: React.FC<CreateOrgPostProps> = ({ organization, onPostCreated }) => {
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useUser();
+
+  const handleCreatePost = async () => {
+    if (!user || !content.trim()) return;
+    setIsLoading(true);
+
+    try {
+      const isContentAppropriate = await checkContentAppropriateness(content);
+
+      if (!isContentAppropriate) {
+        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          description: "Please use appropriate language.",
+        });
+        return;
+      }
+
+      if (image && !(await checkImageFileAndToast(image, toast))) {
+        setIsLoading(false);
+        return;
+      }
+
+      const newPost = await createOrganizationPost(user, organization.id, content, image || undefined);
+      onPostCreated(newPost);
+      setContent("");
+      setImage(null);
+      toast({
+        title: "Success",
+        description: "Post created successfully",
+      });
+    } catch (err) {
+      console.error("Error creating post:", err);
+      toast({
+        title: "Error",
+        description: "Failed to create post",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const charCount = content.length;
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <div className="flex items-center cursor-pointer">
-          <SquarePen className="w-4 h-4 mr-1" />
-          <span className="text-sm text-gray-600">Create a post</span>
+    <Card className="mb-4 w-full bg-background border-primary rounded-lg overflow-hidden">
+      <CardContent className="p-4">
+        <div className="flex items-center mb-4">
+          <Avatar className="mr-2">
+            <AvatarImage src={organization.profile_photo} />
+            <AvatarFallback>{organization.name[0]}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{organization.name}</span>
         </div>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className="bg-black/50 fixed inset-0" />
-        <Dialog.Content
-          className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg w-[90vw] max-w-3xl ${
-            theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-          }`}
+        <div className="flex-grow w-full">
+          <TextareaAutosize
+            placeholder="What's new with the organization?"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full p-2 border rounded resize-none"
+            maxRows={10}
+          />
+          {image && (
+            <div className="relative w-full h-48 mt-2">
+              <Image
+                src={URL.createObjectURL(image)}
+                alt="Uploaded"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute top-2 right-2 bg-white bg-opacity-70"
+                onClick={removeImage}
+              >
+                <X />
+              </Button>
+            </div>
+          )}
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between items-center p-4">
+        <div className="flex items-center space-x-2">
+          <CircularProgress charCount={charCount} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <LucideImage className="w-4 h-4" />
+          </Button>
+        </div>
+        <Button
+          onClick={handleCreatePost}
+          disabled={charCount > MAX_CHAR_COUNT || !content || isLoading}
         >
-          <Dialog.Title className="text-xl font-semibold mb-4">
-            Create a Post
-          </Dialog.Title>
-          <Dialog.Description style={{ display: "none" }}>
-            Fill in the details below to create a new post.
-          </Dialog.Description>
-          <IssueInputBox onAddIssue={() => {}} />
-          <Dialog.Close asChild>
-            <Button variant="outline" className="mt-4">
-              Close
-            </Button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+          Post
+          {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+        </Button>
+      </CardFooter>
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: "none" }}
+      />
+    </Card>
   );
 };
 
-export default CreatePost;
+export default CreateOrgPost;

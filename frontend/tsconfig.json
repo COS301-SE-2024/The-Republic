@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "lib": ["dom", "dom.iterable", "esnext", "es6", "es5"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -29,7 +30,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "cypress/**/*.ts",
-    "global.d.ts"
+    "global.d.ts",
+    "components/CreateOrganizationForm"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "backend"]
 }

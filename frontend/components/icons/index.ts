@@ -1,9 +1,9 @@
-export { default as HomeIcon } from "./HomeIcon";
-export { default as ProfileIcon } from "./ProfileIcon";
-export { default as VisualizationsIcon } from "./VisualizationsIcon";
-export { default as LogoutIcon } from "./LogoutIcon";
-export { default as ReportsIcon } from "./ReportsIcon";
-export { default as NotificationsIcon } from "./NotificationsIcon";
-export { default as SettingsIcon } from "./SettingsIcon";
-export { default as TrophyIcon } from './TrophyIcon';
-
+export { default as HomeIcon } from "@/components/icons/HomeIcon";
+export { default as ProfileIcon } from "@/components/icons/ProfileIcon";
+export { default as VisualizationsIcon } from "@/components/icons/VisualizationsIcon";
+export { default as LogoutIcon } from "@/components/icons/LogoutIcon";
+export { default as ReportsIcon } from "@/components/icons/ReportsIcon";
+export { default as NotificationsIcon } from "@/components/icons/NotificationsIcon";
+export { default as SettingsIcon } from "@/components/icons/SettingsIcon";
+export { default as TrophyIcon } from '@/components/icons/TrophyIcon';
+export { default as OrganizationIcon } from '@/components/icons/OrganizationIcon';

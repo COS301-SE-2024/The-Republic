@@ -25,115 +25,121 @@ describe("ReactionService", () => {
 
   describe("addOrRemoveReaction", () => {
     it("should add a new reaction", async () => {
-      const newReaction: Partial<Reaction> = {
+      const newReaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         user_id: "1",
         emoji: "👍",
+        itemType: "issue",
       };
       const addedReaction: Reaction = {
-        ...newReaction,
+        reaction_id: 1,
         issue_id: 1,
         user_id: "1",
-        reaction_id: 1,
         emoji: "👍",
         created_at: "2022-01-01",
       };
-      reactionRepository.getReactionByUserAndIssue.mockResolvedValue(null);
+      reactionRepository.getReactionByUserAndItem.mockResolvedValue(null);
       reactionRepository.addReaction.mockResolvedValue(addedReaction);
 
-      const response = await reactionService.addOrRemoveReaction(
-        newReaction as Reaction,
-      );
+      const response = await reactionService.addOrRemoveReaction(newReaction);
 
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "reacted to an issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
+        "1",
+        5,
+        "reacted to an issue",
+      );
 
       expect(response.data).toEqual({
         added: "👍",
         removed: undefined,
       });
-      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(
-        1,
+      expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith(
+        "1",
+        "issue",
         "1",
       );
-      expect(reactionRepository.addReaction).toHaveBeenCalledWith(
-        newReaction as Reaction,
-      );
+      expect(reactionRepository.addReaction).toHaveBeenCalledWith(newReaction);
       expect(reactionRepository.addReaction).toHaveBeenCalledTimes(1);
     });
 
     it("should remove an existing reaction", async () => {
-      const reaction: Partial<Reaction> = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         user_id: "1",
         emoji: "👍",
+        itemType: "issue",
       };
       const existingReaction: Reaction = {
-        ...reaction,
+        reaction_id: 1,
         issue_id: 1,
         user_id: "1",
-        reaction_id: 1,
         emoji: "👍",
         created_at: "2022-01-01",
       };
-      reactionRepository.getReactionByUserAndIssue.mockResolvedValue(
+      reactionRepository.getReactionByUserAndItem.mockResolvedValue(
         existingReaction,
       );
       reactionRepository.deleteReaction.mockResolvedValue(existingReaction);
 
-      const response = await reactionService.addOrRemoveReaction(
-        reaction as Reaction,
-      );
+      const response = await reactionService.addOrRemoveReaction(reaction);
 
       expect(response.data).toEqual({
         added: undefined,
         removed: "👍",
       });
-      expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(
-        1,
+      expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith(
+        "1",
+        "issue",
         "1",
       );
-      expect(reactionRepository.deleteReaction).toHaveBeenCalledWith(1, "1");
+      expect(reactionRepository.deleteReaction).toHaveBeenCalledWith(
+        "1",
+        "issue",
+        "1",
+      );
       expect(reactionRepository.deleteReaction).toHaveBeenCalledTimes(1);
     });
 
     it("should throw an error when user_id is missing", async () => {
-      const reaction: Partial<Reaction> = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         issue_id: 1,
         emoji: "👍",
+        itemType: "issue",
       };
 
       await expect(
         (async () => {
           try {
-            await reactionService.addOrRemoveReaction(reaction as Reaction);
+            await reactionService.addOrRemoveReaction(reaction);
           } catch (error) {
             throw new Error((error as APIResponse).error);
           }
         })(),
       ).rejects.toThrow("You need to be signed in to react");
       expect(
-        reactionRepository.getReactionByUserAndIssue,
+        reactionRepository.getReactionByUserAndItem,
       ).not.toHaveBeenCalled();
       expect(reactionRepository.addReaction).not.toHaveBeenCalled();
       expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();
     });
 
     it("should throw an error when required fields are missing", async () => {
-      const reaction: Partial<Reaction> = {
+      const reaction: Partial<Reaction> & { itemType: "issue" | "post" } = {
         user_id: "1",
+        itemType: "issue",
       };
 
       await expect(
         (async () => {
           try {
-            await reactionService.addOrRemoveReaction(reaction as Reaction);
+            await reactionService.addOrRemoveReaction(reaction);
           } catch (error) {
             throw new Error((error as APIResponse).error);
           }
         })(),
       ).rejects.toThrow("Missing required fields for reacting");
       expect(
-        reactionRepository.getReactionByUserAndIssue,
+        reactionRepository.getReactionByUserAndItem,
       ).not.toHaveBeenCalled();
       expect(reactionRepository.addReaction).not.toHaveBeenCalled();
       expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();

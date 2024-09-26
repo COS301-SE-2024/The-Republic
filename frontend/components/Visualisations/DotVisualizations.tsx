@@ -15,7 +15,7 @@ import {
   RenderItemResult,
 } from "@/lib/types";
 import { colorFromCategory } from "@/lib/utils";
-import { LoadingSpinner } from "../Spinner/Spinner";
+import { LoadingSpinner } from "@/components/Spinner/Spinner";
 import { dotVisualization } from "@/lib/api/dotVisualization";
 import { useRouter } from "next/navigation";
 
@@ -184,7 +184,6 @@ const EChartsComponent = () => {
               const minSize = 1000;
               const maxSize = 100000;
               const size = Math.sqrt(minSize + (d.issueRate / maxIssueRate) * (maxSize - minSize)) * 50;
-              // console.log(`Province: ${d.id}, Count: ${d.value}, Population: ${d.population}, Issue Rate: ${d.issueRate.toFixed(8)}, Calculated Size: ${size.toFixed(2)}`);
               return size;
             }
 

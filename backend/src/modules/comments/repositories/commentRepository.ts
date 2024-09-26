@@ -4,14 +4,18 @@ import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
 
 export class CommentRepository {
-  async getNumComments(issue_id: number, parent_id?: number) {
+  async getNumComments(
+    itemId: string,
+    itemType: "issue" | "post",
+    parent_id?: number,
+  ) {
     let query = supabase
       .from("comment")
       .select("*", {
         count: "exact",
         head: true,
       })
-      .eq("issue_id", issue_id);
+      .eq(itemType === "issue" ? "issue_id" : "post_id", itemId);
 
     query = !parent_id
       ? query.is("parent_id", null)
@@ -21,7 +25,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -32,7 +35,14 @@ export class CommentRepository {
     return count!;
   }
 
-  async getComments({ issue_id, user_id, from, amount, parent_id }: GetCommentsParams) {
+  async getComments({
+    itemId,
+    itemType,
+    user_id,
+    from,
+    amount,
+    parent_id,
+  }: GetCommentsParams) {
     let query = supabase
       .from("comment")
       .select(
@@ -48,7 +58,7 @@ export class CommentRepository {
         )
       `,
       )
-      .eq("issue_id", issue_id)
+      .eq(itemType === "issue" ? "issue_id" : "post_id", itemId)
       .order("created_at", { ascending: false })
       .range(from, from + amount - 1);
 
@@ -60,7 +70,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -97,7 +106,8 @@ export class CommentRepository {
     const { data, error } = await supabase
       .from("comment")
       .insert(comment)
-      .select(`
+      .select(
+        `
         *,
         user: user_id (
           user_id,
@@ -106,12 +116,12 @@ export class CommentRepository {
           fullname,
           image_url
         )
-      `)
+      `,
+      )
       .single();
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -145,7 +155,6 @@ export class CommentRepository {
 
     if (error) {
       console.error(error);
-
       throw APIError({
         code: 500,
         success: false,
@@ -160,5 +169,25 @@ export class CommentRepository {
         error: "Comment does not exist",
       });
     }
+  }
+
+  async getCommentCountByUser(userId: string, startDate: Date, endDate: Date): Promise<number> {
+    const { count, error } = await supabase
+      .from('comments')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
+
+    if (error) {
+      console.error('Error getting comment count:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting comment count.',
+      });
+    }
+
+    return count || 0;
   }
 }

@@ -1,70 +1,79 @@
-import { useRef, useState, useEffect } from "react";
-import { useUser } from "@/lib/contexts/UserContext";
-import Issue from "../Issue/Issue";
-import IssueInputBox from "@/components/IssueInputBox/IssueInputBox";
-import RightSidebar from "@/components/RightSidebar/RightSidebar";
+import React, { useRef, useState, useEffect } from "react";
+import Issue from "@/components/Issue/Issue";
+
+const IssueInputBox = React.lazy(() => import("@/components/IssueInputBox/IssueInputBox"));
+const MobileIssueInput = React.lazy(() => import("@/components/MobileIssueInput/MobileIssueInput"));
+const RightSidebar = React.lazy(() => import('@/components/RightSidebar/RightSidebar'));
+
 import {
   Issue as IssueType,
   RequestBody,
   Resolution,
+  Location,
+  UserContextType,
 } from "@/lib/types";
+
 import styles from '@/styles/Feed.module.css';
 import { Filter, Loader2, Plus } from "lucide-react";
-import { LazyList, LazyListRef } from "../LazyList/LazyList";
-import { Location } from "@/lib/types";
+import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
 import { useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
+import { ErrorPage } from "@/components/ui/error_page";
 import FilterModal from "@/components/FilterModal/FilterModal";
-import MobileIssueInput from "@/components/MobileIssueInput/MobileIssueInput";
 
-const FETCH_SIZE = 5;
+const FETCH_SIZE = 10;
 
-const Feed: React.FC = () => {
-  const { user } = useUser();
+let lastSortBy: string;
+let lastFilter: string;
+let lastLocation: Location | null;
+
+const Feed: React.FC<UserContextType> = ({ user }) => {
   const lazyRef = useRef<LazyListRef<IssueType>>(null);
   const searchParams = useSearchParams();
-  const [sortBy, setSortBy] = useState("newest");
-  const [filter, setFilter] = useState(searchParams.get("category") ?? "All");
-  const [location, setLocation] = useState<Location | null>(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [sortBy, setSortBy] = useState(lastSortBy ?? "newest");
+  const [filter, setFilter] = useState(lastFilter ?? searchParams.get("category") ?? "All");
+  const [location, setLocation] = useState<Location | null>(lastLocation ?? null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(lastLocation === undefined);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
 
   useEffect(() => {
+    const locationString = searchParams.get("location");
+    if (locationString) {
+      const locationParts = locationString.split(", ").slice(1);
+      const locationObject: Location = {
+        location_id: "",
+        province: locationParts[0],
+        city: "",
+        suburb: "",
+        district: locationParts.slice(-1)[0],
+      };
+
+      if (locationParts.length >= 3) {
+        locationObject.city = locationParts[1];
+      }
+
+      if (locationParts.length === 4) {
+        locationObject.suburb = locationParts[2];
+      }
+
+      setLocation(locationObject);
+      setIsLoadingLocation(false);
+      return;
+    }
+
     const loadLocation = async () => {
       setIsLoadingLocation(true);
 
-      const locationString = searchParams.get("location");
-      if (locationString) {
-        const locationParts = locationString.split(", ").slice(1);
-        const locationObject: Location = {
-          location_id: "",
-          province: locationParts[0],
-          city: "",
-          suburb: "",
-          district: locationParts.slice(-1)[0],
-        };
-
-        if (locationParts.length >= 3) {
-          locationObject.city = locationParts[1];
-        }
-
-        if (locationParts.length === 4) {
-          locationObject.suburb = locationParts[2];
-        }
-
-        setLocation(locationObject);
-        setIsLoadingLocation(false);
-      } else if (user && user.location_id) {
+      if (user && user.location_id) {
         try {
           const userLocation = await fetchUserLocation(user.location_id);
           if (userLocation) {
-            setLocation(() => {
-              return { ...userLocation.value, location_id: "" };
-            });
+            lastLocation = { ...userLocation.value, location_id: "" };
+            setLocation({...lastLocation});
           }
         } catch (error) {
           console.error("Error fetching user location:", error);
@@ -74,7 +83,9 @@ const Feed: React.FC = () => {
       setIsLoadingLocation(false);
     };
 
-    loadLocation();
+    if (lastLocation === undefined) {
+      loadLocation();
+    }
   }, [user, searchParams]);
 
   const fetchIssues = async (from: number, amount: number) => {
@@ -155,11 +166,13 @@ const Feed: React.FC = () => {
   );
 
   const EmptyIndicator = () => (
-    <div className="flex justify-center items-center h-32">
-      <h3 className="text-lg">No issues</h3>
-    </div>
+    <ErrorPage
+      message="No issues found."
+      error="It seems there are no issues to display. Please check back later."
+      showReloadButton={true}
+    />
   );
-
+  
   const FailedIndicator = () => (
     <div className="flex justify-center items-center h-32">
       <h3 className="text-muted-foreground">Failed to fetch issues</h3>
@@ -217,7 +230,7 @@ const Feed: React.FC = () => {
             </Button>
           )}
         </div>
-        {user && isDesktop && <IssueInputBox onAddIssue={handleAddIssue} />}
+        {user && isDesktop && <IssueInputBox user={user} onAddIssue={handleAddIssue} />}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}
@@ -239,16 +252,27 @@ const Feed: React.FC = () => {
           Empty={EmptyIndicator}
           parentId={scrollId}
           controlRef={lazyRef}
+          uniqueId="feed-issues"
+          adFrequency={10}
         />
       </div>
       {isDesktop && (
         <RightSidebar
           sortBy={sortBy}
-          setSortBy={setSortBy}
+          setSortBy={(sortBy) => {
+            lastSortBy = sortBy;
+            setSortBy(lastSortBy);
+          }}
           filter={filter}
-          setFilter={setFilter}
+          setFilter={(filter) => {
+            lastFilter = filter;
+            setFilter(lastFilter);
+          }}
           location={location}
-          setLocation={setLocation}
+          setLocation={(location) => {
+            lastLocation = location;
+            setLocation(lastLocation && {...lastLocation});
+          }}
         />
       )}
       {!isDesktop && (
@@ -260,7 +284,7 @@ const Feed: React.FC = () => {
             <Plus className="h-6 w-6" />
           </Button>
           {isMobileIssueInputOpen && (
-            <MobileIssueInput
+            <MobileIssueInput user={user}
               onClose={() => setIsMobileIssueInputOpen(false)}
               onAddIssue={handleAddIssue}
             />
@@ -268,11 +292,20 @@ const Feed: React.FC = () => {
           {isFilterModalOpen && (
             <FilterModal
               sortBy={sortBy}
-              setSortBy={setSortBy}
+              setSortBy={(sortBy) => {
+                lastSortBy = sortBy;
+                setSortBy(lastSortBy);
+              }}
               filter={filter}
-              setFilter={setFilter}
+              setFilter={(filter) => {
+                lastFilter = filter;
+                setFilter(lastFilter);
+              }}
               location={location}
-              setLocation={setLocation}
+              setLocation={(location) => {
+                lastLocation = location;
+                setLocation(lastLocation && {...lastLocation});
+              }}
               onClose={() => setIsFilterModalOpen(false)}
             />
           )}

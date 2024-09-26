@@ -1,4 +1,4 @@
-interface MulterFile {
+export interface MulterFile {
   fieldname: string;
   originalname: string;
   encoding: string;
@@ -10,7 +10,7 @@ interface MulterFile {
   buffer: Buffer;
 }
 
-interface MockUser {
+export interface MockUser {
   user_id: string;
   email_address: string;
   username: string;
@@ -32,4 +32,7 @@ interface MockUser {
   } | null;
 }
 
-export type { MockUser, MulterFile };
+export interface UserExists {
+  username: string;
+  user_id?: string;
+}

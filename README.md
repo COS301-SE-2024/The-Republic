@@ -1,6 +1,9 @@
-# Infinite Loopers - The Republic
 
-<img src="./documentation/images/InfiniteLoopers_13.jpeg" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
+
+<img id="loopingGif" src="/documentation/images/logoVid.gif" alt="Infinite Loopers Logo" width="100%" height="50%" style="display: block; margin: 15px auto; border-radius: 30px; background-color: #d1d1d1;">
+
+
+
 
 > The Republic project aims to revolutionize citizen engagement with government services by providing a platform for individuals to share their experiences, report incidents, and voice their concerns. This initiative is designed to enhance transparency and accountability within government operations, allowing users to contribute to a public discourse that promotes improved service delivery. By organizing and analyzing user-generated content, The Republic seeks to provide a clear and comprehensive picture of government service performance, fostering a more informed and active citizenry.
 

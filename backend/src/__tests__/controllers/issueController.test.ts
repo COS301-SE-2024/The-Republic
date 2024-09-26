@@ -1,14 +1,29 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as issueController from "@/modules/issues/controllers/issueController";
 import IssueService from "@/modules/issues/services/issueService";
 import { sendResponse } from "@/utilities/response";
+import { cacheMiddleware } from "@/middleware/cacheMiddleware";
 
 jest.mock("@/modules/issues/services/issueService");
 jest.mock("@/utilities/response");
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+
+jest.mock("@/modules/shared/services/redisClient", () => ({
+  __esModule: true,
+  default: {
+    on: jest.fn(),
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn().mockResolvedValue([]),
+  },
+}));
 
 describe("Issue Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
+  let mockNext: NextFunction;
   let mockIssueService: jest.Mocked<IssueService>;
 
   beforeEach(() => {
@@ -17,6 +32,7 @@ describe("Issue Controller", () => {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
     };
+    mockNext = jest.fn();
     mockIssueService = {
       getIssues: jest.fn(),
       getIssueById: jest.fn(),
@@ -28,16 +44,28 @@ describe("Issue Controller", () => {
       getUserResolvedIssues: jest.fn(),
     } as unknown as jest.Mocked<IssueService>;
     (IssueService as jest.Mock).mockImplementation(() => mockIssueService);
+    (cacheMiddleware as jest.Mock).mockImplementation(
+      () => (req: Request, res: Response, next: NextFunction) => next(),
+    );
   });
 
   const testControllerMethod = async (
     methodName: keyof typeof issueController,
   ) => {
-    const controllerMethod = issueController[methodName] as (
-      req: Request,
-      res: Response,
-    ) => Promise<void>;
-    await controllerMethod(mockRequest as Request, mockResponse as Response);
+    const controllerMethod = issueController[methodName];
+    if (Array.isArray(controllerMethod)) {
+      // If it's an array of middleware, call the last function (actual controller)
+      const lastMiddleware = controllerMethod[controllerMethod.length - 1];
+      if (typeof lastMiddleware === "function") {
+        await lastMiddleware(
+          mockRequest as Request,
+          mockResponse as Response,
+          mockNext,
+        );
+      }
+    } else if (typeof controllerMethod === "function") {
+      await controllerMethod(mockRequest as Request, mockResponse as Response);
+    }
     expect(sendResponse).toHaveBeenCalled();
   };
 
@@ -53,20 +81,12 @@ describe("Issue Controller", () => {
 
   it("should handle createIssue", async () => {
     mockRequest.file = {} as Express.Multer.File;
-    const createIssueHandler = issueController.createIssue[1] as (
-      req: Request,
-      res: Response,
-    ) => Promise<void>;
-    await createIssueHandler(mockRequest as Request, mockResponse as Response);
-    expect(sendResponse).toHaveBeenCalled();
+    await testControllerMethod("createIssue");
   });
 
   it("should handle errors", async () => {
     mockIssueService.getIssues.mockRejectedValue(new Error("Test error"));
-    await issueController.getIssues(
-      mockRequest as Request,
-      mockResponse as Response,
-    );
+    await testControllerMethod("getIssues");
     expect(sendResponse).toHaveBeenCalled();
   });
 });

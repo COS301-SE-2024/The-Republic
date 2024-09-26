@@ -5,7 +5,6 @@ import { GetCommentsParams } from "@/types/comment";
 import { APIError } from "@/types/response";
 import { PointsService } from "@/modules/points/services/pointsService";
 
-
 jest.mock("@/modules/comments/repositories/commentRepository");
 jest.mock("@/modules/points/services/pointsService");
 
@@ -15,7 +14,8 @@ describe("CommentService", () => {
   let mockPointsService: jest.Mocked<PointsService>;
 
   beforeEach(() => {
-    commentRepository = new CommentRepository() as jest.Mocked<CommentRepository>;
+    commentRepository =
+      new CommentRepository() as jest.Mocked<CommentRepository>;
     mockPointsService = {
       awardPoints: jest.fn().mockResolvedValue(100),
     } as unknown as jest.Mocked<PointsService>;
@@ -26,9 +26,11 @@ describe("CommentService", () => {
   });
 
   describe("getNumComments", () => {
-    it("should return the number of comments for an issue", async () => {
+    it("should return the number of comments for an item", async () => {
       const params: Partial<GetCommentsParams> = {
-        issue_id: 1,
+        itemId: "1",
+        itemType: "issue",
+        user_id: "user1",
       };
       commentRepository.getNumComments.mockResolvedValue(10);
 
@@ -36,14 +38,18 @@ describe("CommentService", () => {
 
       expect(response.data).toBe(10);
       expect(commentRepository.getNumComments).toHaveBeenCalledWith(
-        1,
+        "1",
+        "issue",
         undefined,
       );
       expect(commentRepository.getNumComments).toHaveBeenCalledTimes(1);
     });
 
-    it("should throw an error when issue_id is missing", async () => {
-      const params: Partial<GetCommentsParams> = {};
+    it("should throw an error when itemId is missing", async () => {
+      const params: Partial<GetCommentsParams> = {
+        itemType: "issue",
+        user_id: "user1",
+      };
 
       await expect(commentService.getNumComments(params)).rejects.toEqual(
         APIError({
@@ -57,11 +63,13 @@ describe("CommentService", () => {
   });
 
   describe("getComments", () => {
-    it("should return comments for an issue", async () => {
+    it("should return comments for an item", async () => {
       const params: GetCommentsParams = {
-        issue_id: 1,
+        itemId: "1",
+        itemType: "issue",
         from: 0,
         amount: 10,
+        user_id: "user1",
       };
       const mockComments: Comment[] = [
         {
@@ -99,7 +107,9 @@ describe("CommentService", () => {
 
     it("should throw an error when required fields are missing", async () => {
       const params: Partial<GetCommentsParams> = {
-        issue_id: 1,
+        itemId: "1",
+        itemType: "issue",
+        user_id: "user1",
       };
 
       await expect(
@@ -140,9 +150,9 @@ describe("CommentService", () => {
           is_owner: true,
           total_issues: 10,
           resolved_issues: 5,
-          user_score: 0, 
+          user_score: 0,
           location_id: null,
-          location: null
+          location: null,
         },
         is_owner: true,
       };
@@ -150,7 +160,11 @@ describe("CommentService", () => {
 
       const response = await commentService.addComment(newComment as Comment);
 
-      expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 10, "Left a comment on an open issue");
+      expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
+        "1",
+        10,
+        "Left a comment",
+      );
       expect(response.data).toEqual(addedComment);
       expect(commentRepository.addComment).toHaveBeenCalledWith(newComment);
       expect(commentRepository.addComment).toHaveBeenCalledTimes(1);

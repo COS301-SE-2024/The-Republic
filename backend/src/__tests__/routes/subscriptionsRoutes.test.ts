@@ -18,8 +18,12 @@ describe("Subscription Routes", () => {
 
   describe("POST /subscriptions/issue", () => {
     it("should call issueSubscriptions controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
-      (subscriptionsController.issueSubscriptions as jest.Mock).mockImplementation((req, res) =>
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (
+        subscriptionsController.issueSubscriptions as jest.Mock
+      ).mockImplementation((req, res) =>
         res.status(200).json({ message: "Issue subscription successful" }),
       );
 
@@ -33,12 +37,18 @@ describe("Subscription Routes", () => {
 
   describe("POST /subscriptions/category", () => {
     it("should call categorySubscriptions controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
-      (subscriptionsController.categorySubscriptions as jest.Mock).mockImplementation((req, res) =>
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (
+        subscriptionsController.categorySubscriptions as jest.Mock
+      ).mockImplementation((req, res) =>
         res.status(200).json({ message: "Category subscription successful" }),
       );
 
-      const response = await request(app).post("/subscriptions/category").send();
+      const response = await request(app)
+        .post("/subscriptions/category")
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Category subscription successful");
@@ -48,12 +58,18 @@ describe("Subscription Routes", () => {
 
   describe("POST /subscriptions/location", () => {
     it("should call locationSubscriptions controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
-      (subscriptionsController.locationSubscriptions as jest.Mock).mockImplementation((req, res) =>
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (
+        subscriptionsController.locationSubscriptions as jest.Mock
+      ).mockImplementation((req, res) =>
         res.status(200).json({ message: "Location subscription successful" }),
       );
 
-      const response = await request(app).post("/subscriptions/location").send();
+      const response = await request(app)
+        .post("/subscriptions/location")
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Location subscription successful");
@@ -63,12 +79,18 @@ describe("Subscription Routes", () => {
 
   describe("POST /subscriptions/subscriptions", () => {
     it("should call getSubscriptions controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) => next());
-      (subscriptionsController.getSubscriptions as jest.Mock).mockImplementation((req, res) =>
+      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
+        next(),
+      );
+      (
+        subscriptionsController.getSubscriptions as jest.Mock
+      ).mockImplementation((req, res) =>
         res.status(200).json({ message: "Get subscriptions successful" }),
       );
 
-      const response = await request(app).post("/subscriptions/subscriptions").send();
+      const response = await request(app)
+        .post("/subscriptions/subscriptions")
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Get subscriptions successful");

@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast as shadToast } from "@/components/ui/use-toast";
-import { supabase } from "./globals";
-import { Api, AnalysisResult } from "./types";
+import { supabase } from "@/lib/globals";
+import { Api, AnalysisResult } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -195,4 +195,21 @@ export async function checkImageFileAndToast(
   }
 
   return true;
+}
+
+export function formatLongDate(input: Date | string | number) {
+  const date = new Date(input);
+
+  return date
+    .toLocaleString(undefined, {
+      hour12: true,
+      hour: "numeric",
+      minute: "numeric",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+    .replace("am", "AM")
+    .replace("pm", "PM")
+    .replace(" at", ",");
 }

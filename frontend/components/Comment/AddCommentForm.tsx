@@ -4,21 +4,23 @@ import { useToast } from "@/components/ui/use-toast";
 import { Comment } from "@/lib/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import TextareaAutosize from "react-textarea-autosize";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 import { useMutation } from "@tanstack/react-query";
 import { AddComment } from "@/lib/api/AddComment";
+import MentionInput from "@/components/MentionInput/MentionInput";
 
 interface AddCommentFormProps {
-  issueId: number;
-  parentCommentId: number | null;
+  itemId: string;
+  itemType: 'issue' | 'post';
+  parentCommentId: string | null;
   onCommentAdded: (comment: Comment) => void;
 }
 
 const AddCommentForm: React.FC<AddCommentFormProps> = ({
-  issueId,
+  itemId,
+  itemType,
   parentCommentId = null,
   onCommentAdded,
 }) => {
@@ -40,7 +42,8 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
 
       return await AddComment(
         user,
-        issueId,
+        itemId,
+        itemType,
         content,
         isAnonymous,
         parentCommentId,
@@ -72,6 +75,23 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
     },
   });
 
+  // const fetchUserSuggestions = useCallback(
+  //   debounce(async (query: string): Promise<User[]> => {
+  //     try {
+  //       const response = await fetch(`/api/user-suggestions?query=${query}`);
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch user suggestions');
+  //       }
+  //       const data = await response.json();
+  //       return data.users || [];
+  //     } catch (error) {
+  //       console.error('Error fetching user suggestions:', error);
+  //       return [];
+  //     }
+  //   }, 300),
+  //   []
+  // );
+
   return (
     <form
       action={() => mutation.mutate()}
@@ -84,14 +104,17 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
             <AvatarFallback>{user.fullname[0]}</AvatarFallback>
           </Avatar>
         )}
-        <TextareaAutosize
+
+            <div className="flex-grow relative">
+        <MentionInput
           data-testid="comment-input"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="flex-grow p-2 border rounded resize-none bg-background text-foreground dark:bg-background dark:text-foreground"
+          onChange={setContent}
           placeholder="Add Comment..."
-          rows={1}
-        />
+          className=" w-full flex-grow p-2 border rounded resize-none bg-background text-foreground dark:bg-background dark:text-foreground"
+          />
+          </div>
+
       </div>
       <div className="flex items-center justify-between">
         <label className="flex items-center space-x-2">

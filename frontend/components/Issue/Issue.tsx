@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -6,20 +6,19 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
+import InfoPopover from "@/components/ui/resolution-popover";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Bell, Loader2 } from "lucide-react";
-import MoreMenu from "../MoreMenu/MoreMenu";
-import { IssueProps, User , Resolution} from "@/lib/types";
-import { timeSince } from "@/lib/utils";
-import Reaction from "../Reaction/Reaction";
+import { MessageCircle, Bell, Loader2, Sparkles as Star } from "lucide-react";
+import MoreMenu from "@/components/MoreMenu/MoreMenu";
+import { formatLongDate, timeSince } from "@/lib/utils";
+import Reaction from "@/components/Reaction/Reaction";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
 import { deleteIssue } from "@/lib/api/deleteIssue";
-import { SubsParams } from "@/lib/types";
+import { SubsParams, IssueProps } from "@/lib/types";
 import Image from "next/image";
 
 import { subscribe } from "@/lib/api/subscription";
@@ -28,14 +27,8 @@ import { createExternalResolution } from "@/lib/api/createExternalResolution";
 import { respondToResolution } from "@/lib/api/respondToResolution";
 import ResolutionModal from '@/components/ResolutionModal/ResolutionModal';
 import ResolutionResponseModal from '@/components/ResolutionResponseModal/ResolutionResponseModal';
-import { fetchResolutionsForIssue } from "@/lib/api/fetchResolutionsForIssue";
-import { checkUserIssuesInCluster } from "@/lib/api/checkUserIssuesInCluster";
-import { fetchUserIssueInCluster } from "@/lib/api/fetchUserIssueInCluster";
 import MapModal from "@/components/MapModal/MapModal";
-import { Sparkles as Star } from "lucide-react";
-import { fetchRelatedIssues } from "@/lib/api/fetchRelatedIssues";
 import RelatedIssuesModal from "@/components/RelatedIssuesModal/RelatedIssuesModal";
-
 
 const Issue: React.FC<IssueProps> = ({
   issue,
@@ -51,120 +44,15 @@ const Issue: React.FC<IssueProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isResolutionModalOpen, setIsResolutionModalOpen] = useState(false);
   const [isResolutionResponseModalOpen, setIsResolutionResponseModalOpen] = useState(false);
-  const [resolutions, setResolutions] = useState<Resolution[]>([]);
-  const [canRespond, setCanRespond] = useState(false);
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-  const [resolutionTime, setResolutionTime] = useState<Date | null>(issue.resolved_at ? new Date(issue.resolved_at) : null);
-  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = useState(false);
-  const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
   const [isRelatedIssuesModalOpen, setIsRelatedIssuesModalOpen] = useState(false);
-  const [relatedIssues, setRelatedIssues] = useState<IssueProps['issue'][]>([]);
-  const [hasRelatedIssues, setHasRelatedIssues] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(true);
+  const [isResolutionSubmitLoading, setIsResolutionSubmitLoading] = useState(false);
+  const [isResolutionResponseLoading, setIsResolutionResponseLoading] = 
+    useState<'accept' | 'reject' | undefined>();
 
-  
-
-  useEffect(() => {
-    const fetchResolutions = async () => {
-      try {
-        const fetchedResolutions = await fetchResolutionsForIssue(user!, issue.issue_id);
-        setResolutions(fetchedResolutions);
-      } catch (error) {
-        console.error("Failed to fetch resolutions:", error);
-      }
-    };
-
-    if (user && issue.issue_id) {
-      fetchResolutions();
-    }
-  }, [user, issue.issue_id]);
-
-  const selfResolutionMutation = useMutation({
-    mutationFn: (data: { resolutionText: string; proofImage?: File }) =>
-      createSelfResolution(user!, issue.issue_id, data.resolutionText, data.proofImage),
-    onSuccess: (response) => {
-      const resolvedIssue = response;
-      queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
-      if (resolvedIssue) {
-        onResolveIssue!(issue, resolvedIssue);
-        setResolutionTime(new Date());
-      }
-      toast({ description: "Self-resolution submitted successfully" });
-      setIsResolutionModalOpen(false);
-    },
-    onError: (error) => {
-      console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit self-resolution" });
-    }
-  });
-
-  const externalResolutionMutation = useMutation({
-    mutationFn: (data: {
-      resolutionText: string;
-      resolutionSource: 'unknown' | 'other';
-      resolvedBy?: string;
-      politicalAssociation?: string;
-      stateEntityAssociation?: string;
-      proofImage?: File;
-    }) => createExternalResolution(
-      user!,
-      issue.issue_id,
-      data.resolutionText,
-      data.resolutionSource,
-      data.resolvedBy,
-      data.politicalAssociation,
-      data.stateEntityAssociation,
-      data.proofImage
-    ),
-    onSuccess: (response) => {
-      const resolvedIssue = response;
-      queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
-      if (resolvedIssue) {
-        onResolveIssue!(issue, resolvedIssue);
-      }
-      toast({ description: "External resolution submitted successfully" });
-      setIsResolutionModalOpen(false);
-    },
-    onError: (error) => {
-      console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit external resolution" });
-    }
-  });
-
-
-  const handleResolutionSubmit = async (resolutionData: {
-    resolutionText: string;
-    proofImage: File | null;
-    resolutionSource: 'self' | 'unknown' | 'other';
-    resolvedBy?: string;
-    politicalAssociation?: string;
-    stateEntityAssociation?: string;
-  }) => {
-    setIsResolutionSubmitLoading(true);
-    try {
-      if (resolutionData.resolutionSource === 'self') {
-        await selfResolutionMutation.mutateAsync({
-          resolutionText: resolutionData.resolutionText,
-          proofImage: resolutionData.proofImage || undefined,
-        });
-      } else {
-        await externalResolutionMutation.mutateAsync({
-          resolutionText: resolutionData.resolutionText,
-          resolutionSource: resolutionData.resolutionSource as 'unknown' | 'other',
-          resolvedBy: resolutionData.resolvedBy,
-          politicalAssociation: resolutionData.politicalAssociation,
-          stateEntityAssociation: resolutionData.stateEntityAssociation,
-          proofImage: resolutionData.proofImage || undefined,
-        });
-      }
-      setIsResolutionModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit resolution" });
-    } finally {
-      setIsResolutionSubmitLoading(false);
-    }
-  };
+  const isOwner = user ? user.user_id === issue.user_id : false;
+  const canRespond = isOwner;
+  const hasRelatedIssues = issue.relatedIssues && issue.relatedIssues.length > 0;
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
@@ -172,9 +60,8 @@ const Issue: React.FC<IssueProps> = ({
     },
     onSuccess: () => {
       toast({
-        description: "Succesfully deleted issue",
+        description: "Successfully deleted issue",
       });
-
       onDeleteIssue!(issue);
     },
     onError: (error) => {
@@ -182,7 +69,6 @@ const Issue: React.FC<IssueProps> = ({
         variant: "destructive",
         description: "Failed to delete issue",
       });
-
       console.error(error);
     }
   });
@@ -202,10 +88,130 @@ const Issue: React.FC<IssueProps> = ({
         variant: "destructive",
         description: "Failed to Subscribe to Issue",
       });
-
       console.error(error);
     }
   });
+
+  const selfResolutionMutation = useMutation({
+    mutationFn: (data: { resolutionText: string; proofImage?: File; organizationId?: string }) =>
+      createSelfResolution(user!, issue.issue_id, data.resolutionText, data.proofImage, data.organizationId),
+    onSuccess: (response) => {
+      const resolvedIssue = response;
+      queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
+      if (resolvedIssue) {
+        onResolveIssue!(issue, resolvedIssue);
+        issue.resolved_at = new Date().toISOString();
+      }
+      toast({ description: "Self-resolution submitted successfully" });
+      setIsResolutionModalOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({ variant: "destructive", description: "Failed to submit self-resolution" });
+    }
+  });
+
+  const externalResolutionMutation = useMutation({
+    mutationFn: (data: {
+      resolutionText: string;
+      resolutionSource: 'unknown' | 'other';
+      resolvedBy?: string;
+      politicalAssociation?: string;
+      stateEntityAssociation?: string;
+      proofImage?: File;
+      organizationId?: string;
+    }) => createExternalResolution(
+      user!,
+      issue.issue_id,
+      data.resolutionText,
+      data.resolutionSource,
+      data.resolvedBy,
+      data.politicalAssociation,
+      data.stateEntityAssociation,
+      data.proofImage,
+      data.organizationId
+    ),
+    onSuccess: (response) => {
+      if ('suspended_until' in response!) {
+        toast({
+          variant: "destructive",
+          description: 
+            "Because of a false resolution you are suspended from resolving until " +
+            formatLongDate(response.suspended_until)
+        });
+      } else {
+        const resolvedIssue = response;
+        queryClient.invalidateQueries({ queryKey: ['issue', issue.issue_id] });
+        if (resolvedIssue) {
+          onResolveIssue!(issue, resolvedIssue);
+        }
+        toast({ description: "External resolution submitted successfully" });
+      }
+
+      setIsResolutionModalOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({ variant: "destructive", description: "Failed to submit external resolution" });
+    }
+  });
+
+  const handleResolutionSubmit = async (resolutionData: {
+    resolutionText: string;
+    proofImage: File | null;
+    resolutionSource: 'self' | 'unknown' | 'other';
+    resolvedBy?: string;
+    organizationIds?: string[];
+  }) => {
+    setIsResolutionSubmitLoading(true);
+    try {
+      if (resolutionData.resolutionSource === 'self') {
+        await selfResolutionMutation.mutateAsync({
+          resolutionText: resolutionData.resolutionText,
+          proofImage: resolutionData.proofImage || undefined,
+          organizationId: resolutionData.organizationIds?.[0],
+        });
+      } else {
+        await externalResolutionMutation.mutateAsync({
+          resolutionText: resolutionData.resolutionText,
+          resolutionSource: resolutionData.resolutionSource,
+          resolvedBy: resolutionData.resolvedBy,
+          proofImage: resolutionData.proofImage || undefined,
+          organizationId: resolutionData.organizationIds?.[0],
+        });
+      } 
+      setIsResolutionModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", description: "Failed to submit resolution" });
+    } finally {
+      setIsResolutionSubmitLoading(false);
+    }
+  };
+
+  const handleResolutionResponse = async (accept: boolean, rating?: number) => {
+    setIsResolutionResponseLoading(accept ? 'accept' : 'reject');
+    try {
+      await respondToResolution(user!, issue.pendingResolutionId!, issue.issue_id, accept, rating);
+
+      // Optimistically update the UI
+      if (accept) {
+        issue.resolved_at = new Date().toISOString();
+        issue.hasPendingResolution = false;
+      }
+
+      // Refetch the issue data
+      await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
+
+      toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
+      setIsResolutionResponseModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", description: "Failed to respond to resolution" });
+    } finally {
+      setIsResolutionResponseLoading(undefined);
+    }
+  };
 
   const handleCommentClick = () => {
     router.push(`/issues/${issue.issue_id}`);
@@ -239,65 +245,24 @@ const Issue: React.FC<IssueProps> = ({
     }
   };
 
-  // const handleMapModalOpen = () => {
-  //   setIsMapModalOpen(true);
-  // };
-
   const handleMapModalClose = () => {
     setIsMapModalOpen(false);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowSubscribeDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
-
-  const isOwner = user ? user.user_id === issue.user_id : false;
   const isLoading = deleteMutation.isPending || selfResolutionMutation.isPending || externalResolutionMutation.isPending;
 
-  const userHasIssueInCluster = async (user: User | null, clusterId: string): Promise<boolean> => {
-    if (!user || !clusterId) {
-      return false;
-    }
-
-    try {
-      return await checkUserIssuesInCluster(user, clusterId);
-    } catch (error) {
-      console.error("Failed to check user issues in cluster:", error);
-      return false;
-    }
-  };
+  const [showMoreMenu, setShowMoreMenu] = useState(true);
 
   useEffect(() => {
-    const checkCanRespond = async () => {
-      const canRespond = isOwner || (user && issue.cluster_id && await userHasIssueInCluster(user, issue.cluster_id)) || false;
-      setCanRespond(canRespond);
-    };
-
-    checkCanRespond();
-  }, [isOwner, user, issue.cluster_id]);
-
-  useEffect(() => {
-    if (resolutionTime && !isOwner) {
+    if (issue.resolved_at && !isOwner) {
       setShowMoreMenu(false);
     } else {
       setShowMoreMenu(true);
     }
-  }, [resolutionTime, isOwner]);
+  }, [issue.resolved_at, isOwner]);
 
   const menuItems = isOwner ? ["Delete"] : [];
-  if (!resolutionTime && !issue.hasPendingResolution) {
+  if (!issue.resolved_at && !issue.hasPendingResolution) {
     menuItems.push("Resolve Issue");
   }
 
@@ -316,56 +281,9 @@ const Issue: React.FC<IssueProps> = ({
     }
   };
 
-  const handleResolutionResponse = async (accept: boolean) => {
-    setIsResolutionResponseLoading(true);
-    try {
-      if (isOwner && issue.pendingResolutionId) {
-        await respondToResolution(user!, issue.pendingResolutionId, accept);
-      } else if (user && issue.cluster_id) {
-        const userIssue = await fetchUserIssueInCluster(user, issue.cluster_id);
-        if (userIssue && userIssue.pendingResolutionId) {
-          await respondToResolution(user, userIssue.pendingResolutionId, accept);
-        }
-      }
-
-      // Optimistically update the UI
-      if (accept) {
-        setResolutionTime(new Date());
-        issue.hasPendingResolution = false;
-      }
-
-      // Refetch the issue data
-      await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
-
-      toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
-      setIsResolutionResponseModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      toast({ variant: "destructive", description: "Failed to respond to resolution" });
-    } finally {
-      setIsResolutionResponseLoading(false);
-    }
+    const highlightMentions = (text: string) => {
+    return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
   };
-
-  const fetchRelatedIssuesData = async () => {
-    if (user && issue.cluster_id) {
-      try {
-        const fetchedIssues = await fetchRelatedIssues(user, issue.issue_id);
-        const filteredIssues = fetchedIssues.filter(relatedIssue => relatedIssue.issue_id !== issue.issue_id);
-        setRelatedIssues(filteredIssues);
-        setHasRelatedIssues(filteredIssues.length > 0);
-      } catch (error) {
-        console.error("Failed to fetch related issues:", error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchRelatedIssuesData();
-  }, []);
-
-
-
 
   return (
     <>
@@ -454,6 +372,7 @@ const Issue: React.FC<IssueProps> = ({
                   </div>
                 )}
               </div>
+              <InfoPopover message={issue.forecast}/>
               {!isLoading && showMoreMenu && menuItems.length > 0 && (
                 <MoreMenu
                   menuItems={menuItems}
@@ -468,9 +387,6 @@ const Issue: React.FC<IssueProps> = ({
           <div className="flex flex-wrap gap-2 pt-2">
             <Badge variant="outline">
               {issue.category?.name}
-            </Badge>
-            <Badge variant="outline" className="hidden sm:inline-flex">
-              {issue?.sentiment}
             </Badge>
             {issue.location && (
               <Badge
@@ -502,7 +418,11 @@ const Issue: React.FC<IssueProps> = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p className="whitespace-pre-wrap">{issue?.content}</p>
+          <p 
+            className="whitespace-pre-wrap"
+            dangerouslySetInnerHTML={{ __html: highlightMentions(issue?.content) }}
+          />
+          
           {issue?.image_url && (
             <div className="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3 h-auto mt-4">
               <Image
@@ -514,10 +434,10 @@ const Issue: React.FC<IssueProps> = ({
                 className="rounded-lg" />
             </div>
           )}
-          {(issue?.resolved_at || resolutionTime) && (
+          {issue?.resolved_at && (
             <div className="flex space-x-2 pt-2">
               <Badge className="">
-                Resolved {timeSince(issue.resolved_at || resolutionTime?.toISOString() || '')}
+                Resolved {timeSince(issue.resolved_at)}
               </Badge>
             </div>
           )}
@@ -528,7 +448,8 @@ const Issue: React.FC<IssueProps> = ({
             <span>{issue.comment_count}</span>
           </div>
           <Reaction
-            issueId={String(issue.issue_id)}
+            itemId={String(issue.issue_id)}
+            itemType={"issue"}
             initialReactions={issue.reactions}
             userReaction={issue.user_reaction} />
         </CardFooter>
@@ -545,7 +466,8 @@ const Issue: React.FC<IssueProps> = ({
         isOpen={isResolutionResponseModalOpen}
         onClose={() => setIsResolutionResponseModalOpen(false)}
         onRespond={handleResolutionResponse}
-        resolution={resolutions[0]}
+        resolution={issue.resolution}
+        response={issue.resolutionResponse}
         canRespond={canRespond}
         isLoading={isResolutionResponseLoading}
       />
@@ -573,7 +495,7 @@ const Issue: React.FC<IssueProps> = ({
       <RelatedIssuesModal
         isOpen={isRelatedIssuesModalOpen}
         onClose={() => setIsRelatedIssuesModalOpen(false)}
-        relatedIssues={relatedIssues}
+        issues={issue.relatedIssues || []}
       />
     </>
   );

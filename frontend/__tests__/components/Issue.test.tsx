@@ -55,7 +55,6 @@ const mockIssue = {
   },
   created_at: new Date().toISOString(),
   category: { name: "Bug" },
-  sentiment: "Neutral",
   location: {
     suburb: "Suburb",
     city: "City",
@@ -90,7 +89,6 @@ describe("Issue Component", () => {
     expect(screen.getByText("johndoe")).toBeInTheDocument();
     expect(screen.getByText("Suburb, City, Province")).toBeInTheDocument();
     expect(screen.getByText("Issue content")).toBeInTheDocument();
-    expect(screen.getByText("Neutral")).toBeInTheDocument();
   });
 
   test("handles avatar click", () => {

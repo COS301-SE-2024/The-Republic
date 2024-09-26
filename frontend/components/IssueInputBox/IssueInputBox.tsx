@@ -1,88 +1,49 @@
-"use client";
-
 import React, { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardFooter } from "../ui/card";
-import { Button } from "../ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import TextareaAutosize from "react-textarea-autosize";
-import { categoryOptions, moodOptions } from "@/lib/constants";
+import { categoryOptions } from "@/lib/constants";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import { Loader2, Image as LucideImage, X, MapPin } from "lucide-react";
 import { LocationType, IssueInputBoxProps } from "@/lib/types";
 import Image from "next/image";
 import { checkImageFileAndToast } from "@/lib/utils";
-import { useUser } from "@/lib/contexts/UserContext";
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
-import CircularProgress from "../CircularProgressBar/CircularProgressBar";
+import CircularProgress from "@/components/CircularProgressBar/CircularProgressBar";
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
+import { useQuery } from "@tanstack/react-query";
+import MentionInput from "@/components/MentionInput/MentionInput";
 
 const MAX_CHAR_COUNT = 500;
 
-const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
+const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user, onAddIssue }) => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
-  const [mood, setMood] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useUser();
+
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-
-  // This should be intergrated as described in the comment for mutations in Issue.tsx
-  /* const mutation = useMutation({
-    mutationFn: async () => {
-      if (user) {
-        return await createIssue(user as UserAlt, ...otherParamaters);
-      } else {
-        toast({
-          description: "You need to be logged in to delete a comment",
-        });
+  const { data: userLocation } = useQuery({
+    queryKey: ["user-location"],
+    queryFn: async () => {
+      if (user?.location_id) {
+        return await fetchUserLocation(user.location_id);
       }
-    },
-    onSuccess: (issue) => {
-      setContent("");
-      setCategory("");
-      setMood("");
-      setIsAnonymous(false);
-      setLocation(null);
-      setImage(null);
-
-      toast({
-        description: "Post successful",
-      });
-
-      onAddIssue(issue);
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: "Failed to post, please try again",
-      });
-    },
-  }); */
+    }
+  });
 
   useEffect(() => {
-    const loadUserLocation = async () => {
-      if (user && user.location_id) {
-        try {
-          const userLocation = await fetchUserLocation(user.location_id);
-          if (userLocation) {
-            setLocation(userLocation);
-          }
-        } catch (error) {
-          console.error("Failed to fetch user location:", error);
-        }
-      }
-    };
-
-    loadUserLocation();
-  }, [user]);
+    if (userLocation) {
+      setLocation(userLocation);
+    }
+  }, [userLocation]);
 
   const handleLocationSet = (newLocation: LocationType) => {
     setLocation(newLocation);
@@ -98,17 +59,12 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       },
       {
         check: !category,
-        message: "Please select a category.",
-        variant: "destructive",
-      },
-      {
-        check: !mood,
-        message: "Please select a mood.",
+        message: "Please select a category associated with your issue.",
         variant: "destructive",
       },
       {
         check: !location,
-        message: "Please set a location.",
+        message: "Please set a location of where your issue is taking place.",
         variant: "destructive",
       },
     ];
@@ -152,7 +108,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
     const requestBody = new FormData();
     requestBody.append("category_id", categoryID.toString());
     requestBody.append("content", content);
-    requestBody.append("sentiment", mood);
     requestBody.append("is_anonymous", isAnonymous.toString());
     requestBody.append(
       "location_data",
@@ -164,35 +119,44 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       requestBody.append("image", image);
     }
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
-      {
-        method: "POST",
-        body: requestBody,
-        headers: {
-          Authorization: `Bearer ${user?.access_token}`,
-        },
-      },
-    );
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues/create`,
+        {
+          method: "POST",
+          body: requestBody,
+          headers: {
+            Authorization: `Bearer ${user?.access_token}`,
+          },
+        }
+      );
 
-    if (!res.ok) {
+      if (!res.ok) {
+        throw new Error("Failed to post");
+      }
+
+      const apiResponse = await res.json();
+      onAddIssue(apiResponse.data);
+
+      // Reset form after successful submission
+      setContent("");
+      setCategory("");
+      setIsAnonymous(false);
+      setLocation(userLocation ?? null);
+      setImage(null);
+
+      toast({
+        variant: "success",
+        description: "Issue posted successfully!",
+      });
+    } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to post, please try again",
       });
-    } else {
-      setContent("");
-      setCategory("");
-      setMood("");
-      setIsAnonymous(false);
-      setLocation(null);
-      setImage(null);
-
-      const apiResponse = await res.json();
-      onAddIssue(apiResponse.data);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,6 +171,23 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
       fileInputRef.current.value = "";
     }
   };
+
+  // Placeholder function for fetching user suggestions
+  // Replace this with actual API call when available
+// const fetchUserSuggestions = async (query: string): Promise<User[]> => {
+//   try {
+//     // Replace this with your actual API call
+//     const response = await fetch(`/api/user-suggestions?query=${query}`);
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch user suggestions');
+//     }
+//     const data = await response.json();
+//     return data.users || [];
+//   } catch (error) {
+//     console.error('Error fetching user suggestions:', error);
+//     return [];
+//   }
+// };
 
   const charCount = content.length;
 
@@ -223,12 +204,11 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             </div>
           )}
           <div className="flex-grow w-full">
-            <TextareaAutosize
-              placeholder="What's going on!?"
+            <MentionInput
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
+              placeholder="What's going on!?"
               className="w-full p-2 border rounded resize-none"
-              maxRows={10}
             />
             {image && (
               <div className="relative w-full h-48 mt-2">
@@ -261,15 +241,6 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             placeholder="Select category..."
             className="w-full sm:w-40 mb-2 sm:mb-0"
           />
-          <Dropdown
-            options={moodOptions}
-            value={mood}
-            onChange={setMood}
-            placeholder="😟"
-            className="w-full sm:w-36"
-            showSearch={false}
-            compact={true}
-          />
           <Button
             variant="ghost"
             size="sm"
@@ -277,7 +248,10 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
             onClick={() => setIsLocationModalOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-1" />
-            {location ? location.value.suburb : 'Set Location'}
+            {location 
+              ? location.value.suburb || location.value.city
+              : 'Set Location'
+            }
           </Button>
           <Button
             variant="ghost"
@@ -302,7 +276,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps>  = ({ onAddIssue }) => {
           <CircularProgress charCount={charCount} />
           <Button
             onClick={handleIssueSubmit}
-            disabled={charCount > MAX_CHAR_COUNT || !content}
+            disabled={charCount > MAX_CHAR_COUNT || !content || isLoading}
             className="w-full sm:w-auto"
           >
             Post

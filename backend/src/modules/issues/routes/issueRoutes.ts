@@ -15,11 +15,11 @@ router.post("/user/resolved", issueController.getUserResolvedIssues);
 router.post("/self-resolution", issueController.createSelfResolution);
 router.post("/external-resolution", issueController.createExternalResolution);
 router.post("/respond-resolution", issueController.respondToResolution);
-router.post("/resolutions", issueController.getResolutionsForIssue);
-router.post("/user-issues-in-cluster", issueController.hasUserIssuesInCluster);
 router.post("/user-resolutions", issueController.getUserResolutions);
 router.post("/delete-resolution", issueController.deleteResolution);
-router.post("/related", issueController.getRelatedIssues);
-
+router.post(
+  "/organization-resolutions",
+  issueController.getOrganizationResolutions,
+);
 
 export default router;

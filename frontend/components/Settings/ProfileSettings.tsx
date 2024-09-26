@@ -1,52 +1,89 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { User, Lock } from "lucide-react";
+import { User } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { updateUsername } from "@/lib/api/updateProfile";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import ChangePasswordForm from "../ChangePasswordForm/ChangePasswordForm";
 
-const ProfileSettings: React.FC = () => {
-  const [role, setRole] = useState("");
 
-  const handleRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setRole(e.target.value);
-  };
+const ProfileSettings: React.FC<{ currentUsername: string }> = ({ currentUsername }) => {
+  const [newUsername, setNewUsername] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSaveProfile = () => {
-    // Logic to save profile changes
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const isUsernameAppropriate = await checkContentAppropriateness(newUsername);
+      if (!isUsernameAppropriate) {
+        throw new Error("Username contains inappropriate content.");
+      }
+      const result = await updateUsername(newUsername);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      return result;
+    },
+    onSuccess: () => {
+      setSuccessMessage("Username changed successfully!");
+      setErrorMessage("");
+    },
+    onError: (error: Error) => {
+      if (error.message === "Username already exists.") {
+        setErrorMessage("Username already exists.");
+      } else if (error.message === "Username contains inappropriate content.") {
+        setErrorMessage("Please choose an appropriate username.");
+      } else {
+        setErrorMessage(error.message || "An unexpected error occurred.");
+      }
+    },
+  });
+
+  const handleSaveUsername = () => {
+    if (newUsername.length < 3 || newUsername.length > 20) {
+      setErrorMessage("Username must be between 3 and 20 characters.");
+      return;
+    }
+    
+    mutation.mutate();
   };
 
   return (
-    <Card className="mb-4">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <User className="mr-2" /> Profile Settings
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="role">Your Role</Label>
-            <Input
-              id="role"
-              value={role}
-              onChange={handleRoleChange}
-              placeholder="e.g., City Planner"
-            />
-          </div>
-          <div>
-            <Label htmlFor="password">Change Password</Label>
-            <div className="flex items-center space-x-2">
-              <Input id="password" type="password" placeholder="New Password" />
-              <Button variant="outline">
-                <Lock className="mr-2 h-4 w-4" /> Change
-              </Button>
+    <div className="space-y-4">
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <User className="mr-2" /> Change Username
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="currentUsername">Current Username</Label>
+              <Input id="currentUsername" value={currentUsername} readOnly />
             </div>
+            <div>
+              <Label htmlFor="newUsername">New Username</Label>
+              <Input
+                id="newUsername"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                placeholder="Enter new username"
+              />
+              {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+              {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
+            </div>
+            <Button onClick={handleSaveUsername}>Save Username</Button>
           </div>
-          <Button onClick={handleSaveProfile}>Save Changes</Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <ChangePasswordForm />
+    </div>
   );
 };
 

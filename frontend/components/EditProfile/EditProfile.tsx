@@ -8,7 +8,7 @@ import { checkImageFileAndToast, cn } from "@/lib/utils";
 import { EditProfileProps, LocationType, ProfileUpdate } from "@/lib/types";
 import { Upload, Trash2 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import LocationModal from "@/components/LocationModal/LocationModal";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { updateUserProfile } from "@/lib/api/updateProfile";
@@ -194,20 +194,24 @@ const EditProfile: React.FC<EditProfileProps> = ({
             />
           </div>
           <div>
-            <label htmlFor="username" className="block text-sm font-medium">
-              Username
-            </label>
-            <Input
-              id="username"
-              value={updatedUser.username}
-              onChange={handleInputChange}
-              className={cn(
-                theme === "dark"
-                  ? "bg-gray-700 text-white border-gray-600"
-                  : "bg-white text-gray-800 border-gray-300",
-              )}
-            />
-          </div>
+  <label htmlFor="username" className="block text-sm font-medium">
+    Username
+  </label>
+  <Input
+    id="username"
+    value={updatedUser.username}
+    readOnly
+    className={cn(
+      theme === "dark"
+        ? "bg-gray-700 text-white border-gray-600"
+        : "bg-white text-gray-800 border-gray-300",
+    )}
+  />
+  <p className="text-sm text-gray-500 mt-2">
+    To change your username, please visit <a href="/settings" className="text-blue-500">Settings</a>.
+  </p>
+</div>
+
           <div>
             <label htmlFor="bio" className="block text-sm font-medium">
               Bio

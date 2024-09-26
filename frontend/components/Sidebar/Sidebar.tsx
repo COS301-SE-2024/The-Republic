@@ -6,26 +6,30 @@ import {
   ProfileIcon,
   LogoutIcon,
   ReportsIcon,
-  TrophyIcon,
+  OrganizationIcon,
   NotificationsIcon,
   SettingsIcon,
-} from "../icons";
+  TrophyIcon,
+} from "@/components/icons";
 
 import { supabase } from "@/lib/globals";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { HomeAvatarProps } from "@/lib/types";
 import styles from "@/styles/Custom.module.css";
 import { useUser } from "@/lib/contexts/UserContext";
 import Link from "next/link";
 import { signOutWithToast } from "@/lib/utils";
-import { XIcon } from "lucide-react";
-import { ReactionNotification, CommentNotification, Issue } from "@/lib/types";
+import { CircleHelp, XIcon } from "lucide-react";
+import {
+  ReactionNotification,
+  CommentNotification,
+  Issue,
+} from "@/lib/types";
 import UserAvatarWithScore from '@/components/UserAvatarWithScore/UserAvatarWithScore';
 import { fetchUserData } from '@/lib/api/fetchUserData';
 import { useRouter } from 'next/navigation';
 
-interface SidebarProps extends HomeAvatarProps {
+interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -55,9 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         },
         async (payload) => {
           const { new: notification } = payload;
-          // console.log("New Comment notification:", notification);
           if (notification && Object.keys(notification).length > 0) {
-            // console.log("Comments Flooding for a Reported Issue: ", notification);
             const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
             
             // Fetch the issue to check if it belongs to the current user
@@ -189,12 +191,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           }
         },
       )
-      .subscribe((status) => {
-        console.log("Subscription Result: ", status);
-      });
+      .subscribe();
 
     return () => {
-      channelA.unsubscribe();
+      if (channelA && channelA.unsubscribe) {
+        channelA.unsubscribe();
+      }
     };
   }, [user]);
 
@@ -231,6 +233,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <Link href="/analytics">
                 <ReportsIcon />
                 Analytics
+              </Link>
+            </li>
+            <li onClick={onClose}>
+              <Link href="/organization">
+                <OrganizationIcon />
+                Organizations
               </Link>
             </li>
             <li onClick={onClose}>
@@ -271,6 +279,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </Link>
               </li>
             )}
+            <h4>
+              <span>About</span>
+            </h4>
+            <li onClick={onClose}>
+              <Link href={`/about`}>
+                <CircleHelp />
+                  About
+              </Link>
+            </li>
           </ul>
           {user && (
             <div className={styles.userAccount}>
