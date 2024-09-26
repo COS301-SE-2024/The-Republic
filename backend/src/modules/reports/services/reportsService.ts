@@ -10,7 +10,7 @@ import {
   NameValue,
 } from "@/modules/shared/models/reports";
 import { GetIssuesParams } from "@/types/issue";
-import { reportQueue } from "@/modules/shared/services/queue"; 
+import { sendEmail } from "@/modules/shared/services/emailService";
 import ExcelJS from 'exceljs';
 
 export default class ReportsService {
@@ -146,7 +146,16 @@ export default class ReportsService {
 
   async generateAndSendReport(organizationId: string, email: string): Promise<APIResponse<null>> {
     try {
-      await reportQueue.add({ organizationId, email });
+      const reportBuffer = await this.generateReport();
+
+      await sendEmail(email, 'Your Requested Report', '<strong>Please find the attached report.</strong>', [
+        {
+          filename: 'report.xlsx',
+          content: reportBuffer.toString('base64'),
+          encoding: 'base64',
+          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      ]);
 
       return APIData({
         code: 200,
@@ -158,24 +167,24 @@ export default class ReportsService {
       throw APIError({
         code: 500,
         success: false,
-        error: "An unexpected error occurred while generating the report.",
+        error: "An unexpected error occurred while generating and sending the report.",
       });
     }
   }
+
+  private async generateReport(): Promise<Buffer> {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Report');
+
+    worksheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Value', key: 'value', width: 10 },
+    ];
+
+    worksheet.addRow({ id: 1, name: 'Test', value: 123 });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return Buffer.from(buffer);
+  }
 }
-
-export const generateReport = async (): Promise<Buffer> => {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Report');
-
-  worksheet.columns = [
-    { header: 'ID', key: 'id', width: 10 },
-    { header: 'Name', key: 'name', width: 30 },
-    { header: 'Value', key: 'value', width: 10 },
-  ];
-
-  worksheet.addRow({ id: 1, name: 'Test', value: 123 });
-
-  const buffer = await workbook.xlsx.writeBuffer();
-  return Buffer.from(buffer);
-};

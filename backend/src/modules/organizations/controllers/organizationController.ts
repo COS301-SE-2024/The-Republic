@@ -356,25 +356,21 @@ export const getOrganizationById = [
   },
 ];
 
-export const generateReport = async (req: Request, res: Response) => {
+export const requestReport = async (req: Request, res: Response) => {
   try {
     const userId = req.body.user_id;
     const organizationId = req.params.id;
+    const { email } = req.body;
+
     if (!userId) {
-      return sendResponse(
-        res,
-        APIError({
-          code: 401,
-          success: false,
-          error: "Unauthorized: User ID is missing",
-        }),
-      );
+      return sendResponse(res, APIError({
+        code: 401,
+        success: false,
+        error: "Unauthorized: User ID is missing",
+      }));
     }
 
-    const response = await organizationService.generateReport(
-      organizationId,
-      userId,
-    );
+    const response = await reportsService.generateAndSendReport(organizationId, email);
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
