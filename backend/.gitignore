@@ -134,4 +134,4 @@ out
 node_modules
 # dist
 .env
-# public/
+public/

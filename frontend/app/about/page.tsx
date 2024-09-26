@@ -5,10 +5,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const AboutPage = () => {
-
   const router = useRouter();
+  const { theme } = useTheme();
   const features = [
     { title: "Incident Reporting", description: "Report issues with government services", icon: "🚨" },
     { title: "Data Analysis", description: "Gain insights from reported data", icon: "📊" },
@@ -22,15 +23,18 @@ const AboutPage = () => {
     router.push("/"); 
   };
 
+  const isDarkMode = theme === 'dark';
+
   return (
-    <div className="bg-white text-green-900 min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#0C0A09] text-white' : 'bg-white text-green-900'}`}>
       <header className="p-4 flex justify-center relative items-center">
         <motion.button 
           onClick={goBackHome}
           className={`
             absolute left-4
             flex items-center
-            text-green-900 hover:text-green-700 transition duration-300
+            ${isDarkMode ? 'text-white hover:text-gray-300' : 'text-green-900 hover:text-green-700'}
+            transition duration-300
           `}
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -48,7 +52,7 @@ const AboutPage = () => {
             priority
             width={250}
             height={150}
-            src="/images/b-logo-full-black.png"
+            src={isDarkMode ? "/images/b-logo-full.png" : "/images/b-logo-full-black.png"}
             alt="The Republic logo"
           />
         </motion.div>
@@ -58,11 +62,10 @@ const AboutPage = () => {
         {/* Hero Section */}
         <section className="container mx-auto px-4 py-16 text-center">
           <motion.h1 
-            className="text-5xl font-bold mb-4"
+            className={`text-5xl font-bold mb-4 ${isDarkMode ? 'text-green-400' : 'text-green-900'}`}
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ color: "#007847" }} 
           >
             Revolutionize Citizen Engagement
           </motion.h1>
@@ -77,14 +80,13 @@ const AboutPage = () => {
         </section>
 
         {/* Project Overview */}
-        <section className="bg-green-100 py-16">
+        <section className={`py-16 ${isDarkMode ? 'bg-[#262626]' : 'bg-green-100'}`}>
           <div className="container mx-auto px-4">
             <motion.h2 
-              className="text-3xl font-bold mb-4 text-center"
+              className={`text-3xl font-bold mb-4 text-center ${isDarkMode ? 'text-green-400' : 'text-green-900'}`}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              style={{ color: "#007847" }}
             >
               About The Republic
             </motion.h2>
@@ -103,11 +105,10 @@ const AboutPage = () => {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <motion.h2 
-              className="text-3xl font-bold mb-8 text-center"
+              className={`text-3xl font-bold mb-8 text-center ${isDarkMode ? 'text-green-400' : 'text-green-900'}`}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              style={{ color: "#007847" }}
             >
               Core Features
             </motion.h2>
@@ -120,12 +121,16 @@ const AboutPage = () => {
               {features.map((feature, index) => (
                 <motion.div 
                   key={index} 
-                  className="bg-white shadow-lg p-6 rounded-lg border border-green-300"
+                  className={`p-6 rounded-lg border ${
+                    isDarkMode 
+                      ? 'bg-[#262626] border-green-700 text-white' 
+                      : 'bg-white shadow-lg border-green-300 text-green-900'
+                  }`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <div className="text-4xl mb-4">{feature.icon}</div>
-                  <h3 className="text-xl font-bold mb-2 text-green-900">{feature.title}</h3>
+                  <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p>{feature.description}</p>
                 </motion.div>
               ))}
@@ -134,7 +139,7 @@ const AboutPage = () => {
         </section>
       </main>
 
-      <footer className="bg-green-900 py-8 text-white">
+      <footer className={`py-8 ${isDarkMode ? 'bg-[#262626]' : 'bg-green-900'} text-white`}>
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-between items-center">
             <div className="w-full md:w-1/3 mb-4 md:mb-0">
