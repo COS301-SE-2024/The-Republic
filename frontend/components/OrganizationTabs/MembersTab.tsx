@@ -65,6 +65,19 @@ export default function MembersTab({ organization, members, setMembers }: Member
   const handleLeaveOrganization = async (event: React.MouseEvent) => {
     event.stopPropagation();
     if (!user) return;
+  
+    const admins = members.data.filter((member) => member.role === 'admin');
+    
+    
+    if (admins.length === 1 && admins[0].user_id === user.user_id) {
+      toast({
+        title: "Cannot leave",
+        description: "You are the only admin. Please appoint another admin before leaving the organization.",
+        variant: "destructive",
+      });
+      return; 
+    }
+  
     try {
       await leaveOrganization(user, organization.id);
       // Redirect user or update UI as needed
@@ -78,6 +91,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
       });
     }
   };
+  
 
   const handlePromoteToAdmin = async (memberId: string, event: React.MouseEvent) => {
     event.stopPropagation();
