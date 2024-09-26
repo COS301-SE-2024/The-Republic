@@ -12,7 +12,7 @@ interface EmailAttachment {
 const sendEmail = async (to: string, subject: string, html: string, attachments: EmailAttachment[]) => {
   try {
     const data = await resend.emails.send({
-      from: 'The Republic <onboarding@resend.dev>',
+      from: 'The Republic <noreply@the-republic.co.za>',
       to: [to],
       subject,
       html,
