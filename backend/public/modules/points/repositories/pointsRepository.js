@@ -212,6 +212,78 @@ class PointsRepository {
             return Object.assign(Object.assign({}, user), { position: position !== null ? position.toString() : null, message: `User ranked ${position} ${locationMessage}.` });
         });
     }
+    updateOrganizationScore(organizationId, points) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // First, get the current score
+            const { data: currentData, error: fetchError } = yield supabaseClient_1.default
+                .from('organizations')
+                .select('points')
+                .eq('id', organizationId)
+                .single();
+            if (fetchError) {
+                console.error('Error fetching organization score:', fetchError);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching organization score.",
+                });
+            }
+            const currentPoints = (currentData === null || currentData === void 0 ? void 0 : currentData.points) || 0;
+            const newPoints = currentPoints + points;
+            // Now, update the score
+            const { data, error } = yield supabaseClient_1.default
+                .from('organizations')
+                .update({ points: newPoints })
+                .eq('id', organizationId)
+                .select('points')
+                .single();
+            if (error) {
+                console.error('Error updating organization score:', error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while updating organization score.",
+                });
+            }
+            return data === null || data === void 0 ? void 0 : data.points;
+        });
+    }
+    logOrganizationPointsTransaction(organizationId, points, reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { error } = yield supabaseClient_1.default.from("points_history").insert({
+                organization_id: organizationId,
+                points: points,
+                action: reason,
+                created_at: new Date().toISOString(),
+            });
+            if (error) {
+                console.error(error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while logging organization points transaction.",
+                });
+            }
+        });
+    }
+    getOrganizationScore(organizationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield supabaseClient_1.default
+                .from("organizations")
+                .select("points")
+                .eq("id", organizationId)
+                .single();
+            if (error) {
+                console.error(error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching organization score.",
+                });
+            }
+            return data.points;
+        });
+    }
     userMatchesLocationFilter(user, locationFilter) {
         if (!user.location)
             return false;

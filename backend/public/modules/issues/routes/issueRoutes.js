@@ -40,4 +40,5 @@ router.post("/external-resolution", issueController.createExternalResolution);
 router.post("/respond-resolution", issueController.respondToResolution);
 router.post("/user-resolutions", issueController.getUserResolutions);
 router.post("/delete-resolution", issueController.deleteResolution);
+router.post("/organization-resolutions", issueController.getOrganizationResolutions);
 exports.default = router;

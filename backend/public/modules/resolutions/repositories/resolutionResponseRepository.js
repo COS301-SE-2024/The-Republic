@@ -16,11 +16,16 @@ exports.ResolutionResponseRepository = void 0;
 const supabaseClient_1 = __importDefault(require("@/modules/shared/services/supabaseClient"));
 const response_1 = require("@/types/response");
 class ResolutionResponseRepository {
-    createResponse(resolutionId, userId, response) {
+    createResponse(resolutionId, userId, response, satisfactionRating) {
         return __awaiter(this, void 0, void 0, function* () {
             const { error } = yield supabaseClient_1.default
                 .from('resolution_responses')
-                .insert({ resolution_id: resolutionId, user_id: userId, response });
+                .insert({
+                resolution_id: resolutionId,
+                user_id: userId,
+                response,
+                satisfaction_rating: response === 'accepted' ? satisfactionRating : null
+            });
             if (error) {
                 console.error(error);
                 throw (0, response_1.APIError)({
@@ -35,7 +40,7 @@ class ResolutionResponseRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from('resolution_responses')
-                .select('user_id')
+                .select('user_id, satisfaction_rating')
                 .eq('resolution_id', resolutionId)
                 .eq('response', 'accepted');
             if (error) {
@@ -46,7 +51,30 @@ class ResolutionResponseRepository {
                     error: "An unexpected error occurred while fetching accepted users.",
                 });
             }
-            return data.map(row => row.user_id);
+            return data.map(row => ({ userId: row.user_id, satisfactionRating: row.satisfaction_rating }));
+        });
+    }
+    getAverageSatisfactionRating(resolutionId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield supabaseClient_1.default
+                .from('resolution_responses')
+                .select('satisfaction_rating')
+                .eq('resolution_id', resolutionId)
+                .eq('response', 'accepted')
+                .not('satisfaction_rating', 'is', null);
+            if (error) {
+                console.error(error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching satisfaction ratings.",
+                });
+            }
+            if (data.length === 0) {
+                return null;
+            }
+            const sum = data.reduce((acc, curr) => acc + curr.satisfaction_rating, 0);
+            return sum / data.length;
         });
     }
 }

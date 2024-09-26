@@ -100,9 +100,9 @@ class IssueRepository {
             }
             const issues = yield Promise.all(data.map((issue) => __awaiter(this, void 0, void 0, function* () {
                 var _b, _c;
-                const reactions = yield reactionRepository.getReactionCountsByIssueId(issue.issue_id);
+                const reactions = yield reactionRepository.getReactionCountsByItemId(issue.issue_id.toString(), "issue");
                 const userReaction = user_id
-                    ? yield reactionRepository.getReactionByUserAndIssue(issue.issue_id, user_id)
+                    ? yield reactionRepository.getReactionByUserAndItem(issue.issue_id.toString(), "issue", user_id)
                     : null;
                 const pendingResolution = yield this.getPendingResolutionForIssue(issue.issue_id);
                 const resolutions = yield this.getResolutionsForIssue(issue.issue_id);
@@ -167,11 +167,11 @@ class IssueRepository {
                     error: "Issue does not exist",
                 });
             }
-            const reactions = yield reactionRepository.getReactionCountsByIssueId(data.issue_id);
+            const reactions = yield reactionRepository.getReactionCountsByItemId(data.issue_id.toString(), "issue");
             const userReaction = user_id
-                ? yield reactionRepository.getReactionByUserAndIssue(data.issue_id, user_id)
+                ? yield reactionRepository.getReactionByUserAndItem(data.issue_id.toString(), "issue", user_id)
                 : null;
-            const commentCount = yield commentRepository.getNumComments(data.issue_id);
+            const commentCount = yield commentRepository.getNumComments(data.issue_id, "issue");
             const pendingResolution = yield this.getPendingResolutionForIssue(data.issue_id);
             const resolutions = yield this.getResolutionsForIssue(data.issue_id);
             const { issues: relatedIssues, totalCount: relatedIssuesCount } = yield this.getRelatedIssues(data.cluster_id, data.issue_id);
@@ -402,7 +402,7 @@ class IssueRepository {
                     error: "Issue does not exist",
                 });
             }
-            const reactions = yield reactionRepository.getReactionCountsByIssueId(data.issue_id);
+            const reactions = yield reactionRepository.getReactionCountsByItemId(data.issue_id.toString(), "issue");
             return Object.assign(Object.assign({}, data), { reactions, is_owner: true, user: data.is_anonymous
                     ? {
                         user_id: null,
@@ -502,9 +502,9 @@ class IssueRepository {
                 });
             }
             const issues = yield Promise.all(data.map((issue) => __awaiter(this, void 0, void 0, function* () {
-                const reactions = yield reactionRepository.getReactionCountsByIssueId(issue.issue_id);
-                const userReaction = yield reactionRepository.getReactionByUserAndIssue(issue.issue_id, userId);
-                const commentCount = yield commentRepository.getNumComments(issue.issue_id);
+                const reactions = yield reactionRepository.getReactionCountsByItemId(issue.issue_id.toString(), "issue");
+                const userReaction = yield reactionRepository.getReactionByUserAndItem(issue.issue_id.toString(), "issue", userId);
+                const commentCount = yield commentRepository.getNumComments(issue.issue_id.toString(), "issue");
                 return Object.assign(Object.assign({}, issue), { reactions, user_reaction: (userReaction === null || userReaction === void 0 ? void 0 : userReaction.emoji) || null, comment_count: commentCount, is_owner: issue.user_id === userId, user: issue.is_anonymous
                         ? {
                             user_id: null,
@@ -555,9 +555,9 @@ class IssueRepository {
                 });
             }
             const issues = yield Promise.all(data.map((issue) => __awaiter(this, void 0, void 0, function* () {
-                const reactions = yield reactionRepository.getReactionCountsByIssueId(issue.issue_id);
-                const userReaction = yield reactionRepository.getReactionByUserAndIssue(issue.issue_id, userId);
-                const commentCount = yield commentRepository.getNumComments(issue.issue_id);
+                const reactions = yield reactionRepository.getReactionCountsByItemId(issue.issue_id.toString(), "issue");
+                const userReaction = yield reactionRepository.getReactionByUserAndItem(issue.issue_id.toString(), "issue", userId);
+                const commentCount = yield commentRepository.getNumComments(issue.issue_id.toString(), "issue");
                 return Object.assign(Object.assign({}, issue), { reactions, user_reaction: (userReaction === null || userReaction === void 0 ? void 0 : userReaction.emoji) || null, comment_count: commentCount, is_owner: issue.user_id === userId, user: issue.is_anonymous
                         ? {
                             user_id: null,
@@ -703,6 +703,31 @@ class IssueRepository {
                     code: 500,
                     success: false,
                     error: "An unexpected error occurred while fetching issues in the cluster.",
+                });
+            }
+            return data;
+        });
+    }
+    getIssueEmbedding(issueId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield supabaseClient_1.default
+                .from('issue_embeddings')
+                .select('*')
+                .eq('issue_id', issueId)
+                .single();
+            if (error) {
+                console.error('Error fetching issue embedding:', error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching the issue embedding.",
+                });
+            }
+            if (!data) {
+                throw (0, response_1.APIError)({
+                    code: 404,
+                    success: false,
+                    error: "Issue embedding not found",
                 });
             }
             return data;

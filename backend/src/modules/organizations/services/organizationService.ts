@@ -737,7 +737,7 @@ export class OrganizationService {
       return APIData({
         code: 200,
         success: true,
-        data: null, // Replace with the actual report object in the future
+        data: null,
       });
     } catch (error) {
       if (error instanceof APIError) {

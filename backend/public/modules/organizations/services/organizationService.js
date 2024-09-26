@@ -8,11 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrganizationService = void 0;
 const organizationRepository_1 = require("../repositories/organizationRepository");
 const response_1 = require("@/types/response");
 const validators_1 = require("@/utilities/validators");
+const supabaseClient_1 = __importDefault(require("@/modules/shared/services/supabaseClient"));
 class OrganizationService {
     constructor() {
         this.organizationRepository = new organizationRepository_1.OrganizationRepository();
@@ -71,6 +75,7 @@ class OrganizationService {
                 });
             }
             catch (error) {
+                console.error("Error in createOrganization service:", error);
                 if (error instanceof response_1.APIError) {
                     throw error;
                 }
@@ -93,7 +98,13 @@ class OrganizationService {
                         error: "You do not have permission to update this organization.",
                     });
                 }
-                const updatedOrganization = yield this.organizationRepository.updateOrganization(id, updates, profilePhoto);
+                const updatesToSend = updates;
+                const updatedOrganization = yield this.organizationRepository.updateOrganization(id, updatesToSend, profilePhoto);
+                const actionDetails = {
+                    type: 'UPDATE_ORGANIZATION',
+                    details: updatesToSend
+                };
+                yield this.organizationRepository.logActivity(id, userId, 'UPDATE_ORGANIZATION', actionDetails);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -193,41 +204,6 @@ class OrganizationService {
             }
         });
     }
-    getUserOrganizations(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const organizations = yield this.organizationRepository.getUserOrganizations(userId);
-                if (organizations.length === 0) {
-                    return (0, response_1.APIData)({
-                        code: 200,
-                        success: true,
-                        data: [],
-                        error: "User is not a member of any organizations."
-                    });
-                }
-                return (0, response_1.APIData)({
-                    code: 200,
-                    success: true,
-                    data: organizations,
-                });
-            }
-            catch (error) {
-                console.error("Error in getUserOrganizations:", error);
-                if (error instanceof response_1.APIError) {
-                    throw (0, response_1.APIError)({
-                        code: 500,
-                        success: false,
-                        error: "An unexpected error occurred while fetching user organizations.",
-                    });
-                }
-                return (0, response_1.APIData)({
-                    code: 500,
-                    success: false,
-                    error: "An unexpected error occurred while fetching user organizations.",
-                });
-            }
-        });
-    }
     leaveOrganization(organizationId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -291,6 +267,11 @@ class OrganizationService {
                     });
                 }
                 yield this.organizationRepository.updateMemberRole(organizationId, newAdminId, 'admin');
+                const actionDetails = {
+                    type: 'ASSIGN_ADMIN',
+                    details: { newAdminId }
+                };
+                yield this.organizationRepository.logActivity(organizationId, adminId, 'ASSIGN_ADMIN', actionDetails);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -328,6 +309,18 @@ class OrganizationService {
                     });
                 }
                 yield this.organizationRepository.updateOrganizationJoinPolicy(organizationId, joinPolicy);
+                if (joinPolicy === 'open') {
+                    const pendingRequests = yield this.organizationRepository.getJoinRequests(organizationId, { offset: 0, limit: 1000 }); // Adjust the limit as needed
+                    for (const request of pendingRequests.data) {
+                        yield this.organizationRepository.updateJoinRequestStatus(request.id, "accepted");
+                        yield this.organizationRepository.addOrganizationMember({
+                            organization_id: organizationId,
+                            user_id: request.user_id,
+                            role: 'member',
+                            joined_at: new Date().toISOString()
+                        });
+                    }
+                }
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -447,6 +440,28 @@ class OrganizationService {
             }
         });
     }
+    getJoinRequestByUser(organizationId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const joinRequest = yield this.organizationRepository.getJoinRequestByUser(organizationId, userId);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: joinRequest,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching the join request.",
+                });
+            }
+        });
+    }
     removeMember(organizationId, memberUserId, adminUserId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -484,10 +499,10 @@ class OrganizationService {
             }
         });
     }
-    getOrganizations(params) {
-        return __awaiter(this, void 0, void 0, function* () {
+    getOrganizations(params_1) {
+        return __awaiter(this, arguments, void 0, function* (params, orgType = null, locationId = null, userId) {
             try {
-                const organizations = yield this.organizationRepository.getOrganizations(params);
+                const organizations = yield this.organizationRepository.getOrganizations(params, orgType, locationId, userId);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -506,14 +521,15 @@ class OrganizationService {
             }
         });
     }
-    getOrganizationById(id) {
+    getOrganizationById(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const organization = yield this.organizationRepository.getOrganizationById(id);
+                const isAdmin = yield this.organizationRepository.isUserAdmin(id, userId);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
-                    data: organization,
+                    data: Object.assign(Object.assign({}, organization), { isAdmin: isAdmin !== null && isAdmin !== void 0 ? isAdmin : false, averageSatisfactionRating: organization.averageSatisfactionRating }),
                 });
             }
             catch (error) {
@@ -605,10 +621,10 @@ class OrganizationService {
             }
         });
     }
-    searchOrganizations(searchTerm, params) {
+    searchOrganizations(searchTerm, orgType, locationId, params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield this.organizationRepository.searchOrganizations(searchTerm, params);
+                const result = yield this.organizationRepository.searchOrganizations(searchTerm, orgType, locationId, params);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -623,6 +639,249 @@ class OrganizationService {
                     code: 500,
                     success: false,
                     error: "An unexpected error occurred while searching organizations.",
+                });
+            }
+        });
+    }
+    getOrganizationPosts(organizationId, userId, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const posts = yield this.organizationRepository.getOrganizationPosts(organizationId, userId, params);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: posts,
+                });
+            }
+            catch (error) {
+                console.error('Service: Error in getOrganizationPosts', error);
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching organization posts.",
+                });
+            }
+        });
+    }
+    createOrganizationPost(post, userId, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let imageUrl = null;
+                if (image) {
+                    imageUrl = yield this.uploadImage(post.organization_id, image);
+                }
+                const newPost = yield this.organizationRepository.createOrganizationPost(Object.assign(Object.assign({}, post), { image_url: imageUrl, created_at: new Date().toISOString() }));
+                const actionDetails = {
+                    type: 'CREATE_POST',
+                    details: { postId: newPost.post_id }
+                };
+                yield this.organizationRepository.logActivity(post.organization_id, userId, 'CREATE_POST', actionDetails);
+                return (0, response_1.APIData)({
+                    code: 201,
+                    success: true,
+                    data: newPost,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while creating the organization post.",
+                });
+            }
+        });
+    }
+    isMember(organizationId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.organizationRepository.isMember(organizationId, userId);
+        });
+    }
+    deleteOrganizationPost(postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const post = yield this.organizationRepository.getOrganizationPostById(postId);
+                if (post.image_url) {
+                    yield this.deleteImage(post.image_url);
+                }
+                yield this.organizationRepository.deleteOrganizationPost(postId);
+                return (0, response_1.APIData)({
+                    code: 204,
+                    success: true,
+                    data: null,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while deleting the organization post.",
+                });
+            }
+        });
+    }
+    getTopActiveMembers(organizationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const members = yield this.organizationRepository.getTopActiveMembers(organizationId);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: members,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching top active members.",
+                });
+            }
+        });
+    }
+    uploadImage(organizationId, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fileName = `${organizationId}_${Date.now()}-${image.originalname}`;
+            const { error: uploadError } = yield supabaseClient_1.default.storage
+                .from("organization_posts")
+                .upload(fileName, image.buffer);
+            if (uploadError) {
+                console.error("Error uploading image:", uploadError);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An error occurred while uploading the image. Please try again.",
+                });
+            }
+            const { data: urlData } = supabaseClient_1.default.storage
+                .from("organization_posts")
+                .getPublicUrl(fileName);
+            return urlData.publicUrl;
+        });
+    }
+    deleteImage(imageUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const imageName = imageUrl.split("/").slice(-1)[0];
+            const { error: deleteError } = yield supabaseClient_1.default.storage
+                .from("organization_posts")
+                .remove([imageName]);
+            if (deleteError) {
+                console.error("Failed to delete image from storage:", deleteError);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An error occurred while deleting the image. Please try again.",
+                });
+            }
+        });
+    }
+    getOrganizationMembers(organizationId, userId, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const members = yield this.organizationRepository.getOrganizationMembers(organizationId, params);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: members,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching organization members.",
+                });
+            }
+        });
+    }
+    getOrganizationPost(organizationId, postId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const post = yield this.organizationRepository.getOrganizationPost(organizationId, postId);
+                // Fetch user's reaction
+                const userReaction = yield this.organizationRepository.reactionRepository.getReactionByUserAndItem(postId, 'post', userId);
+                // Add user's reaction to the post data
+                post.reactions.userReaction = (userReaction === null || userReaction === void 0 ? void 0 : userReaction.emoji) || null;
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: post,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching the organization post.",
+                });
+            }
+        });
+    }
+    checkUserMembership(organizationId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const isMember = yield this.organizationRepository.isMember(organizationId, userId);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: { isMember },
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while checking user membership.",
+                });
+            }
+        });
+    }
+    getActivityLogs(organizationId, userId, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const isAdmin = yield this.organizationRepository.isUserAdmin(organizationId, userId);
+                if (!isAdmin) {
+                    throw (0, response_1.APIError)({
+                        code: 403,
+                        success: false,
+                        error: "You do not have permission to view activity logs.",
+                    });
+                }
+                const logs = yield this.organizationRepository.getActivityLogs(organizationId, params);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: logs,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching activity logs.",
                 });
             }
         });

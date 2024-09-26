@@ -52,7 +52,11 @@ class ResolutionService {
                 status = 'accepted';
                 yield this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
                 yield this.clusterService.moveAcceptedMembersToNewCluster(resolution.issue_id, [resolution.resolver_id]);
-                yield this.pointsService.awardPoints(resolution.resolver_id, 70, "self-resolution logged and accepted");
+                yield this.pointsService.awardPoints(resolution.resolver_id, 70, "self-resolution logged");
+                // Award points to the organization if it's a self-resolution
+                if (resolution.organization_id) {
+                    yield this.pointsService.awardOrganizationPoints(resolution.organization_id, 2, "self-resolution logged");
+                }
             }
             const clusterIssues = clusterId ? yield this.issueRepository.getIssuesInCluster(clusterId) : [issue];
             const numClusterMembers = clusterIssues.length;
@@ -83,7 +87,7 @@ class ResolutionService {
             }
         });
     }
-    updateResolutionStatus(resolutionId, status, userId) {
+    updateResolutionStatus(resolutionId, status, userId, satisfactionRating) {
         return __awaiter(this, void 0, void 0, function* () {
             const resolution = yield this.resolutionRepository.getResolutionById(resolutionId);
             if (resolution.status !== 'pending') {
@@ -101,7 +105,7 @@ class ResolutionService {
                     error: "You don't have permission to respond to this resolution.",
                 });
             }
-            yield this.ResolutionResponseRepository.createResponse(resolutionId, userId, status);
+            yield this.ResolutionResponseRepository.createResponse(resolutionId, userId, status, satisfactionRating);
             const updatedResolution = yield this.resolutionRepository.updateResolution(resolutionId, {
                 num_cluster_members_accepted: status === 'accepted' ? resolution.num_cluster_members_accepted + 1 : resolution.num_cluster_members_accepted,
                 num_cluster_members_rejected: status === 'declined' ? resolution.num_cluster_members_rejected + 1 : resolution.num_cluster_members_rejected,
@@ -138,8 +142,12 @@ class ResolutionService {
                 yield this.pointsService.awardPoints(resolution.resolver_id, 50, "self-resolution accepted");
             }
             else {
+                if (resolution.organization_id) {
+                    yield this.pointsService.awardOrganizationPoints(resolution.organization_id, 75, "External resolution accepted for Organization member");
+                }
                 yield this.pointsService.awardPoints(resolution.resolver_id, 100, "external resolution accepted");
             }
+            // Award points to the organization
             yield this.issueRepository.updateIssueResolutionStatus(resolution.issue_id, true);
             const acceptedUsers = yield this.getAcceptedUsers(resolution.resolution_id);
             // Move cluster members who ACCEPTED to a NEW CLUSTER
@@ -167,12 +175,33 @@ class ResolutionService {
     }
     getAcceptedUsers(resolutionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
+            const acceptedUsers = yield this.ResolutionResponseRepository.getAcceptedUsers(resolutionId);
+            return acceptedUsers.map(user => user.userId);
         });
     }
     getUserResolutions(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return this.resolutionRepository.getUserResolutions(userId);
+        });
+    }
+    getOrganizationResolutions(organizationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.resolutionRepository.getOrganizationResolutions(organizationId);
+        });
+    }
+    getResolutionsByIssueId(issueId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.resolutionRepository.getResolutionsByIssueId(issueId);
+            }
+            catch (error) {
+                console.error(`Error fetching resolutions for issue ${issueId}:`, error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching resolutions for the issue.",
+                });
+            }
         });
     }
     deleteResolution(resolutionId, userId) {

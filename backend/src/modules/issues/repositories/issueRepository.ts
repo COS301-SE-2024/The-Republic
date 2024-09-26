@@ -1004,4 +1004,130 @@ export default class IssueRepository {
 
     return data;
   }
+
+  async getIssueCount(params: { startDate: Date; endDate: Date }): Promise<number> {
+    const { count, error } = await supabase
+      .from("issue")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", params.startDate.toISOString())
+      .lte("created_at", params.endDate.toISOString());
+  
+    if (error) {
+      console.error("Error getting issue count:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while getting issue count.",
+      });
+    }
+  
+    return count || 0;
+  }
+
+  async getIssueCountByUser(userId: string, startDate: Date, endDate: Date): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from('issue')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
+  
+      if (error) {
+        console.error('Error getting issue count:', error);
+        throw new Error(error.message || 'An error occurred while getting issue count.');
+      }
+  
+      return count || 0;
+    } catch (error) {
+      console.error('Unexpected error in getIssueCountByUser:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: error instanceof Error ? error.message : 'An unexpected error occurred while getting issue count.',
+      });
+    }
+  }
+
+  async getIssuesByCategoryInDateRange(organizationId: string, startDate: Date, endDate: Date): Promise<{ category: string; issues: Issue[] }[]> {
+    const { data, error } = await supabase
+      .from('issue')
+      .select(`
+        *,
+        category:category_id (name)
+      `)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
+  
+    if (error) {
+      console.error('Error getting issues by category:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting issues by category.',
+      });
+    }
+  
+    const issuesByCategory = data.reduce<Record<string, Issue[]>>((acc, issue) => {
+      const categoryName = issue.category.name;
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(issue);
+      return acc;
+    }, {});
+  
+    return Object.entries(issuesByCategory).map(([category, issues]) => ({ category, issues })) as { category: string; issues: Issue[] }[];
+  }
+  
+  async getIssuesByLocationInDateRange(organizationId: string, startDate: Date, endDate: Date): Promise<{ location: string; issues: Issue[] }[]> {
+    const { data, error } = await supabase
+      .from('issue')
+      .select(`
+        *,
+        location:location_id (city)
+      `)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString());
+  
+    if (error) {
+      console.error('Error getting issues by location:', error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: 'An error occurred while getting issues by location.',
+      });
+    }
+  
+    const issuesByLocation = data.reduce<Record<string, Issue[]>>((acc, issue) => {
+      const locationName = issue.location?.city ?? 'Unknown';
+      if (!acc[locationName]) {
+        acc[locationName] = [];
+      }
+      acc[locationName].push(issue);
+      return acc;
+    }, {});
+  
+    return Object.entries(issuesByLocation).map(([location, issues]) => ({ location, issues })) as { location: string; issues: Issue[] }[];
+  }
+
+  async getResolvedIssueCount(params: { startDate: Date; endDate: Date }): Promise<number> {
+    const { count, error } = await supabase
+      .from("issue")
+      .select("*", { count: "exact", head: true })
+      .not("resolved_at", "is", null)
+      .gte("created_at", params.startDate.toISOString())
+      .lte("created_at", params.endDate.toISOString());
+  
+    if (error) {
+      console.error("Error getting resolved issue count:", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while getting resolved issue count.",
+      });
+    }
+  
+    return count || 0;
+  }
 }

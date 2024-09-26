@@ -19,6 +19,18 @@ const reactionController_1 = __importDefault(require("@/modules/reactions/contro
 const middleware_1 = require("@/middleware/middleware");
 jest.mock("@/middleware/middleware");
 jest.mock("@/modules/reactions/controllers/reactionController");
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+jest.mock("@/modules/shared/services/redisClient", () => ({
+    __esModule: true,
+    default: {
+        on: jest.fn(),
+        get: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        keys: jest.fn().mockResolvedValue([]),
+    },
+}));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use("/reactions", reactionRoutes_1.default);

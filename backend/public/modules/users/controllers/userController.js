@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.updateUsername = exports.updateUserProfile = exports.getUserById = void 0;
+exports.updateUserProfile = exports.getUserById = void 0;
 const response_1 = require("@/utilities/response");
 const userService_1 = require("@/modules/users/services/userService");
 const cacheMiddleware_1 = require("@/middleware/cacheMiddleware");
@@ -39,25 +39,3 @@ const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateUserProfile = updateUserProfile;
-const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const response = yield userService.updateUsername(req.params.id, req.body.username);
-        (0, cacheUtils_1.clearCache)(`/api/users/${req.params.id}`);
-        (0, cacheUtils_1.clearCachePattern)('__express__/api/users*');
-        (0, response_1.sendResponse)(res, response);
-    }
-    catch (error) {
-        (0, response_1.sendResponse)(res, error);
-    }
-});
-exports.updateUsername = updateUsername;
-const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const response = yield userService.changePassword(req.params.id, req.body.currentPassword, req.body.newPassword);
-        (0, response_1.sendResponse)(res, response);
-    }
-    catch (error) {
-        (0, response_1.sendResponse)(res, error);
-    }
-});
-exports.changePassword = changePassword;

@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const supabaseClient_1 = __importDefault(require("../../shared/services/supabaseClient"));
-const response_1 = require("../../../types/response");
+const supabaseClient_1 = __importDefault(require("@/modules/shared/services/supabaseClient"));
+const response_1 = require("@/types/response");
 class UserRepository {
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -123,50 +123,6 @@ class UserRepository {
                 });
             }
             return data;
-        });
-    }
-    updateUsername(userId, newUsername) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default
-                .from("user")
-                .update({ username: newUsername })
-                .eq("user_id", userId)
-                .select()
-                .single();
-            if (error) {
-                console.error("Supabase error:", error);
-                if (error.message.includes("duplicate key value violates unique constraint")) {
-                    throw (0, response_1.APIError)({
-                        code: 409,
-                        success: false,
-                        error: "Username already taken.",
-                    });
-                }
-                throw (0, response_1.APIError)({
-                    code: 500,
-                    success: false,
-                    error: "An unexpected error occurred while updating username.",
-                });
-            }
-            return data;
-        });
-    }
-    isUsernameTaken(username) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { data, error } = yield supabaseClient_1.default
-                .from("user")
-                .select("username")
-                .eq("username", username)
-                .maybeSingle();
-            if (error) {
-                console.error("Supabase error:", error);
-                throw (0, response_1.APIError)({
-                    code: 500,
-                    success: false,
-                    error: "An unexpected error occurred while checking username availability.",
-                });
-            }
-            return !!data;
         });
     }
 }

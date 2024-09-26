@@ -38,7 +38,7 @@ class ResolutionRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from('resolution')
-                .select('*')
+                .select('*, organization:organization_id(*)')
                 .eq('resolution_id', resolutionId)
                 .single();
             if (error) {
@@ -75,7 +75,7 @@ class ResolutionRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from('resolution')
-                .select('*')
+                .select('*, organization:organization_id(*)')
                 .eq('issue_id', issueId);
             if (error) {
                 console.error(error);
@@ -92,7 +92,7 @@ class ResolutionRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from('resolution')
-                .select('*')
+                .select('*, organization:organization_id(*)')
                 .eq('resolver_id', userId)
                 .order('created_at', { ascending: false });
             if (error) {
@@ -149,6 +149,24 @@ class ResolutionRepository {
                     error: "An unexpected error occurred while deleting the resolution.",
                 });
             }
+        });
+    }
+    getOrganizationResolutions(organizationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { data, error } = yield supabaseClient_1.default
+                .from('resolution')
+                .select('*')
+                .eq('organization_id', organizationId)
+                .order('created_at', { ascending: false });
+            if (error) {
+                console.error(error);
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching organization resolutions.",
+                });
+            }
+            return data;
         });
     }
 }

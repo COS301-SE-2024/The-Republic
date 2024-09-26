@@ -11,6 +11,7 @@ import { checkImageFileAndToast } from "@/lib/utils";
 import { useUser } from "@/lib/contexts/UserContext";
 import { createOrganizationPost } from '@/lib/api/createOrganizationPost';
 import CircularProgress from "@/components/CircularProgressBar/CircularProgressBar";
+import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
 
 const MAX_CHAR_COUNT = 300;
 
@@ -32,6 +33,17 @@ const CreateOrgPost: React.FC<CreateOrgPostProps> = ({ organization, onPostCreat
     setIsLoading(true);
 
     try {
+      const isContentAppropriate = await checkContentAppropriateness(content);
+
+      if (!isContentAppropriate) {
+        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          description: "Please use appropriate language.",
+        });
+        return;
+      }
+
       if (image && !(await checkImageFileAndToast(image, toast))) {
         setIsLoading(false);
         return;

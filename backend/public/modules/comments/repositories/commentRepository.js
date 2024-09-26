@@ -16,7 +16,7 @@ exports.CommentRepository = void 0;
 const supabaseClient_1 = __importDefault(require("@/modules/shared/services/supabaseClient"));
 const response_1 = require("@/types/response");
 class CommentRepository {
-    getNumComments(issue_id, parent_id) {
+    getNumComments(itemId, itemType, parent_id) {
         return __awaiter(this, void 0, void 0, function* () {
             let query = supabaseClient_1.default
                 .from("comment")
@@ -24,7 +24,7 @@ class CommentRepository {
                 count: "exact",
                 head: true,
             })
-                .eq("issue_id", issue_id);
+                .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId);
             query = !parent_id
                 ? query.is("parent_id", null)
                 : query.eq("parent_id", parent_id);
@@ -41,7 +41,7 @@ class CommentRepository {
         });
     }
     getComments(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ issue_id, user_id, from, amount, parent_id }) {
+        return __awaiter(this, arguments, void 0, function* ({ itemId, itemType, user_id, from, amount, parent_id }) {
             let query = supabaseClient_1.default
                 .from("comment")
                 .select(`
@@ -55,7 +55,7 @@ class CommentRepository {
           user_score
         )
       `)
-                .eq("issue_id", issue_id)
+                .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
                 .order("created_at", { ascending: false })
                 .range(from, from + amount - 1);
             query = !parent_id

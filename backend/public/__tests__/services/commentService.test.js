@@ -28,18 +28,20 @@ describe("CommentService", () => {
         commentService.setPointsService(mockPointsService);
     });
     describe("getNumComments", () => {
-        it("should return the number of comments for an issue", () => __awaiter(void 0, void 0, void 0, function* () {
+        it("should return the number of comments for an item", () => __awaiter(void 0, void 0, void 0, function* () {
             const params = {
-                issue_id: 1,
+                itemId: "1",
+                itemType: 'issue',
+                user_id: "user1",
             };
             commentRepository.getNumComments.mockResolvedValue(10);
             const response = yield commentService.getNumComments(params);
             expect(response.data).toBe(10);
-            expect(commentRepository.getNumComments).toHaveBeenCalledWith(1, undefined);
+            expect(commentRepository.getNumComments).toHaveBeenCalledWith("1", 'issue', undefined);
             expect(commentRepository.getNumComments).toHaveBeenCalledTimes(1);
         }));
-        it("should throw an error when issue_id is missing", () => __awaiter(void 0, void 0, void 0, function* () {
-            const params = {};
+        it("should throw an error when itemId is missing", () => __awaiter(void 0, void 0, void 0, function* () {
+            const params = { itemType: 'issue', user_id: "user1" };
             yield expect(commentService.getNumComments(params)).rejects.toEqual((0, response_1.APIError)({
                 code: 400,
                 success: false,
@@ -49,11 +51,13 @@ describe("CommentService", () => {
         }));
     });
     describe("getComments", () => {
-        it("should return comments for an issue", () => __awaiter(void 0, void 0, void 0, function* () {
+        it("should return comments for an item", () => __awaiter(void 0, void 0, void 0, function* () {
             const params = {
-                issue_id: 1,
+                itemId: "1",
+                itemType: 'issue',
                 from: 0,
                 amount: 10,
+                user_id: "user1",
             };
             const mockComments = [
                 {
@@ -88,7 +92,9 @@ describe("CommentService", () => {
         }));
         it("should throw an error when required fields are missing", () => __awaiter(void 0, void 0, void 0, function* () {
             const params = {
-                issue_id: 1,
+                itemId: "1",
+                itemType: 'issue',
+                user_id: "user1",
             };
             yield expect(commentService.getComments(params)).rejects.toEqual((0, response_1.APIError)({
                 code: 400,
@@ -131,7 +137,7 @@ describe("CommentService", () => {
             };
             commentRepository.addComment.mockResolvedValue(addedComment);
             const response = yield commentService.addComment(newComment);
-            expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 10, "Left a comment on an open issue");
+            expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 10, "Left a comment");
             expect(response.data).toEqual(addedComment);
             expect(commentRepository.addComment).toHaveBeenCalledWith(newComment);
             expect(commentRepository.addComment).toHaveBeenCalledTimes(1);

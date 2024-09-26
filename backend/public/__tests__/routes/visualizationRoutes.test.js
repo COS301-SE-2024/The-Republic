@@ -39,6 +39,18 @@ const supertest_1 = __importDefault(require("supertest"));
 const express_1 = __importDefault(require("express"));
 const visualizationRoutes_1 = __importDefault(require("@/modules/visualizations/routes/visualizationRoutes"));
 const visualizationController = __importStar(require("@/modules/visualizations/controllers/visualizationController"));
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+jest.mock("@/modules/shared/services/redisClient", () => ({
+    __esModule: true,
+    default: {
+        on: jest.fn(),
+        get: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        keys: jest.fn().mockResolvedValue([]),
+    },
+}));
 jest.mock("@/modules/visualizations/controllers/visualizationController");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());

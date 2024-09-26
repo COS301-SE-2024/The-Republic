@@ -234,7 +234,17 @@ class ClusterService {
             }
             else {
                 // Create a new cluster with the accepted issue
-                const newCluster = yield this.clusterRepository.createCluster(issue);
+                const issueEmbedding = yield this.issueRepository.getIssueEmbedding(issueId);
+                if (!issueEmbedding.content_embedding) {
+                    throw (0, response_1.APIError)({
+                        code: 500,
+                        success: false,
+                        error: "Issue embedding not found",
+                    });
+                }
+                // Combine the full issue data with the embedding
+                const fullIssueWithEmbedding = Object.assign(Object.assign({}, issue), { content_embedding: issueEmbedding.content_embedding });
+                const newCluster = yield this.clusterRepository.createCluster(fullIssueWithEmbedding);
                 newClusterId = newCluster.cluster_id;
             }
             // Move the accepted issue to the new cluster
@@ -256,7 +266,18 @@ class ClusterService {
             if (issues.length === 0) {
                 return; // Cluster is empty, no need to recalculate
             }
-            const newCentroid = this.calculateAverageEmbedding(issues);
+            const issuesWithEmbeddings = yield Promise.all(issues.map((issue) => __awaiter(this, void 0, void 0, function* () {
+                if (!issue.content_embedding) {
+                    const embedding = yield this.issueRepository.getIssueEmbedding(issue.issue_id);
+                    return Object.assign(Object.assign({}, issue), { content_embedding: embedding.content_embedding });
+                }
+                return issue;
+            })));
+            const newCentroid = this.calculateAverageEmbedding(issuesWithEmbeddings);
+            if (newCentroid.length === 0) {
+                console.error(`Failed to calculate new centroid for cluster ${clusterId}`);
+                return;
+            }
             const formattedCentroid = this.formatCentroidForDatabase(newCentroid);
             yield this.clusterRepository.updateCluster(clusterId, formattedCentroid, issues.length);
         });
@@ -265,6 +286,10 @@ class ClusterService {
         let sumEmbedding = [];
         let validEmbeddingsCount = 0;
         for (const issue of issues) {
+            if (!issue.content_embedding) {
+                console.warn(`Issue ${issue.issue_id} has no content_embedding`);
+                continue;
+            }
             let embeddingArray = [];
             if (typeof issue.content_embedding === 'string') {
                 try {
@@ -291,6 +316,10 @@ class ClusterService {
                 }
                 validEmbeddingsCount++;
             }
+        }
+        if (validEmbeddingsCount === 0) {
+            console.error('No valid embeddings found in cluster');
+            return [];
         }
         return sumEmbedding.map(val => val / validEmbeddingsCount);
     }

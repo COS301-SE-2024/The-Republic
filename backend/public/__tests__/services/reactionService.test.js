@@ -36,9 +36,16 @@ describe("ReactionService", () => {
                 issue_id: 1,
                 user_id: "1",
                 emoji: "👍",
+                itemType: 'issue',
             };
-            const addedReaction = Object.assign(Object.assign({}, newReaction), { issue_id: 1, user_id: "1", reaction_id: 1, emoji: "👍", created_at: "2022-01-01" });
-            reactionRepository.getReactionByUserAndIssue.mockResolvedValue(null);
+            const addedReaction = {
+                reaction_id: 1,
+                issue_id: 1,
+                user_id: "1",
+                emoji: "👍",
+                created_at: "2022-01-01",
+            };
+            reactionRepository.getReactionByUserAndItem.mockResolvedValue(null);
             reactionRepository.addReaction.mockResolvedValue(addedReaction);
             const response = yield reactionService.addOrRemoveReaction(newReaction);
             expect(mockPointsService.awardPoints).toHaveBeenCalledWith("1", 5, "reacted to an issue");
@@ -46,7 +53,7 @@ describe("ReactionService", () => {
                 added: "👍",
                 removed: undefined,
             });
-            expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(1, "1");
+            expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith("1", 'issue', "1");
             expect(reactionRepository.addReaction).toHaveBeenCalledWith(newReaction);
             expect(reactionRepository.addReaction).toHaveBeenCalledTimes(1);
         }));
@@ -55,23 +62,31 @@ describe("ReactionService", () => {
                 issue_id: 1,
                 user_id: "1",
                 emoji: "👍",
+                itemType: 'issue',
             };
-            const existingReaction = Object.assign(Object.assign({}, reaction), { issue_id: 1, user_id: "1", reaction_id: 1, emoji: "👍", created_at: "2022-01-01" });
-            reactionRepository.getReactionByUserAndIssue.mockResolvedValue(existingReaction);
+            const existingReaction = {
+                reaction_id: 1,
+                issue_id: 1,
+                user_id: "1",
+                emoji: "👍",
+                created_at: "2022-01-01",
+            };
+            reactionRepository.getReactionByUserAndItem.mockResolvedValue(existingReaction);
             reactionRepository.deleteReaction.mockResolvedValue(existingReaction);
             const response = yield reactionService.addOrRemoveReaction(reaction);
             expect(response.data).toEqual({
                 added: undefined,
                 removed: "👍",
             });
-            expect(reactionRepository.getReactionByUserAndIssue).toHaveBeenCalledWith(1, "1");
-            expect(reactionRepository.deleteReaction).toHaveBeenCalledWith(1, "1");
+            expect(reactionRepository.getReactionByUserAndItem).toHaveBeenCalledWith("1", 'issue', "1");
+            expect(reactionRepository.deleteReaction).toHaveBeenCalledWith("1", 'issue', "1");
             expect(reactionRepository.deleteReaction).toHaveBeenCalledTimes(1);
         }));
         it("should throw an error when user_id is missing", () => __awaiter(void 0, void 0, void 0, function* () {
             const reaction = {
                 issue_id: 1,
                 emoji: "👍",
+                itemType: 'issue',
             };
             yield expect((() => __awaiter(void 0, void 0, void 0, function* () {
                 try {
@@ -81,13 +96,14 @@ describe("ReactionService", () => {
                     throw new Error(error.error);
                 }
             }))()).rejects.toThrow("You need to be signed in to react");
-            expect(reactionRepository.getReactionByUserAndIssue).not.toHaveBeenCalled();
+            expect(reactionRepository.getReactionByUserAndItem).not.toHaveBeenCalled();
             expect(reactionRepository.addReaction).not.toHaveBeenCalled();
             expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();
         }));
         it("should throw an error when required fields are missing", () => __awaiter(void 0, void 0, void 0, function* () {
             const reaction = {
                 user_id: "1",
+                itemType: 'issue',
             };
             yield expect((() => __awaiter(void 0, void 0, void 0, function* () {
                 try {
@@ -97,7 +113,7 @@ describe("ReactionService", () => {
                     throw new Error(error.error);
                 }
             }))()).rejects.toThrow("Missing required fields for reacting");
-            expect(reactionRepository.getReactionByUserAndIssue).not.toHaveBeenCalled();
+            expect(reactionRepository.getReactionByUserAndItem).not.toHaveBeenCalled();
             expect(reactionRepository.addReaction).not.toHaveBeenCalled();
             expect(reactionRepository.deleteReaction).not.toHaveBeenCalled();
         }));

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRelatedIssues = exports.deleteResolution = exports.getUserResolutions = exports.getUserIssueInCluster = exports.hasUserIssuesInCluster = exports.getResolutionsForIssue = exports.respondToResolution = exports.createExternalResolution = exports.createSelfResolution = exports.getUserResolvedIssues = exports.getUserIssues = exports.resolveIssue = exports.deleteIssue = exports.updateIssue = exports.createIssue = exports.getIssueById = exports.getIssues = void 0;
+exports.getRelatedIssues = exports.deleteResolution = exports.getUserResolutions = exports.getUserIssueInCluster = exports.hasUserIssuesInCluster = exports.getResolutionsForIssue = exports.respondToResolution = exports.getOrganizationResolutions = exports.createExternalResolution = exports.createSelfResolution = exports.getUserResolvedIssues = exports.getUserIssues = exports.resolveIssue = exports.deleteIssue = exports.updateIssue = exports.createIssue = exports.getIssueById = exports.getIssues = void 0;
 const issueService_1 = __importDefault(require("@/modules/issues/services/issueService"));
 const response_1 = require("@/types/response");
 const response_2 = require("@/utilities/response");
@@ -135,8 +135,8 @@ exports.createSelfResolution = [
     upload.single("proofImage"),
     (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { issueId, userId, resolutionText } = req.body;
-            const response = yield issueService.createSelfResolution(parseInt(issueId), userId, resolutionText, req.file);
+            const { issueId, userId, resolutionText, organizationId } = req.body;
+            const response = yield issueService.createSelfResolution(parseInt(issueId), userId, resolutionText, req.file, organizationId);
             (0, cacheUtils_1.clearCachePattern)('__express__/api/issues*');
             (0, response_2.sendResponse)(res, response);
         }
@@ -149,8 +149,8 @@ exports.createExternalResolution = [
     upload.single("proofImage"),
     (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy } = req.body;
-            const response = yield issueService.createExternalResolution(parseInt(issueId), userId, resolutionText, req.file, politicalAssociation, stateEntityAssociation, resolvedBy);
+            const { issueId, userId, resolutionText, politicalAssociation, stateEntityAssociation, resolvedBy, organizationId } = req.body;
+            const response = yield issueService.createExternalResolution(parseInt(issueId), userId, resolutionText, req.file, politicalAssociation, stateEntityAssociation, resolvedBy, organizationId);
             (0, cacheUtils_1.clearCachePattern)('__express__/api/issues*');
             (0, response_2.sendResponse)(res, response);
         }
@@ -159,10 +159,23 @@ exports.createExternalResolution = [
         }
     }),
 ];
+exports.getOrganizationResolutions = [
+    (0, cacheMiddleware_1.cacheMiddleware)(300),
+    (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { organizationId } = req.body;
+            const response = yield issueService.getOrganizationResolutions(organizationId);
+            (0, response_2.sendResponse)(res, response);
+        }
+        catch (err) {
+            handleError(res, err);
+        }
+    })
+];
 const respondToResolution = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { resolutionId, userId, accept } = req.body;
-        const response = yield issueService.respondToResolution(resolutionId, userId, accept);
+        const { resolutionId, userId, accept, satisfactionRating } = req.body;
+        const response = yield issueService.respondToResolution(resolutionId, userId, accept, satisfactionRating);
         (0, cacheUtils_1.clearCachePattern)('__express__/api/issues*');
         (0, response_2.sendResponse)(res, response);
     }

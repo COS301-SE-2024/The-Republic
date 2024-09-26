@@ -67,5 +67,22 @@ class PointsService {
             return this.pointsRepository.getUserPosition(userId, locationFilter);
         });
     }
+    awardOrganizationPoints(organizationId, points, reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newScore = yield this.pointsRepository.updateOrganizationScore(organizationId, points);
+            yield this.pointsRepository.logOrganizationPointsTransaction(organizationId, points, reason);
+            return newScore;
+        });
+    }
+    awardPointsForResolution(userId, organizationId, isSelfResolution) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userPoints = isSelfResolution ? 5 : 10;
+            const orgPoints = 2;
+            yield this.awardPoints(userId, userPoints, "Resolution accepted");
+            if (organizationId) {
+                yield this.awardOrganizationPoints(organizationId, orgPoints, "Resolution accepted");
+            }
+        });
+    }
 }
 exports.PointsService = PointsService;

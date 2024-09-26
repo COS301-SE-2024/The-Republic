@@ -25,15 +25,15 @@ class CommentService {
         this.pointsService = pointsService;
     }
     getNumComments(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ issue_id, parent_id }) {
-            if (!issue_id) {
+        return __awaiter(this, arguments, void 0, function* ({ itemId, itemType, parent_id }) {
+            if (!itemId || !itemType) {
                 throw (0, response_1.APIError)({
                     code: 400,
                     success: false,
                     error: "Missing required fields for getting number of comments",
                 });
             }
-            const count = yield this.commentRepository.getNumComments(issue_id, parent_id);
+            const count = yield this.commentRepository.getNumComments(itemId, itemType, parent_id);
             return (0, response_1.APIData)({
                 code: 200,
                 success: true,
@@ -43,7 +43,7 @@ class CommentService {
     }
     getComments(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!params.issue_id || !params.amount || params.from === undefined) {
+            if (!params.itemId || !params.itemType || !params.amount || params.from === undefined) {
                 throw (0, response_1.APIError)({
                     code: 400,
                     success: false,
@@ -90,7 +90,7 @@ class CommentService {
                     error: "You need to be signed in to create a comment",
                 });
             }
-            if (!comment.issue_id ||
+            if ((!comment.issue_id && !comment.post_id) ||
                 !comment.content ||
                 comment.is_anonymous === undefined) {
                 throw (0, response_1.APIError)({
@@ -104,7 +104,7 @@ class CommentService {
             const addedComment = yield this.commentRepository.addComment(comment);
             // Award points for adding a comment, but only if it's a top-level comment
             if (!comment.parent_id) {
-                yield this.pointsService.awardPoints(comment.user_id, 10, "Left a comment on an open issue");
+                yield this.pointsService.awardPoints(comment.user_id, 10, "Left a comment");
             }
             return (0, response_1.APIData)({
                 code: 201,

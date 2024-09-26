@@ -292,7 +292,7 @@ class IssueService {
             return this.createSelfResolution(issue_id, user_id, "Issue resolved by owner");
         });
     }
-    createSelfResolution(issueId, userId, resolutionText, proofImage) {
+    createSelfResolution(issueId, userId, resolutionText, proofImage, organizationId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 //console.log(`Starting createSelfResolution for issue ${issueId} by user ${userId}`);
@@ -318,7 +318,6 @@ class IssueService {
                 }
                 let imageUrl = null;
                 if (proofImage) {
-                    //console.log(`Uploading proof image`);
                     const fileName = `${userId}_${Date.now()}-${proofImage.originalname}`;
                     const { error } = yield supabaseClient_1.default.storage
                         .from("resolutions")
@@ -335,9 +334,7 @@ class IssueService {
                         .from("resolutions")
                         .getPublicUrl(fileName);
                     imageUrl = urlData.publicUrl;
-                    //console.log(`Image uploaded successfully. URL: ${imageUrl}`);
                 }
-                //console.log(`Creating resolution`);
                 const resolution = yield this.resolutionService.createResolution({
                     issue_id: issueId,
                     resolver_id: userId,
@@ -347,9 +344,9 @@ class IssueService {
                     num_cluster_members: numClusterMembers,
                     political_association: null,
                     state_entity_association: null,
-                    resolved_by: null
+                    resolved_by: null,
+                    organization_id: organizationId
                 });
-                //console.log(`Returning successful response`);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -369,7 +366,7 @@ class IssueService {
             }
         });
     }
-    createExternalResolution(issueId, userId, resolutionText, proofImage, politicalAssociation, stateEntityAssociation, resolvedBy) {
+    createExternalResolution(issueId, userId, resolutionText, proofImage, politicalAssociation, stateEntityAssociation, resolvedBy, organizationId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const issue = yield this.issueRepository.getIssueById(issueId);
@@ -413,7 +410,8 @@ class IssueService {
                     num_cluster_members: numClusterMembers,
                     political_association: politicalAssociation || null,
                     state_entity_association: stateEntityAssociation || null,
-                    resolved_by: resolvedBy || null
+                    resolved_by: resolvedBy || null,
+                    organization_id: organizationId
                 });
                 return (0, response_1.APIData)({
                     code: 200,
@@ -433,10 +431,10 @@ class IssueService {
             }
         });
     }
-    respondToResolution(resolutionId, userId, accept) {
+    respondToResolution(resolutionId, userId, accept, satisfactionRating) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const resolution = yield this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId);
+                const resolution = yield this.resolutionService.updateResolutionStatus(resolutionId, accept ? 'accepted' : 'declined', userId, satisfactionRating);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -554,7 +552,7 @@ class IssueService {
     getResolutionsForIssue(issueId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const resolutions = yield this.issueRepository.getResolutionsForIssue(issueId);
+                const resolutions = yield this.resolutionService.getResolutionsByIssueId(issueId);
                 return (0, response_1.APIData)({
                     code: 200,
                     success: true,
@@ -569,6 +567,28 @@ class IssueService {
                     code: 500,
                     success: false,
                     error: "An unexpected error occurred while fetching resolutions for the issue.",
+                });
+            }
+        });
+    }
+    getOrganizationResolutions(organizationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const resolutions = yield this.resolutionService.getOrganizationResolutions(organizationId);
+                return (0, response_1.APIData)({
+                    code: 200,
+                    success: true,
+                    data: resolutions,
+                });
+            }
+            catch (error) {
+                if (error instanceof response_1.APIError) {
+                    throw error;
+                }
+                throw (0, response_1.APIError)({
+                    code: 500,
+                    success: false,
+                    error: "An unexpected error occurred while fetching resolutions for the organization.",
                 });
             }
         });

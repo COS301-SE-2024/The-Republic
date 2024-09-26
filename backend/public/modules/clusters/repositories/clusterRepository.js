@@ -255,20 +255,28 @@ class ClusterRepository {
                 .from('issue')
                 .select(`
         *,
+        issue_embeddings (content_embedding),
         cluster:cluster_id (
           centroid_embedding
         )
       `)
                 .eq('cluster_id', clusterId);
             if (error) {
-                console.error(error);
+                console.error('Error fetching issues in cluster:', error);
                 throw (0, response_1.APIError)({
                     code: 500,
                     success: false,
                     error: "An unexpected error occurred while fetching issues in the cluster.",
                 });
             }
-            return data;
+            if (!data || !Array.isArray(data)) {
+                console.warn('No issues found in cluster or invalid data format');
+                return [];
+            }
+            return data.map(issue => {
+                var _a, _b;
+                return (Object.assign(Object.assign({}, issue), { content_embedding: ((_b = (_a = issue.issue_embeddings) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.content_embedding) || null }));
+            });
         });
     }
     getIssueEmbeddingsInCluster(clusterId) {

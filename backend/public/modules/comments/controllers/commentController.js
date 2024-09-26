@@ -16,7 +16,8 @@ const commentService = new commentService_1.CommentService();
 function getNumComments(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield commentService.getNumComments(req.body);
+            const { itemId, itemType, parent_id } = req.body;
+            const response = yield commentService.getNumComments({ itemId, itemType, parent_id });
             (0, response_1.sendResponse)(res, response);
         }
         catch (error) {

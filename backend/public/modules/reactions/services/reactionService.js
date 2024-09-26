@@ -35,24 +35,26 @@ class ReactionService {
                     error: "You need to be signed in to react",
                 });
             }
-            if (!reaction.issue_id || !reaction.emoji) {
+            if ((!reaction.issue_id && !reaction.post_id) || !reaction.emoji || !reaction.itemType) {
                 throw (0, response_1.APIError)({
                     code: 400,
                     success: false,
                     error: "Missing required fields for reacting",
                 });
             }
+            const itemId = reaction.issue_id || reaction.post_id;
+            const itemType = reaction.itemType;
             let added;
             let removed;
-            const existingReaction = yield this.reactionRepository.getReactionByUserAndIssue(reaction.issue_id, reaction.user_id);
+            const existingReaction = yield this.reactionRepository.getReactionByUserAndItem(itemId.toString(), itemType, reaction.user_id);
             if (existingReaction) {
-                const removedReaction = yield this.reactionRepository.deleteReaction(reaction.issue_id, reaction.user_id);
+                const removedReaction = yield this.reactionRepository.deleteReaction(itemId.toString(), itemType, reaction.user_id);
                 removed = removedReaction.emoji;
             }
             if (reaction.emoji !== removed) {
                 const addedReaction = yield this.reactionRepository.addReaction(reaction);
                 added = addedReaction.emoji;
-                yield this.pointsService.awardPoints(reaction.user_id, 5, "reacted to an issue");
+                yield this.pointsService.awardPoints(reaction.user_id, 5, `reacted to an ${itemType}`);
             }
             return (0, response_1.APIData)({
                 code: 200,

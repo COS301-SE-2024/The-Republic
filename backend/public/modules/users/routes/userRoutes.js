@@ -11,6 +11,4 @@ const router = express_1.default.Router();
 const upload = (0, multer_1.default)();
 router.post("/:id", middleware_1.verifyAndGetUser, userController_1.getUserById);
 router.put("/:id", middleware_1.verifyAndGetUser, upload.single("profile_picture"), userController_1.updateUserProfile);
-router.put("/:id/username", middleware_1.verifyAndGetUser, userController_1.updateUsername);
-router.put("/:id/password", middleware_1.verifyAndGetUser, userController_1.changePassword);
 exports.default = router;

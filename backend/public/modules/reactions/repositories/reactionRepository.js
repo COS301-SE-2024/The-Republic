@@ -17,10 +17,11 @@ const response_1 = require("@/types/response");
 class ReactionRepository {
     addReaction(reaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            reaction.created_at = new Date().toISOString();
+            const reactionData = reaction;
+            reactionData.created_at = new Date().toISOString();
             const { data, error } = yield supabaseClient_1.default
                 .from("reaction")
-                .insert(reaction)
+                .insert(reactionData)
                 .select()
                 .single();
             if (error) {
@@ -34,12 +35,12 @@ class ReactionRepository {
             return data;
         });
     }
-    deleteReaction(issueId, userId) {
+    deleteReaction(itemId, itemType, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from("reaction")
                 .delete()
-                .eq("issue_id", issueId)
+                .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
                 .eq("user_id", userId)
                 .select()
                 .maybeSingle();
@@ -61,12 +62,12 @@ class ReactionRepository {
             return data;
         });
     }
-    getReactionByUserAndIssue(issueId, userId) {
+    getReactionByUserAndItem(itemId, itemType, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from("reaction")
                 .select("*")
-                .eq("issue_id", issueId)
+                .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId)
                 .eq("user_id", userId)
                 .maybeSingle();
             if (error) {
@@ -80,12 +81,12 @@ class ReactionRepository {
             return data;
         });
     }
-    getReactionCountsByIssueId(issueId) {
+    getReactionCountsByItemId(itemId, itemType) {
         return __awaiter(this, void 0, void 0, function* () {
             const { data, error } = yield supabaseClient_1.default
                 .from("reaction")
                 .select("emoji")
-                .eq("issue_id", issueId);
+                .eq(itemType === 'issue' ? "issue_id" : "post_id", itemId);
             if (error) {
                 console.error(error);
                 throw (0, response_1.APIError)({

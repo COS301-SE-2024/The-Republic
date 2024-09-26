@@ -42,6 +42,18 @@ const commentController = __importStar(require("@/modules/comments/controllers/c
 const middleware_1 = require("@/middleware/middleware");
 jest.mock("@/middleware/middleware");
 jest.mock("@/modules/comments/controllers/commentController");
+jest.mock("@/middleware/cacheMiddleware");
+jest.mock("@/utilities/cacheUtils");
+jest.mock("@/modules/shared/services/redisClient", () => ({
+    __esModule: true,
+    default: {
+        on: jest.fn(),
+        get: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        keys: jest.fn().mockResolvedValue([]),
+    },
+}));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use("/comments", commentRoutes_1.default);

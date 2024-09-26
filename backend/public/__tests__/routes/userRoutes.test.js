@@ -40,13 +40,10 @@ const express_1 = __importDefault(require("express"));
 const userRoutes_1 = __importDefault(require("@/modules/users/routes/userRoutes"));
 const middleware_1 = require("@/middleware/middleware");
 const userController = __importStar(require("@/modules/users/controllers/userController"));
-// Mock the middleware and controllers
 jest.mock("@/middleware/middleware");
 jest.mock("@/modules/users/controllers/userController", () => ({
     getUserById: [jest.fn()],
     updateUserProfile: jest.fn(),
-    updateUsername: jest.fn(),
-    changePassword: jest.fn(),
 }));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -71,24 +68,6 @@ describe("User Routes", () => {
             const response = yield (0, supertest_1.default)(app).put("/users/1").send();
             expect(response.status).toBe(200);
             expect(userController.updateUserProfile).toHaveBeenCalled();
-        }));
-    });
-    describe("PUT /users/:id/username", () => {
-        it("should call updateUsername controller", () => __awaiter(void 0, void 0, void 0, function* () {
-            middleware_1.verifyAndGetUser.mockImplementation((req, res, next) => next());
-            userController.updateUsername.mockImplementation((req, res) => res.status(200).json({}));
-            const response = yield (0, supertest_1.default)(app).put("/users/1/username").send({ username: "newUsername" });
-            expect(response.status).toBe(200);
-            expect(userController.updateUsername).toHaveBeenCalled();
-        }));
-    });
-    describe("PUT /users/:id/password", () => {
-        it("should call changePassword controller", () => __awaiter(void 0, void 0, void 0, function* () {
-            middleware_1.verifyAndGetUser.mockImplementation((req, res, next) => next());
-            userController.changePassword.mockImplementation((req, res) => res.status(200).json({}));
-            const response = yield (0, supertest_1.default)(app).put("/users/1/password").send({ password: "newPassword" });
-            expect(response.status).toBe(200);
-            expect(userController.changePassword).toHaveBeenCalled();
         }));
     });
 });
