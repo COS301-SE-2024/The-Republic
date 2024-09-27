@@ -19,6 +19,7 @@ import TypedDeleteConfirmation from '@/components/DeleteConfirmation/TypedDelete
 import LocationModal from '@/components/LocationModal/LocationModal';
 import Link from 'next/link';
 import { checkContentAppropriateness } from "@/lib/api/checkContentAppropriateness";
+import { Loader2 } from "lucide-react";
 
 interface SettingsTabProps {
   organization: Organization;
@@ -412,7 +413,9 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
               This log shows all administrative actions taken within the organization. It helps maintain transparency and accountability among admins.
             </p>
             {isLoadingLogs ? (
-              <div className="text-center">Loading...</div>
+               <div className="flex justify-center items-center h-full">
+                <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+              </div>
             ) : logsError ? (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
