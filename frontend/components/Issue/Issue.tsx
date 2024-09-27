@@ -391,6 +391,7 @@ const Issue: React.FC<IssueProps> = ({
                   isOwner={isOwner}
                   onAction={handleMenuAction}
                   onSubscribe={handleSubscribe}
+                  theme={"dark" || "light"} 
                 />
               )}
               {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}

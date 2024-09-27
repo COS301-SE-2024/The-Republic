@@ -26,6 +26,7 @@ interface MoreMenuProps {
   isOwner: boolean;
   onAction: (action: string) => void;
   onSubscribe: (option: string) => void;
+  theme: "light" | "dark"; 
 }
 
 const MoreMenu: React.FC<MoreMenuProps> = ({
@@ -33,6 +34,7 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
   isOwner,
   onAction,
   onSubscribe,
+  theme,
 }) => {
   const handleAction = (action: string) => {
     onAction(action);
@@ -47,46 +49,62 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex items-center rounded-full p-1 hover:bg-gray-200"
+            className={`flex items-center rounded-full p-1 hover:bg-gray-200 ${
+              theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
+            }`}
             title="More Options"
           >
-            <MoreHorizontal />
+            <MoreHorizontal className={theme === "dark" ? "text-white" : "text-gray-900"} />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className={theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : "bg-white"}>
           {menuItems.map((item, index) => (
             <React.Fragment key={index}>
               {item === "Delete" && isOwner ? (
                 <DialogTrigger asChild>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                  <DropdownMenuItem className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                    Delete
+                  </DropdownMenuItem>
                 </DialogTrigger>
               ) : item === "Resolve Issue" ? (
-                <DropdownMenuItem onClick={() => handleAction("Resolve Issue")}>
+                <DropdownMenuItem 
+                  onClick={() => handleAction("Resolve Issue")}
+                  className={theme === "dark" ? "hover:bg-gray-600 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900"}
+                >
                   Resolve Issue
                 </DropdownMenuItem>
               ) : item === "Subscribe" ? (
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Subscribe</DropdownMenuSubTrigger>
+                  <DropdownMenuSubTrigger className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                    Subscribe
+                  </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
                     <DropdownMenuItem
                       onClick={() => handleSubscribeOptionClick("Issue")}
+                      className={theme === "dark" ? "hover:bg-gray-600 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900"}
                     >
                       Issue
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleSubscribeOptionClick("Category")}
+                      className={theme === "dark" ? "hover:bg-gray-600 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900"}
                     >
                       Category
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleSubscribeOptionClick("Location")}
+                      className={theme === "dark" ? "hover:bg-gray-600 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900"}
                     >
                       Location
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               ) : (
-                <DropdownMenuItem key={index} onClick={() => handleAction(item)}>
+                <DropdownMenuItem 
+                  key={index} 
+                  onClick={() => handleAction(item)}
+                  className={theme === "dark" ? "hover:bg-gray-600 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900"}
+                >
                   {item}
                 </DropdownMenuItem>
               )}
@@ -98,8 +116,7 @@ const MoreMenu: React.FC<MoreMenuProps> = ({
         <DialogHeader>
           <DialogTitle>Confirm Deletion</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this issue? This action cannot be
-            undone.
+            Are you sure you want to delete this issue? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
