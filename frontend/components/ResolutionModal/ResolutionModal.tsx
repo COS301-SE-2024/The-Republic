@@ -354,10 +354,12 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                 className={cn(
                   "px-4 py-2 rounded-lg",
                   theme === "dark"
-                    ? "bg-gray-700 text-white hover:bg-gray-600"
+                    ? "bg-[#0C0A09] text-white hover:bg-[#262626]"
                     : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 )}
               >
+
+                
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Image
               </Button>
