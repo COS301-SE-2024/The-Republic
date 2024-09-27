@@ -160,19 +160,16 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       }
 
       const fieldsToCheck: (keyof typeof formData)[] = ['name', 'username', 'bio'];
-      for (const field of fieldsToCheck) {
-        const value = formData[field];
-        if (typeof value === 'string') {
-        const isContentAppropriate = await checkContentAppropriateness(value);
-        if (!isContentAppropriate) {
-          setLoading(false);
-          toast({
-            variant: "destructive",
-            description: `Please use appropriate language in the ${field} field.`,
-          });
-          return;
-        }
-      }
+      const contentToCheck = fieldsToCheck.map(field => formData[field]).join(' ');
+      
+      const isContentAppropriate = await checkContentAppropriateness(contentToCheck);
+      if (!isContentAppropriate) {
+        setLoading(false);
+        toast({
+          variant: "destructive",
+          description: "Please use appropriate language in all fields.",
+        });
+        return;
       }
 
       const updateData = new FormData();
