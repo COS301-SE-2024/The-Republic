@@ -7,7 +7,7 @@ jest.mock('@/components/ReportCharts/Reports', () => () => <div>Reports Componen
 describe('Tabs Component', () => {
   test('renders Reports tab by default', () => {
     render(<Tabs />);
-    expect(screen.getByText('Statitics')).toBeInTheDocument();
+    expect(screen.getByText('Statistics')).toBeInTheDocument();
     expect(screen.getByText('Reports Component')).toBeInTheDocument();
   });
 
