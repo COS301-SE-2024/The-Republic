@@ -94,7 +94,7 @@ function RadarChart() {
         radar: {
           indicator: indicators,
           center: ["50%", "60%"],
-          radius: isMobile ? "60%" : "70%",
+          radius: isMobile ? "60%" : "60%",
         },
         series: [
           {
@@ -114,6 +114,9 @@ function RadarChart() {
             ],
           },
         ],
+        grid: {
+          containLabel: true,
+        }
       };
 
       chartInstance.current.setOption(option);
@@ -147,7 +150,7 @@ function RadarChart() {
                     ref={chartRef}
                     style={{ 
                       width: '100%',
-                      height: isMobile ? "300px" : "400px"
+                      height: isMobile ? "300px" : "650px"
                     }}
                     className="echart"
                   ></div>

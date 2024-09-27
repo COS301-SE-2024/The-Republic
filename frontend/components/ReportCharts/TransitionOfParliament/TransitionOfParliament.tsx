@@ -222,7 +222,7 @@ const TransitionOfParliament: React.FC = () => {
                     ref={chartRef}
                     style={{ 
                       width: '100%', 
-                      height: isMobile ? "300px" : "400px" 
+                      height: isMobile ? "300px" : "500px" 
                     }}
                     className="echart mx-auto"
                   ></div>

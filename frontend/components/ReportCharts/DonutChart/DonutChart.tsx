@@ -129,7 +129,7 @@ function DonutChart() {
                 <div className="card-body pb-0">
                   <div
                     id="donutChart"
-                    style={{ height: isMobile ? "300px" : "400px" }}
+                    style={{ height: isMobile ? "300px" : "550px" }}
                     className="echart w-full"
                   ></div>
                 </div>
