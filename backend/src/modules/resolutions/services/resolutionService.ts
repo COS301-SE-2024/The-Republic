@@ -7,6 +7,7 @@ import IssueRepository from "@/modules/issues/repositories/issueRepository";
 import { ResolutionResponseRepository } from "../repositories/resolutionResponseRepository";
 import { Issue } from "@/modules/shared/models/issue";
 import UserRepository from "@/modules/users/repositories/userRepository";
+import { clearCachePattern } from "@/utilities/cacheUtils";
 
 export class ResolutionService {
   private resolutionRepository: ResolutionRepository;
@@ -97,6 +98,9 @@ export class ResolutionService {
 
     // Notify cluster members for both self and external resolutions
     await this.notifyClusterMembers(createdResolution, clusterIssues);
+
+    clearCachePattern("__express__/api/issues*");
+clearCachePattern("__express__/api/resolutions*");
 
     return createdResolution;
   }
@@ -189,8 +193,12 @@ export class ResolutionService {
         } else {
           await this.rejectResolution(updatedResolution);
         }
+
       }
     }
+
+    clearCachePattern("__express__/api/issues*");
+clearCachePattern("__express__/api/resolutions*");
 
     return updatedResolution;
   }
@@ -294,5 +302,7 @@ export class ResolutionService {
 
   async deleteResolution(resolutionId: string, userId: string): Promise<void> {
     await this.resolutionRepository.deleteResolution(resolutionId, userId);
+    clearCachePattern("__express__/api/issues*");
+clearCachePattern("__express__/api/resolutions*");
   }
 }

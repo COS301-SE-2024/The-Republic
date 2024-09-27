@@ -154,9 +154,6 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       resolverId,
       organizationIds: selectedOrganizations.length > 0 ? selectedOrganizations : undefined,
     });
-    if (!isLoading) {
-      resetForm();
-    }
   };
 
   const resetForm = () => {
@@ -302,7 +299,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                 You can select the organization that you resolved this issue on behalf of. This helps with tracking and crediting efforts across your organization.
               </p>
               {userOrganizations.length > 0 ? (
-                <div className="flex flex-col space-y-2 mt-2">
+                <div className="flex flex-row flex-wrap gap-2 mt-2">
                   {userOrganizations.map((org) => (
                     <TooltipProvider key={org.id}>
                       <Tooltip>

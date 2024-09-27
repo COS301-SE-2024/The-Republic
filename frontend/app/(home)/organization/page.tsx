@@ -198,7 +198,7 @@ export default function OrganizationPage() {
           <h1 className="text-3xl font-bold mr-2">Organizations</h1>
           <Button 
             onClick={() => setShowCreateForm(true)} 
-            className="bg-green-600 hover:bg-red-700 rounded-full w-8 h-8 p-0"
+            className="bg-green-600 hover:bg-green-800 rounded-full w-8 h-8 p-0"
             title="Create Organization"
           >
             <PlusCircle className="h-5 w-5" />

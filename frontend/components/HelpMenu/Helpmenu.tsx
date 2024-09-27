@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircleHelp, Search, Book, Lightbulb, X, BarChart2, UserCircle, Trophy } from "lucide-react";
+import { CircleHelp, Search, Book, Lightbulb, X, BarChart2, UserCircle, Trophy, Users } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 
@@ -124,6 +124,46 @@ const KeyConcepts = () => (
           </p>
         </details>
       </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Organizations</summary>
+          <p className="mt-2">
+            Organizations are groups that users can create, join, or manage within the platform. They allow for collaborative issue reporting and management.
+            <br /><br />
+            <strong>Key features:</strong>
+            <ul className="list-disc ml-6 mt-2">
+              <li>Create or join organizations</li>
+              <li>Manage organization membership</li>
+              <li>Post organization-specific content</li>
+              <li>View organization activity logs</li>
+              <li>Set join policies for organizations</li>
+            </ul>
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">How to create an organization</summary>
+          <p className="mt-2">
+            1. Navigate to the Organizations page.<br />
+            2. Click on "Create Organization".<br />
+            3. Fill in the organization details (name, description, etc.).<br />
+            4. Set the join policy (open, request to join, or invite-only).<br />
+            5. Click "Create" to finalize.
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">How to join an organization</summary>
+          <p className="mt-2">
+            1. Search for the organization you want to join.<br />
+            2. Click on the organization to view its details.<br />
+            3. Click "Join" or "Request to Join" (depending on the organization's policy).<br />
+            4. If it's a request, wait for approval from the organization admin.
+          </p>
+        </details>
+      </li>
     </ul>
   </div>
 );
@@ -202,6 +242,67 @@ const LeaderboardGuide = () => (
   </div>
 );
 
+const OrganizationManagement = () => (
+  <div>
+    <h3 className="text-xl font-bold mb-4">Organization Management</h3>
+    <ul className="space-y-2">
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Managing organization members</summary>
+          <p className="mt-2">
+            1. Go to your organization's page.<br />
+            2. Click on "Members" or "Manage Members".<br />
+            3. Here you can view all members, remove members, or promote members to admin status.
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Posting organization content</summary>
+          <p className="mt-2">
+            1. Navigate to your organization's page.<br />
+            2. Look for a "Create Post" or "New Post" button.<br />
+            3. Write your post and add any relevant attachments.<br />
+            4. Click "Post" to publish the content to your organization's feed.
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Viewing organization activity logs</summary>
+          <p className="mt-2">
+            1. Go to your organization's page.<br />
+            2. Look for an "Activity" or "Logs" section.<br />
+            3. Here you can view recent actions and events within the organization.
+          </p>
+        </details>
+      </li>
+      <li>
+        <details>
+          <summary className="cursor-pointer font-semibold">Downloading detailed reports</summary>
+          <p className="mt-2">
+            1. Navigate to your organization's page.<br />
+            2. Look for a "Reports" or "Analytics" section.<br />
+            3. Click on "Download Report"<br />
+            4. Enter your email and the report will be emailed to you once it is ready.<br />
+            <br />
+            Note: Detailed reports may include information such as:
+            <ul className="list-disc ml-6 mt-2">
+              <li>Member engagement statistics</li>
+              <li>Issue resolution rates</li>
+              <li>Top contributors within the organization</li>
+              <li>Trending categories or locations for reported issues</li>
+              <li>Overall organization growth and activity metrics</li>
+            </ul>
+            <br />
+            These reports can help organization administrators make data-driven decisions and track the organization's impact over time.
+          </p>
+        </details>
+      </li>
+    </ul>
+  </div>
+);
+
 const ExpandedHelpMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("main");
@@ -235,6 +336,12 @@ const ExpandedHelpMenu: React.FC = () => {
     { title: "Using the Analytics page", section: "analytics" },
     { title: "Understanding the Leaderboard", section: "leaderboard" },
     { title: "Point system", section: "key-concepts" },
+    { title: "Organizations", section: "key-concepts" },
+  { title: "Creating an organization", section: "key-concepts" },
+  { title: "Joining an organization", section: "key-concepts" },
+  { title: "Managing organization members", section: "organization-management" },
+  { title: "Posting organization content", section: "organization-management" },
+  { title: "Viewing organization activity logs", section: "organization-management" },
   ].filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -251,6 +358,8 @@ const ExpandedHelpMenu: React.FC = () => {
         return <AnalyticsGuide />;
       case "leaderboard":
         return <LeaderboardGuide />;
+      case "organization-management":
+        return <OrganizationManagement />;
       default:
         return (
           <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} gap-4 mb-6`}>
@@ -260,6 +369,7 @@ const ExpandedHelpMenu: React.FC = () => {
               { icon: <UserCircle size={isMobile ? 20 : 24} />, title: "Profile Management", key: "profile-management" },
               { icon: <BarChart2 size={isMobile ? 20 : 24} />, title: "Analytics", key: "analytics" },
               { icon: <Trophy size={isMobile ? 20 : 24} />, title: "Leaderboard", key: "leaderboard" },
+              { icon: <Users size={isMobile ? 20 : 24} />, title: "Organization Management", key: "organization-management" },
             ].map((item, index) => (
               <div
                 key={index}

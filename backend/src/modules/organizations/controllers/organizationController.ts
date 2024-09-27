@@ -11,30 +11,38 @@ const organizationService = new OrganizationService();
 const upload = multer({ storage: multer.memoryStorage() });
 const reportsService = new ReportsService();
 
-export const createOrganization = async (req: Request, res: Response) => {
-  try {
-    const userId = req.body.user_id;
-    if (!userId) {
-      return sendResponse(
-        res,
-        APIError({
-          code: 401,
-          success: false,
-          error: "Unauthorized: User ID is missing",
-        }),
-      );
-    }
+export const createOrganization = [
+  upload.single('profilePhoto'),
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.body.user_id;
+      if (!userId) {
+        return sendResponse(
+          res,
+          APIError({
+            code: 401,
+            success: false,
+            error: "Unauthorized: User ID is missing",
+          }),
+        );
+      }
 
-    const response = await organizationService.createOrganization(
-      req.body,
-      userId,
-    );
-    clearCachePattern("__express__/api/organizations*");
-    sendResponse(res, response);
-  } catch (err) {
-    handleError(res, err);
-  }
-};
+      const organizationData = {
+        ...req.body,
+        profilePhoto: req.file,
+      };
+
+      const response = await organizationService.createOrganization(
+        organizationData,
+        userId,
+      );
+      clearCachePattern("__express__/api/organizations*");
+      sendResponse(res, response);
+    } catch (err) {
+      handleError(res, err);
+    }
+  },
+];
 
 export const updateOrganization = [
   upload.single("profilePhoto"),
