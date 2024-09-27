@@ -29,7 +29,7 @@ function Tabs() {
               onClick={() => handleTabClick('Reports')}
               aria-current={activeTab === 'Reports' ? 'page' : undefined}
             >
-              Reports
+              Statistics
             </button>
           </li>
           <li className="flex-1">
