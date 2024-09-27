@@ -129,7 +129,7 @@ export default class IssueRepository {
         const days =
           forecastData && !forecastError ? formatTime(forecastData) : "6 days";
         const information = !issue.resolved_at
-          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
           : "This issue has already been resolved.";
 
         return {
@@ -249,7 +249,7 @@ export default class IssueRepository {
     const days =
       forecastData && !forecastError ? formatTime(forecastData) : "6 days";
     const information = !data.resolved_at
-      ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+      ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
       : "This issue has already been resolved.";
 
     return {
@@ -427,7 +427,7 @@ export default class IssueRepository {
       const days =
         forecastData && !forecastError ? formatTime(forecastData) : "6 days";
       const information = !issue.resolved_at
-        ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+        ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
         : "This issue has already been resolved.";
 
       return {
@@ -677,7 +677,7 @@ export default class IssueRepository {
         const days =
           forecastData && !forecastError ? formatTime(forecastData) : "6 days";
         const information = !issue.resolved_at
-          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
           : "This issue has already been resolved.";
 
         return {
@@ -772,7 +772,7 @@ export default class IssueRepository {
         const days =
           forecastData && !forecastError ? formatTime(forecastData) : "6 days";
         const information = !issue.resolved_at
-          ? `This issue may take at least ${days} to be resolved. Please check back if your issue is not resolved by then.`
+          ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
           : "This issue has already been resolved.";
 
         return {
