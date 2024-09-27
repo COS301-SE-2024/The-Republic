@@ -175,19 +175,28 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       const updateData = new FormData();
       let hasChanges = false;
 
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'location') {
-          const newLocation = JSON.stringify(value);
-          const oldLocation = JSON.stringify(organization.location);
-          if (newLocation !== oldLocation) {
-            updateData.append(key, newLocation);
-            hasChanges = true;
-          }
-        } else if (organization[key as keyof Organization] !== value) {
-          updateData.append(key, value as string);
+      // Handle regular fields
+      (Object.keys(formData) as Array<keyof typeof formData>).forEach(key => {
+        if (key !== 'location' && organization[key] !== formData[key]) {
+          updateData.append(key, formData[key] as string);
           hasChanges = true;
         }
       });
+
+      // Handle location separately
+      const newLocation = formData.location;
+      const oldLocation = organization.location || {};
+      const isLocationChanged = JSON.stringify(newLocation) !== JSON.stringify(oldLocation);
+      
+      if (isLocationChanged) {
+        // If all location fields are empty, set location to null
+        if (Object.values(newLocation).every(value => value === '')) {
+          updateData.append('location', JSON.stringify(null));
+        } else {
+          updateData.append('location', JSON.stringify(newLocation));
+        }
+        hasChanges = true;
+      }
 
       if (profilePhoto) {
         updateData.append('profilePhoto', profilePhoto);
