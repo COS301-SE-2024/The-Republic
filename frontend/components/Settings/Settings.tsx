@@ -7,6 +7,7 @@ import { signOutWithToast } from "@/lib/utils";
 import { fetchUserData } from "@/lib/api/fetchUserData"; 
 import { UserAlt } from "@/lib/types";
 import AccountManagement from "./AccountManagement";
+import { Loader2 } from "lucide-react";
 
 interface SettingsDropdownProps {
   title: string;
@@ -57,7 +58,11 @@ const SettingsPage = () => {
   }, [toast]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin text-green-400" />
+      </div>
+    );
   }
 
   return (
