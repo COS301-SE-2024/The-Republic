@@ -7,7 +7,7 @@ jest.mock('@/components/ReportCharts/Reports', () => () => <div>Reports Componen
 describe('Tabs Component', () => {
   test('renders Reports tab by default', () => {
     render(<Tabs />);
-    expect(screen.getByText('Reports')).toBeInTheDocument();
+    expect(screen.getByText('Statitics')).toBeInTheDocument();
     expect(screen.getByText('Reports Component')).toBeInTheDocument();
   });
 
@@ -20,7 +20,7 @@ describe('Tabs Component', () => {
 
   test('highlights the active tab correctly', () => {
     render(<Tabs />);
-    const reportsTab = screen.getByText('Reports');
+    const reportsTab = screen.getByText('Statistics');
     const visualizationsTab = screen.getByText('Visualizations');
 
     fireEvent.click(reportsTab);
