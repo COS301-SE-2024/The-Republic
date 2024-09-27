@@ -1005,12 +1005,13 @@ export default class IssueRepository {
     return data;
   }
 
-  async getIssueCount(params: { startDate: Date; endDate: Date }): Promise<number> {
-    const { count, error } = await supabase
-      .from("issue")
-      .select("*", { count: "exact", head: true })
-      .gte("created_at", params.startDate.toISOString())
-      .lte("created_at", params.endDate.toISOString());
+  async getIssueCount(organizationId: string /*params?: { startDate: Date; endDate: Date }*/): Promise<number> {
+    const { data, error } = await supabase
+      .rpc("org_issues_count", {
+        p_org_id: organizationId,
+      });
+      /* .gte("created_at", params.startDate.toISOString())
+      .lte("created_at", params.endDate.toISOString()); */
   
     if (error) {
       console.error("Error getting issue count:", error);
@@ -1021,7 +1022,7 @@ export default class IssueRepository {
       });
     }
   
-    return count || 0;
+    return data || 0;
   }
 
   async getIssueCountByUser(userId: string, startDate: Date, endDate: Date): Promise<number> {
