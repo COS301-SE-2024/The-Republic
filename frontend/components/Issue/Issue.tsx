@@ -355,27 +355,23 @@ const Issue: React.FC<IssueProps> = ({
                     <div className="py-1" role="none">
                       <button
                         onClick={() => handleSubscribe("Issue")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Issue
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Category")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Category
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Location")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Location
