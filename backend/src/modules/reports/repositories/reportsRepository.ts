@@ -2,6 +2,7 @@ import { Issue } from "@/modules/shared/models/issue";
 import supabase from "@/modules/shared/services/supabaseClient";
 import { GetIssuesParams } from "@/types/issue";
 import { APIError } from "@/types/response";
+import { CategoryRepository } from "@/modules/issues/repositories/categoryRepository";
 import {
   Counts,
   CategoryCounts,
@@ -9,6 +10,12 @@ import {
 } from "@/modules/shared/models/reports";
 
 export default class ReportsRepository {
+  private categoryRepository: CategoryRepository;
+
+  constructor() {
+    this.categoryRepository = new CategoryRepository();
+  }
+
   async getAllIssuesGroupedByResolutionStatus({
     from,
     amount,
@@ -420,4 +427,38 @@ export default class ReportsRepository {
     return report;
   }
 
+  async getIndividualReport(suburbs: string[]) {
+    const report = await suburbs.reduce(async (report, suburb) => {
+      const { data, error } = await supabase
+        .rpc("individual_report", {
+          p_suburb: suburb
+        });
+
+      if (error) {
+        console.error("getIndividualReport: ", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later.",
+        });
+      }
+
+      return {
+        ...(await report),
+        [suburb || "N/A"]: data.map((row: { [key: string]: string | number }) => ({
+          category: row.r_category,
+          issues: row.r_issues,
+          issues_resolved: row.r_issues_resolved
+        }))
+      };
+    }, {} as Promise<{
+      [suburb: string]: {
+        category: string,
+        issues: number,
+        issues_resolved: number,
+      }[]
+    }>);
+
+    return report;
+  }
 }
