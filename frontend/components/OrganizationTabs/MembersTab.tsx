@@ -118,7 +118,9 @@ export default function MembersTab({ organization, members, setMembers }: Member
     router.push(`/profile/${userId}`);
   };
 
-  if (!members.data) return <div>Loading members...</div>;
+  if (!members?.data || members.data.length === 0) {
+    return <div>No members found.</div>;
+  }
 
   return (
     <Card>

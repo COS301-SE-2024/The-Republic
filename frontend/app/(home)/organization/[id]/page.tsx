@@ -78,6 +78,8 @@ export default function OrganizationPage() {
       setHasUserRequested(!!joinRequest);
       setJoinRequestId(joinRequest?.id || null);
   
+      setMembers(membersData);
+  
     } catch (err) {
       console.error("Error fetching data:", err);
       setError('An error occurred while fetching data');

@@ -25,7 +25,7 @@ export class OrganizationService {
   }
 
   async createOrganization(
-    organization: Partial<Organization>,
+    organization: Partial<Organization> & { profilePhoto?: Express.Multer.File },
     userId: string,
   ): Promise<APIResponse<Organization>> {
     try {
@@ -81,8 +81,27 @@ export class OrganizationService {
         });
       }
 
-      const createdOrganization =
-        await this.organizationRepository.createOrganization(organization);
+      let profilePhotoUrl: string | null = null;
+      if (organization.profilePhoto) {
+        profilePhotoUrl = await this.uploadProfilePhoto(organization.profilePhoto);
+      }
+
+      const organizationData = {
+        name: organization.name,
+        username: organization.username,
+        bio: organization.bio,
+        website_url: organization.website_url,
+        join_policy: organization.join_policy,
+        org_type: organization.org_type,
+        profile_photo: profilePhotoUrl ?? undefined,
+        created_at: new Date().toISOString(),
+        verified_status: false,
+        points: 0,
+      };
+
+      console.log(organizationData);
+
+      const createdOrganization = await this.organizationRepository.createOrganization(organizationData);
 
       await this.organizationRepository.addOrganizationMember({
         organization_id: createdOrganization.id,
@@ -107,6 +126,28 @@ export class OrganizationService {
         error: "An unexpected error occurred while creating the organization.",
       });
     }
+  }
+
+  private async uploadProfilePhoto(file: Express.Multer.File): Promise<string> {
+    const fileName = `org_${Date.now()}_${file.originalname}`;
+    const { error: uploadError } = await supabase.storage
+      .from("organizations")
+      .upload(fileName, file.buffer);
+
+    if (uploadError) {
+      console.error("Error uploading profile photo:", uploadError);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An error occurred while uploading the profile photo.",
+      });
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("organizations")
+      .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
   }
 
   async updateOrganization(
