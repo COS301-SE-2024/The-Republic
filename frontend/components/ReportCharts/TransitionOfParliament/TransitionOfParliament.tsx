@@ -69,6 +69,7 @@ const TransitionOfParliament: React.FC = () => {
         series: [
           {
             type: "pie",
+            top: "5%",
             id: "distribution",
             radius: radius,
             label: {
