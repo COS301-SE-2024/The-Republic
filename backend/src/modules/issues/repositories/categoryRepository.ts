@@ -21,4 +21,21 @@ export class CategoryRepository {
 
     return data!.category_id as number;
   }
+
+  async getCategories() {
+    const { data, error} = await supabase
+      .from('category')
+      .select('category_id, name');
+
+    if (error) {
+      console.error("getCategories: ", error);
+      throw APIError({
+        code: 500,
+        success: false,
+        error: "An unexpected error occurred. Please try again later.",
+      });
+    }
+
+    return data;
+  }
 }
