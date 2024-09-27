@@ -10,6 +10,7 @@ import { subscribe } from "@/lib/api/subscription";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/lib/contexts/UserContext";
 import ErrorDisplay from '@/components/ui/error_display';
+import { useTheme } from "next-themes";
 
 import type { NotificationType } from "@/lib/types";
 import { formatLongDate } from "@/lib/utils";
@@ -77,6 +78,8 @@ const NotificationsList: React.FC = () => {
     );
   }
 
+  const { theme } = useTheme();
+
   const addSuspendMessage = (notif: NotificationType) => 
     notif.content.includes("external resolution rejected")
       ? notif.content + " You will be suspended from resolving until " + formatLongDate(
@@ -92,7 +95,11 @@ const NotificationsList: React.FC = () => {
 
             <li
               key={index}
-              className="flex items-start space-x-3 p-4 hover:bg-gray-50"
+              className={`flex items-start space-x-3 p-4 transition duration-200 
+                ${theme === "dark" 
+                  ? "hover:bg-[#262626] hover:text-white" 
+                  : "hover:bg-gray-300 hover:text-black"}
+              `}
             >
               <Link
                 href={getNotificationLink(notification.type, (notification.type != "points") ? notification.issue_id : "none")}
