@@ -38,6 +38,7 @@ export class OrganizationRepository {
         verified_status: false,
         points: 0,
         org_type: organization.org_type,
+        profile_photo: organization.profile_photo,
       })
       .select()
       .single();
