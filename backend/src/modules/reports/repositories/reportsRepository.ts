@@ -321,4 +321,103 @@ export default class ReportsRepository {
       return newData;
     }, []);
   }
+
+  async getOrganizationReport(organizationId: string) {
+    const categories = await this.categoryRepository.getCategories();
+
+    categories.unshift({
+      category_id: null,
+      name: "All"
+    });
+
+    const report = await categories.reduce(async (report, category) => {
+      const { data, error } = await supabase
+        .rpc("org_report", {
+          p_org_id: organizationId,
+          p_category_id: category.category_id,
+        });
+
+      if (error) {
+        console.error("getOrganizationReport: ", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later.",
+        });
+      }
+
+      return { 
+        ...(await report),
+        [category.name]: data.map((row: { [key: string]: string | number }) => ({
+          suburb: row.r_suburb || "N/A",
+          our_issues: row.r_our_issues,
+          our_issues_resolved: row.r_our_issues_resolved,
+          issues_resolved_by_us: row.r_issues_resolved_by_us
+        }))
+      };
+    }, {} as Promise<{ 
+      [category: string]: {
+        suburb: string,
+        our_issues: string,
+        our_issues_resolved: string,
+        issues_resolved_by_us: string,
+      }[]
+    }>);
+
+    return report;
+  }
+
+  async getOrganizationMembersReport(organizationId: string) {
+    const categories = await this.categoryRepository.getCategories();
+
+    categories.unshift({
+      category_id: null,
+      name: "All"
+    });
+
+    const report = await categories.reduce(async (report, category) => {
+      const { data, error } = await supabase
+        .rpc("org_members_report", {
+          p_org_id: organizationId,
+          p_category_id: category.category_id,
+        });
+
+      if (error) {
+        console.error("geOrganizationMembersReport (report): ", error);
+        throw APIError({
+          code: 500,
+          success: false,
+          error: "An unexpected error occurred. Please try again later.",
+        });
+      }
+
+      return { 
+        ...(await report),
+        [category.name]: data.map((row: { [key: string]: string | number | Date }) => ({
+          user_id: row.r_user_id,
+          fullname: row.r_fullname,
+          username: row.r_username,
+          email: row.r_email_address,
+          joined_at: new Date(row.r_joined_at),
+          my_issues: row.r_my_issues,
+          my_issues_resolved: row.r_my_issues_resolved,
+          issues_resolved_by_me: row.r_issues_resolved_by_me,
+        }))
+      };
+    }, {} as Promise<{ 
+      [category: string]: {
+        user_id: string,
+        fullname: string,
+        username: string,
+        email: string,
+        joined_at: Date,
+        my_issues: number,
+        my_issues_resolved: number,
+        issues_resolved_by_me: number,
+      }[]
+    }>);
+
+    return report;
+  }
+
 }
