@@ -46,24 +46,32 @@ interface OrganizationToggleProps {
   onToggle: (id: string) => void;
 }
 
-const OrganizationToggle: React.FC<OrganizationToggleProps> = ({ organization, isSelected, onToggle }) => (
-  <Toggle
-    pressed={isSelected}
-    onPressedChange={() => onToggle(organization.id)}
-    className={cn(
-      "flex flex-col items-center justify-center p-2 rounded-md",
-      "w-24 h-24 border-2",
-      isSelected ? "border-primary bg-primary/10" : "border-gray-200 hover:bg-gray-100",
-      "transition-all duration-200 ease-in-out"
-    )}
-  >
-    <Avatar className="w-12 h-12 mb-2">
-      <AvatarImage src={organization.profile_photo} alt={organization.name} />
-      <AvatarFallback>{organization.name.charAt(0)}</AvatarFallback>
-    </Avatar>
-    <span className="text-xs text-center line-clamp-2">{organization.name}</span>
-  </Toggle>
-);
+const OrganizationToggle: React.FC<OrganizationToggleProps> = ({ organization, isSelected, onToggle }) => {
+  const { theme } = useTheme();
+
+  return (
+    <Toggle
+      pressed={isSelected}
+      onPressedChange={() => onToggle(organization.id)}
+      className={cn(
+        "flex flex-col items-center justify-center p-2 rounded-md",
+        "w-24 h-24 border-2",
+        isSelected ? "border-primary bg-primary/10" : "border-gray-200",
+        theme === 'dark'
+          ? "hover:bg-[#0C0A09] hover:text-white"
+          : "hover:bg-gray-100",
+        "transition-all duration-200 ease-in-out"
+      )}
+    >
+      <Avatar className="w-12 h-12 mb-2">
+        <AvatarImage src={organization.profile_photo} alt={organization.name} />
+        <AvatarFallback>{organization.name.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <span className="text-xs text-center line-clamp-2">{organization.name}</span>
+    </Toggle>
+  );
+};
+
 
 const ResolutionModal: React.FC<ResolutionModalProps> = ({
   isOpen,
