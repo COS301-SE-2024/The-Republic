@@ -5,7 +5,7 @@ import { checkUserMembership } from '@/lib/api/checkUserMembership';
 import { requestReport } from '@/lib/api/requestReport'; 
 import { useUser } from '@/lib/contexts/UserContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PenSquare, Star, BarChart, Sparkles } from 'lucide-react';
+import { PenSquare, Star, BarChart, PieChart } from 'lucide-react';
 import OrgPost from '@/components/OrgPost/OrgPost';
 import CreateOrgPost from '@/components/CreatePost/CreatePost';
 import { useToast } from '../ui/use-toast';
@@ -185,7 +185,7 @@ export default function InformationTab({
             <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
               <DialogTrigger asChild>
                 <Button className="w-full">
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <PieChart className="w-4 h-4 mr-2" />
                   Get Your Detailed Report
                 </Button>
               </DialogTrigger>

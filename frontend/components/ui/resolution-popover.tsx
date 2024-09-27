@@ -23,7 +23,7 @@ export default function InfoPopover({ message }: PopoverProps) {
           <h3 className="font-semibold text-gray-900 dark:text-gray-200">Resolution Information</h3>
         </div>
         <div className="px-3 py-2">
-          <p>{message ?? 'This issue may take at least 6 day(s) to be resolved. Please check back if your issue is not resolved by then.'}</p>
+          <p>{message ?? 'This issue may take around 6 day(s) to be resolved based on similar issues in this area.'}</p>
         </div>
         {/* <div className="absolute w-3 h-3 bg-white transform rotate-45 border-l border-t border-gray-200 dark:bg-gray-900 dark:border-gray-800"></div> */}
       </div>

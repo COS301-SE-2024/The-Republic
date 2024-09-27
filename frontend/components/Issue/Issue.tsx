@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTheme } from 'next-themes';
 import {
   Card,
   CardContent,
@@ -38,6 +39,7 @@ const Issue: React.FC<IssueProps> = ({
 }) => {
   const { user } = useUser();
   const router = useRouter();
+  const { theme } = useTheme();
   const [type, setType] = useState("");
   const queryClient = useQueryClient();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
@@ -285,6 +287,10 @@ const Issue: React.FC<IssueProps> = ({
     return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
   };
 
+  const dropdownClasses = `origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none ${
+    theme === "dark" ? "bg-[#262626] text-white ring-gray-700" : "bg-white text-gray-700 ring-black"
+  }`;
+
   return (
     <>
       <Card className="mb-4" id={id} data-testid="issue-item">
@@ -341,7 +347,7 @@ const Issue: React.FC<IssueProps> = ({
                 {showSubscribeDropdown && (
                   <div
                     ref={dropdownRef}
-                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className={dropdownClasses}
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="subscribe-menu"
@@ -349,21 +355,27 @@ const Issue: React.FC<IssueProps> = ({
                     <div className="py-1" role="none">
                       <button
                         onClick={() => handleSubscribe("Issue")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
+                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
+                        }`}
                         role="menuitem"
                       >
                         Subscribe to Issue
                       </button>
                       <button
                         onClick={() => handleSubscribe("Category")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
+                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
+                        }`}
                         role="menuitem"
                       >
                         Subscribe to Category
                       </button>
                       <button
                         onClick={() => handleSubscribe("Location")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
+                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
+                        }`}
                         role="menuitem"
                       >
                         Subscribe to Location
@@ -379,6 +391,7 @@ const Issue: React.FC<IssueProps> = ({
                   isOwner={isOwner}
                   onAction={handleMenuAction}
                   onSubscribe={handleSubscribe}
+
                 />
               )}
               {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
