@@ -104,7 +104,7 @@ function RadarChart() {
         radar: {
           indicator: indicators,
           center: ["50%", "60%"],
-          radius: isMobile ? "60%" : "60%",
+          radius: "60%",
         },
         series: [
           {

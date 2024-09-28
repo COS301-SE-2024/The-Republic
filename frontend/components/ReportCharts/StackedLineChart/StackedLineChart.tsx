@@ -87,7 +87,7 @@ function StackedLineChart() {
         },
         legend: {
           data: Object.keys(data),
-          top: "5%",
+          top: "6%",
           textStyle: {
             fontSize: isMobile ? 10 : 12,
           },
