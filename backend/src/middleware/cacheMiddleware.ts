@@ -17,7 +17,9 @@ export const cacheMiddleware = (duration: number) => {
       } else {
         const originalJson = res.json;
         res.json = function (body: unknown) {
-          redisClient?.setex(key, duration, JSON.stringify(body));
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            redisClient?.setex(key, duration, JSON.stringify(body));
+          }
           return originalJson.call(this, body);
         };
         next();
