@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from 'next-themes';
 import { FaSpinner } from "react-icons/fa";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { reportCharts } from "@/lib/api/reportCharts";
+import darkTheme from "@/lib/charts-dark-theme";
+import lightTheme from "@/lib/charts-light-theme";
 
 function DonutChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { theme } = useTheme();
 
   const {
     data,
@@ -49,8 +54,16 @@ function DonutChart() {
     if (dataArray.length > 0) {
       const element = document.querySelector("#donutChart") as HTMLElement;
       if (element) {
-        const donutChart = echarts.init(element);
-        donutChart.setOption({
+        const currentTheme = theme === 'dark' ? 'darkTheme' : 'lightTheme';
+        echarts.registerTheme('lightTheme', lightTheme);
+        echarts.registerTheme('darkTheme', darkTheme);
+
+        if (chartInstance.current) {
+          chartInstance.current.dispose();
+        }
+
+        chartInstance.current = echarts.init(element, currentTheme);
+        chartInstance.current.setOption({
           tooltip: {
             trigger: "item",
           },
@@ -83,9 +96,14 @@ function DonutChart() {
               emphasis: {
                 label: {
                   show: true,
-                  fontSize: isMobile ? "14" : "18",
+                  fontSize: isMobile ? 14 : 18,
                   fontWeight: "bold",
                 },
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
               },
               labelLine: {
                 show: false,
@@ -95,22 +113,20 @@ function DonutChart() {
           ],
         });
 
-        // Add resize event listener
         const handleResize = () => {
-          donutChart.resize();
+          chartInstance.current?.resize();
         };
         window.addEventListener('resize', handleResize);
 
-        // Clean up function
         return () => {
           window.removeEventListener('resize', handleResize);
-          donutChart.dispose();
+          chartInstance.current?.dispose();
         };
       } else {
         console.error("Element #donutChart not found");
       }
     }
-  }, [dataArray, isMobile]);
+  }, [dataArray, isMobile, theme]);
 
   return (
     <>
