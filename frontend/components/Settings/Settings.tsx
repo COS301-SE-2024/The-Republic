@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProfileSettings from "./ProfileSettings";
 import NotificationSettings from "./NotificationSettings";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
-import { fetchUserData } from "@/lib/api/fetchUserData"; 
-import { UserAlt } from "@/lib/types";
+import { useUser } from "@/lib/contexts/UserContext";
 import AccountManagement from "./AccountManagement";
-import { Loader2 } from "lucide-react";
 
 interface SettingsDropdownProps {
   title: string;
@@ -34,36 +32,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
 const SettingsPage = () => {
   const { toast } = useToast();
-  const [user, setUser] = useState<UserAlt | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const userData = await fetchUserData();
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load user data. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadUserData();
-  }, [toast]);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <Loader2 className="h-6 w-6 animate-spin text-green-400" />
-      </div>
-    );
-  }
+  const { user } = useUser();
 
   return (
     <div className="container mx-auto my-8 space-y-8">
@@ -85,7 +54,7 @@ const SettingsPage = () => {
       </SettingsDropdown>
 
       <SettingsDropdown title="Account Management">
-        <AccountManagement />
+        <AccountManagement user={user}/>
       </SettingsDropdown>
     </div>
   );
