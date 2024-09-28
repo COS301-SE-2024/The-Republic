@@ -2,16 +2,19 @@ import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import { formatMoreDate } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from 'next-themes';
 import { FaSpinner } from "react-icons/fa";
 import { useMediaQuery } from "@/lib/useMediaQuery";
-
 import { reportCharts } from "@/lib/api/reportCharts";
+import darkTheme from "@/lib/charts-dark-theme";
+import lightTheme from "@/lib/charts-light-theme";
 
 function StackedLineChart() {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedCategoryAndCreatedAt`;
+  const { theme } = useTheme();
   const {
     data,
     isLoading: isLoadingCharts,
@@ -30,7 +33,15 @@ function StackedLineChart() {
       !isErrorCharts &&
       chartRef.current
     ) {
-      chartInstance.current = echarts.init(chartRef.current);
+      const currentTheme = theme === 'dark' ? 'darkTheme' : 'lightTheme';
+      echarts.registerTheme('lightTheme', lightTheme);
+      echarts.registerTheme('darkTheme', darkTheme);
+
+      if (chartInstance.current) {
+        chartInstance.current.dispose();
+      }
+
+      chartInstance.current = echarts.init(chartRef.current, currentTheme);
 
       const dates = Array.from(
         new Set(
@@ -130,7 +141,7 @@ function StackedLineChart() {
         chartInstance.current?.dispose();
       };
     }
-  }, [data, isLoadingCharts, isErrorCharts, isMobile]);
+  }, [data, isLoadingCharts, isErrorCharts, isMobile, theme]);
 
   const getColorForCategory = (category: string, opacity = 1) => {
     const colors = {
