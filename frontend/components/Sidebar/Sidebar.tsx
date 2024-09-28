@@ -43,7 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigateToIssue = (issueId: number) => {
     router.push(`/issues/${issueId}`);
   };
-  
 
   useEffect(() => {
     if (!user) return;
@@ -62,7 +61,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           if (notification && Object.keys(notification).length > 0) {
             const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
             
-            // Fetch the issue to check if it belongs to the current user
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
               .select('user_id')
@@ -182,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
           if (notification && Object.keys(notification).length > 0) {
             const { user_id } = notification as Partial<Issue>;
-            if (user_id !== user?.user_id) {
+            if (user_id === user?.user_id) {
               toast({
                 variant: "warning",
                 description: `Gained 20 Points for Reporting an Issue`,
