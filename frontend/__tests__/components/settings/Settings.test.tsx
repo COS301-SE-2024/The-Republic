@@ -6,9 +6,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { signOutWithToast } from "@/lib/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fetchUserData } from "@/lib/api/fetchUserData";
+import { useUser } from "@/lib/contexts/UserContext";
+import mockCurrentUser from "@/data/mockUser";
 
-
-const queryClient = new QueryClient();
+jest.mock("@/lib/contexts/UserContext", () => ({
+  useUser: jest.fn(),
+}));
 
 jest.mock("@/components/ui/use-toast", () => ({
   useToast: jest.fn(),
@@ -40,14 +43,34 @@ jest.mock("@/lib/api/fetchUserData", () => ({
   fetchUserData: jest.fn(),
 }));
 
+const renderWithClient = (ui: React.ReactNode) => {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: true,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe("SettingsPage", () => {
   beforeEach(() => {
     useToast.mockImplementation(() => ({ toast: jest.fn() }));
     (fetchUserData as jest.Mock).mockResolvedValue({ username: "testuser" });
+    (useUser as jest.Mock).mockReturnValue({
+      user: mockCurrentUser,
+    });
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   it("renders correctly", async () => {
-    render(<SettingsPage />);
+    renderWithClient(<SettingsPage />);
     await waitFor(() => {
       expect(screen.getByText("Account Settings")).toBeInTheDocument();
       expect(screen.getByText("Profile Settings")).toBeInTheDocument();
@@ -57,10 +80,8 @@ describe("SettingsPage", () => {
 
   it("toggles dropdowns", async () => {
     
-    render(
-      <QueryClientProvider client={queryClient}>
-        <SettingsPage />
-      </QueryClientProvider>
+    renderWithClient(
+      <SettingsPage />
     );
   
     
@@ -73,7 +94,7 @@ describe("SettingsPage", () => {
   
 
   it("calls signOutWithToast on sign out click", async () => {
-    render(<SettingsPage />);
+    renderWithClient(<SettingsPage />);
     await waitFor(() => {
       const signOutButton = screen.getByText("Sign out");
       fireEvent.click(signOutButton);
