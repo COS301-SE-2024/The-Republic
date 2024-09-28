@@ -4,10 +4,12 @@ import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
 import { DataItem2 } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from 'next-themes';
 import { FaSpinner } from "react-icons/fa";
 import { useMediaQuery } from "@/lib/useMediaQuery";
-
 import { reportCharts } from "@/lib/api/reportCharts";
+import darkTheme from "@/lib/charts-dark-theme";
+import lightTheme from "@/lib/charts-light-theme";
 
 function RadarChart() {
   const [indicators, setIndicators] = useState<DataItem2[]>([]);
@@ -17,6 +19,8 @@ function RadarChart() {
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
+  const { theme } = useTheme();
+  
   const {
     data,
     isLoading: isLoadingCharts,
@@ -71,9 +75,15 @@ function RadarChart() {
       !isErrorCharts &&
       chartRef.current
     ) {
-      if (!chartInstance.current) {
-        chartInstance.current = echarts.init(chartRef.current);
+      if (chartInstance.current) {
+        chartInstance.current.dispose();
       }
+
+      const currentTheme = theme === 'dark' ? 'darkTheme' : 'lightTheme';
+      echarts.registerTheme('lightTheme', lightTheme);
+      echarts.registerTheme('darkTheme', darkTheme);
+
+      chartInstance.current = echarts.init(chartRef.current, currentTheme);
 
       const option: echarts.EChartsOption = {
         title: {
@@ -132,7 +142,7 @@ function RadarChart() {
         chartInstance.current?.dispose();
       };
     }
-  }, [indicators, unresolvedData, resolvedData, isLoadingCharts, isErrorCharts, isMobile]);
+  }, [indicators, unresolvedData, resolvedData, isLoadingCharts, isErrorCharts, isMobile, theme]);
 
   return (
     <>
