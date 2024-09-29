@@ -239,19 +239,22 @@ Organizations allow for collaborative issue reporting and management within The 
 
 
 ### Downloading Detailed Reports
-1. Navigate to your organization's page.
-2. Look for a "Reports" or "Analytics" section.
-3. Click on "Download Report"
-4. Enter your email and the report will be emailed to you once it is ready.
+**1. Navigate to your organization's page.**<br>
 
-Note: Detailed reports may include information such as:
+**2. Click on "Get Your Detailed Report".**<br>
+![alt text](image-16.png)
+
+**3. Enter your email and the report will be emailed to you once it is ready.**<br>
+![alt text](image-17.png)
+
+**Note: Detailed reports may include information such as:**<br>
 - Member engagement statistics
 - Issue resolution rates
 - Top contributors within the organization
 - Trending categories or locations for reported issues
 - Overall organization growth and activity metrics
 
-These reports can help organization administrators make data-driven decisions and track the organization's impact over time.
+**These reports can help organization administrators make data-driven decisions and track the organization's impact over time.**
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
