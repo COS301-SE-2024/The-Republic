@@ -50,7 +50,7 @@ The documentation provides different versions and progress for each demo, guidin
 - [Coding Standards](./documentation/specifications/Coding%20Standards.pdf)
 - [Requirements Specification](./documentation/specifications/RequirementsSpecification.pdf)
 - [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
-- [Architectural Specification](./documentation/specifications/ArchitecturalSpecification.pdf)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.md)
 
 
 
