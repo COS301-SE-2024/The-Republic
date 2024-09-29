@@ -33,6 +33,7 @@ export default function Login() {
 
     if (error) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Incorrect email or password. Please try again",
       });
@@ -51,6 +52,7 @@ export default function Login() {
 
     if (error) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to sign in with Google, please try again",
       });

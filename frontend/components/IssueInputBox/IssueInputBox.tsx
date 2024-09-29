@@ -92,6 +92,7 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user, onAddIssue }) => {
     if (!isContentAppropriate) {
       setIsLoading(false);
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Please use appropriate language.",
       });
@@ -146,11 +147,13 @@ const IssueInputBox: React.FC<IssueInputBoxProps> = ({ user, onAddIssue }) => {
       setImage(null);
 
       toast({
+        title: "Success",
         variant: "success",
         description: "Issue posted successfully!",
       });
     } catch (error) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to post, please try again",
       });

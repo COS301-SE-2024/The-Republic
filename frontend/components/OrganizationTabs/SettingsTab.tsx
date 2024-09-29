@@ -101,7 +101,7 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       console.error("Error fetching activity logs:", err);
       setLogsError("Failed to fetch activity logs");
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to fetch activity logs",
         variant: "destructive",
       });
@@ -167,6 +167,7 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       if (!isContentAppropriate) {
         setLoading(false);
         toast({
+          title: "Something Went Wrong",
           variant: "destructive",
           description: "Please use appropriate language in all fields.",
         });
@@ -218,7 +219,7 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       console.error("Error updating organization:", err);
       setError(err instanceof Error ? err.message : 'Failed to update organization');
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: err instanceof Error ? err.message : 'Failed to update organization',
         variant: "destructive",
       });
@@ -242,7 +243,7 @@ export default function SettingsTab({ organization, onOrganizationUpdate }: Sett
       console.error("Error deleting organization:", err);
       setError('Failed to delete organization');
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to delete organization",
         variant: "destructive",
       });

@@ -25,6 +25,7 @@ export default function CompleteProfile() {
     const isUsernameAvailable = await checkUsername({ username });
     if (!isUsernameAvailable) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Username is not available, already in use.",
       });
@@ -68,7 +69,7 @@ export default function CompleteProfile() {
       console.error("Error updating user:", error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to update profile. Please try again.",
       });
     }
