@@ -189,6 +189,7 @@ Organizations allow for collaborative issue reporting and management within The 
 
 ### Managing Organization Members
 1. Go to your organization's page.
+![alt text](image.png)
 2. Click on "Members" or "Manage Members".
 3. Here you can view all members, remove members, or promote members to admin status.
 
@@ -197,6 +198,8 @@ Organizations allow for collaborative issue reporting and management within The 
 2. Look for a "Create Post" or "New Post" button.
 3. Write your post and add any relevant attachments.
 4. Click "Post" to publish the content to your organization's feed.
+
+
 
 ### Viewing Organization Activity Logs
 1. Go to your organization's page.
