@@ -139,6 +139,7 @@ describe("CommentList", () => {
 
     await waitFor(() => {
       expect(mockToast.toast).toHaveBeenCalledWith({
+        title: "Success",
         description: "Comment deleted successfully",
       });
       expect(screen.queryByText("This is a comment")).not.toBeInTheDocument();
@@ -196,6 +197,7 @@ describe("CommentList", () => {
       expect(console.error).not.toBe(null);
       expect(mockToast.toast).toHaveBeenCalledWith({
         description: "Failed to delete comment",
+        title: "Something Went Wrong",
         variant: "destructive",
       });
       expect(screen.getByText("This is a comment")).toBeInTheDocument();
