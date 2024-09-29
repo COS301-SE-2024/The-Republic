@@ -213,11 +213,18 @@ Organizations allow for collaborative issue reporting and management within The 
 **3. Here you can view all members, remove members, or promote members to admin status.**<br>
 ![alt text](image-10.png)
 
-### Posting Organization Content
-1. Navigate to your organization's page.
-2. Look for a "Create Post" or "New Post" button.
-3. Write your post and add any relevant attachments.
-4. Click "Post" to publish the content to your organization's feed.
+### Posting Organization Content (FOR ADMINS ONLY)
+**1. Navigate to your organization's page.**<br>
+![alt text](image-8.png)
+
+**2. Click the icon at the far right corner of the "Organizations Post" section.**<br>
+![alt text](image-11.png)
+
+**3. Write your post and add any relevant attachments.**<br>
+![alt text](image-12.png)
+
+**4. Click "Post" to publish the content to your organization's feed.**<br>
+![alt text](image-13.png)
 
 
 
