@@ -175,21 +175,22 @@ Organizations allow for collaborative issue reporting and management within The 
 - Set join policies for organizations
 
 ### Creating an Organization
-1. Navigate to the Organizations page.
+**1. Navigate to the Organizations page.** <br>
+![alt text](image.png)
+
 2. Click on "Create Organization".
 3. Fill in the organization details (name, description, etc.).
 4. Set the join policy (open, request to join, or invite-only).
 5. Click "Create" to finalize.
 
 ### Joining an Organization
-1. Search for the organization you want to join.
+1. Search for the organization you want to join.<br>
 2. Click on the organization to view its details.
 3. Click "Join" or "Request to Join" (depending on the organization's policy).
 4. If it's a request, wait for approval from the organization admin.
 
 ### Managing Organization Members
 1. Go to your organization's page.
-![alt text](image.png)
 2. Click on "Members" or "Manage Members".
 3. Here you can view all members, remove members, or promote members to admin status.
 
