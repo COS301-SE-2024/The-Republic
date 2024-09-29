@@ -204,9 +204,14 @@ Organizations allow for collaborative issue reporting and management within The 
 **4. If it's a request, wait for approval from the organization admin.**<br>
 
 ### Managing Organization Members
-1. Go to your organization's page.
-2. Click on "Members" or "Manage Members".
-3. Here you can view all members, remove members, or promote members to admin status.
+**1. Navigate to your organization's page.**<br>
+![alt text](image-8.png)
+
+**2. Click on "Members" or "Manage Members".**<br>
+![alt text](image-9.png)
+
+**3. Here you can view all members, remove members, or promote members to admin status.**<br>
+![alt text](image-10.png)
 
 ### Posting Organization Content
 1. Navigate to your organization's page.
