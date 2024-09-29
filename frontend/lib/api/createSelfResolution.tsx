@@ -10,6 +10,7 @@ const createSelfResolution = async (
 ): Promise<Resolution | null> => {
   if (!user) {
     toast({
+      title: "Something Went Wrong",
       variant: "destructive",
       description: "Please log in to create a resolution.",
     });

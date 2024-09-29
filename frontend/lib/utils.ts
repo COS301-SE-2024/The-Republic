@@ -41,11 +41,13 @@ export async function signOutWithToast(toast: typeof shadToast) {
 
   if (error) {
     toast({
+      title: "Something Went Wrong",
       variant: "destructive",
       description: "Failed to sign out, please try again",
     });
   } else {
     toast({
+      title: "Success",
       description: "Signed out succesfully",
     });
   }
@@ -170,11 +172,13 @@ export async function checkImageFileAndToast(
   } catch (error) {
     if (error === "File too big") {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "File exceeds limit of 1MB",
       });
     } else {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "A file system error occured. Please try again",
       });
@@ -187,6 +191,7 @@ export async function checkImageFileAndToast(
 
   if (!isImageAppropriate) {
     toast({
+      title: "Something Went Wrong",
       variant: "destructive",
       description: "Please use an appropriate image.",
     });

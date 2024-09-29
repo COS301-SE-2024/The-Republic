@@ -77,7 +77,7 @@ export default function InformationTab({
       } catch (err) {
         console.error("Error deleting post:", err);
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Failed to delete post",
           variant: "destructive",
         });
@@ -88,7 +88,7 @@ export default function InformationTab({
       e.preventDefault();
       if (!user) {
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "You must be signed in to request a report",
           variant: "destructive",
         });
@@ -105,7 +105,7 @@ export default function InformationTab({
       } catch (error) {
         console.error("Error requesting report:", error);
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Failed to request report",
           variant: "destructive",
         });

@@ -55,7 +55,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
     } catch (err) {
       console.error("Error removing member:", err);
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to remove member",
         variant: "destructive",
       });
@@ -85,7 +85,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
     } catch (err) {
       console.error("Error leaving organization:", err);
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to leave organization",
         variant: "destructive",
       });
@@ -107,7 +107,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
     } catch (err) {
       console.error("Error promoting member to admin:", err);
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to promote member to admin",
         variant: "destructive",
       });

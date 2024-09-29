@@ -43,7 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigateToIssue = (issueId: number) => {
     router.push(`/issues/${issueId}`);
   };
-  
 
   useEffect(() => {
     if (!user) return;
@@ -60,9 +59,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         async (payload) => {
           const { new: notification } = payload;
           if (notification && Object.keys(notification).length > 0) {
-            const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
+            const { is_anonymous, user_id, issue_id, content } = notification as CommentNotification;
             
-            // Fetch the issue to check if it belongs to the current user
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
               .select('user_id')
@@ -81,6 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               }
 
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: (
                   <div 
@@ -105,8 +104,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               });
             } else if (user_id === user.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 10 Points for leaving a Comment on an Issue`,
+              });
+            } else if (content.includes(user.username)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `You've been mentioned in a comment.`,
               });
             }
           }
@@ -139,6 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               const reactorInfo = await fetchUserData(user_id);
 
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: (
                   <div 
@@ -163,6 +170,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               });
             } else if (user_id === user.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 5 Points on your ${emoji} Reaction`,
               });
@@ -181,11 +189,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           const { new: notification } = payload;
 
           if (notification && Object.keys(notification).length > 0) {
-            const { user_id } = notification as Partial<Issue>;
-            if (user_id !== user?.user_id) {
+            const { user_id, content } = notification as Partial<Issue>;
+            if (user_id === user?.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 20 Points for Reporting an Issue`,
+              });
+            } else if (content && content.includes(user.username)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `You've been mentioned in an issue.`,
               });
             }
           }

@@ -62,12 +62,14 @@ const Issue: React.FC<IssueProps> = ({
     },
     onSuccess: () => {
       toast({
+        title: "Success",
         description: "Successfully deleted issue",
       });
       onDeleteIssue!(issue);
     },
     onError: (error) => {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to delete issue",
       });
@@ -87,6 +89,7 @@ const Issue: React.FC<IssueProps> = ({
     },
     onError: (error) => {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to Subscribe to Issue",
       });
@@ -104,12 +107,12 @@ const Issue: React.FC<IssueProps> = ({
         onResolveIssue!(issue, resolvedIssue);
         issue.resolved_at = new Date().toISOString();
       }
-      toast({ description: "Self-resolution submitted successfully" });
+      toast({ title: "Success", description: "Self-resolution submitted successfully" });
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit self-resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit self-resolution" });
     }
   });
 
@@ -136,6 +139,7 @@ const Issue: React.FC<IssueProps> = ({
     onSuccess: (response) => {
       if ('suspended_until' in response!) {
         toast({
+          title: "Something Went Wrong",
           variant: "destructive",
           description: 
             "Because of a false resolution you are suspended from resolving until " +
@@ -147,14 +151,14 @@ const Issue: React.FC<IssueProps> = ({
         if (resolvedIssue) {
           onResolveIssue!(issue, resolvedIssue);
         }
-        toast({ description: "External resolution submitted successfully" });
+        toast({ title: "Success", description: "External resolution submitted successfully" });
       }
 
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit external resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit external resolution" });
     }
   });
 
@@ -185,7 +189,7 @@ const Issue: React.FC<IssueProps> = ({
       setIsResolutionModalOpen(false);
     } catch (error) {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit resolution" });
     } finally {
       setIsResolutionSubmitLoading(false);
     }
@@ -205,11 +209,11 @@ const Issue: React.FC<IssueProps> = ({
       // Refetch the issue data
       await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
 
-      toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
+      toast({ title: accept? "Success" : "Error", description: accept ? "Resolution accepted" : "Resolution rejected" });
       setIsResolutionResponseModalOpen(false);
     } catch (error) {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to respond to resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to respond to resolution" });
     } finally {
       setIsResolutionResponseLoading(undefined);
     }
@@ -355,27 +359,23 @@ const Issue: React.FC<IssueProps> = ({
                     <div className="py-1" role="none">
                       <button
                         onClick={() => handleSubscribe("Issue")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Issue
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Category")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Category
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Location")}
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left ${
-                          theme === "dark" ? "hover:bg-[#0C0A09] hover:text-white" : ""
-                        }`}
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Location

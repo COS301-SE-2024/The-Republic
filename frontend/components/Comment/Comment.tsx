@@ -35,6 +35,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }
   const handleDelete = async () => {
     if (!user) {
       toast({
+        title: "Something Went Wrong",
         description: "You need to be logged in to delete a comment",
       });
       return;
@@ -45,11 +46,13 @@ const Comment: React.FC<CommentProps> = ({ comment, onCommentDeleted, itemType }
       await deleteComment(user, comment.comment_id.toString());
       onCommentDeleted(comment);
       toast({
+        title: "Success",
         description: "Comment deleted successfully",
       });
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to delete comment",
       });

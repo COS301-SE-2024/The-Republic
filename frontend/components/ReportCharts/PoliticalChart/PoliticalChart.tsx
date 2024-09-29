@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as echarts from "echarts";
 import { DataItem } from "@/lib/reports";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from 'next-themes';
 import { FaSpinner } from "react-icons/fa";
 import { reportCharts } from "@/lib/api/reportCharts";
 import { useMediaQuery } from "@/lib/useMediaQuery";
+import darkTheme from "@/lib/charts-dark-theme";
+import lightTheme from "@/lib/charts-light-theme";
 
 function PoliticalChart() {
   const [dataArray, setDataArray] = useState<DataItem[]>([]);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedPoliticalAssociation`;
+  const { theme } = useTheme();
 
   const {
     data,
@@ -30,8 +35,13 @@ function PoliticalChart() {
     if (dataArray.length > 0) {
       const element = document.querySelector("#politicalChart") as HTMLElement;
       if (element) {
-        const donutChart = echarts.init(element);
-        donutChart.setOption({
+        const currentTheme = theme === 'dark' ? 'darkTheme' : 'lightTheme';
+        echarts.registerTheme('lightTheme', lightTheme);
+        echarts.registerTheme('darkTheme', darkTheme);
+
+        chartInstance.current = echarts.init(element, currentTheme);
+        
+        chartInstance.current.setOption({
           tooltip: {
             trigger: "item",
           },
@@ -73,20 +83,19 @@ function PoliticalChart() {
         });
 
         const handleResize = () => {
-          donutChart.resize();
+          chartInstance.current?.resize();
         };
 
         window.addEventListener('resize', handleResize);
-
         return () => {
           window.removeEventListener('resize', handleResize);
-          donutChart.dispose();
+          chartInstance.current?.dispose();
         };
       } else {
         console.error("Element #politicalChart not found");
       }
     }
-  }, [dataArray]);
+  }, [dataArray, theme]);
 
   return (
     <>

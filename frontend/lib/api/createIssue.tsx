@@ -7,6 +7,7 @@ const createIssue = async (
 ): Promise<void> => {
   if (!user) {
     toast({
+      title: "Something Went Wrong",
       variant: "destructive",
       description: "Please log in to create issues.",
     });

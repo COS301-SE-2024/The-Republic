@@ -146,6 +146,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
 
     if (resolutionSource === "other" && !resolverId) {
       toast({
+        title: "Instruction",
         description: 
           "Please specify who resolved the issue " + 
           "or set the resolution type to 'I don't know who fixed it'"
