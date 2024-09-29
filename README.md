@@ -45,12 +45,12 @@ The documentation provides different versions and progress for each demo, guidin
 
 ## Links to the Latest Documentation of the Project
 
-- [User Manual](./documentation/specifications/UserManualVersion4.md)
-- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManual1.md)
-- [Coding Standards](./documentation/specifications/CodingStandardsVersion3.md)
-- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion4.md)
+- [User Manual](./documentation/specifications/UserManual.pdf)
+- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManual.pdf)
+- [Coding Standards](./documentation/specifications/Coding%20Standards.pdf)
+- [Requirements Specification](./documentation/specifications/RequirementsSpecification.pdf)
 - [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
-- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.md)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecification.pdf)
 
 
 
