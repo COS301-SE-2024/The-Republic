@@ -228,10 +228,15 @@ Organizations allow for collaborative issue reporting and management within The 
 
 
 
-### Viewing Organization Activity Logs
-1. Go to your organization's page.
-2. Look for an "Activity" or "Logs" section.
-3. Here you can view recent actions and events within the organization.
+### Viewing Organization Activity Logs (FOR ADMINS ONLY)
+**1. Navigate to your organization's page.**<br>
+
+**2. Click on Settings**<Br>
+![alt text](image-14.png)
+
+**3. Click on activty Log. Here you can view recent actions and events within the organization.**<br>
+![alt text](image-15.png)
+
 
 ### Downloading Detailed Reports
 1. Navigate to your organization's page.
