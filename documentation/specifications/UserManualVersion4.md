@@ -192,10 +192,16 @@ Organizations allow for collaborative issue reporting and management within The 
 
 
 ### Joining an Organization
-1. Search for the organization you want to join.<br>
-2. Click on the organization to view its details.
-3. Click "Join" or "Request to Join" (depending on the organization's policy).
-4. If it's a request, wait for approval from the organization admin.
+**1. Search for the organization you want to join.**<br>
+![alt text](image-5.png)
+
+**2. Click on the organization to view its details.**<br>
+![alt text](image-6.png)
+
+**3. Click "Join" or "Request to Join" (depending on the organization's policy).**<br>
+![alt text](image-7.png)
+
+**4. If it's a request, wait for approval from the organization admin.**<br>
 
 ### Managing Organization Members
 1. Go to your organization's page.
