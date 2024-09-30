@@ -251,12 +251,12 @@ export class OrganizationRepository {
       });
     }
 
-    if (count && count >= 5) {
+    if (count && count >= 10) {
       throw APIError({
         code: 400,
         success: false,
         error:
-          "You have reached the maximum number of organizations you can join (5).",
+          "You have reached the maximum number of organizations you can join (10).",
       });
     }
 
