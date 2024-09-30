@@ -14,7 +14,7 @@ const AboutPage = () => {
     { title: "Incident Reporting", description: "Report issues with government services", icon: "🚨" },
     { title: "Data Analysis", description: "Gain insights from reported data", icon: "📊" },
     { title: "Public Discourse", description: "Engage in meaningful discussions", icon: "💬" },
-    { title: "Sentiment Analysis", description: "Understand public opinion trends", icon: "🔍" },
+    { title: "Public Sentiment", description: "Understand public opinion trends", icon: "🔍" },
     { title: "Visualizations", description: "View data in interactive formats", icon: "📈" },
     { title: "Anonymous Posting", description: "Share concerns privately", icon: "🕵️" },
   ];

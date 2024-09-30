@@ -76,9 +76,11 @@ Performance is crucial for handling high volumes of user posts and data analysis
 
 ### Key Implementations:
 
-- **Load Balancing**: We utilize Heroku's built-in load balancer to distribute traffic across multiple backend instances. This automatically scales by launching new instances when necessary, ensuring consistent performance during traffic spikes.
+- **Load Balancing**: We utilize a Python Flask load balancer to distribute traffic across multiple backend instances. This automatically scales by launching new instances when necessary, ensuring consistent performance during traffic spikes. The load balancer also retries the requests on other instances in case one of the servers is down or not responsive.
 
-- **Client-side Caching**: Our frontend implements client-side caching strategies to reduce server load and improve response times. This is particularly effective for frequently accessed data like user profiles or common complaint categories.
+- **Server-side Caching**: Our backend implements server-side caching using Redis to enhance performance and scalability. Redis, an in-memory data structure store, allows us to cache frequently accessed data, reducing the load on our primary database and decreasing response times for end-users. By storing data in memory, Redis provides rapid access to cached data, which is particularly beneficial for our read-heavy application. This caching mechanism helps to handle high traffic volumes efficiently, ensuring that our application remains responsive and can scale to meet increasing demand.
+
+- **Client-side Caching**: Our frontend implements client-side caching using react-query strategies to reduce server load and improve response times. This is particularly effective for frequently accessed data like user profiles or common complaint categories.
 
 - **Request Deduplication**: To minimize redundant processing, we've implemented request deduplication on the backend. This is especially useful for preventing duplicate submissions when users double-click submit buttons or experience network issues.
 
@@ -89,12 +91,15 @@ Performance is crucial for handling high volumes of user posts and data analysis
 During a major government service outage, our system experiences a sudden influx of 10,000 concurrent users trying to submit complaints and view service status updates.
 
 **Response:**
-- The Heroku load balancer distributes incoming requests across multiple backend instances.
+
+- The Python Flask load balancer distributes incoming requests across multiple backend instances.
+- Server-side caching mechanism helps to handle high traffic volumes efficiently, ensuring that our application remains responsive and can scale to meet increasing demand.
 - Client-side caching serves frequently accessed data like service status updates without hitting the server.
 - Request deduplication prevents duplicate complaint submissions from users frantically clicking the submit button.
 - Pagination ensures that the system only loads manageable chunks of complaint data at a time, while prefetching prepares the next set of data.
 
 **Measure:** 
+
 - 95% of API requests are processed within 500ms.
 - Complex data visualizations render within 3 seconds.
 
@@ -104,7 +109,7 @@ Reliability ensures our system remains available and functional for users to pos
 
 ### Key Implementations:
 
-- **Multiple Backend Instances**: We run multiple instances of our backend on Heroku, providing redundancy in case of individual instance failures.
+- **Multiple Backend Instances**: We run multiple instances of our backend on Vercel, providing redundancy in case of individual instance failures.
 
 - **Supabase Replication**: We leverage Supabase's built-in replication features for our database, ensuring data consistency and availability even if one database node fails.
 
@@ -113,10 +118,12 @@ Reliability ensures our system remains available and functional for users to pos
 During a planned maintenance window, one of our backend instances goes offline.
 
 **Response:**
-- Incoming requests are automatically routed to the remaining active instances by Heroku's load balancer.
+
+- Incoming requests are automatically routed to the remaining active instances by out Flask load balancer on vercel.
 - Supabase replication ensures that all data remains consistent and accessible across the database cluster.
 
 **Measure:**
+
 - The system maintains 99.9% uptime.
 - No data loss occurs during the instance downtime.
 
@@ -124,22 +131,24 @@ During a planned maintenance window, one of our backend instances goes offline.
 
 Our system is designed to handle growth in users, posts, and data analysis requirements efficiently.
 
-### Key Implementations:
+### Key Implementations
 
-- **Heroku and Vercel Scaling**: We utilize Heroku's dynamic scaling for our backend and Vercel's serverless architecture for our frontend. This allows us to automatically adjust resources based on demand.
+- **Vercel Scaling**: We utilize Vercel's serverless architecture for both our load balancer and frontend. This allows us to automatically adjust resources based on demand.
 
 - **Future Microservices Architecture**: While currently monolithic, our system is designed with a future transition to microservices in mind. This will allow different functionalities to scale independently as needed.
 
-### Scalability Scenario:
+### Scalability Scenario
 
 Our user base doubles over a weekend due to a viral social media post about government services.
 
 **Response:**
-- Heroku automatically scales our backend instances to handle the increased load.
+
+- Our load balancer together with Vercel automatically scales our backend instances to handle the increased load. This ensures that during periods of high traffic, our system can dynamically allocate resources to maintain performance and reliability. By distributing incoming requests across multiple instances and launching new ones as needed, we can provide a seamless and responsive user experience even under significant load.
 - Vercel's serverless architecture ensures the frontend remains responsive despite the traffic surge.
 - Our design allows for easy transition to a microservices architecture if sustained growth requires it.
 
 **Measure:**
+
 - The system maintains performance while handling up to 1 million concurrent users.
 - Data processing and analysis capabilities scale to handle at least 10 million user posts.
 
@@ -155,7 +164,7 @@ Security is paramount in our system to protect user data and ensure secure inter
 
 - **User ID Obfuscation**: We hide or obfuscate user IDs in public-facing areas of the application to enhance user privacy.
 
-- **Nginx Proxy**: We utilize Nginx as a reverse proxy, leveraging its additional security features like rate limiting and request filtering.
+- **Python Flask Proxy/Load balancer**: We utilize Python Flask as a reverse proxy, leveraging its additional security features like rate limiting and request filtering.
 
 ### Security Scenario:
 
@@ -165,7 +174,7 @@ A malicious actor attempts to gain unauthorized access to user data through a se
 - JWT verification fails for all unauthorized access attempts.
 - All data remains encrypted in transit due to HTTPS implementation.
 - User IDs remain obfuscated, preventing the attacker from easily targeting specific users.
-- Nginx proxy detects and blocks suspicious request patterns.
+- Python Flask proxy detects and blocks suspicious request patterns.
 
 **Measure:**
 - Zero successful unauthorized data access attempts.

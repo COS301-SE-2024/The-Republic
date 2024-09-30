@@ -43,15 +43,12 @@
 
 The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
-## Links to the Latest Documentation of the Project
-
 - [User Manual](./documentation/specifications/UserManual.pdf)
-- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManual.pdf)
+- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManualVersion2.pdf)
 - [Coding Standards](./documentation/specifications/Coding%20Standards.pdf)
 - [Requirements Specification](./documentation/specifications/RequirementsSpecification.pdf)
-- [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
-- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.md)
-
+- [Testing Specification](./documentation/specifications/TestingSpecification.pdf)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.pdf)
 
 
 <h1 align="center">Meet The Infinite Loopers!</h1>
