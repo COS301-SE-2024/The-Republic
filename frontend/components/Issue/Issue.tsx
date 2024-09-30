@@ -167,7 +167,7 @@ const Issue: React.FC<IssueProps> = ({
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
-    organizationIds?: string[];
+    organizationId?: string;
   }) => {
     setIsResolutionSubmitLoading(true);
     try {
@@ -175,7 +175,7 @@ const Issue: React.FC<IssueProps> = ({
         await selfResolutionMutation.mutateAsync({
           resolutionText: resolutionData.resolutionText,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } else {
         await externalResolutionMutation.mutateAsync({
@@ -183,7 +183,7 @@ const Issue: React.FC<IssueProps> = ({
           resolutionSource: resolutionData.resolutionSource,
           resolvedBy: resolutionData.resolvedBy,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } 
       setIsResolutionModalOpen(false);
