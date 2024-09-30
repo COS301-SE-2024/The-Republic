@@ -1,3 +1,7 @@
+<div>
+    <img src="../images/gifs/TestingSpecifications.gif" alt="Gif" style="width: 1584px; height: 396px;"/>
+</div>
+
 # Testing Specification
 
 ### Overview
