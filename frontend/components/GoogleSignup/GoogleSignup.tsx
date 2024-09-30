@@ -12,7 +12,7 @@ export default function GoogleSignup({ onSignup }: GoogleSignupProps) {
       className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 py-2 sm:py-3 text-base sm:text-lg rounded-md transition duration-300 flex items-center justify-center"
     >
       <FcGoogle className="mr-2" size={20} />
-      Sign up with Google
+      Continue with Google
     </Button>
   );
 }

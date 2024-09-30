@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           const { new: notification } = payload;
           if (notification && Object.keys(notification).length > 0) {
             const { is_anonymous, user_id, issue_id, content } = notification as CommentNotification;
-            
+
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
               .select('user_id, category_id, location_id')
@@ -346,8 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </h4>
             <li onClick={onClose}>
               <Link href={`/about`}>
-                <CircleHelp />
-                About
+                <CircleHelp /> About
               </Link>
             </li>
           </ul>
@@ -368,10 +367,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <div className={styles.userProfile} onClick={toggleLogout}>
                 <Avatar>
                   <AvatarImage src={user.image_url} />
-                  <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                  <AvatarFallback>{user.fullname[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className={styles.userDetail}>
-                  <h3>{user.fullname}</h3>
+                <div className={`w-[70%] overflow-hidden overflow-ellipsis ${styles.userDetail}`}>
+                  <h3 className="inline">{user.fullname}</h3>
+                  <br />
                   <span>@{user.username}</span>
                 </div>
               </div>

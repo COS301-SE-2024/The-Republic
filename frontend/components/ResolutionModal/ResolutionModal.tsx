@@ -35,7 +35,7 @@ interface ResolutionModalProps {
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
     resolverId?: string;
-    organizationIds?: string[];
+    organizationId?: string;
   }) => void;
   isLoading: boolean;
 }
@@ -93,7 +93,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   );
   const [resolvedBy, setResolvedBy] = useState('');
   const [resolverId, setResolverID] = useState<string>();
-  const [selectedOrganization, setSelectedOrganization] = useState<string | null>(null);
+  const [selectedOrganization, setSelectedOrganization] = useState<string>();
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([]);
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -161,7 +161,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       resolutionSource: finalResolutionSource as 'self' | 'unknown' | 'other',
       resolvedBy: finalResolutionSource === 'other' ? resolvedBy : undefined,
       resolverId,
-      organizationIds: selectedOrganization ? [selectedOrganization] : undefined,
+      organizationId: selectedOrganization,
     });
   };
 
@@ -171,7 +171,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     setImagePreview(null);
     setResolutionSource(isSelfResolution ? 'self' : 'unknown');
     setResolvedBy('');
-    setSelectedOrganization(null);
+    setSelectedOrganization(undefined);
     setSearchResults([]);
     setSearchQuery('');
     setError(null);
@@ -216,7 +216,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   }, 500), [resolutionSource]);
 
   const toggleOrganization = (orgId: string) => {
-    setSelectedOrganization(prev => prev === orgId ? null : orgId);
+    setSelectedOrganization(selectedOrganization === orgId ? undefined : orgId);
   };
 
   return (
