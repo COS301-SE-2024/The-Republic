@@ -254,3 +254,27 @@ As an organization admin, I want to generate detailed reports about the organiza
 - **FR15.1**: Implement proper authentication and authorization for all organization-related actions.
 - **FR15.2**: Validate all input for organization creation and updates, including name uniqueness.
 
+### 📊 Use Case Diagrams 
+
+<div>
+    <img src="../images/diagrams/authentication.png" alt="authentication use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/profile_management.png" alt="profile use case diagram"/>
+</div>
+
+<div>
+    <img src="../images/diagrams/posting.png" alt="posting use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/interactions.png" alt="interactions use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/feed.png" alt="feed use case diagram"/>
+</div>
+<div>
+    <img src="../images/diagrams/reporting.png" alt="reporting use case diagram"/>
+</div>
+
+
