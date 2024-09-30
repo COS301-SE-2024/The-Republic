@@ -4,7 +4,7 @@ import Visualizations from '@/components/Visualisations/Visualizations';
 import Reports from '@/components/ReportCharts/Reports';
 
 function Tabs() {
-  const [activeTab, setActiveTab] = useState("Reports");
+  const [activeTab, setActiveTab] = useState("Statistics");
   const [selectedCharts, setSelectedCharts] = useState<string[]>([]);
 
   useEffect(() => {
@@ -25,9 +25,9 @@ function Tabs() {
         <ul className="flex justify-center w-full -mb-px">
           <li className="flex-1">
             <button
-              className={`w-full p-4 text-center border-b-2 ${activeTab === 'Reports' ? 'text-green-600 border-green-600 dark:text-green-500 dark:border-green-500' : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
-              onClick={() => handleTabClick('Reports')}
-              aria-current={activeTab === 'Reports' ? 'page' : undefined}
+              className={`w-full p-4 text-center border-b-2 ${activeTab === 'Statistics' ? 'text-green-600 border-green-600 dark:text-green-500 dark:border-green-500' : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
+              onClick={() => handleTabClick('Statistics')}
+              aria-current={activeTab === 'Statistics' ? 'page' : undefined}
             >
               Statistics
             </button>
@@ -43,7 +43,7 @@ function Tabs() {
         </ul>
       </div>
       <div className='p-5'>
-        {activeTab === 'Reports' && <Reports selectedCharts={selectedCharts} setSelectedCharts={setSelectedCharts} />}
+        {activeTab === 'Statistics' && <Reports selectedCharts={selectedCharts} setSelectedCharts={setSelectedCharts} />}
         {activeTab === 'Visualizations' && <Visualizations />}
       </div>
     </div>

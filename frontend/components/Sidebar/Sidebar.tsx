@@ -250,18 +250,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 Analytics
               </Link>
             </li>
-            <li onClick={onClose}>
-              <Link href="/organization">
-                <OrganizationIcon />
-                Organizations
-              </Link>
-            </li>
-            <li onClick={onClose}>
-              <Link href="/leaderboard">
-                <TrophyIcon />
-                Leaderboard
-              </Link>
-            </li>
+            {user && (
+              <>
+                <li onClick={onClose}>
+                  <Link href="/organization">
+                    <OrganizationIcon />
+                    Organizations
+                  </Link>
+                </li>
+                <li onClick={onClose}>
+                  <Link href="/leaderboard">
+                    <TrophyIcon />
+                    Leaderboard
+                  </Link>
+                </li>
+              </>
+            )}
             {user ? (
               <>
                 <li onClick={onClose}>
@@ -300,7 +304,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <li onClick={onClose}>
               <Link href={`/about`}>
                 <CircleHelp />
-                  About
+                About
               </Link>
             </li>
           </ul>
@@ -310,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className={styles.logoutOverlay}>
                   <ul className={styles.sidebarLinks}>
                     <li>
-                      <Link href="" onClick={() => signOutWithToast(toast)}>
+                      <Link href="/login" onClick={() => signOutWithToast(toast)}>
                         <LogoutIcon />
                         Logout
                       </Link>

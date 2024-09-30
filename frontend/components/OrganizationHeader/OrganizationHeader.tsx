@@ -74,7 +74,8 @@ export default function OrganizationHeader({ organization, isUserMember, onJoinR
             imageUrl={organization.profile_photo || ''}
             username={organization.name || 'Unknown'}
             score={organization.points || 0}
-            className="h-24 w-24"
+            className="w-24 h-24"
+            scoreFontSize={20}
           />
           <div className="mt-4 md:mt-0">
             <h1 className="text-3xl font-bold flex items-center">

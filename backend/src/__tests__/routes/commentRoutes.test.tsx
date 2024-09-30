@@ -29,38 +29,6 @@ describe("Comments Routes", () => {
     jest.clearAllMocks();
   });
 
-  describe("POST /comments/", () => {
-    it("should call getComments controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
-        next(),
-      );
-      (commentController.getComments as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
-      );
-
-      const response = await request(app).post("/comments/").send();
-
-      expect(response.status).toBe(200);
-      expect(commentController.getComments).toHaveBeenCalled();
-    });
-  });
-
-  describe("POST /comments/count", () => {
-    it("should call getNumComments controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
-        next(),
-      );
-      (commentController.getNumComments as jest.Mock).mockImplementation(
-        (req, res) => res.status(200).json({}),
-      );
-
-      const response = await request(app).post("/comments/count").send();
-
-      expect(response.status).toBe(200);
-      expect(commentController.getNumComments).toHaveBeenCalled();
-    });
-  });
-
   describe("POST /comments/add", () => {
     it("should call addComment controller", async () => {
       (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>

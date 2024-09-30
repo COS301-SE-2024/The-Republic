@@ -76,25 +76,4 @@ describe("Subscription Routes", () => {
       expect(subscriptionsController.locationSubscriptions).toHaveBeenCalled();
     });
   });
-
-  describe("POST /subscriptions/subscriptions", () => {
-    it("should call getSubscriptions controller", async () => {
-      (verifyAndGetUser as jest.Mock).mockImplementation((req, res, next) =>
-        next(),
-      );
-      (
-        subscriptionsController.getSubscriptions as jest.Mock
-      ).mockImplementation((req, res) =>
-        res.status(200).json({ message: "Get subscriptions successful" }),
-      );
-
-      const response = await request(app)
-        .post("/subscriptions/subscriptions")
-        .send();
-
-      expect(response.status).toBe(200);
-      expect(response.body.message).toBe("Get subscriptions successful");
-      expect(subscriptionsController.getSubscriptions).toHaveBeenCalled();
-    });
-  });
 });

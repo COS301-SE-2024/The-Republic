@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { VisualizationService } from "@/modules/visualizations/services/visualizationService";
 import { sendResponse } from "@/utilities/response";
 import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
@@ -37,9 +37,10 @@ describe("Visualization Controller", () => {
   });
 
   it("should call sendResponse for getVizData", async () => {
-    await visualizationController.getVizData(
+    await visualizationController.getVizData[visualizationController.getVizData.length - 1](
       mockRequest as Request,
       mockResponse as Response,
+      jest.fn() as NextFunction
     );
     expect(sendResponse).toHaveBeenCalled();
   });
@@ -48,9 +49,10 @@ describe("Visualization Controller", () => {
     const error = new Error("Test error");
     mockVisualizationService.getVizData.mockRejectedValue(error);
 
-    await visualizationController.getVizData(
+    await visualizationController.getVizData[visualizationController.getVizData.length - 1](
       mockRequest as Request,
       mockResponse as Response,
+      jest.fn() as NextFunction
     );
     expect(sendResponse).toHaveBeenCalledWith(mockResponse, expect.any(Error));
   });
