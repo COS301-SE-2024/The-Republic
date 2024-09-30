@@ -13,18 +13,24 @@
 
 ## Introduction
 
-This comprehensive manual provides step-by-step instructions for setting up and deploying The Republic project, which consists of a Next.js frontend and an Express backend within a single repository.
+This comprehensive manual provides step-by-step instructions for setting up and deploying The Republic project, which consists of a Next.js frontend, python flask load balancer and an Express backend within a single repository.
 
 ## Prerequisites
 
 Before beginning the installation process, ensure you have the following software installed:
 
 ### Software Requirements
+
+- Python (3.10.12 or later)
+- Pip (24.2 or later)
 - Node.js (v18.0.0 or later)
 - Git
 - npm or yarn (package managers)
 
 ### Installation Resources
+
+- Python: [https://www.python.org/](https://www.python.org/)
+- Pip: [https://pypi.org/project/pip/](https://pypi.org/project/pip/)
 - Node.js: [https://nodejs.org/](https://nodejs.org/)
 - Git: [https://git-scm.com/downloads](https://git-scm.com/downloads)
 - npm Documentation: [https://docs.npmjs.com/](https://docs.npmjs.com/)
@@ -47,24 +53,48 @@ cd The-Republic
 
 #### Frontend (Next.js)
 
-Navigate to the frontend directory and install dependencies:
+From the root directory, navigate to the `frontend` directory and install dependencies:
 
 ```bash
 cd frontend
 npm install
-# or, if using Yarn
-yarn install
 ```
 
 #### Backend (Express)
 
-Navigate to the backend directory and install dependencies:
+From the root directory, navigate to the `backend` directory and install dependencies:
 
 ```bash
-cd ../backend
+cd backend
 npm install
-# or, if using Yarn
-yarn install
+```
+
+#### Load Balancer (Python)
+
+From the root directory, navigate to the `proxy/python` directory and install dependencies:
+
+Start by creating a virtual environment
+
+```bash
+cd /proxy/python
+sudo apt-get update
+sudo apt-get install python3-venv
+python3 -m venv venv
+
+pip install virtualenv
+virtualenv -p python3 <env_name>
+
+# activating virtualenv
+source <env_name>/bin/activate
+# deactivating virtualenv
+deactivate
+```
+
+Install dependencies
+
+```bash
+cd proxy/python
+pip install -r requirements.txt
 ```
 
 ## Environment Configuration
@@ -82,6 +112,7 @@ NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_URL=<Azure Content Moderator URL>
 NEXT_PUBLIC_AZURE_CONTENT_MODERATOR_KEY=<Azure Content Moderator Key>
 NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_URL=<Azure Image Content Safety URL>
 NEXT_PUBLIC_AZURE_IMAGE_CONTENT_SAFETY_KEY=<Azure Image Content Safety Key>
+NEXT_PUBLIC_FRONTEND_URL=http://localhost:3000
 ```
 
 ### Backend (.env file)
@@ -93,6 +124,25 @@ SUPABASE_URL=<Your Supabase URL>
 SUPABASE_SERVICE_ROLE_KEY=<Your Supabase Service Role Key>
 SUPABASE_ANON_KEY=<Your Supabase Anon Key>
 OPENAI_API_KEY=<Your OpenAI API Key>
+ALLOWED_ORIGIN=<Alowed Origin, URL to Frontend app>
+REDIS_URL=<Redis URL Config>
+RESEND_API_KEY=<Key for Vercel's Email Send>
+PORT=<Port for Runnning the Server>
+```
+
+### Load Balancer (.env file)
+
+# Place this in (/proxy/python/.env) File in Root Directory
+
+```
+PORT=5000
+MAX_RETRIES=<Maximum retries for Failed Requests>
+FRONTEND_URL=<Frontend Url, Ussually http://localhost:3000>
+
+SERVER_1=<Link to Backend Server No. 1> 
+SERVER_2=<Link to Backend Server No. 2> 
+SERVER_3=<Link to Backend Server No. 3> 
+SERVER_4=<Link to Backend Server No. 4> 
 ```
 
 ## Supabase Configuration
@@ -144,26 +194,35 @@ OPENAI_API_KEY=<Your OpenAI API Key>
 
 ### Starting the Backend Server
 
-Navigate to the `backend` directory and start the Express server:
+From the root directory, navigate to the `backend` directory and start the Express server:
 
 ```bash
 cd backend
+npm run build
 npm start
-# or, if using Yarn
-yarn start
 ```
 
-The backend server will typically run on `http://localhost:8080`.
+The backend server will typically run on `http://localhost:8080`. You may need to start the backend server on multiple ports if testing everything locally so that the load balancer can utilise all these servvers.
+
+### Starting the Load Balancer
+
+From the root directory, navigate to the `proxy/python` directory and install dependencies:
+
+```bash
+cd /proxy/python
+gunicorn --workers 4 wsgi:app
+gunicorn --workers 4 wsgi:app --reload
+```
+
 
 ### Starting the Frontend Application
 
-Open a new terminal window, navigate to the `frontend` directory, and start the Next.js application:
+From the root directory, navigate to the `frontend` directory, and start the Next.js application:
 
 ```bash
 cd frontend
-npm run dev
-# or, if using Yarn
-yarn dev
+npm run build
+npm run start
 ```
 
 The frontend application will typically run on `http://localhost:3000`.
@@ -183,4 +242,4 @@ Open your web browser and navigate to `http://localhost:3000` to access the Next
 
 For more detailed usage instructions, please refer to the User Manual available at:
 
-`/documentation/specifications/UserManualVersion3.md`
+[User Manual](./UserManualVersion4.md)

@@ -261,7 +261,7 @@ As a user, I want to review and confirm or decline resolutions of issues in my c
 - **FR9.4**: Users can provide details about the resolution when marking an issue as resolved.
 
 
-### 📊 Use Case Diagrams TO BE UPDATED !!!!!
+### 📊 Use Case Diagrams 
 
 <div>
     <img src="../images/diagrams/authentication.png" alt="authentication use case diagram"/>

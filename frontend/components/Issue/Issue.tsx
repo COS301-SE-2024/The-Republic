@@ -416,7 +416,7 @@ const Issue: React.FC<IssueProps> = ({
                   : `${issue.location.city}, ${issue.location.province}`}
               </Badge>
             )}
-            {issue.hasPendingResolution && !issue.resolutionResponse && (
+            {issue.hasPendingResolution && (issue?.resolved_at == null || !issue.resolutionResponse) && (
               <Badge
                 variant="destructive"
                 className="cursor-pointer"

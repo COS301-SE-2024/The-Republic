@@ -61,6 +61,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -68,6 +69,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Missing required fields for creating an issue"
     }
     ```
@@ -75,6 +77,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 401,
       "error": "You need to be signed in to create an issue."
     }
     ```
@@ -82,6 +85,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -109,6 +113,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": [
         {
           "issue_id": "number",
@@ -161,6 +166,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {
         "issue_id": "number",
         "user_id": "string",
@@ -200,6 +206,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Issue does not exist."
     }
     ```
@@ -207,6 +214,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -228,6 +236,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -235,6 +244,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 401,
       "error": "You need be to signed in to resolve an issue."
     }
     ```
@@ -242,6 +252,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Issue does not exist."
     }
     ```
@@ -249,6 +260,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -271,6 +283,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {
         "added?": "string",
         "removed?": "string"
@@ -282,6 +295,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Missing required fields for reacting"
     }
     ```
@@ -289,6 +303,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 401,
       "error": "You need to be signed in to react."
     }
     ```
@@ -296,6 +311,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -320,6 +336,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -327,6 +344,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Missing required fields for creating a comment"
     }
     ```
@@ -334,6 +352,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 401,
       "error": "You need to be signed in to comment."
     }
     ```
@@ -341,6 +360,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -389,6 +409,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Comment does not exist."
     }
     ```
@@ -396,6 +417,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -411,6 +433,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {
         "user_id": "string",
         "email_address": "string",
@@ -432,6 +455,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "User not found."
     }
     ```
@@ -439,6 +463,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -463,6 +488,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -470,6 +496,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide valid fields."
     }
     ```
@@ -477,6 +504,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "User not found."
     }
     ```
@@ -484,6 +512,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -505,6 +534,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 201,
       "data": {}
     }
     ```
@@ -512,6 +542,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -519,6 +550,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 409,
       "error": "User is already subscribed to the issue."
     }
     ```
@@ -526,6 +558,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -548,6 +581,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -555,6 +589,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -562,6 +597,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 409,
       "error": "User is already subscribed to the category in the location."
     }
     ```
@@ -569,6 +605,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -590,6 +627,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -597,6 +635,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -604,6 +643,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 409,
       "error": "User is already subscribed to the location."
     }
     ```
@@ -611,6 +651,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -632,6 +673,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -639,6 +681,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -646,6 +689,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Subscription not found."
     }
     ```
@@ -653,6 +697,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -675,6 +720,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -682,6 +728,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -689,6 +736,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Subscription not found."
     }
     ```
@@ -696,6 +744,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -717,6 +766,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {}
     }
     ```
@@ -724,6 +774,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 400,
       "error": "Invalid input data. Please provide all required fields."
     }
     ```
@@ -731,6 +782,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "Subscription not found."
     }
     ```
@@ -738,6 +790,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -753,6 +806,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {
         "issues": [
           {
@@ -781,6 +835,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "User not found."
     }
     ```
@@ -788,6 +843,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -806,6 +862,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": {
         "issues": [
           {
@@ -839,6 +896,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "User not found."
     }
     ```
@@ -846,6 +904,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -861,6 +920,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": true,
+      "code": 200,
       "data": [
         {
           "notification_id": "number",
@@ -879,6 +939,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 404,
       "error": "User not found."
     }
     ```
@@ -886,6 +947,7 @@ If the token is missing for an endpoint where it is required the API will respon
     ```json
     {
       "success": false,
+      "code": 500,
       "error": "An unexpected error occurred. Please try again later."
     }
     ```
@@ -897,6 +959,7 @@ To prevent abuse, rate limiting should be applied to all endpoints. Users are al
 ```json
 {
   "success": false,
+  "code": 429,
   "error": "Too many requests. Please try again later."
 }
 ```
