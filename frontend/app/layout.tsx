@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { UserProvider } from "@/lib/contexts/UserContext";
 import QueryProvider from "@/components/ReactQuery/QueryProvider";
+import { Analytics } from '@vercel/analytics/react';
 
 export default function RootLayout({
   children,
@@ -21,11 +22,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <UserProvider>                {children}
-                <Toaster />
+            <UserProvider>
+              {children}
+              <Toaster />
             </UserProvider>
           </QueryProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
