@@ -74,7 +74,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (subscriptions && userData) {
-      localStorage.removeItem("userSubscriptions");
       localStorage.setItem(
         "userSubscriptions",
         JSON.stringify(subscriptions.data)
