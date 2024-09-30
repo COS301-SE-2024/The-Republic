@@ -70,10 +70,12 @@ export function LazyList<D>({
       if (!data) {
         return;
       }
+      
+      const newIssuesList = [newData, ...data.pages[0]];
 
       queryClient.setQueryData(fetchKey, {
         pages: [
-          [newData, ...data.pages[0]],
+          newIssuesList,
           ...data.pages.slice(1)
         ],
         pageParams: data.pageParams,
