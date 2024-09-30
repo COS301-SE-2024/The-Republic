@@ -122,7 +122,7 @@ export const joinOrganization = async (req: Request, res: Response) => {
       userId,
     );
     clearCachePattern(
-      `__express__/api/organizations/${organizationId}/join-requests`,
+      `__express__/api/organizations*`,
     );
     sendResponse(res, response);
   } catch (err) {
@@ -407,7 +407,7 @@ export const leaveOrganization = async (req: Request, res: Response) => {
       organizationId,
       userId,
     );
-    clearCachePattern(`__express__/api/organizations/${organizationId}`);
+    clearCachePattern(`__express__/api/organizations*`);
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
@@ -709,7 +709,6 @@ export const getOrganizationPost = [
 ];
 
 export const checkUserMembership = [
-  cacheMiddleware(300),
   async (req: Request, res: Response) => {
     try {
       const organizationId = req.params.id;
