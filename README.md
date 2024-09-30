@@ -45,18 +45,14 @@ The documentation provides different versions and progress for each demo, guidin
 
 ## Links to the Latest Documentation of the Project as of 30 September 2024
 
-- [User Manual PDF](./documentation/specifications/UserManualVersion4.pdf)
-- [User Manual MD](./documentation/specifications/UserManualVersion4.md)
-- [Technical Installation Manual PDF](./documentation/specifications/TechnicalInstallationManualVersion2.pdf)
-- [Technical Installation Manual MD](./documentation/specifications/TechnicalInstallationManualVersion2.md)
-- [Coding Standards PDF](./documentation/specifications/CodingStandardsVersion3.pdf)
-- [Coding Standards MD](./documentation/specifications/CodingStandardsVersion3.md)
-- [Requirements Specification PDF](./documentation/specifications/RequirementsSpecification.pdf)
-- [Requirements Specification MD](./documentation/specifications/RequirementsSpecificationVersion4.md)
-- [Testing Specification PDF](./documentation/specifications/TestingSpecification.pdf)
-- [Testing Specification MD](./documentation/specifications/TestingSpecificationVersion4.md)
-- [Architectural Specification PDF](./documentation/specifications/ArchitecturalSpecificationVersion4.pdf)
-- [Architectural Specification MD](./documentation/specifications/ArchitecturalSpecificationVersion4.md)
+| PDFs | Markdown |
+|------|----------|
+| [User Manual PDF](./documentation/specifications/UserManualVersion4.pdf) | [User Manual MD](./documentation/specifications/UserManualVersion4.md) |
+| [Technical Installation Manual PDF](./documentation/specifications/TechnicalInstallationManualVersion2.pdf) | [Technical Installation Manual MD](./documentation/specifications/TechnicalInstallationManualVersion2.md) |
+| [Coding Standards PDF](./documentation/specifications/CodingStandardsVersion3.pdf) | [Coding Standards MD](./documentation/specifications/CodingStandardsVersion3.md) |
+| [Requirements Specification PDF](./documentation/specifications/RequirementsSpecification.pdf) | [Requirements Specification MD](./documentation/specifications/RequirementsSpecificationVersion4.md) |
+| [Testing Specification PDF](./documentation/specifications/TestingSpecification.pdf) | [Testing Specification MD](./documentation/specifications/TestingSpecificationVersion4.md) |
+| [Architectural Specification PDF](./documentation/specifications/ArchitecturalSpecificationVersion4.pdf) | [Architectural Specification MD](./documentation/specifications/ArchitecturalSpecificationVersion4.md) |
 
 
 
