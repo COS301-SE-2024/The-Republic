@@ -164,7 +164,7 @@ Security is paramount in our system to protect user data and ensure secure inter
 
 - **User ID Obfuscation**: We hide or obfuscate user IDs in public-facing areas of the application to enhance user privacy.
 
-- **Nginx Proxy**: We utilize Nginx as a reverse proxy, leveraging its additional security features like rate limiting and request filtering.
+- **Python Flask Proxy/Load balancer**: We utilize Python Flask as a reverse proxy, leveraging its additional security features like rate limiting and request filtering.
 
 ### Security Scenario:
 
@@ -174,7 +174,7 @@ A malicious actor attempts to gain unauthorized access to user data through a se
 - JWT verification fails for all unauthorized access attempts.
 - All data remains encrypted in transit due to HTTPS implementation.
 - User IDs remain obfuscated, preventing the attacker from easily targeting specific users.
-- Nginx proxy detects and blocks suspicious request patterns.
+- Python Flask proxy detects and blocks suspicious request patterns.
 
 **Measure:**
 - Zero successful unauthorized data access attempts.
