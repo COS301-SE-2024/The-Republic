@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!user) return;
 
-    const userSubscriptions = JSON.parse(localStorage.getItem("userSubscriptions") || '{"issues": [], "categories": [], "locations": []}');
+    const userSubscriptions = JSON.parse(localStorage.getItem("userSubscriptions") ?? '{"issues": [], "categories": [], "locations": []}');
     const {
       issues: subIssues,
       categories: subCategories,
