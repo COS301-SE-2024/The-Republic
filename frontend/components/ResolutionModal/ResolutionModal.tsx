@@ -93,7 +93,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   );
   const [resolvedBy, setResolvedBy] = useState('');
   const [resolverId, setResolverID] = useState<string>();
-  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
+  const [selectedOrganization, setSelectedOrganization] = useState<string | null>(null);
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([]);
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -160,7 +160,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       resolutionSource: finalResolutionSource as 'self' | 'unknown' | 'other',
       resolvedBy: finalResolutionSource === 'other' ? resolvedBy : undefined,
       resolverId,
-      organizationIds: selectedOrganizations.length > 0 ? selectedOrganizations : undefined,
+      organizationIds: selectedOrganization ? [selectedOrganization] : undefined,
     });
   };
 
@@ -170,7 +170,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     setImagePreview(null);
     setResolutionSource(isSelfResolution ? 'self' : 'unknown');
     setResolvedBy('');
-    setSelectedOrganizations([]);
+    setSelectedOrganization(null);
     setSearchResults([]);
     setSearchQuery('');
     setError(null);
@@ -215,9 +215,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   }, 500), [resolutionSource]);
 
   const toggleOrganization = (orgId: string) => {
-    setSelectedOrganizations(prev =>
-      prev.includes(orgId) ? prev.filter(id => id !== orgId) : [...prev, orgId]
-    );
+    setSelectedOrganization(prev => prev === orgId ? null : orgId);
   };
 
   return (
@@ -330,12 +328,12 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                         <TooltipTrigger asChild>
                           <OrganizationToggle
                             organization={org}
-                            isSelected={selectedOrganizations.includes(org.id)}
+                            isSelected={selectedOrganization === org.id}
                             onToggle={toggleOrganization}
                           />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Click to {selectedOrganizations.includes(org.id) ? 'deselect' : 'select'} {org.name}</p>
+                          <p>Click to {selectedOrganization === org.id ? 'deselect' : 'select'} {org.name}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
