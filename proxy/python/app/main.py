@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
+import logging
 import requests
 import random
 import os
@@ -8,10 +9,13 @@ import os
 load_dotenv()
 app = Flask(__name__)
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
 # CORS Origin Configuration
 cors = CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:3000", os.getenv('FRONTEND_URL')],
+        "origins": ["*"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
         "supports_credentials": True
@@ -36,9 +40,11 @@ def get_random_server(servers):
     server_index = random.sample(range(len(servers)), 1)[0]
     return servers[server_index]
 
-def proxy_request(request, server, retries):
+def proxy_request(request, retries):
     
     while retries < MAX_RETRIES:
+        server = get_random_server(servers)
+
         try:
             final_url = f"{server.url}{request.full_path}"
             
@@ -49,7 +55,7 @@ def proxy_request(request, server, retries):
                 data=request.get_data(),
                 cookies=request.cookies,
                 allow_redirects=False,
-                verify=True
+                verify=True,
             )
             
             excluded_headers = ['content-length', 'transfer-encoding', 'connection']
@@ -63,7 +69,7 @@ def proxy_request(request, server, retries):
                 headers.append(('Content-Length', content_length))
 
             if 500 <= int(response.status_code) < 600:
-                print(f"Error Occurred({retries}):", response)
+                logging.error(f"Error Occurred({retries}): ", response.status_code)
                 retries += 1
             elif int(response.status_code) == 404:
                 return jsonify({
@@ -87,18 +93,26 @@ def proxy_request(request, server, retries):
                 return jsonify(data), response.status_code
         
         except requests.exceptions.RequestException as e:
-            print(f"Error proxying request: {e}")
+            logging.error(f"Request to {server.url} failed: {e}")
             retries += 1
+            if retries >= MAX_RETRIES:
+                return jsonify({
+                    "status": "error",
+                    "success": False,
+                    "status_code": 502,
+                    "data": "Bad API Gateway, Error Occured",
+                }), 502
                 
         if retries >= MAX_RETRIES:
             break
-    
+
     return jsonify({
             "status": "error",
             "success": False,
             "status_code": 502,
-            "data": "Bad API Gateway",
+            "data": "Bad API Gateway, Request Coundn't be Handled.",
         }), 502
+
 
 @app.route('/', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def process_root():
@@ -111,8 +125,7 @@ def process_root():
 
 @app.route('/<path:path>', methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def process_request(path):
-    server = get_random_server(servers)
-    return proxy_request(request, server, 0)
+    return proxy_request(request, 0)
 
 if __name__ == "__main__":
     env_port = int(os.getenv('PORT', 5000))

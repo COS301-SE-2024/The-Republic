@@ -43,10 +43,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigateToIssue = (issueId: number) => {
     router.push(`/issues/${issueId}`);
   };
-  
 
   useEffect(() => {
     if (!user) return;
+
+    let userSubscriptions;
+    try {
+      userSubscriptions = JSON.parse(localStorage.getItem("userSubscriptions") || '{"issues": [], "categories": [], "locations": []}');
+    } catch (error) {
+      userSubscriptions = {"issues": [], "categories": [], "locations": []};
+    }
+
+    const {
+      issues: subIssues,
+      categories: subCategories,
+      locations: subLocations,
+    } = userSubscriptions;
 
     const channelA = supabase
       .channel("schema-db-changes")
@@ -60,12 +72,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         async (payload) => {
           const { new: notification } = payload;
           if (notification && Object.keys(notification).length > 0) {
-            const { is_anonymous, user_id, issue_id } = notification as CommentNotification;
-            
-            // Fetch the issue to check if it belongs to the current user
+            const { is_anonymous, user_id, issue_id, content } = notification as CommentNotification;
+
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
-              .select('user_id')
+              .select('user_id, category_id, location_id')
               .eq('issue_id', issue_id)
               .single();
 
@@ -81,6 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               }
 
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: (
                   <div 
@@ -105,8 +117,33 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               });
             } else if (user_id === user.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 10 Points for leaving a Comment on an Issue`,
+              });
+            } else if (subIssues.includes(issue_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue you are subscribed to.`,
+              });
+            } else if (subCategories.includes(issueData.category_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue under a category you are subscribed to.`,
+              });
+            } else if (subLocations.includes(issueData.location_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue in a location you are subscribed to.`,
+              });
+            } else if (content.includes(user.username)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `You've been mentioned in a comment.`,
               });
             }
           }
@@ -126,7 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
-              .select('user_id')
+              .select('user_id, category_id, location_id')
               .eq('issue_id', issue_id)
               .single();
 
@@ -139,6 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               const reactorInfo = await fetchUserData(user_id);
 
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: (
                   <div 
@@ -163,8 +201,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               });
             } else if (user_id === user.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 5 Points on your ${emoji} Reaction`,
+              });
+            } else if (subIssues.includes(issue_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New reaction to an issue you are subscribed to.`,
+              });
+            } else if (subCategories.includes(issueData.category_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `A new issue was posted under a category you are subscribed to.`,
+              });
+            } else if (subLocations.includes(issueData.location_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `A new issue was posted in a location you are subscribed to.`,
               });
             }
           }
@@ -181,11 +238,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           const { new: notification } = payload;
 
           if (notification && Object.keys(notification).length > 0) {
-            const { user_id } = notification as Partial<Issue>;
-            if (user_id !== user?.user_id) {
+            const { user_id, content } = notification as Partial<Issue>;
+            if (user_id === user?.user_id) {
               toast({
+                title: "Notification",
                 variant: "warning",
                 description: `Gained 20 Points for Reporting an Issue`,
+              });
+            } else if (content && content.includes(user.username)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `You've been mentioned in an issue.`,
               });
             }
           }
@@ -235,18 +299,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 Analytics
               </Link>
             </li>
-            <li onClick={onClose}>
-              <Link href="/organization">
-                <OrganizationIcon />
-                Organizations
-              </Link>
-            </li>
-            <li onClick={onClose}>
-              <Link href="/leaderboard">
-                <TrophyIcon />
-                Leaderboard
-              </Link>
-            </li>
+            {user && (
+              <>
+                <li onClick={onClose}>
+                  <Link href="/organization">
+                    <OrganizationIcon />
+                    Organizations
+                  </Link>
+                </li>
+                <li onClick={onClose}>
+                  <Link href="/leaderboard">
+                    <TrophyIcon />
+                    Leaderboard
+                  </Link>
+                </li>
+              </>
+            )}
             {user ? (
               <>
                 <li onClick={onClose}>
@@ -284,8 +352,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </h4>
             <li onClick={onClose}>
               <Link href={`/about`}>
-                <CircleHelp />
-                  About
+                <CircleHelp /> About
               </Link>
             </li>
           </ul>
@@ -295,7 +362,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 <div className={styles.logoutOverlay}>
                   <ul className={styles.sidebarLinks}>
                     <li>
-                      <Link href="" onClick={() => signOutWithToast(toast)}>
+                      <Link href="/login" onClick={() => signOutWithToast(toast)}>
                         <LogoutIcon />
                         Logout
                       </Link>
@@ -306,10 +373,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <div className={styles.userProfile} onClick={toggleLogout}>
                 <Avatar>
                   <AvatarImage src={user.image_url} />
-                  <AvatarFallback>{user.fullname[0]}</AvatarFallback>
+                  <AvatarFallback>{user.fullname[0].toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <div className={styles.userDetail}>
-                  <h3>{user.fullname}</h3>
+                <div className={`w-[70%] overflow-hidden overflow-ellipsis ${styles.userDetail}`}>
+                  <h3 className="inline">{user.fullname}</h3>
+                  <br />
                   <span>@{user.username}</span>
                 </div>
               </div>

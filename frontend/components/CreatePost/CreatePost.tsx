@@ -38,6 +38,7 @@ const CreateOrgPost: React.FC<CreateOrgPostProps> = ({ organization, onPostCreat
       if (!isContentAppropriate) {
         setIsLoading(false);
         toast({
+          title: "Something Went Wrong",
           variant: "destructive",
           description: "Please use appropriate language.",
         });
@@ -60,7 +61,7 @@ const CreateOrgPost: React.FC<CreateOrgPostProps> = ({ organization, onPostCreat
     } catch (err) {
       console.error("Error creating post:", err);
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to create post",
         variant: "destructive",
       });

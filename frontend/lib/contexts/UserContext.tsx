@@ -12,9 +12,25 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserAlt | null>(null);
 
-  const { data: userData, refetch } = useQuery({
+  const { data: userData, refetch: refetchUserData } = useQuery({
     queryKey: ['user_data'],
     queryFn: () => fetchUserData(),
+  });
+
+  const {
+    data: subscriptions, refetch: refetchSubscriptions
+  } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subscriptions/subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userData?.access_token}`,
+        },
+        body: JSON.stringify({ userId: userData?.user_id }),
+      }).then(response => response.json()),
+    enabled: !!userData,
   });
 
   useEffect(() => {
@@ -35,11 +51,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (session?.user.id !== user?.user_id) {
           if (user) setUser(null);
-          refetch();
+          refetchUserData();
+          refetchSubscriptions();
         }
       } else if (event === "SIGNED_OUT") {
         Cookies.remove("Authorization");
         localStorage.removeItem("savedUser");
+        localStorage.removeItem("userSubscriptions");
         setUser(null);
       }
     });
@@ -54,7 +72,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       localStorage.setItem("savedUser", JSON.stringify(userData));
     }
-  }, [userData]);
+
+    if (subscriptions?.data && userData) {
+      localStorage.setItem(
+        "userSubscriptions",
+        JSON.stringify(subscriptions.data)
+      );
+    }
+  }, [userData, subscriptions]);
 
   return (
     <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>

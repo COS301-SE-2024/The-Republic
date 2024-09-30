@@ -11,6 +11,7 @@ const addOrRemoveReaction = async (req: Request, res: Response) => {
     const response = await reactionService.addOrRemoveReaction(req.body);
 
     clearCachePattern("__express__/api/reactions*");
+    clearCachePattern("__express__/api/issues*");
 
     sendResponse(res, response);
   } catch (error) {

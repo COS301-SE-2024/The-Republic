@@ -7,8 +7,7 @@ import {
   LineChart,
   RadarChart,
   StackedLineChart,
-  TransitionOfParliament,
-  PoliticalChart
+  TransitionOfParliament
 } from "@/components/ReportCharts";
 import { Eye, EyeOff, Filter } from 'lucide-react';
 
@@ -18,7 +17,6 @@ const chartComponents: Record<string, ChartComponentType> = {
   TransitionOfParliament,
   BarChart,
   RadarChart,
-  PoliticalChart,
   LineChart,
   DonutChart,
   StackedLineChart,

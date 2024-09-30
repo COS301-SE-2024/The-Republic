@@ -66,7 +66,7 @@ export default function JoinRequestsTab({ organization, onJoinRequestsUpdate }: 
     } catch (err) {
       console.error("Error handling join request:", err);
       toast({
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to handle join request",
         variant: "destructive",
       });

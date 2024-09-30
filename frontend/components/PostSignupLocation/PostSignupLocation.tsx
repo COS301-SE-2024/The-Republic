@@ -54,7 +54,7 @@ export default function PostSignupLocation({ onComplete, username, fullname }: P
       console.error("Error setting location:", error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Something Went Wrong",
         description: "Failed to set location. Please try again.",
       });
       setShowModal(true);

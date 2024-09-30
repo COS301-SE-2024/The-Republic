@@ -74,7 +74,7 @@ export default function OrganizationPage() {
         await handleFilter();
       } else {
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Please set your location in your profile to use this feature.",
           variant: "destructive",
         });
@@ -86,7 +86,7 @@ export default function OrganizationPage() {
         await handleFilter();
       } else {
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Please set your location in your profile to use this feature.",
           variant: "destructive",
         });

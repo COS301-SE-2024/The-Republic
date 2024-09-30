@@ -96,23 +96,45 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           styles: {
             control: (provided) => ({
               ...provided,
-              backgroundColor: "var(--background)",
-              borderColor: "var(--border)",
+              backgroundColor: "hsl(var(--background))",
+              borderColor: "hsl(var(--border))",
+            }),
+            loadingMessage: (provided) => ({
+              ...provided,
+              backgroundColor: "hsl(var(--background))",
+              borderColor: "hsl(var(--border))",
+            }),
+            noOptionsMessage: (provided) => ({
+              ...provided,
+              backgroundColor: "hsl(var(--background))",
+              borderColor: "hsl(var(--border))",
+            }),
+            menu: (provided) => ({
+              ...provided,
+              backgroundColor: "hsl(var(--background))",
+              borderColor: "hsl(var(--border))",
             }),
             input: (provided) => ({
               ...provided,
-              color: "var(--foreground)",
+              color: "hsl(var(--foreground))",
             }),
             option: (provided, state) => ({
               ...provided,
-              backgroundColor: state.isFocused ? "var(--accent)" : "var(--background)",
-              color: "var(--foreground)",
+              backgroundColor: state.isFocused ? "hsl(var(--accent))" : "hsl(var(--background))",
+              color: "hsl(var(--foreground))",
             }),
             singleValue: (provided) => ({
               ...provided,
-              color: "var(--foreground)",
+              color: "hsl(var(--foreground))",
             }),
           },
+          theme: (theme) => ({
+            ...theme,
+            colors: {
+              ...theme.colors,
+              primary50: '', // Removing the blue flash when clicking 
+            },
+          })
         }}
         autocompletionRequest={{
           componentRestrictions: { country: "za" },

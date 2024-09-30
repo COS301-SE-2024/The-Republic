@@ -84,6 +84,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         return await updateUserProfile(user, dataToUpdate, file);
       } else {
         toast({
+          title: "Something Went Wrong",
           description: "You need to be logged in to update your profile",
         });
       }
@@ -91,12 +92,14 @@ const EditProfile: React.FC<EditProfileProps> = ({
     onSuccess: (data) => {
       onUpdate(data.data);
       toast({
+        title: "Success",
         description: "Profile updated successfully",
       });
     },
     onError: (error) => {
       console.error("Failed to update profile:", error);
       toast({
+        title: "Something Went Wrong",
         description: error.message,
       });
     },

@@ -35,7 +35,7 @@ interface ResolutionModalProps {
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
     resolverId?: string;
-    organizationIds?: string[];
+    organizationId?: string;
   }) => void;
   isLoading: boolean;
 }
@@ -46,24 +46,32 @@ interface OrganizationToggleProps {
   onToggle: (id: string) => void;
 }
 
-const OrganizationToggle: React.FC<OrganizationToggleProps> = ({ organization, isSelected, onToggle }) => (
-  <Toggle
-    pressed={isSelected}
-    onPressedChange={() => onToggle(organization.id)}
-    className={cn(
-      "flex flex-col items-center justify-center p-2 rounded-md",
-      "w-24 h-24 border-2",
-      isSelected ? "border-primary bg-primary/10" : "border-gray-200 hover:bg-gray-100",
-      "transition-all duration-200 ease-in-out"
-    )}
-  >
-    <Avatar className="w-12 h-12 mb-2">
-      <AvatarImage src={organization.profile_photo} alt={organization.name} />
-      <AvatarFallback>{organization.name.charAt(0)}</AvatarFallback>
-    </Avatar>
-    <span className="text-xs text-center line-clamp-2">{organization.name}</span>
-  </Toggle>
-);
+const OrganizationToggle: React.FC<OrganizationToggleProps> = ({ organization, isSelected, onToggle }) => {
+  const { theme } = useTheme();
+
+  return (
+    <Toggle
+      pressed={isSelected}
+      onPressedChange={() => onToggle(organization.id)}
+      className={cn(
+        "flex flex-col items-center justify-center p-2 rounded-md",
+        "w-24 h-24 border-2",
+        isSelected ? "border-primary bg-primary/10" : "border-gray-200",
+        theme === 'dark'
+          ? "hover:bg-[#0C0A09] hover:text-white"
+          : "hover:bg-gray-100",
+        "transition-all duration-200 ease-in-out"
+      )}
+    >
+      <Avatar className="w-12 h-12 mb-2">
+        <AvatarImage src={organization.profile_photo} alt={organization.name} />
+        <AvatarFallback>{organization.name.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <span className="text-xs text-center line-clamp-2">{organization.name}</span>
+    </Toggle>
+  );
+};
+
 
 const ResolutionModal: React.FC<ResolutionModalProps> = ({
   isOpen,
@@ -85,7 +93,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   );
   const [resolvedBy, setResolvedBy] = useState('');
   const [resolverId, setResolverID] = useState<string>();
-  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
+  const [selectedOrganization, setSelectedOrganization] = useState<string>();
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([]);
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -138,6 +146,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
 
     if (resolutionSource === "other" && !resolverId) {
       toast({
+        title: "Instruction",
         description: 
           "Please specify who resolved the issue " + 
           "or set the resolution type to 'I don't know who fixed it'"
@@ -152,7 +161,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
       resolutionSource: finalResolutionSource as 'self' | 'unknown' | 'other',
       resolvedBy: finalResolutionSource === 'other' ? resolvedBy : undefined,
       resolverId,
-      organizationIds: selectedOrganizations.length > 0 ? selectedOrganizations : undefined,
+      organizationId: selectedOrganization,
     });
   };
 
@@ -162,7 +171,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
     setImagePreview(null);
     setResolutionSource(isSelfResolution ? 'self' : 'unknown');
     setResolvedBy('');
-    setSelectedOrganizations([]);
+    setSelectedOrganization(undefined);
     setSearchResults([]);
     setSearchQuery('');
     setError(null);
@@ -207,9 +216,7 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
   }, 500), [resolutionSource]);
 
   const toggleOrganization = (orgId: string) => {
-    setSelectedOrganizations(prev =>
-      prev.includes(orgId) ? prev.filter(id => id !== orgId) : [...prev, orgId]
-    );
+    setSelectedOrganization(selectedOrganization === orgId ? undefined : orgId);
   };
 
   return (
@@ -264,31 +271,47 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                 </div>
               </div>
               {isSearchOpen && searchResults.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-                  {searchResults.map((item) => (
-                    <div
-                      key={item.id}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setResolvedBy(item.name);
-                        setResolverID(item.id);
-                        setSearchQuery(item.name);
-                        setIsSearchOpen(false);
-                      }}
-                    >
-                      <span className="font-medium text-foreground">
-                        {item.name}
-                      </span>
-                      <span className="ml-2 text-sm text-muted-foreground">
-                        @{item.username}
-                      </span>
-                      <span className="px-2 bg-gray-200 rounded absolute right-2">
-                        {item.type}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+  <div className={cn(
+    "absolute z-10 w-full mt-1 border rounded-md shadow-lg max-h-60 overflow-auto",
+    theme === "dark" 
+      ? "bg-[#262626] border-gray-700" 
+      : "bg-white border-gray-200"
+  )}>
+    {searchResults.map((item) => (
+      <div
+        key={item.id}
+        className={cn(
+          "px-4 py-2 cursor-pointer",
+          theme === "dark"
+            ? "hover:bg-[#404040] text-white"
+            : "hover:bg-gray-100 text-foreground"
+        )}
+        onClick={() => {
+          setResolvedBy(item.name);
+          setResolverID(item.id);
+          setSearchQuery(item.name);
+          setIsSearchOpen(false);
+        }}
+      >
+        <span className="font-medium">
+          {item.name}
+        </span>
+        <span className={cn(
+          "ml-2 text-sm",
+          theme === "dark" ? "text-gray-400" : "text-muted-foreground"
+        )}>
+          @{item.username}
+        </span>
+        <span className={cn(
+          "px-2 rounded absolute right-2",
+          theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+        )}>
+          {item.type}
+        </span>
+      </div>
+    ))}
+  </div>
+)}
             </div>
           )}
 
@@ -306,12 +329,12 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                         <TooltipTrigger asChild>
                           <OrganizationToggle
                             organization={org}
-                            isSelected={selectedOrganizations.includes(org.id)}
+                            isSelected={selectedOrganization === org.id}
                             onToggle={toggleOrganization}
                           />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Click to {selectedOrganizations.includes(org.id) ? 'deselect' : 'select'} {org.name}</p>
+                          <p>Click to {selectedOrganization === org.id ? 'deselect' : 'select'} {org.name}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -343,10 +366,12 @@ const ResolutionModal: React.FC<ResolutionModalProps> = ({
                 className={cn(
                   "px-4 py-2 rounded-lg",
                   theme === "dark"
-                    ? "bg-gray-700 text-white hover:bg-gray-600"
+                    ? "bg-[#0C0A09] text-white hover:bg-[#262626]"
                     : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 )}
               >
+
+                
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Image
               </Button>

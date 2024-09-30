@@ -58,15 +58,18 @@ const AddCommentForm: React.FC<AddCommentFormProps> = ({
     onError: (error) => {
       if (error.message === "Content") {
         toast({
+          title: "Something Went Wrong",
           variant: "destructive",
           description: "Please use appropriate language.",
         });
       } else if (error.message === "User") {
         toast({
+          title: "Something Went Wrong",
           description: "You need to be logged in to comment",
         });
       } else {
         toast({
+          title: "Something Went Wrong",
           description: "Failed to post comment",
         });
 

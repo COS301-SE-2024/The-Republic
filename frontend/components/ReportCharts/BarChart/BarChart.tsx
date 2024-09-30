@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from 'next-themes';
 import { FaSpinner } from "react-icons/fa";
 import { useMediaQuery } from "@/lib/useMediaQuery";
-
 import { reportCharts } from "@/lib/api/reportCharts";
+import darkTheme from "@/lib/charts-dark-theme";
+import lightTheme from "@/lib/charts-light-theme";
 
 function BarChart() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports/groupedResolutionAndCategory`;
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const chartInstance = useRef<echarts.ECharts | null>(null);
+  const { theme } = useTheme();
 
   const {
     data,
@@ -46,10 +50,15 @@ function BarChart() {
         );
       }
 
-      const barChart = echarts.init(
-        document.querySelector("#barChart") as HTMLElement,
+      const currentTheme = theme === 'dark' ? 'darkTheme' : 'lightTheme';
+      echarts.registerTheme('lightTheme', lightTheme);
+      echarts.registerTheme('darkTheme', darkTheme);
+
+      chartInstance.current = echarts.init(
+        document.querySelector("#barChart") as HTMLElement, currentTheme
       );
-      barChart.setOption({
+
+      chartInstance.current.setOption({
         title: {
           text: "Count of Resolved vs Unresolved Issues by Category",
           left: "center",
@@ -114,16 +123,16 @@ function BarChart() {
       });
 
       const handleResize = () => {
-        barChart.resize();
+        chartInstance.current?.resize();
       };
       window.addEventListener('resize', handleResize);
 
       return () => {
         window.removeEventListener('resize', handleResize);
-        barChart.dispose();
+        chartInstance.current?.dispose();
       };
     }
-  }, [data, isMobile]);
+  }, [data, isMobile, theme]);
 
   return (
     <>

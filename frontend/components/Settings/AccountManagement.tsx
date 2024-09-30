@@ -16,13 +16,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { UserX, Eye, EyeOff } from "lucide-react";
+import { UserAlt } from '@/lib/types';
+import { signOutWithToast } from "@/lib/utils";
 
-const AccountManagement: React.FC = () => {
+interface AccountManagementProps {
+  user: UserAlt | null;
+}
+
+const AccountManagement: React.FC<AccountManagementProps> = ({ user }) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(1);
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const { toast } = useToast();
 
   const handleAnonymousToggle = () => {
@@ -41,7 +47,7 @@ const AccountManagement: React.FC = () => {
   const handleDeleteAccountConfirm = () => {
     switch (deleteConfirmationStep) {
       case 1:
-        if (deleteConfirmationText.toLowerCase() === "delete my account") {
+        if (deleteConfirmationText === "delete my account") {
           setDeleteConfirmationStep(2);
           setDeleteConfirmationText("");
         } else {
@@ -53,25 +59,24 @@ const AccountManagement: React.FC = () => {
         }
         break;
       case 2:
-        if (deleteConfirmationText === "username@example.com") {
+        if (deleteConfirmationText === user?.email_address) {
           setDeleteConfirmationStep(3);
           setDeleteConfirmationText("");
         } else {
           toast({
             title: "Incorrect username",
-            description: "Please enter your username to confirm deletion.",
+            description: "Please enter your email address to confirm deletion.",
             variant: "destructive",
           });
         }
         break;
       case 3:
-        if (password === "correctPassword123") {
-          // Call API to delete the account
+        if (username === user?.username) {
           handleDeleteAccount();
         } else {
           toast({
-            title: "Incorrect password",
-            description: "Please enter your correct password to confirm deletion.",
+            title: "Incorrect Username",
+            description: "Please enter your username to confirm deletion.",
             variant: "destructive",
           });
         }
@@ -81,19 +86,50 @@ const AccountManagement: React.FC = () => {
     }
   };
 
-  const handleDeleteAccount = () => {
-    // Implement account deletion logic here
-    toast({
-      title: "Account deleted",
-      description: "Your account has been successfully deleted.",
-      variant: "destructive",
-    });
-    setIsDeleting(false);
-    setDeleteConfirmationStep(1);
-    setDeleteConfirmationText("");
-    setPassword("");
-    // Update relevant state management (e.g., user context) after successful deletion
-    // Implement redirect logic after account deletion (e.g., to home page or login page)
+  const handleDeleteAccount = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "Please log in to delete your account.",
+      });
+
+      return;
+    } else {    
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/validate/delete/${user?.user_id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "user_id": user?.user_id,
+          "username": username,
+          "email_address": deleteConfirmationText
+        }),
+      });
+    
+      if (response.status === 204) {
+        toast({
+          title: "Account deleted",
+          description: "Your account has been successfully deleted.",
+          variant: "warning",
+        });
+
+        setIsDeleting(false);
+        setDeleteConfirmationStep(1);
+        setDeleteConfirmationText("");
+        setUsername("");
+
+        signOutWithToast(toast);
+      } else {
+        toast({
+          title: "Account Deletion Failed",
+          description: "Please verify your details and try again later.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   return (
@@ -142,12 +178,12 @@ const AccountManagement: React.FC = () => {
             {deleteConfirmationStep === 2 && (
               <>
                 <p>
-                  Please enter your username to confirm the second step of the deletion process.
+                  Please enter your email address to confirm the second step of the deletion process.
                 </p>
                 <input
                   type="text"
                   className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                  placeholder="Enter your username"
+                  placeholder="Enter your email address"
                   value={deleteConfirmationText}
                   onChange={(e) => setDeleteConfirmationText(e.target.value)}
                 />
@@ -156,14 +192,14 @@ const AccountManagement: React.FC = () => {
             {deleteConfirmationStep === 3 && (
               <>
                 <p>
-                  This is the final step. Please enter your password to permanently delete your account.
+                  This is the final step. Please enter your username to permanently delete your account.
                 </p>
                 <input
-                  type="password"
+                  type="text"
                   className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </>
             )}

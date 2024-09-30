@@ -407,7 +407,9 @@ export default class SubscriptionsRepository {
       if (points.user_id === user_id) {
         filteredNotifications.push({
           type: "points",
-          content: `You earned ${points.points} points, because you ${points.action}.`,
+          content: points.points >= 0 
+            ? `You earned ${points.points} points, because you ${points.action}.`
+            : `You lost ${Math.abs(points.points)} points, because you ${points.action}.`,
           created_at: points.created_at,
         });
       }

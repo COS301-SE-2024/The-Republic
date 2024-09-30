@@ -25,4 +25,27 @@
 6. [Coding Standards](./specifications/CodingStandardsVersion2.md)
 7. [API / Services Contract](./specifications/APISpecificationVersion2.md)
 
+## Demo 3
+
+1. [Architectural Specification](./specifications/ArchitecturalSpecificationVersion3.md)
+2. [Testing Specification](./specifications/TestingSpecificationVersion3.md)
+3. [Delivery Specification](./specifications/DeliverySpecificationVersion2.md)
+4. [Requirements Specification](./specifications/RequirementsSpecificationVersion3.md)
+5. [User Manual](./specifications/UserManualVersion3.md)
+6. [Coding Standards](./specifications/CodingStandardsVersion2.md)
+7. [API / Services Contract](./specifications/APISpecificationVersion3.md)
+8. [Technical Installation Manual ](./specifications/TechnicalInstallationManual1.md)
+
+## Demo 4
+
+1. [Architectural Specification](./specifications/ArchitecturalSpecificationVersion4.md)
+2. [Testing Specification](./specifications/TestingSpecificationVersion4.md)
+3. [Delivery Specification](./specifications/DeliverySpecificationVersion2.md)
+4. [Requirements Specification](./specifications/RequirementsSpecificationVersion4.md)
+5. [User Manual](./specifications/UserManualVersion4.md)
+6. [Coding Standards](./specifications/CodingStandardsVersion3.md)
+7. [API / Services Contract](./specifications/APISpecificationVersion3.md)
+8. [Technical Installation Manual ](./specifications/TechnicalInstallationManualVersion2.md)
+
+
 [Back to Main](/README.md)

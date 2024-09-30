@@ -33,7 +33,6 @@ describe("Reports Component", () => {
       "TransitionOfParliament",
       "BarChart",
       "RadarChart",
-      "PoliticalChart",
       "LineChart",
       "DonutChart",
       "StackedLineChart"

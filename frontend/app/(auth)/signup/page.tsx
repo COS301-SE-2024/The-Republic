@@ -29,6 +29,7 @@ export default function Signup() {
     const isUsernameAvailable = await checkUsername({"username" : username});
     if (!isUsernameAvailable) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Username is not available, already in use.",
       });
@@ -48,6 +49,7 @@ export default function Signup() {
 
     if (error) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to sign up, please try again",
       });
@@ -64,12 +66,13 @@ export default function Signup() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/auth/callback`,
       },
     });
 
     if (error) {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to sign up with Google, please try again",
       });

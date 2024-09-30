@@ -25,10 +25,10 @@ const Resolution: React.FC<ResolutionProps> = ({ resolution }) => {
     mutationFn: () => deleteResolution(user!, resolution.resolution_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user_resolutions", user?.user_id] });
-      toast({ description: "Resolution deleted successfully" });
+      toast({ title: "Success", description: "Resolution deleted successfully" });
     },
     onError: () => {
-      toast({ variant: "destructive", description: "Failed to delete resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to delete resolution" });
     },
   });
 

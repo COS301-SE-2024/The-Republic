@@ -43,16 +43,12 @@
 
 The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
-## Links to the Latest Documentation of the Project
-
-- [User Manual](./documentation/specifications/UserManualVersion3.md)
-- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManual1.md)
-- [Coding Standards](./documentation/specifications/CodingStandardsVersion2.md)
-- [Requirements Specification](./documentation/specifications/RequirementsSpecificationVersion3.md)
-- [Delivery Specification](./documentation/specifications/DeliverySpecificationVersion2.md)
-- [Testing Specification](./documentation/specifications/TestingSpecificationVersion3.md)
-- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion3.md)
-
+- [User Manual](./documentation/specifications/UserManual.pdf)
+- [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManualVersion2.pdf)
+- [Coding Standards](./documentation/specifications/Coding%20Standards.pdf)
+- [Requirements Specification](./documentation/specifications/RequirementsSpecification.pdf)
+- [Testing Specification](./documentation/specifications/TestingSpecification.pdf)
+- [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.pdf)
 
 
 <h1 align="center">Meet The Infinite Loopers!</h1>
@@ -235,7 +231,7 @@ The documentation provides different versions and progress for each demo, guidin
         <b style="font-size: 18px;">HLOKOMANI KHONDLO</b>
       </h2>
       <b style="font-size: 16px;">Integration Engineer</b>
-      <br> I am an integration engineer driven by the desire to understand and optimize how systems work. My passion for software engineering allows me to create seamless integrations that enhance product functionality and user experience. I specialize in using various tools and technologies to connect different systems and ensure they work together efficiently.
+      <br> I'm an integration engineer who’s driven by building solutions that make a difference. I focus on creating systems that connect seamlessly and actually improve how things work. My goal is to deliver efficient and resilient solutions that have a real, lasting impact.
       <br><br>
       <b style="font-size: 16px;">Profile Links</b>
       <br><br>
@@ -252,13 +248,13 @@ The documentation provides different versions and progress for each demo, guidin
           <img src="https://skillicons.dev/icons?i=express">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+          <img src="https://skillicons.dev/icons?i=react">
+      </a>
+      <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+          <img src="https://skillicons.dev/icons?i=azure">
+      </a>
+      <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
           <img src="https://skillicons.dev/icons?i=supabase">
-      </a>
-      <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
-          <img src="https://skillicons.dev/icons?i=aws">
-      </a>
-      <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
-          <img src="https://skillicons.dev/icons?i=nodejs">
       </a>
       <a href="#" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
           <img src="https://skillicons.dev/icons?i=nextjs">

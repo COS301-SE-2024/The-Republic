@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { sendResponse } from "@/utilities/response";
 import SubscriptionsService from "@/modules/subscriptions/services/subscriptionsService";
 import * as subscriptionsController from "@/modules/subscriptions/controllers/subscriptionsController";
@@ -176,9 +176,11 @@ describe("Subscriptions Controller", () => {
         mockResponse,
       );
 
-      await subscriptionsController.getSubscriptions(
+      // Call the last function in the getSubscriptions array
+      await subscriptionsController.getSubscriptions[subscriptionsController.getSubscriptions.length - 1](
         req as Request,
         res as Response,
+        jest.fn() as NextFunction
       );
 
       expect(
@@ -193,9 +195,11 @@ describe("Subscriptions Controller", () => {
         mockError,
       );
 
-      await subscriptionsController.getSubscriptions(
+      // Call the last function in the getSubscriptions array
+      await subscriptionsController.getSubscriptions[subscriptionsController.getSubscriptions.length - 1](
         req as Request,
         res as Response,
+        jest.fn() as NextFunction
       );
 
       expect(

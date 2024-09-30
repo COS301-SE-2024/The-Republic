@@ -5,7 +5,7 @@ import { checkUserMembership } from '@/lib/api/checkUserMembership';
 import { requestReport } from '@/lib/api/requestReport'; 
 import { useUser } from '@/lib/contexts/UserContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PenSquare, Star, BarChart, Sparkles } from 'lucide-react';
+import { PenSquare, Star, BarChart, PieChart } from 'lucide-react';
 import OrgPost from '@/components/OrgPost/OrgPost';
 import CreateOrgPost from '@/components/CreatePost/CreatePost';
 import { useToast } from '../ui/use-toast';
@@ -77,7 +77,7 @@ export default function InformationTab({
       } catch (err) {
         console.error("Error deleting post:", err);
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Failed to delete post",
           variant: "destructive",
         });
@@ -88,7 +88,7 @@ export default function InformationTab({
       e.preventDefault();
       if (!user) {
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "You must be signed in to request a report",
           variant: "destructive",
         });
@@ -105,7 +105,7 @@ export default function InformationTab({
       } catch (error) {
         console.error("Error requesting report:", error);
         toast({
-          title: "Error",
+          title: "Something Went Wrong",
           description: "Failed to request report",
           variant: "destructive",
         });
@@ -185,7 +185,7 @@ export default function InformationTab({
             <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
               <DialogTrigger asChild>
                 <Button className="w-full">
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <PieChart className="w-4 h-4 mr-2" />
                   Get Your Detailed Report
                 </Button>
               </DialogTrigger>

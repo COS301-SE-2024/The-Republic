@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTheme } from 'next-themes';
 import {
   Card,
   CardContent,
@@ -38,6 +39,7 @@ const Issue: React.FC<IssueProps> = ({
 }) => {
   const { user } = useUser();
   const router = useRouter();
+  const { theme } = useTheme();
   const [type, setType] = useState("");
   const queryClient = useQueryClient();
   const [showSubscribeDropdown, setShowSubscribeDropdown] = useState(false);
@@ -60,12 +62,14 @@ const Issue: React.FC<IssueProps> = ({
     },
     onSuccess: () => {
       toast({
+        title: "Success",
         description: "Successfully deleted issue",
       });
       onDeleteIssue!(issue);
     },
     onError: (error) => {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to delete issue",
       });
@@ -85,6 +89,7 @@ const Issue: React.FC<IssueProps> = ({
     },
     onError: (error) => {
       toast({
+        title: "Something Went Wrong",
         variant: "destructive",
         description: "Failed to Subscribe to Issue",
       });
@@ -102,12 +107,12 @@ const Issue: React.FC<IssueProps> = ({
         onResolveIssue!(issue, resolvedIssue);
         issue.resolved_at = new Date().toISOString();
       }
-      toast({ description: "Self-resolution submitted successfully" });
+      toast({ title: "Success", description: "Self-resolution submitted successfully" });
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit self-resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit self-resolution" });
     }
   });
 
@@ -134,6 +139,7 @@ const Issue: React.FC<IssueProps> = ({
     onSuccess: (response) => {
       if ('suspended_until' in response!) {
         toast({
+          title: "Something Went Wrong",
           variant: "destructive",
           description: 
             "Because of a false resolution you are suspended from resolving until " +
@@ -145,14 +151,14 @@ const Issue: React.FC<IssueProps> = ({
         if (resolvedIssue) {
           onResolveIssue!(issue, resolvedIssue);
         }
-        toast({ description: "External resolution submitted successfully" });
+        toast({ title: "Success", description: "External resolution submitted successfully" });
       }
 
       setIsResolutionModalOpen(false);
     },
     onError: (error) => {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit external resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit external resolution" });
     }
   });
 
@@ -161,7 +167,7 @@ const Issue: React.FC<IssueProps> = ({
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
-    organizationIds?: string[];
+    organizationId?: string;
   }) => {
     setIsResolutionSubmitLoading(true);
     try {
@@ -169,7 +175,7 @@ const Issue: React.FC<IssueProps> = ({
         await selfResolutionMutation.mutateAsync({
           resolutionText: resolutionData.resolutionText,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } else {
         await externalResolutionMutation.mutateAsync({
@@ -177,13 +183,13 @@ const Issue: React.FC<IssueProps> = ({
           resolutionSource: resolutionData.resolutionSource,
           resolvedBy: resolutionData.resolvedBy,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } 
       setIsResolutionModalOpen(false);
     } catch (error) {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to submit resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to submit resolution" });
     } finally {
       setIsResolutionSubmitLoading(false);
     }
@@ -197,17 +203,17 @@ const Issue: React.FC<IssueProps> = ({
       // Optimistically update the UI
       if (accept) {
         issue.resolved_at = new Date().toISOString();
-        issue.hasPendingResolution = false;
-      }
+      } 
+      issue.hasPendingResolution = false;
 
       // Refetch the issue data
       await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
 
-      toast({ description: accept ? "Resolution accepted" : "Resolution rejected" });
+      toast({ title: "Success", description: accept ? "Resolution accepted" : "Resolution rejected" });
       setIsResolutionResponseModalOpen(false);
     } catch (error) {
       console.error(error);
-      toast({ variant: "destructive", description: "Failed to respond to resolution" });
+      toast({ title: "Something Went Wrong", variant: "destructive", description: "Failed to respond to resolution" });
     } finally {
       setIsResolutionResponseLoading(undefined);
     }
@@ -285,6 +291,10 @@ const Issue: React.FC<IssueProps> = ({
     return text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
   };
 
+  const dropdownClasses = `origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none ${
+    theme === "dark" ? "bg-[#262626] text-white ring-gray-700" : "bg-white text-gray-700 ring-black"
+  }`;
+
   return (
     <>
       <Card className="mb-4" id={id} data-testid="issue-item">
@@ -341,7 +351,7 @@ const Issue: React.FC<IssueProps> = ({
                 {showSubscribeDropdown && (
                   <div
                     ref={dropdownRef}
-                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className={dropdownClasses}
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="subscribe-menu"
@@ -349,21 +359,23 @@ const Issue: React.FC<IssueProps> = ({
                     <div className="py-1" role="none">
                       <button
                         onClick={() => handleSubscribe("Issue")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Issue
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Category")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Category
                       </button>
+                      
                       <button
                         onClick={() => handleSubscribe("Location")}
-                        className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 w-full text-left"
+                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white`}
                         role="menuitem"
                       >
                         Subscribe to Location
@@ -379,6 +391,7 @@ const Issue: React.FC<IssueProps> = ({
                   isOwner={isOwner}
                   onAction={handleMenuAction}
                   onSubscribe={handleSubscribe}
+
                 />
               )}
               {isLoading && <Loader2 className="h-6 w-6 animate-spin text-green-400" />}
@@ -403,7 +416,7 @@ const Issue: React.FC<IssueProps> = ({
                   : `${issue.location.city}, ${issue.location.province}`}
               </Badge>
             )}
-            {issue.hasPendingResolution && (
+            {issue.hasPendingResolution && (issue?.resolved_at == null || !issue.resolutionResponse) && (
               <Badge
                 variant="destructive"
                 className="cursor-pointer"
