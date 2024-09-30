@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sendResponse } from "@/utilities/response";
 import { APIResponse } from "@/types/response";
 import SubscriptionsService from "@/modules/subscriptions/services/subscriptionsService";
+import { cacheMiddleware } from "@/middleware/cacheMiddleware";
 
 const subscriptionsService = new SubscriptionsService();
 
@@ -32,20 +33,26 @@ export const locationSubscriptions = async (req: Request, res: Response) => {
   }
 };
 
-export const getSubscriptions = async (req: Request, res: Response) => {
-  try {
-    const response = await subscriptionsService.getSubscriptions(req.body);
-    sendResponse(res, response);
-  } catch (error) {
-    sendResponse(res, error as APIResponse);
-  }
-};
+export const getSubscriptions = [
+  cacheMiddleware(300),
+  async (req: Request, res: Response) => {
+    try {
+      const response = await subscriptionsService.getSubscriptions(req.body);
+      sendResponse(res, response);
+    } catch (error) {
+      sendResponse(res, error as APIResponse);
+    }
+  },
+];
 
-export const getNotifications = async (req: Request, res: Response) => {
-  try {
-    const response = await subscriptionsService.getNotifications(req.body);
-    sendResponse(res, response);
-  } catch (error) {
-    sendResponse(res, error as APIResponse);
-  }
-};
+export const getNotifications = [
+  cacheMiddleware(300),
+  async (req: Request, res: Response) => {
+    try {
+      const response = await subscriptionsService.getNotifications(req.body);
+      sendResponse(res, response);
+    } catch (error) {
+      sendResponse(res, error as APIResponse);
+    }
+  },
+];

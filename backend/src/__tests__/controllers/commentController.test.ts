@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CommentService } from "@/modules/comments/services/commentService";
 import { sendResponse } from "@/utilities/response";
 import * as commentController from "@/modules/comments/controllers/commentController";
@@ -19,11 +19,13 @@ jest.mock("@/modules/shared/services/redisClient", () => ({
 describe("Comment Controller", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
+  let mockNext: NextFunction;
   let mockCommentService: jest.Mocked<CommentService>;
 
   beforeEach(() => {
     mockRequest = { body: {} };
     mockResponse = { json: jest.fn() } as Partial<Response>;
+    mockNext = jest.fn();
     mockCommentService = {
       getNumComments: jest.fn(),
       getComments: jest.fn(),
@@ -44,7 +46,15 @@ describe("Comment Controller", () => {
 
   testCases.forEach(({ name, method }) => {
     it(`should call sendResponse for ${name}`, async () => {
-      await method(mockRequest as Request, mockResponse as Response);
+      if (Array.isArray(method)) {
+        // If the method is an array (middleware + controller), call each function in the array
+        for (const fn of method) {
+          await fn(mockRequest as Request, mockResponse as Response, mockNext);
+        }
+      } else {
+        // If it's a regular function, call it directly
+        await method(mockRequest as Request, mockResponse as Response);
+      }
       expect(sendResponse).toHaveBeenCalled();
     });
   });
