@@ -2,6 +2,8 @@ import request from "supertest";
 import express, { Request, Response, NextFunction } from "express";
 import visualizationRouter from "@/modules/visualizations/routes/visualizationRoutes";
 
+import * as visualizationController from "@/modules/visualizations/controllers/visualizationController";
+
 jest.mock("@/middleware/cacheMiddleware", () => ({
   cacheMiddleware: jest.fn().mockImplementation(() => (req: Request, res: Response, next: NextFunction) => next()),
 }));
@@ -39,7 +41,7 @@ describe("Visualization Routes", () => {
       const response = await request(app).post("/visualizations").send();
 
       expect(response.status).toBe(200);
-      expect(require("@/modules/visualizations/controllers/visualizationController").getVizData).toHaveBeenCalled();
+      expect(visualizationController.getVizData).toHaveBeenCalled();
     });
   });
 });
