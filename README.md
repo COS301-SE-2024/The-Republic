@@ -43,9 +43,9 @@
 
 The documentation provides different versions and progress for each demo, guiding you through various aspects of the project, including architectural design, implementation details, and user guidelines - [Click Here to See Documentation Versions](./documentation/README.md)
 
-- [User Manual](./documentation/specifications/UserManualVersion4.pdf)
+- [User Manual](./documentation/specifications/UserManual.pdf)
 - [Technical Installation Manual](./documentation/specifications/TechnicalInstallationManualVersion2.pdf)
-- [Coding Standards](./documentation/specifications/CodingStandardsVersion3.pdf)
+- [Coding Standards](./documentation/specifications/Coding%20Standards.pdf)
 - [Requirements Specification](./documentation/specifications/RequirementsSpecification.pdf)
 - [Testing Specification](./documentation/specifications/TestingSpecification.pdf)
 - [Architectural Specification](./documentation/specifications/ArchitecturalSpecificationVersion4.pdf)
