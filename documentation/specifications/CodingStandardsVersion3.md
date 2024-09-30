@@ -16,6 +16,7 @@ Maintaining high coding standards is crucial for the success of The Republic pro
 4. [Error Handling](#error-handling)
 5. [Testing Standards](#testing-standards)
 6. [Version Control Practices](#version-control-practices)
+7. [Linter Rules](#linter-rules)
 
 ## General Guidelines
 
@@ -25,6 +26,7 @@ Maintaining high coding standards is crucial for the success of The Republic pro
 - Consistently apply indentation throughout the codebase.
 
 Example:
+
 ```typescript
 function exampleFunction() {
     if (condition) {
@@ -40,6 +42,7 @@ function exampleFunction() {
 - Avoid combining multiple statements on a single line, even if they are short.
 
 Example:
+
 ```typescript
 // Good
 let x = 5;
@@ -60,6 +63,7 @@ let x = 5; let y = 10; let z = x + y;
   - Use all uppercase letters with underscores separating words.
 
 Examples:
+
 ```typescript
 // Variables
 let firstName: string = "John";
@@ -78,6 +82,7 @@ const API_BASE_URL: string = "https://api.example.com";
 - Functions should have descriptive names that clearly indicate their purpose.
 
 Examples:
+
 ```typescript
 function getUserName(userId: number): string {
     // Function logic
@@ -97,6 +102,8 @@ function calculateTotalPrice(items: Item[], discountPercentage: number): number 
   - Pascal case: start with a capital letter and capitalize all words.
 
 Examples:
+
+
 ```typescript
 // Pascal case file names
 import { UserProfile } from "./UserProfile";
@@ -116,6 +123,7 @@ import { error_handlers } from "./error_handlers";
 - Write clear and concise comments that add value to the code.
 
 Example:
+
 ```typescript
 /**
  * Calculates the total price of items after applying a discount.
@@ -142,6 +150,7 @@ function calculateTotalPrice(items: Item[], discountPercentage: number): number 
 - Provide meaningful error messages for better understanding and debugging.
 
 Example:
+
 ```typescript
 function transferFunds(fromAccount: Account, toAccount: Account, amount: number): void {
     if (amount <= 0) {
@@ -175,6 +184,7 @@ function transferFunds(fromAccount: Account, toAccount: Account, amount: number)
 - Each test file should have the same name as the component being tested, with a `.test.ts` or `.test.tsx` extension.
 
 Example:
+
 ```typescript
 // File: UserProfile.test.ts
 import { UserProfile } from "./UserProfile";
@@ -200,6 +210,7 @@ describe("UserProfile", () => {
 - Focus on testing the flow of data and control between components.
 
 Example:
+
 ```typescript
 // File: authentication.spec.ts
 describe("Authentication Flow", () => {
@@ -221,6 +232,7 @@ describe("Authentication Flow", () => {
 - Simulate real user scenarios and test critical user journeys.
 
 Example:
+
 ```typescript
 // File: checkout.spec.ts
 describe("Checkout Process", () => {
@@ -250,6 +262,7 @@ describe("Checkout Process", () => {
 - Regularly review and improve test coverage.
 
 Example of running Jest with coverage:
+
 ```bash
 jest --coverage
 ```
@@ -262,6 +275,7 @@ jest --coverage
 - Branches: Main, Development, Feature, Documentation.
 
 Example of creating a feature branch:
+
 ```bash
 git checkout develop
 git checkout -b feature/new-user-registration
@@ -274,7 +288,8 @@ git checkout -b feature/new-user-registration
 - Alphanumeric characters with no continuous hyphens.
 
 Examples:
-```
+
+```text
 main
 develop
 feature/user-authentication
@@ -290,6 +305,7 @@ release/v1.2.0
 - Conduct manual review by testers.
 
 Example of creating a pull request:
+
 ```bash
 git push origin feature/new-user-registration
 # Then create a pull request on GitHub/GitLab from feature/new-user-registration to develop
@@ -302,7 +318,8 @@ git push origin feature/new-user-registration
 - Use separate commits for code changes, tests, and documentation.
 
 Example of good commit messages:
-```
+
+```text
 Add user registration form
 Implement password strength validation
 Update user registration documentation
@@ -315,24 +332,62 @@ Add unit tests for user registration process
 - Implement custom rules aligned with coding standards.
 - Set up automated checks and manual review for compliance.
 
-Example of an ESLint configuration file (.eslintrc.js):
-```javascript
-module.exports = {
-    root: true,
-    parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint'],
-    extends: [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended',
-    ],
-    rules: {
-        // Custom rules
-        'indent': ['error', 4],
-        'no-unused-vars': 'error',
-        'camelcase': 'error',
-    },
-};
-```
+## Linter Rules
+
+### Extends
+
+We use predefined sets of rules from various sources to maintain code quality:
+
+- **eslint:recommended**: Basic rules for JavaScript.
+- **plugin:@next/next/recommended**: Rules specific to Next.js.
+- **plugin:@typescript-eslint/recommended**: Rules for TypeScript.
+
+### Parser
+
+We use a special tool called a parser to understand our TypeScript code:
+
+- **@typescript-eslint/parser**: This parser helps ESLint understand TypeScript.
+
+### Parser Options
+
+These settings tell the parser how to interpret our code:
+
+- **ecmaVersion**: 2020 (Supports modern JavaScript features).
+- **sourceType**: module (Allows the use of import/export statements).
+- **jsx**: true (Supports JSX, a syntax used in React).
+
+### Settings
+
+These settings help configure specific tools:
+
+- **react version**: detect (Automatically detects the React version).
+
+### Environment
+
+These settings specify the environments our code is expected to run in:
+
+- **jest/globals**: true (Supports Jest testing framework).
+- **browser**: true (Code runs in a web browser).
+- **es6**: true (Supports ES6 features).
+- **node**: true (Code runs in Node.js).
+- **jest**: true (Supports Jest testing framework).
+
+### Plugins
+
+Plugins add extra rules and functionalities:
+
+- **react**: For React-specific linting rules.
+- **@next/next**: For Next.js-specific linting rules.
+- **@typescript-eslint**: For TypeScript-specific linting rules.
+- **jest**: For Jest-specific linting rules.
+
+### Rules
+
+These are specific guidelines our code must follow:
+
+- **semi**: Always use semicolons.
+- **@typescript-eslint/no-explicit-any**: Avoid using the `any` type in TypeScript.
+- **import/order**: No specific order for import statements.
 
 By following these coding standards, we ensure consistency, readability, and maintainability throughout the development lifecycle of The Republic project.
 
