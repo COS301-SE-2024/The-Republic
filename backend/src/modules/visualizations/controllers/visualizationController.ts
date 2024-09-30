@@ -7,7 +7,7 @@ import { cacheMiddleware } from "@/middleware/cacheMiddleware";
 const visualizationService = new VisualizationService();
 
 export const getVizData = [
-  cacheMiddleware(300),
+  cacheMiddleware(100),
   async (req: Request, res: Response) => {
     try {
       const response = await visualizationService.getVizData();
