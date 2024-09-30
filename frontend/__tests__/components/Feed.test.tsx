@@ -18,6 +18,9 @@ jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn().mockReturnValue({
     get: jest.fn().mockReturnValue(null),
   }),
+  useRouter: jest.fn().mockReturnValue({
+    back: jest.fn().mockReturnValue(null),
+  }),
 }));
 
 jest.mock("@/lib/contexts/UserContext", () => ({

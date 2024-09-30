@@ -167,7 +167,7 @@ const Issue: React.FC<IssueProps> = ({
     proofImage: File | null;
     resolutionSource: 'self' | 'unknown' | 'other';
     resolvedBy?: string;
-    organizationIds?: string[];
+    organizationId?: string;
   }) => {
     setIsResolutionSubmitLoading(true);
     try {
@@ -175,7 +175,7 @@ const Issue: React.FC<IssueProps> = ({
         await selfResolutionMutation.mutateAsync({
           resolutionText: resolutionData.resolutionText,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } else {
         await externalResolutionMutation.mutateAsync({
@@ -183,7 +183,7 @@ const Issue: React.FC<IssueProps> = ({
           resolutionSource: resolutionData.resolutionSource,
           resolvedBy: resolutionData.resolvedBy,
           proofImage: resolutionData.proofImage || undefined,
-          organizationId: resolutionData.organizationIds?.[0],
+          organizationId: resolutionData.organizationId,
         });
       } 
       setIsResolutionModalOpen(false);
@@ -203,13 +203,13 @@ const Issue: React.FC<IssueProps> = ({
       // Optimistically update the UI
       if (accept) {
         issue.resolved_at = new Date().toISOString();
-        issue.hasPendingResolution = false;
-      }
+      } 
+      issue.hasPendingResolution = false;
 
       // Refetch the issue data
       await queryClient.refetchQueries({ queryKey: ['issue', issue.issue_id] });
 
-      toast({ title: accept? "Success" : "Error", description: accept ? "Resolution accepted" : "Resolution rejected" });
+      toast({ title: "Success", description: accept ? "Resolution accepted" : "Resolution rejected" });
       setIsResolutionResponseModalOpen(false);
     } catch (error) {
       console.error(error);
@@ -416,7 +416,7 @@ const Issue: React.FC<IssueProps> = ({
                   : `${issue.location.city}, ${issue.location.province}`}
               </Badge>
             )}
-            {issue.hasPendingResolution && issue?.resolved_at == null && (
+            {issue.hasPendingResolution && (issue?.resolved_at == null || !issue.resolutionResponse) && (
               <Badge
                 variant="destructive"
                 className="cursor-pointer"

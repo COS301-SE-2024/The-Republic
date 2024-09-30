@@ -14,9 +14,9 @@ import {
 } from "@/lib/types";
 
 import styles from '@/styles/Feed.module.css';
-import { Filter, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Filter, Loader2, Plus } from "lucide-react";
 import { LazyList, LazyListRef } from "@/components/LazyList/LazyList";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { fetchUserLocation } from "@/lib/api/fetchUserLocation";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [isMobileIssueInputOpen, setIsMobileIssueInputOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const locationString = searchParams.get("location");
@@ -213,6 +214,8 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
     return <LoadingIndicator />;
   }
 
+  const isVizFiltering = !!searchParams.get("location");
+
   return (
     <div className="flex h-full relative">
       <div
@@ -231,6 +234,20 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
           )}
         </div>
         {user && isDesktop && <IssueInputBox user={user} onAddIssue={handleAddIssue} />}
+        {isVizFiltering && (
+          <div className="mx-auto w-max max-w-[80vw] mb-2 text-center">
+            <Button 
+              variant="ghost" 
+              className="text-green-300 inline mr-2"
+              onClick={() => router.back()}
+            >
+              <ArrowLeft className="inline scale-90"/> Back
+            </Button>
+            <p className="inline text-muted-foreground">
+              Viewing {filter.toLowerCase()} issues in {location?.suburb || location?.city} from Visualization
+            </p>
+          </div>
+        )}
         <LazyList
           pageSize={FETCH_SIZE}
           fetcher={fetchIssues}

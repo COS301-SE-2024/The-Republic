@@ -73,7 +73,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("savedUser", JSON.stringify(userData));
     }
 
-    if (subscriptions && userData) {
+    if (subscriptions?.data && userData) {
       localStorage.setItem(
         "userSubscriptions",
         JSON.stringify(subscriptions.data)
