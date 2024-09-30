@@ -47,6 +47,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!user) return;
 
+    const userSubscriptions = JSON.parse(localStorage.getItem("userSubscriptions") ?? '{"issues": [], "categories": [], "locations": []}');
+    const {
+      issues: subIssues,
+      categories: subCategories,
+      locations: subLocations,
+    } = userSubscriptions;
+
     const channelA = supabase
       .channel("schema-db-changes")
       .on(
@@ -63,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
-              .select('user_id')
+              .select('user_id, category_id, location_id')
               .eq('issue_id', issue_id)
               .single();
 
@@ -108,6 +115,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 variant: "warning",
                 description: `Gained 10 Points for leaving a Comment on an Issue`,
               });
+            } else if (subIssues.includes(issue_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue you are subscribed to.`,
+              });
+            } else if (subCategories.includes(issueData.category_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue under a category you are subscribed to.`,
+              });
+            } else if (subLocations.includes(issueData.location_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New comment on an issue in a location you are subscribed to.`,
+              });
             } else if (content.includes(user.username)) {
               toast({
                 title: "Notification",
@@ -132,7 +157,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             
             const { data: issueData, error: issueError } = await supabase
               .from('issue')
-              .select('user_id')
+              .select('user_id, category_id, location_id')
               .eq('issue_id', issue_id)
               .single();
 
@@ -173,6 +198,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 title: "Notification",
                 variant: "warning",
                 description: `Gained 5 Points on your ${emoji} Reaction`,
+              });
+            } else if (subIssues.includes(issue_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `New reaction to an issue you are subscribed to.`,
+              });
+            } else if (subCategories.includes(issueData.category_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `A new issue was posted under a category you are subscribed to.`,
+              });
+            } else if (subLocations.includes(issueData.location_id)) {
+              toast({
+                title: "Notification",
+                variant: "warning",
+                description: `A new issue was posted in a location you are subscribed to.`,
               });
             }
           }
