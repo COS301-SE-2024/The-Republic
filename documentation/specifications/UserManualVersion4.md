@@ -175,48 +175,89 @@ Organizations allow for collaborative issue reporting and management within The 
 - Set join policies for organizations
 
 ### Creating an Organization
-1. Navigate to the Organizations page.
-2. Click on "Create Organization".
-3. Fill in the organization details (name, description, etc.).
-4. Set the join policy (open, request to join, or invite-only).
-5. Click "Create" to finalize.
+**1. Navigate to the Organizations page.** <br>
+<img src="../images/User Manual Screenshots/Orgs/image.png"/><br>
+
+
+**2. Click on the plus icon next to "Organizations".**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-1.png"/><br>
+
+
+**3. Fill in the organization details (name, description, etc.).**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-2.png"/><br>
+
+
+**4. Set the join policy (open, request to join, or invite-only).**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-3.png"/><br>
+
+**5. Click "Create" to finalize.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-4.png"/><br>
+
 
 ### Joining an Organization
-1. Search for the organization you want to join.
-2. Click on the organization to view its details.
-3. Click "Join" or "Request to Join" (depending on the organization's policy).
-4. If it's a request, wait for approval from the organization admin.
+**1. Search for the organization you want to join.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-5.png"/><br>
+
+
+**2. Click on the organization to view its details.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-6.png"/><br>
+
+**3. Click "Join" or "Request to Join" (depending on the organization's policy).**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-7.png"/><br>
+
+**4. If it's a request, wait for approval from the organization admin.**<br>
 
 ### Managing Organization Members
-1. Go to your organization's page.
-2. Click on "Members" or "Manage Members".
-3. Here you can view all members, remove members, or promote members to admin status.
+**1. Navigate to your organization's page.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-8.png"/><br>
 
-### Posting Organization Content
-1. Navigate to your organization's page.
-2. Look for a "Create Post" or "New Post" button.
-3. Write your post and add any relevant attachments.
-4. Click "Post" to publish the content to your organization's feed.
+**2. Click on "Members" or "Manage Members".**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-9.png"/><br>
 
-### Viewing Organization Activity Logs
-1. Go to your organization's page.
-2. Look for an "Activity" or "Logs" section.
-3. Here you can view recent actions and events within the organization.
+**3. Here you can view all members, remove members, or promote members to admin status.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-10.png"/><br>
+
+### Posting Organization Content (FOR ADMINS ONLY)
+**1. Navigate to your organization's page.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-8.png"/><br>
+
+**2. Click the icon at the far right corner of the "Organizations Post" section.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-11.png"/><br>
+
+**3. Write your post and add any relevant attachments.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-12.png"/><br>
+
+**4. Click "Post" to publish the content to your organization's feed.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-13.png"/><br>
+
+
+### Viewing Organization Activity Logs (FOR ADMINS ONLY)
+**1. Navigate to your organization's page.**<br>
+
+**2. Click on Settings**<Br>
+<img src="../images/User Manual Screenshots/Orgs/image-14.png"/><br>
+
+**3. Click on activty Log. Here you can view recent actions and events within the organization.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-15.png"/><br>
+
 
 ### Downloading Detailed Reports
-1. Navigate to your organization's page.
-2. Look for a "Reports" or "Analytics" section.
-3. Click on "Download Report"
-4. Enter your email and the report will be emailed to you once it is ready.
+**1. Navigate to your organization's page.**<br>
 
-Note: Detailed reports may include information such as:
+**2. Click on "Get Your Detailed Report".**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-16.png"/><br>
+
+**3. Enter your email and the report will be emailed to you once it is ready.**<br>
+<img src="../images/User Manual Screenshots/Orgs/image-17.png"/><br>
+
+**Note: Detailed reports may include information such as:**<br>
 - Member engagement statistics
 - Issue resolution rates
 - Top contributors within the organization
 - Trending categories or locations for reported issues
 - Overall organization growth and activity metrics
 
-These reports can help organization administrators make data-driven decisions and track the organization's impact over time.
+**These reports can help organization administrators make data-driven decisions and track the organization's impact over time.**
 
 [Back](./../README.md)<br>
 [Back to main](/README.md)
