@@ -48,7 +48,7 @@ export default class IssueRepository {
         category: category_id (
           name
         ),
-        location: location_id (
+        location: location_id!inner (
           province,
           city,
           suburb,
