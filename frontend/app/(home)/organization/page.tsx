@@ -175,8 +175,8 @@ export default function OrganizationPage() {
     items: [
       { value: "all", label: "All Locations" },
       ...(locations?.map(loc => ({
-        value: loc.location_id.toString(),
-        label: `${loc.suburb ? loc.suburb + ", " : ""}${loc.city}, ${loc.province}`,
+        value: loc.location_id?.toString() ?? '',
+        label: `${loc.suburb ? loc.suburb + ", " : ""}${loc.city ?? ''}, ${loc.province ?? ''}`,
       })) || []),
     ],
   };
