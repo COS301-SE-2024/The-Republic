@@ -31,6 +31,7 @@ const fetchIssues = async (
   }
 
   if (location) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { location_id, ...locationWithoutId } = location;
     requestBody.location = locationWithoutId;
   }
