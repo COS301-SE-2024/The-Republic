@@ -31,7 +31,8 @@ const fetchIssues = async (
   }
 
   if (location) {
-    requestBody.location = location;
+    const { location_id, ...locationWithoutId } = location;
+    requestBody.location = locationWithoutId;
   }
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/issues`;

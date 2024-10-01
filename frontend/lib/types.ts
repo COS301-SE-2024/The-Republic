@@ -452,7 +452,7 @@ interface AnalysisResult {
 }
 
 interface Location {
-  location_id: string;
+  location_id?: string;
   province?: string;
   city?: string;
   suburb?: string;
