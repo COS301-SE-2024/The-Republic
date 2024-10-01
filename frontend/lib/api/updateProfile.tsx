@@ -16,9 +16,10 @@ const updateUserProfile = async (
   }
 
   const formData = new FormData();
-  formData.append("fullname", updatedUser.fullname);
-  formData.append("username", updatedUser.username);
-  formData.append("bio", updatedUser.bio);
+
+  if (updatedUser.fullname) formData.append("fullname", updatedUser.fullname);
+  if (updatedUser.username) formData.append("username", updatedUser.username);
+  if (updatedUser.bio) formData.append("bio", updatedUser.bio);
   if (updatedUser.location) {
     formData.append("location", JSON.stringify(updatedUser.location));
   }
@@ -27,6 +28,11 @@ const updateUserProfile = async (
       throw new Error("Invalid image file");
     }
     formData.append("profile_picture", file);
+  }
+
+  // Don't send the request if there's nothing to update
+  if (formData.entries().next().done) {
+    return user; // Return the original user if no updates
   }
 
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${user.user_id}`;
