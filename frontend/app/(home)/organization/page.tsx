@@ -152,7 +152,6 @@ export default function OrganizationPage() {
     } catch (err) {
       setError('Failed to create organization');
     }
-    throw new Error('Failed to create organization');
   };
 
   const myOrganizations = organizations.filter(org => org.isMember);
