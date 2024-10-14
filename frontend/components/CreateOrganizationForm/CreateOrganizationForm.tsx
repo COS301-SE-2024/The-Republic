@@ -10,7 +10,7 @@ import Image from 'next/image';
 interface CreateOrganizationFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (newOrg: FormData) => Promise<Organization>;
+  onCreate: (newOrg: FormData) => Promise<Organization | undefined>;
 }
 
 const CreateOrganizationForm: React.FC<CreateOrganizationFormProps> = ({ isOpen, onClose, onCreate }) => {
