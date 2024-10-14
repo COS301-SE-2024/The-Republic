@@ -95,7 +95,7 @@ export const deleteOrganization = async (req: Request, res: Response) => {
       organizationId,
       userId,
     );
-    clearCachePattern(`__express__/api/organizations/${organizationId}`);
+    clearCachePattern(`__express__/api/organizations*`);
     sendResponse(res, response);
   } catch (err) {
     handleError(res, err);
@@ -322,7 +322,7 @@ export const getOrganizations = [
 
       const paginationParams: PaginationParams = {
         offset: Number(offset) || 0,
-        limit: Number(limit) || 10,
+        limit: Number(limit) || 99,
       };
 
       const response = await organizationService.getOrganizations(
