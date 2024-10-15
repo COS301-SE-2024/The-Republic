@@ -359,27 +359,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {user && (
             <div className={styles.userAccount}>
               {showLogout && (
-                <div className={styles.logoutOverlay}>
-                  <ul className={styles.sidebarLinks}>
-                    <li>
-                      <Link href="/login" onClick={() => signOutWithToast(toast)}>
-                        <LogoutIcon />
-                        Logout
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
+              <div className={`${styles.logoutOverlay} dark:border-gray-400 hover:bg-gray-200 dark:hover:bg-black dark:bg-background dark:text-white`}>
+                <ul className={styles.sidebarLinks}>
+                <li>
+                  <Link className="dark:border-none hover:bg-gray-200 dark:hover:bg-black focus:ring-green-200 dark:bg-background dark:text-white p-0 m-0" href="/login" onClick={() => signOutWithToast(toast)}>
+                  <LogoutIcon />
+                  Logout
+                  </Link>
+                </li>
+                </ul>
+              </div>
               )}
               <div className={styles.userProfile} onClick={toggleLogout}>
-                <Avatar>
-                  <AvatarImage src={user.image_url} />
-                  <AvatarFallback>{user.fullname[0].toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <div className={`w-[70%] overflow-hidden overflow-ellipsis ${styles.userDetail}`}>
-                  <h3 className="inline">{user.fullname}</h3>
-                  <br />
-                  <span>@{user.username}</span>
-                </div>
+              <Avatar>
+                <AvatarImage src={user.image_url} />
+                <AvatarFallback>{user.fullname[0].toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className={`w-[70%] overflow-hidden overflow-ellipsis ${styles.userDetail}`}>
+                <h3 className="inline">{user.fullname}</h3>
+                <br />
+                <span>@{user.username}</span>
+              </div>
               </div>
             </div>
           )}
