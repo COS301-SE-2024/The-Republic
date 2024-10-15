@@ -108,7 +108,7 @@ export default class UserAdminRepository {
           email_address: `deleted_${rand}@gmail.com`,
           username: `deleted_${rand}`,
           image_url:
-            "https://plvofqwscloxamqxcxhz.supabase.co/storage/v1/object/public/user/profile_pictures/default.png",
+            "/images/default.png",
           fullname: "deleted_user",
           user_score: 0,
           location_id: null,

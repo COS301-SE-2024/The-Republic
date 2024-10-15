@@ -132,7 +132,7 @@ export default function MembersTab({ organization, members, setMembers }: Member
           {members.data.map((member) => (
             <div 
               key={member.user_id} 
-              className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer rounded-md transition-colors duration-200"
+              className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-grey cursor-pointer rounded-md transition-colors duration-200"
               onClick={() => handleRowClick(member.user_id)}
             >
               <div className="flex items-center space-x-4">
