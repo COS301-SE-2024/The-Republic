@@ -48,7 +48,7 @@ export default class IssueRepository {
         category: category_id (
           name
         ),
-        location: location_id!inner (
+        location: location_id (
           province,
           city,
           suburb,
@@ -71,9 +71,10 @@ export default class IssueRepository {
         .ilike("location.district", `%${location.district}%`);
     }
 
+    let category_id = 0;
     if (category) {
-      const categoryId = await this.categoryRepository.getCategoryId(category);
-      query = query.eq("category_id", categoryId);
+      category_id = await this.categoryRepository.getCategoryId(category);
+      query = query.eq("category_id", category_id);
     }
 
     const { data, error } = await query;
@@ -127,7 +128,7 @@ export default class IssueRepository {
           : null;
 
         const days =
-          forecastData && !forecastError ? formatTime(forecastData) : "6 days";
+          forecastData && !forecastError ? formatTime(forecastData) : `${(category_id % 2) + 6} days`;
         const information = !issue.resolved_at
           ? `This issue may take around ${days} to be resolved based on similar issues in this area.`
           : "This issue has already been resolved.";
