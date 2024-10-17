@@ -168,8 +168,8 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
 
   const EmptyIndicator = () => (
     <ErrorPage
-      message="No issues found."
-      error="It seems there are no issues to display. Please check back later."
+      message="No reports available in this area."
+      error="It looks like there are no recent reports for your selected location. Feel free to submit a report if you’re experiencing any issues, or check back later for updates."
       showReloadButton={true}
     />
   );
