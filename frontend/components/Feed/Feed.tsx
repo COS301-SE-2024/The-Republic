@@ -98,9 +98,9 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
       "Content-Type": "application/json",
     };
 
-    if (user) {
-      headers.Authorization = `Bearer ${user.access_token}`;
-    }
+    // if (user) {
+    //   headers.Authorization = `Bearer ${user.access_token}`;
+    // }
 
     const requestBody: RequestBody = {
       from,
@@ -168,13 +168,21 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
 
   const EmptyIndicator = () => (
     <ErrorPage
-    message="No reports available in this area."
-    error="It looks like there are no recent reports for your selected location. Feel free to submit a report if you’re experiencing any issues, or check back later for updates."
-    showReloadButton={true}
+      message="No reports available in this area."
+      error="It looks like there are no recent reports for your selected location. Feel free to submit a report if you’re experiencing any issues, or check back later for updates."
+      showReloadButton={true}
     />
   );
   
-  const FailedIndicator = () => (
+  // const FailedIndicator = () => (
+  //   <ErrorPage
+  //     message="Failed to fetch issues."
+  //     error="It seems there are no issues to display. Please refresh the page or try login."
+  //     showReloadButton={true}
+  //   />
+  // );
+
+  const FailedLazyIndicator = () => (
     <div className="flex justify-center items-center h-32">
       <h3 className="text-muted-foreground">Failed to fetch issues</h3>
     </div>
@@ -264,7 +272,7 @@ const Feed: React.FC<UserContextType> = ({ user }) => {
               onResolveIssue={handleResolveIssue}
             />
           )}
-          Failed={FailedIndicator}
+          Failed={FailedLazyIndicator}
           Loading={LoadingIndicator}
           Empty={EmptyIndicator}
           parentId={scrollId}
