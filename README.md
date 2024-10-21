@@ -154,7 +154,7 @@ The documentation provides different versions and progress for each demo, guidin
       <a href="https://github.com/IRIA7" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github" />
       </a>
-      <a href="https://www.linkedin.com/in/sibisi-mathebe" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://www.linkedin.com/in/sibisi-mathebe-b83543221" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
       <br><br>
